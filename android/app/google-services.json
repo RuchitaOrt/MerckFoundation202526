@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "168817373960",
+    "project_id": "merckfoundation-e76bc",
+    "storage_bucket": "merckfoundation-e76bc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:168817373960:android:14359c7849b0f01e6472bd",
+        "android_client_info": {
+          "package_name": "de.merck.foundation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "168817373960-kvl5m081bmrsvkmo3qds7srcdqefejtj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "de.merck.foundation",
+            "certificate_hash": "fa92c5668cfa1c67b8e3f8791a7a66edfa4cbca1"
+          }
+        },
+        {
+          "client_id": "168817373960-j4rjdcdbpv76n7qmg8569tnd9kknpscr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHPEXU_6LWj_Mx1Fbj9uJeQaMWiQbnOJQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "168817373960-j4rjdcdbpv76n7qmg8569tnd9kknpscr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
