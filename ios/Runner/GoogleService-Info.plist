@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>168817373960-m09nb7mv4l5j1mj2l5qkoveci9jufd2v.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.168817373960-m09nb7mv4l5j1mj2l5qkoveci9jufd2v</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>168817373960-kvl5m081bmrsvkmo3qds7srcdqefejtj.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDN8-Cp42GMaXX9yU0csv3dYaZWq6L2i0w</string>
+	<key>GCM_SENDER_ID</key>
+	<string>168817373960</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.merck.foundation</string>
+	<key>PROJECT_ID</key>
+	<string>merckfoundation-e76bc</string>
+	<key>STORAGE_BUCKET</key>
+	<string>merckfoundation-e76bc.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:168817373960:ios:7763856c565bb2386472bd</string>
+</dict>
+</plist>
