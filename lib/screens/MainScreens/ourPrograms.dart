@@ -8,11 +8,15 @@ import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/data/model/CommonModel.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
+import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/providers/program_provider.dart';
+import 'package:merckfoundation_252026/screens/OurPrograms/MFMoreThanMotherMovement.dart';
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
 import 'package:merckfoundation_252026/widgets/Homewidget.dart/homeSlider.dart';
 import 'package:merckfoundation_252026/widgets/botttomlink.dart';
+import 'package:merckfoundation_252026/widgets/formLabel.dart';
 import 'package:provider/provider.dart';
+
 class OurProgramScreen extends StatelessWidget {
   const OurProgramScreen({super.key});
 
@@ -24,13 +28,13 @@ class OurProgramScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Customcolor.background,
       appBar: CommonAppBar(
-    type: AppBarType.inner,
-    title: CommonStrings.ourPrograms,
-   
-    onSearch: () {},
-    onShare: () {},
-    shareLink: "",
-  ),
+        type: AppBarType.inner,
+        title: CommonStrings.ourPrograms,
+
+        onSearch: () {},
+        onShare: () {},
+        shareLink: "",
+      ),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(child: const HomeSlider()),
@@ -38,15 +42,13 @@ class OurProgramScreen extends StatelessWidget {
           SliverPadding(
             padding: const EdgeInsets.all(12),
             sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  return _ProgramCard(
-                    program: programs[index],
-                    fontSize: responsive.fontSize(1.9),
-                  );
-                },
-                childCount: programs.length,
-              ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                return _ProgramCard(
+                  program: programs[index],
+                  fontSize: responsive.fontSize(1.9),
+                  
+                );
+              }, childCount: programs.length),
             ),
           ),
 
@@ -57,17 +59,16 @@ class OurProgramScreen extends StatelessWidget {
     );
   }
 }
+
 class _ProgramCard extends StatelessWidget {
   final ProgramModel program;
   final double fontSize;
 
-  const _ProgramCard({
-    required this.program,
-    required this.fontSize,
-  });
+  const _ProgramCard({required this.program, required this.fontSize});
 
   @override
   Widget build(BuildContext context) {
+    final responsive = ResponsiveFlutter.of(routeGlobalKey.currentContext!);
     return AnimationConfiguration.staggeredList(
       position: 0,
       duration: const Duration(milliseconds: 400),
@@ -75,9 +76,7 @@ class _ProgramCard extends StatelessWidget {
         verticalOffset: 30,
         child: FadeInAnimation(
           child: GestureDetector(
-            onTap: () {
-              // navigate based on program.id
-            },
+            onTap: program.onTap,
             child: Container(
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.all(12),
@@ -94,15 +93,13 @@ class _ProgramCard extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                
                   Expanded(
-                    child: Text(
-                      program.title,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: fontSize,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    child: FormLabel(
+                      text: program.title,
+            
+                      fontSize: responsive.fontSize(2),
+                      labelColor: Colors.white,
+                      fontweight: FontWeight.w600,
                     ),
                   ),
                   const Icon(

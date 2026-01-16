@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 
 
@@ -12,6 +12,7 @@ class FormLabel extends StatelessWidget {
   dynamic fontfamily;
   double? fontheight;
   TextOverflow? textOverflow;
+  bool? softWrap;
 
   FormLabel(
       {Key? key,
@@ -21,6 +22,7 @@ class FormLabel extends StatelessWidget {
       this.textAlignment = TextAlign.left,
       this.fontweight,
       this.maxLines,this.textOverflow,
+      this.softWrap=false,
       this.fontfamily,this.fontheight=0.0})
       : super(key: key);
 
@@ -31,13 +33,16 @@ class FormLabel extends StatelessWidget {
     }
 
     return Text(
+      softWrap: true,
       text,
       maxLines: 10,
       
       textAlign: textAlignment,
       overflow: textOverflow,
+      
       style: TextStyle(
         color: labelColor,
+        
         fontSize: fontSize,
         fontWeight: fontweight,
         height: fontheight

@@ -56,6 +56,7 @@ dependencies:
   youtube_player_flutter: 
  
   flutter_inappwebview:
+  flip_card:
   
 dev_dependencies:
   flutter_test:

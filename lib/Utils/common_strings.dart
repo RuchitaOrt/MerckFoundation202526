@@ -56,13 +56,12 @@ class CommonStrings {
   static const String exitQuestion = "Are you sure you want to exit?";
   // Our Section
 
-  static const String ourAfrica =
-      'Our Africa \nby Merck Foundation \n(TV Program)';
+  static const String ourAfrica = 'Our Africa by Merck Foundation (TV Program)';
   static const String newsArticles = 'News \nArticles';
-  static const String ourAwards = 'Our \nAwards';
+  static const String ourAwards = 'Our Awards';
   // static const String ourMission = 'Our \nMission';
   static const String mediaEvents = 'Media \n& Events';
-  static const String covidResponse = 'Covid \nResponse';
+  static const String covidResponse = 'Covid Response';
   // static const String ourPolicies = 'Our \nPolicies';
 
   static String baseurllink = "https://merck-foundation.com/";
@@ -81,7 +80,7 @@ class CommonStrings {
   static String threadsUrlScheme = 'threads://';
   // URL to Threads app in the Play Store
   static String followthreas = 'https://www.threads.net/@merckfoundation';
-//Follow Rasha
+  //Follow Rasha
   static String followrashainsta = "https://www.instagram.com/rasha_kelej/";
   static String followrashafacebook = "https://www.facebook.com/KelejRasha/";
   static String followrashatwitter = "https://twitter.com/Rashakelej";
@@ -92,10 +91,10 @@ class CommonStrings {
   static String followUsTitle = "Follow Us";
   static String followUsRashaTitle = "Follow Senator, Dr. Rasha Kelej";
   static String followmsg = "follow us";
-  static double tabheight = 500;
+  static double tabheight = 600;
   static double callimageheight = 300;
   static double callimagewidth = 220;
-  static double callcoursaheight = 330;
+  static double callcoursaheight = 380;
 
   //call ambassdar width as per client
   static double callAmbassadarimagewidth = 240;
@@ -107,4 +106,41 @@ class CommonStrings {
   static const mediaEnquiries = "Media Enquiries";
   static const followUs = "Follow Us";
   static const infoMail = "info@merck-foundation.com";
+  static const readMore = "Read More";
+  static const viewMore = "View More";
+  static const watchMore = "Watch More";
+  static String viewAll = "View All";
+  static const covidTitle = 'MERCK FOUNDATION RESPONSE TO COVID-19 PANDEMIC';
+ static const covidIntro =
+      "Merck Foundation has raced to respond to the Coronavirus pandemic "
+      "in partnership with 18 African First Ladies...";
+  static const communitySupport = 'Merck Foundation Community Support';
+
+  static const healthCare = 'Merck Foundation Health Care Capacity Building';
+
+   static const String mmtmTitle =
+      'Merck Foundation "More Than a Mother" Movement';
+
+  static const String cancerTitle =
+      'Merck Foundation Cancer Access Program';
+
+  static const String capacityTitle =
+      'Merck Foundation Capacity Advancement Program';
+
+  static const String nationwideTitle =
+      'Merck Foundation Nationwide Diabetes & Hypertension Blue Points Program';
+
+  static const String firstLadiesTitle =
+      'Merck Foundation First Ladies Initiative Summit - MFFLI';
+
+  static const String stemTitle =
+      'Merck Foundation STEM Program';
+
+  static const String educatingLindaTitle =
+      'Merck Foundation Educating Linda Program';
+
+  static const String africaAsiaTitle =
+      'Merck Foundation Africa Asia Luminary';
+
+
 }

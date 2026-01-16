@@ -4,11 +4,13 @@ import 'package:merckfoundation_252026/Utility/customappbar.dart';
 import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
+import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/providers/callforapplication_provider.dart';
 import 'package:merckfoundation_252026/widgets/CustomeSwiper.dart';
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
 
 import 'package:merckfoundation_252026/widgets/botttomlink.dart';
+import 'package:merckfoundation_252026/widgets/formLabel.dart';
 import 'package:provider/provider.dart';
 
 class CallforApplication extends StatefulWidget {
@@ -41,13 +43,13 @@ class _CallforApplicationState extends State<CallforApplication>
       appBar: CommonAppBar(
         type: AppBarType.inner,
         title: CommonStrings.upcomingPastTitle,
-       
-         onSearch: () {},
-          onShare: () {},
+
+        onSearch: () {},
+        onShare: () {},
       ),
       body: Column(
         children: [
-           16.0.heightBox,
+          16.0.heightBox,
           _buildTabs(),
           Expanded(
             child: TabBarView(
@@ -65,6 +67,7 @@ class _CallforApplicationState extends State<CallforApplication>
   }
 
   Widget _buildTabs() {
+     final responsive = ResponsiveFlutter.of(routeGlobalKey.currentContext!);
     return TabBar(
       controller: _tabController,
       labelColor: Customcolor.text_darkblue,
@@ -72,17 +75,22 @@ class _CallforApplicationState extends State<CallforApplication>
       indicatorColor: Customcolor.text_darkblue,
       tabs: [
         Tab(
-          child: Text(
-           CommonStrings.upcomingPrograms,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+          child: FormLabel(
+            text: CommonStrings.upcomingPrograms,
+            textAlignment: TextAlign.center,
+            fontSize: responsive.fontSize(2),
+            labelColor: Colors.black87,
+            fontweight: FontWeight.w700,
           ),
         ),
-         Tab(
-          child: Text(
-           CommonStrings.pastCall,
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+        Tab(
+          child: FormLabel(
+            text: CommonStrings.pastCall,
+            textAlignment: TextAlign.center,
+             labelColor: Colors.black87,
+            fontSize: responsive.fontSize(2),
+
+            fontweight: FontWeight.w700,
           ),
         ),
       ],
@@ -101,7 +109,13 @@ class _EventTab extends StatelessWidget {
     final data = isUpcoming ? provider.upcoming : provider.past;
 
     if (data.isEmpty) {
-      return  Center(child: Text(CommonStrings.emptyData));
+      return Center(child:
+       FormLabel(
+            text: CommonStrings.emptyData
+           
+          ),
+      
+      );
     }
 
     return SingleChildScrollView(

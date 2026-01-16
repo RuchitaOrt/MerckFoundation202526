@@ -3,7 +3,9 @@ import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/data/model/CommonModel.dart';
+import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaContactTile.dart';
+import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
 class MediaEnquiryCard extends StatelessWidget {
   final List<MediaContactModel> contacts;
@@ -12,6 +14,7 @@ class MediaEnquiryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = ResponsiveFlutter.of(routeGlobalKey.currentContext!);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       child: Card(
@@ -24,17 +27,19 @@ class MediaEnquiryCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
             children: [
-              const Padding(
+               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12),
-                child: Text(
-                  CommonStrings.mediaHeader,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                child: 
+                
+                   FormLabel(
+            text:  CommonStrings.mediaHeader,
+            textAlignment: TextAlign.center,
+            fontSize: responsive.fontSize(3),
+            labelColor: Colors.white,
+            fontweight: FontWeight.w500,
+          ),
+                
+             
               ),
               8.0.heightBox,
               ...contacts.map(

@@ -4,6 +4,7 @@ import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utils/common_images.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/data/model/CommonModel.dart';
+import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
 class CustomSwiper extends StatefulWidget {
   final List<CallApplicationModel> items;
@@ -20,6 +21,7 @@ class _CustomSwiperState extends State<CustomSwiper> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = ResponsiveFlutter.of(context);
     return Column(
       children: [
         SizedBox(
@@ -28,10 +30,8 @@ class _CustomSwiperState extends State<CustomSwiper> {
             controller: _controller,
             itemCount: widget.items.length,
             onPageChanged: (i) => setState(() => _index = i),
-            itemBuilder: (_, i) => _SwiperCard(
-              model: widget.items[i],
-              active: i == _index,
-            ),
+            itemBuilder: (_, i) =>
+                _SwiperCard(model: widget.items[i], active: i == _index),
           ),
         ),
 
@@ -44,20 +44,18 @@ class _CustomSwiperState extends State<CustomSwiper> {
           ),
         ),
 
-         8.0.heightBox,
-
-        Text(
-          widget.items[_index].title,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-          ),
+        8.0.heightBox,
+        FormLabel(
+          text: widget.items[_index].title,
+          textAlignment: TextAlign.center,
+          fontSize: responsive.fontSize(2),
+          fontweight: FontWeight.w600,
         ),
       ],
     );
   }
 }
+
 class _SwiperCard extends StatelessWidget {
   final CallApplicationModel model;
   final bool active;
@@ -71,9 +69,7 @@ class _SwiperCard extends StatelessWidget {
       margin: EdgeInsets.symmetric(vertical: active ? 0 : 20, horizontal: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        boxShadow: const [
-          BoxShadow(color: Colors.black26, blurRadius: 6),
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 6)],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),

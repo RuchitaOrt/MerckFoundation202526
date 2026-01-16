@@ -4,6 +4,7 @@ import 'package:merckfoundation_252026/Utils/common_images.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/screens/dashboard.dart';
+import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final AppBarType type;
@@ -111,15 +112,11 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            title ?? "",
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          FormLabel(text:  title ?? "", 
+          maxLines: 1,
+          textOverflow: TextOverflow.ellipsis,
+          labelColor: Colors.white,fontweight: FontWeight.bold ,),
+         
           if (onFilter != null) _icon(CommonImagePath.filter, onFilter),
         ],
       ),

@@ -21,43 +21,36 @@ class ArticlesScreen extends StatelessWidget {
         appBar: CommonAppBar(
           type: AppBarType.inner,
           title: CommonStrings.articles,
-        
+
           onSearch: () {},
           onShare: () {},
-        
-          shareLink:"",
+
+          shareLink: "",
         ),
-        body:  Consumer<ArticlesProvider>(
-      builder: (context, provider, _) {
-       
-        return CustomScrollView(
-          slivers: [
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                
+        body: Consumer<ArticlesProvider>(
+          builder: (context, provider, _) {
+            return CustomScrollView(
+              slivers: [
+                SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    return CommonListCard(
+                      imageUrl: provider.articles[index].imageUrl,
+                      htmlTitle: provider.articles[index].titleHtml,
+                      onTap: () {
+                        // navigate to article detail
+                      },
+                    );
+                  }, childCount: provider.articles.length),
+                ),
 
-                  return CommonListCard(
-  imageUrl: provider.articles[index].imageUrl,
-  htmlTitle: provider.articles[index].titleHtml,
-  onTap: () {
-    // navigate to article detail
-  },
-);
-                },
-                childCount:provider.articles.length,
-              ),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
-            const SliverToBoxAdapter(child: FooterFlowerImage()),
-            const SliverToBoxAdapter(child: SizedBox(height: 12)),
-            const SliverToBoxAdapter(child: Bottomcardlink()),
-           
-          ],
-        );
-      },
-    )
+                const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                const SliverToBoxAdapter(child: FooterFlowerImage()),
+                const SliverToBoxAdapter(child: SizedBox(height: 12)),
+                const SliverToBoxAdapter(child: Bottomcardlink()),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

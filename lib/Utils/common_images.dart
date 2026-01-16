@@ -77,4 +77,8 @@ class CommonImagePath {
 
   static const String pauseButton = "assets/newImages/pause.png";
   static const String pdfImage = "assets/newImages/pdf.png";
+  static const bubble = 'assets/newImages/MF_Bubble_Image.png';
+  static const pause = 'assets/newImages/pause.png';
+  static const covidBg = 'assets/images/covid-bg.png';
+  
 }

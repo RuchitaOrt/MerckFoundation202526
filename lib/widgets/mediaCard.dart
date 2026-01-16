@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/data/model/CommonModel.dart';
 import 'package:merckfoundation_252026/widgets/PauseImage.dart';
+import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
 class MediaCard extends StatelessWidget {
   final MediaCardData data;
@@ -45,18 +46,18 @@ class MediaCard extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(6),
                 child: Center(
-                  child: Text(
-                    data.title,
+                  child:
+                  FormLabel(
+                    text:  data.title,
                     maxLines: 3,
-                  
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: responsive.fontSize(1.6),
-                      color: fontColor,
-                      fontWeight: FontWeight.w500,
-                    ),
+                   textAlignment:  TextAlign.center,
+                    fontSize: responsive.fontSize(1.6),
+                      labelColor: fontColor!,
+                      fontweight: FontWeight.w500,
+                    
                   ),
+                  
+                  
                 ),
               ),
             ),

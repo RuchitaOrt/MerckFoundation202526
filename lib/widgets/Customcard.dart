@@ -1,54 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utils/common_images.dart';
+import 'package:merckfoundation_252026/widgets/CommonActionButton.dart';
 import 'package:merckfoundation_252026/widgets/CommonRichText.dart';
 import 'package:merckfoundation_252026/widgets/PauseImage.dart';
 
+import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import '../../Utils/customcolor.dart';
-import '../../Utility/ResponsiveFlutter.dart';
 
 class CustomCard extends StatelessWidget {
-  // HEADER & TITLE
-  final String headerPrefix; // e.g., cardsubtitle
-  final String title;        // main title
-  final Color? headerColor;
-  final Color? titleColor;
-
-  // IMAGE & VIDEO
+  final String headerPrefix;
+  final String title;
   final String imageUrl;
   final bool showYoutubeIcon;
-  final int? youtubeicon; // for Episode card logic
 
-  // SUBTITLE
-  final String? subtitle;     // normal text
-  final String? htmlSubtitle; // optional HTML content
-
-  // BUTTON
+  final String? subtitle;
+  final String? htmlSubtitle;
   final String? buttonText;
+
   final Color buttonColor;
   final Color buttonTextColor;
-  final VoidCallback? onButtonTap;
 
-  // CARD TAP
+  final VoidCallback? onButtonTap;
   final VoidCallback? onCardTap;
 
-  // SHARE / INFO ACTIONS
   final bool showShareIcon;
   final bool showInfoIcon;
   final VoidCallback? onShareTap;
   final VoidCallback? onInfoTap;
 
-  // SCREENSHOT controller for share
- 
-
   const CustomCard({
     super.key,
-    required this.headerPrefix,
-    required this.title,
+    this.headerPrefix = "",
+    this.title = "",
     required this.imageUrl,
-    this.headerColor,
-    this.titleColor,
     this.showYoutubeIcon = false,
-    this.youtubeicon,
     this.subtitle,
     this.htmlSubtitle,
     this.buttonText,
@@ -60,149 +45,143 @@ class CustomCard extends StatelessWidget {
     this.showInfoIcon = false,
     this.onShareTap,
     this.onInfoTap,
-   
   });
+
+  /// ✅ Robust YouTube thumbnail extraction
+  String get displayImage {
+    if (!showYoutubeIcon) return imageUrl;
+
+    try {
+      // embed link
+      if (imageUrl.contains("/embed/")) {
+        final id = imageUrl.split("/embed/").last.split("?").first;
+        return "https://img.youtube.com/vi/$id/0.jpg";
+      }
+
+      // watch?v=
+      if (imageUrl.contains("v=")) {
+        final uri = Uri.parse(imageUrl);
+        final id = uri.queryParameters['v'];
+        if (id != null) {
+          return "https://img.youtube.com/vi/$id/0.jpg";
+        }
+      }
+
+      // youtu.be
+      if (imageUrl.contains("youtu.be")) {
+        final id = imageUrl.split("/").last.split("?").first;
+        return "https://img.youtube.com/vi/$id/0.jpg";
+      }
+    } catch (_) {}
+
+    return imageUrl;
+  }
 
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveFlutter.of(context);
 
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: responsive.width(3),
-        vertical: responsive.height(1),
-      ),
+      padding: EdgeInsets.symmetric(horizontal: responsive.width(3)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // HEADER
+          /// HEADER
+          if (headerPrefix.isNotEmpty)
             CommonRichText(
-              padding: EdgeInsetsGeometry.all(0),
+              padding: EdgeInsets.zero,
               title: "$headerPrefix ",
               subtitle: title,
             ),
-        
+
           8.0.heightBox,
-          // IMAGE + BUTTON + YOUTUBE ICON
+
+          /// IMAGE / VIDEO
           GestureDetector(
             onTap: onCardTap,
             child: Stack(
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: AspectRatio(
-                    aspectRatio: 16 / 9,
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 200, // <-- VERY IMPORTANT
                     child: Image.network(
-                      imageUrl,
+                      displayImage,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
-                        color: Colors.grey.shade300,
-                        child: const Icon(Icons.image_not_supported),
-                      ),
+                      errorBuilder: (_, __, ___) =>
+                          Container(color: Colors.black12),
                     ),
                   ),
+                
                 ),
-               if (showYoutubeIcon)
-  const Positioned.fill(
-    child: Center(
-      child: PauseImage(size: 60,),
-    ),
-  ),
 
-                if (buttonText != null)
+                if (showYoutubeIcon)
+                  const Positioned.fill(
+                    child: Center(child: PauseImage(size: 60)),
+                  ),
+
+                /// ✅ SAFE BUTTON (NO CRASH)
+                if (buttonText != null && onButtonTap != null)
                   Positioned(
                     bottom: responsive.height(1.5),
                     right: responsive.width(3),
-                    child: GestureDetector(
-                      onTap: onButtonTap,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: responsive.width(4),
-                          vertical: responsive.height(0.9),
-                        ),
-                        decoration: BoxDecoration(
-                          color: buttonColor,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          buttonText!,
-                          style: TextStyle(
-                            color: buttonTextColor,
-                            fontWeight: FontWeight.w700,
-                            fontSize: responsive.fontSize(1.8),
-                          ),
-                        ),
-                      ),
+                    child: CommonActionButton(
+                      text: buttonText!,
+                      onTap: onButtonTap!,
                     ),
                   ),
               ],
             ),
           ),
 
-           8.0.heightBox,
+          8.0.heightBox,
 
-          // SUBTITLE / HTML
+          /// SUBTITLE + ICONS
           if (subtitle != null)
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(width: (showInfoIcon || showShareIcon)?responsive.fontSize(50): responsive.fontSize(58),
+                Expanded(
                   child: Text(
-                    subtitle!,
+                    subtitle ?? '',
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: responsive.fontSize(2.2),
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
+                    softWrap: true,
                   ),
                 ),
-                 if (showInfoIcon || showShareIcon)
-            8.0.heightBox,
-          if (showInfoIcon || showShareIcon)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
+
                 if (showInfoIcon)
                   GestureDetector(
                     onTap: onInfoTap,
-                    child: Icon(
+                    child: const Icon(
                       Icons.info_rounded,
                       color: Customcolor.colorBlue,
                     ),
                   ),
-                if (showInfoIcon && showShareIcon)
-                  8.0.widthBox,
                 if (showShareIcon)
                   GestureDetector(
                     onTap: onShareTap,
                     child: Image.asset(
-                   CommonImagePath.share,
-                      width: 25,
-                      height: 25,
+                      CommonImagePath.share,
+                      width: 24,
+                      height: 24,
                     ),
                   ),
               ],
             ),
-              ],
-            ),
+
           if (htmlSubtitle != null)
-
-           Text(
-              htmlSubtitle!,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-             fontSize: responsive.fontSize(2),
-                  color: Customcolor.pink_col,
-                  fontWeight: FontWeight.w600,
-              ),
-            ),
-            
-
-          // SHARE & INFO ICONS (Episode card specific)
-         
+          Expanded(
+                  child: Text(
+                    htmlSubtitle ?? '',
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: true,
+                    style: TextStyle(color: Customcolor.pink_col,fontWeight: FontWeight.w600,fontSize: responsive.fontSize(2.2),),
+                  ),
+                ),
+          
         ],
       ),
     );

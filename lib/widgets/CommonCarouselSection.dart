@@ -5,6 +5,9 @@ import 'package:merckfoundation_252026/Utils/common_images.dart';
 import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/data/model/CommonModel.dart';
+import 'package:merckfoundation_252026/main.dart';
+import 'package:merckfoundation_252026/widgets/CommonActionButton.dart';
+import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
 class CommonCarouselSection extends StatefulWidget {
   final List<CarouselItem> items;
@@ -34,7 +37,7 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
   @override
   Widget build(BuildContext context) {
     if (widget.items.isEmpty) {
-      return Center(child: Text(CommonStrings.emptyData));
+      return Center(child: FormLabel(text: CommonStrings.emptyData));
     }
 
     return Stack(
@@ -55,8 +58,12 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
                 ),
                 items: widget.items.map(_buildItem).toList(),
               ),
-           16.0.heightBox,
-              _viewAllButton(),
+            
+              16.0.heightBox,
+              CommonActionButton(
+                text: CommonStrings.viewAll,
+                onTap: widget.onViewAll,
+              ),
             ],
           ),
         ),
@@ -66,6 +73,7 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
   }
 
   Widget _buildItem(CarouselItem item) {
+    final responsive = ResponsiveFlutter.of(routeGlobalKey.currentContext!);
     return GestureDetector(
       onTap: item.onTap,
       child: Container(
@@ -74,6 +82,7 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           children: [
+            
             Padding(
               padding: const EdgeInsets.only(top: 20),
               child: FadeInImage.assetNetwork(
@@ -84,46 +93,19 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
                 fit: BoxFit.contain,
               ),
             ),
-           8.0.heightBox,
-            item.title != null
-                ? Text(
-                    item.title!,
-                    textAlign: TextAlign.center,
+            16.0.heightBox,
+             item.title != null
+                ? FormLabel(
+                    text: item.title!,
                     maxLines: 2,
-                    style: const TextStyle(
-                      fontSize: 17,
-                    ),
+                    textAlignment: TextAlign.center,
+                    labelColor: Customcolor.colorBlue,
+                    fontSize: responsive.fontSize(3),
                   )
                 : SizedBox(),
+                
+           
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _viewAllButton() {
-    return Align(
-      alignment: Alignment.center,
-      child: GestureDetector(
-        onTap: widget.onViewAll,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          height: 40,
-          width: 120,
-          decoration: BoxDecoration(
-            color: Colors.amber,
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: const Center(
-            child: Text(
-              "View All",
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: Customcolor.colorBlue,
-              ),
-            ),
-          ),
         ),
       ),
     );

@@ -11,6 +11,7 @@ import 'package:merckfoundation_252026/screens/ContactUs/ContactEnquiryCard.dart
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
 import 'package:merckfoundation_252026/widgets/Homewidget.dart/homefollow_us.dart';
 import 'package:merckfoundation_252026/widgets/botttomlink.dart';
+import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
 class ContactUs extends StatelessWidget {
   ContactUs({super.key});
@@ -47,14 +48,16 @@ class ContactUs extends StatelessWidget {
           16.0.heightBox,
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              CommonStrings.contactUs,
-              style: TextStyle(
-                fontSize: responsive.fontSize(3),
-                color: Customcolor.violet_col,
-                fontWeight: FontWeight.bold,
+            child:
+             FormLabel(
+                text: CommonStrings.contactUs,
+               fontSize: responsive.fontSize(3),
+                labelColor:Customcolor.violet_col,
+                fontweight: FontWeight.bold,
+               
               ),
-            ),
+            
+            
           ),
           ContactEnquiryCard(contacts: contacts),
           FollowUsSection(

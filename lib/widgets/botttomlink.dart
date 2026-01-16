@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/main.dart';
+import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
 class Bottomcardlink extends StatelessWidget {
   const Bottomcardlink({
@@ -9,15 +12,16 @@ class Bottomcardlink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   
+    final responsive = ResponsiveFlutter.of(routeGlobalKey.currentContext!);
     return Container(
       padding: EdgeInsets.only(top: 10, bottom: 10),
       color: Customcolor.colorBlue,
-      child: Text(
-        "© Merck Foundation is a German Non-Profit limited liability Company, established on 31 May 2017",
-        style: TextStyle(color: Colors.white, fontSize: 12),
-        textAlign: TextAlign.center,
-      ),
+      child:
+       FormLabel(text:  "© Merck Foundation is a German Non-Profit limited liability Company, established on 31 May 2017",
+          textAlignment: TextAlign.center,
+          labelColor: Colors.white,fontSize: responsive.fontSize(2), ),
+      
+     
     );
   }
 }
