@@ -80,5 +80,23 @@ class CommonImagePath {
   static const bubble = 'assets/newImages/MF_Bubble_Image.png';
   static const pause = 'assets/newImages/pause.png';
   static const covidBg = 'assets/images/covid-bg.png';
+  static const stayHomeGif = "assets/newImages/stayhome.gif";
+static const pauseIcon = "assets/newImages/pause.png";
+
+static const imgOne = "assets/newImages/one.jpg";
+static const imgTwo = "assets/newImages/two.jpg";
+static const imgThree = "assets/newImages/three.jpg";
+static const imgFour = "assets/newImages/four.jpg";
+static const imgFive = "assets/newImages/five.jpg";
+
+static const footerFlower = "assets/newImages/flowers_footer.png";
+static const youth ="assets/newImages/youth.jpeg";
+static const cS1 = "assets/newImages/cs1.jpeg";
+ static const cS2 ="assets/newImages/cs2.jpeg";
+ static const cS3 =  "assets/newImages/cs3.jpeg";
+ static const healthCare3 =  "assets/newImages/healthcare3.jpeg";
+ static const healthCare2 =  "assets/newImages/healthcare2.jpeg";
+  static const healthCare1 = "assets/newImages/healthcare1.jpeg";
+
   
 }

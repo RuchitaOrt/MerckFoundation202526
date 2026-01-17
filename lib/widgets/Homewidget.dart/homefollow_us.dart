@@ -10,13 +10,14 @@ class FollowUsSection extends StatelessWidget {
   final bool showFlower;
   final double? iconSize;
   final List<SocialIconModel> icons;
+  final double? fontSize;
 
   const FollowUsSection({
     super.key,
     required this.title,
     required this.icons,
     this.showFlower = true,
-    this.iconSize,
+    this.iconSize,  this.fontSize,
   });
 
   @override
@@ -46,12 +47,17 @@ class FollowUsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        FormLabel(
-          text: title,
-          labelColor: Customcolor.text_blue,
-          fontSize: responsive.fontSize(2.8),
-          fontweight: FontWeight.w700,
-        ),
+       title.isNotEmpty? SizedBox(
+          width: ResponsiveFlutter.of(context).width(80),
+          child: FormLabel(
+            text: title,
+            softWrap: true,
+            maxLines: 2,
+            labelColor: Customcolor.text_blue,
+            fontSize:fontSize ?? responsive.fontSize(2.8),
+            fontweight: FontWeight.w700,
+          ),
+        ):0.0.widthBox,
       16.0.heightBox,
         Row(
           children: icons.map((e) => _iconWidget(e, iconSize)).toList(),

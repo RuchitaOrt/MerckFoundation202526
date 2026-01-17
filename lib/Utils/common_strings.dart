@@ -90,8 +90,11 @@ class CommonStrings {
 
   static String followUsTitle = "Follow Us";
   static String followUsRashaTitle = "Follow Senator, Dr. Rasha Kelej";
+  static String followMerckFoundationTitle = "Follow Merck Foundation on";
+  static String followMoreThanMotherMovementTitle ='Follow Merck Foundation "More Than a Mother" Movement on';
+ static String followMFCancerAccessProgramTitle ='Follow Merck Foundation Cancer Access Program on';
   static String followmsg = "follow us";
-  static double tabheight = 600;
+  static double tabheight = 500;
   static double callimageheight = 300;
   static double callimagewidth = 220;
   static double callcoursaheight = 380;
@@ -142,5 +145,58 @@ class CommonStrings {
   static const String africaAsiaTitle =
       'Merck Foundation Africa Asia Luminary';
 
+ static const String aboutMtm =
+      'About Merck Foundation "More Than A Mother" Movement';
 
+  static const String strategy = 'Strategy';
+
+  static const String mtmAmbassadors =
+      'Merck Foundation "More Than a Mother" Ambassadors';
+
+  static const String mtmScholarships =
+      'Merck Foundation More Than a Mother Scholarships';
+
+  static const String communityAwarenessAwards =
+      'Merck Foundation Community Awareness and Awards Program';
+
+  static const String empoweringBerna = 'Empowering Berna';
+
+  static const String localSongsStories =
+      'Local Songs and Children Stories';
+
+  static const String videos = 'Videos';
+  static const communityTitle =
+    "Merck Foundation Community Awareness Through Media Awards ";
+  static const communityYouth =
+    "Merck Foundation Community Awareness for Children and Youth ";
+static const stayHomeDesc =
+    "Merck Foundation announced the winners of “Stay at Home” Media Recognition Awards 2020 for Africa, Latin America and Asia.";
+
+static const watchVideoText =
+    "Watch Video Merck Foundation Stay at Home Africa Media Recognition Awards Ceremony - VC 2020";
+
+static const winnersText = "Here is the list of winners:";
+
+ static const healthCareText ="Merck Foundation Healthcare Capacity Building";
+ static const String healthCareIntro1 =
+      "Merck Foundation believes that building professional healthcare capacity is the right strategy to improve access to quality and equitable healthcare specially during this vicious pandemic.";
+
+  static const String healthCareIntro2 =
+      "Therefore, Merck Foundation will strongly continue their current capacity advancement programs...";
+
+  static const String healthCareIntro3 =
+      "Merck Foundation will be providing online scholarships for one-year diploma and two-year Master degree...";
+
+  static const String healthCareIntro4 =
+      "To apply for these scholarships, please email us on: submit@merck-foundation.com";
+
+  static const String callForApplication = "CALL FOR APPLICATION";
+
+  static const String eligibilityAcute =
+      "ELIGIBILITY CRITERIA & OVERVIEW OF ONE- YEAR ONLINE DIPLOMA IN ACUTE MEDICINE";
+
+  static const String eligibilityRespiratory =
+      "ELIGIBILITY CRITERIA & OVERVIEW OF ONE- YEAR ONLINE DIPLOMA IN RESPIRATORY MEDICINE";
+
+  static const String downloadHere = "Download here";
 }

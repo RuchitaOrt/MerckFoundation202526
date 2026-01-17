@@ -72,6 +72,7 @@ class CustomAdvFabState extends State<CustomAdvFab>
 
             FloatingActionButton(
               backgroundColor: widget.backgroundColor,
+              shape: const CircleBorder(),   
               onPressed: toggle,
               child: Icon(widget.icon, color: widget.iconColor),
             ),

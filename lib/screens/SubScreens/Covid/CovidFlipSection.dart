@@ -3,6 +3,12 @@ import 'package:flip_card/flip_card.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utils/common_images.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/main.dart';
+import 'package:merckfoundation_252026/screens/SubScreens/Covid/Healthcare.dart';
+import 'package:merckfoundation_252026/screens/SubScreens/Covid/childrenyouth.dart';
+import 'package:merckfoundation_252026/screens/SubScreens/Covid/communitymedia.dart';
+import 'package:merckfoundation_252026/screens/SubScreens/Covid/communitysupport.dart';
+import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
 class CovidFlipSection extends StatelessWidget {
   const CovidFlipSection({super.key});
@@ -21,13 +27,26 @@ class CovidFlipSection extends StatelessWidget {
             children: [
               _flipCard(
                 r,
+                () {
+                  Navigator.push(
+                    routeGlobalKey.currentContext!,
+                    MaterialPageRoute(builder: (_) => CommunityMedia()),
+                  );
+                },
                 frontImage: CommonImagePath.bubble,
+
                 backText: "Media & Awards",
                 cardSize: r.isTablet ? r.width(20) : r.width(30),
               ),
               SizedBox(width: r.width(5)),
               _flipCard(
                 r,
+                () {
+                  Navigator.push(
+                    routeGlobalKey.currentContext!,
+                    MaterialPageRoute(builder: (_) => Childrenyouth()),
+                  );
+                },
                 frontImage: CommonImagePath.bubble,
                 backText: "Children & Youth",
                 cardSize: r.isTablet ? r.width(26) : r.width(40),
@@ -43,6 +62,12 @@ class CovidFlipSection extends StatelessWidget {
             children: [
               _flipCard(
                 r,
+                () {
+                  Navigator.push(
+                    routeGlobalKey.currentContext!,
+                    MaterialPageRoute(builder: (_) => Communitysupport()),
+                  );
+                },
                 frontImage: CommonImagePath.bubble,
                 backText: "Community Support",
                 cardSize: r.isTablet ? r.width(18) : r.width(40),
@@ -50,6 +75,12 @@ class CovidFlipSection extends StatelessWidget {
               SizedBox(width: r.width(5)),
               _flipCard(
                 r,
+                () {
+                  Navigator.push(
+                    routeGlobalKey.currentContext!,
+                    MaterialPageRoute(builder: (_) => Healthcare()),
+                  );
+                },
                 frontImage: CommonImagePath.bubble,
                 backText: "Health Capacity",
                 cardSize: r.isTablet ? r.width(20) : r.width(30),
@@ -62,7 +93,8 @@ class CovidFlipSection extends StatelessWidget {
   }
 
   Widget _flipCard(
-    ResponsiveFlutter r, {
+    ResponsiveFlutter r,
+    VoidCallback onTap, {
     required String frontImage,
     required String backText,
     required double cardSize,
@@ -70,7 +102,7 @@ class CovidFlipSection extends StatelessWidget {
     return FlipCard(
       direction: FlipDirection.HORIZONTAL,
       front: _cardFront(cardSize, frontImage),
-      back: _cardBack(cardSize, backText),
+      back: _cardBack(cardSize, backText, onTap),
     );
   }
 
@@ -82,37 +114,33 @@ class CovidFlipSection extends StatelessWidget {
         color: Colors.transparent,
         shape: BoxShape.circle,
       ),
-      child: ClipOval(
-        child: Image.asset(
-          image,
-          fit: BoxFit.cover,
-        ),
-      ),
+      child: ClipOval(child: Image.asset(image, fit: BoxFit.cover)),
     );
   }
 
-  Widget _cardBack(double size, String text) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: Customcolor.colorBlue,
-        shape: BoxShape.circle,
-        gradient: LinearGradient(
-          colors: [Customcolor.colorBlue, Customcolor.baby_blue],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+  Widget _cardBack(double size, String text, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: Customcolor.colorBlue,
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
+            colors: [Customcolor.colorBlue, Customcolor.baby_blue],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
         ),
-      ),
-      alignment: Alignment.center,
-      padding: const EdgeInsets.all(14),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: Colors.white,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.all(14),
+        child: FormLabel(
+          text: text,
+          textAlignment: TextAlign.center,
+          labelColor: Colors.white,
           fontSize: size * 0.12, // font proportional to size
-          fontWeight: FontWeight.w600,
+          fontweight: FontWeight.w600,
         ),
       ),
     );

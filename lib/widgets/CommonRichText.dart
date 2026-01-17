@@ -14,6 +14,7 @@ class CommonRichText extends StatelessWidget {
   final Color? subTitleColor;
   final FontWeight? titlefontWeight;
   final FontWeight? subTitlefontWeight;
+  final String? SubTitledescription;
 
   CommonRichText({
     super.key,
@@ -24,6 +25,7 @@ class CommonRichText extends StatelessWidget {
     this.titleSize,
     this.SubtitleSize,
     this.titleColor,
+    this.SubTitledescription,
     this.subTitleColor, this.titlefontWeight, this.subTitlefontWeight,
   });
 
@@ -51,6 +53,14 @@ class CommonRichText extends StatelessWidget {
                 color: subTitleColor ?? Customcolor.pink_col,
                 fontSize: SubtitleSize ?? responsive.fontSize(2.8),
                 fontWeight: subTitlefontWeight ?? FontWeight.bold,
+              ),
+            ),
+            TextSpan(
+              text: SubTitledescription,
+             style: TextStyle(
+                color: titleColor ?? Customcolor.textsubtitlecolor,
+                fontSize: titleSize ?? responsive.fontSize(2.8),
+                fontWeight:titlefontWeight?? FontWeight.w400,
               ),
             ),
           ],

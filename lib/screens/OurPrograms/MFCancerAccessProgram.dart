@@ -18,15 +18,15 @@ import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
 import 'package:provider/provider.dart';
 
-class MFMoreThanMotherMovement extends StatefulWidget {
-  const MFMoreThanMotherMovement({super.key});
+class MFCancerAccessProgram extends StatefulWidget {
+  const MFCancerAccessProgram({super.key});
 
   @override
-  State<MFMoreThanMotherMovement> createState() =>
-      _MFMoreThanMotherMovementState();
+  State<MFCancerAccessProgram> createState() =>
+      _MFCancerAccessProgramState();
 }
 
-class _MFMoreThanMotherMovementState extends State<MFMoreThanMotherMovement> {
+class _MFCancerAccessProgramState extends State<MFCancerAccessProgram> {
   @override
   void initState() {
     super.initState();
@@ -44,7 +44,7 @@ class _MFMoreThanMotherMovementState extends State<MFMoreThanMotherMovement> {
       backgroundColor: Customcolor.background,
       appBar: CommonAppBar(
         type: AppBarType.inner,
-        title: CommonStrings.mmtmTitle,
+        title: CommonStrings.cancerTitle,
         onSearch: () {},
         onShare: () {},
         shareLink: "",
@@ -105,8 +105,8 @@ class _MFMoreThanMotherMovementState extends State<MFMoreThanMotherMovement> {
                 showFlower: false,
                 iconSize: 25,
                 fontSize: responsive.fontSize(2.0),
-                title: CommonStrings.followMoreThanMotherMovementTitle,
-                icons: FollowUsProvider.merckFoundationMOreThanAMotherMovement(context),
+                title: CommonStrings.followMFCancerAccessProgramTitle,
+                icons: FollowUsProvider.merckFoundationCancerAccessProgram(context),
               ),
               const FooterFlowerImage(),
               8.0.heightBox,

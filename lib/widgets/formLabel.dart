@@ -21,8 +21,8 @@ class FormLabel extends StatelessWidget {
       this.fontSize = 15,
       this.textAlignment = TextAlign.left,
       this.fontweight,
-      this.maxLines,this.textOverflow,
-      this.softWrap=false,
+      this.maxLines=50,this.textOverflow,
+      this.softWrap=true,
       this.fontfamily,this.fontheight=0.0})
       : super(key: key);
 
@@ -33,9 +33,9 @@ class FormLabel extends StatelessWidget {
     }
 
     return Text(
-      softWrap: true,
+      softWrap: softWrap,
       text,
-      maxLines: 10,
+      maxLines: maxLines,
       
       textAlign: textAlignment,
       overflow: textOverflow,

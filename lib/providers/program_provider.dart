@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 
-
 import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/data/model/CommonModel.dart';
 import 'package:merckfoundation_252026/data/model/MockHomeData.dart';
 import 'package:merckfoundation_252026/main.dart';
+import 'package:merckfoundation_252026/screens/OurPrograms/MFCancerAccessProgram.dart';
 import 'package:merckfoundation_252026/screens/OurPrograms/MFMoreThanMotherMovement.dart';
 import 'package:merckfoundation_252026/widgets/Homewidget.dart/DynamicContent.dart';
 import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
@@ -19,97 +19,77 @@ class ProgramProvider extends ChangeNotifier {
       title: CommonStrings.mmtmTitle,
 
       bgColor: Customcolor.prog1,
-      onTap:  _openMFMoreThanMotherMovement
+      onTap: _openMFMoreThanMotherMovement,
     ),
     ProgramModel(
       id: 'cancer',
       title: CommonStrings.cancerTitle,
 
       bgColor: Customcolor.prog2,
-       onTap: ()
-      {
-        
-      }
+      onTap:_openMFCancerAccessProgram,
     ),
     ProgramModel(
       id: 'capacity',
       title: CommonStrings.capacityTitle,
 
       bgColor: Customcolor.prog3,
-       onTap: ()
-      {
-        
-      }
+      onTap: () {},
     ),
     ProgramModel(
       id: 'Nationwide',
       title: CommonStrings.nationwideTitle,
 
       bgColor: Customcolor.prog7,
-       onTap: ()
-      {
-        
-      }
+      onTap: () {},
     ),
     ProgramModel(
       id: 'FirstLadies',
       title: CommonStrings.firstLadiesTitle,
 
       bgColor: Customcolor.prog4,
-       onTap: ()
-      {
-        
-      }
+      onTap: () {},
     ),
     ProgramModel(
       id: 'STEM',
       title: CommonStrings.stemTitle,
 
       bgColor: Customcolor.prog5,
-       onTap: ()
-      {
-        
-      }
+      onTap: () {},
     ),
     ProgramModel(
       id: 'EducatingLinda',
       title: CommonStrings.educatingLindaTitle,
 
       bgColor: Customcolor.prog6,
-       onTap: ()
-      {
-        
-      }
+      onTap: () {},
     ),
     ProgramModel(
       id: 'Africa',
       title: CommonStrings.africaAsiaTitle,
 
       bgColor: Customcolor.prog8,
-       onTap: ()
-      {
-        
-      }
+      onTap: () {},
     ),
   ];
 
   List<ProgramModel> get programs => _programs;
 
+  List<ProgramModel> get programsSubList => _programsSubList;
 
-  List programsSubList = [
-    'About Merck Foundation "More Than A Mother" Movement', //"About Merck Foundation More Than A Mother",
-    "Strategy",
-    'Merck Foundation "More Than a Mother" Ambassadors', // "Merck Foundation More Than a Mother Ambassadors",
-    "Merck Foundation More Than a Mother Scholarships",
-  //  "Merck Foundation Fertility and Embryology Training Program",
+  List<ProgramModel> get _programsSubList => [
+    ProgramModel(
+      title: CommonStrings.aboutMtm,
 
-    "Merck Foundation Community Awareness and Awards Program",
-    "Empowering Berna",
-    "Local Songs and Children Stories",
-    "Videos",
+      onTap: _openMFMoreThanMotherMovement,
+    ),
+    ProgramModel(title: CommonStrings.strategy, onTap: () {}),
+    ProgramModel(title: CommonStrings.mtmAmbassadors, onTap: () {}),
+    ProgramModel(title: CommonStrings.mtmScholarships, onTap: () {}),
+    ProgramModel(title: CommonStrings.communityAwarenessAwards, onTap: () {}),
+    ProgramModel(title: CommonStrings.empoweringBerna, onTap: () {}),
+    ProgramModel(title: CommonStrings.localSongsStories, onTap: () {}),
+    ProgramModel(title: CommonStrings.videos, onTap: () {}),
   ];
-
- 
   final List<String> _multiSectionTypes = [
     "contents",
     "videos",
@@ -237,8 +217,8 @@ class ProgramProvider extends ChangeNotifier {
     }).toList();
   }
 
-
- void _openMFMoreThanMotherMovement() => _push(MFMoreThanMotherMovement());
+  void _openMFMoreThanMotherMovement() => _push(MFMoreThanMotherMovement());
+   void _openMFCancerAccessProgram() => _push(MFCancerAccessProgram());
   void _push(Widget page) {
     Navigator.push(
       routeGlobalKey.currentContext!,
@@ -246,18 +226,15 @@ class ProgramProvider extends ChangeNotifier {
     );
   }
 
- List<HomeTabModel> _tabs = [];
+  List<HomeTabModel> _tabs = [];
 
   List<HomeTabModel> get tabs => _tabs;
 
- Future<void> loadProgramTabs() async {
-  final response = MockProgramData.homeTabsApiResponse();
+  Future<void> loadProgramTabs() async {
+    final response = MockProgramData.homeTabsApiResponse();
 
-  _tabs = response
-      .map((e) => HomeTabModel.fromJson(e))
-      .toList();
+    _tabs = response.map((e) => HomeTabModel.fromJson(e)).toList();
 
-  notifyListeners();
-}
-
+    notifyListeners();
+  }
 }

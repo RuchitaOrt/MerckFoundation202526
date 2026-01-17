@@ -101,27 +101,34 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
     );
   }
+Widget _bottomTitleBar(BuildContext context) {
+  return Container(
+    height: 50,
+    width: double.infinity,
+    color: Customcolor.colorVoilet,
+    padding: const EdgeInsets.symmetric(horizontal: 12),
+    child: Row(
+      children: [
+       Expanded(
+  child: FormLabel(
+    text: title ?? "",
+    maxLines: 1,
+    softWrap: true,
+    textOverflow: TextOverflow.ellipsis,
+    labelColor: Colors.white,
+    fontweight: FontWeight.bold,
+    textAlignment: TextAlign.start,
+  ),
+),
 
-  Widget _bottomTitleBar(BuildContext context) {
-    return Container(
-      height: 50,
-      width: double.infinity,
-      color: Customcolor.colorVoilet,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      alignment: Alignment.centerLeft,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          FormLabel(text:  title ?? "", 
-          maxLines: 1,
-          textOverflow: TextOverflow.ellipsis,
-          labelColor: Colors.white,fontweight: FontWeight.bold ,),
-         
-          if (onFilter != null) _icon(CommonImagePath.filter, onFilter),
-        ],
-      ),
-    );
-  }
+        if (onFilter != null)
+          _icon(CommonImagePath.filter, onFilter),
+      ],
+    ),
+  );
+}
+
+
 
   Widget _icon(String asset, VoidCallback? onTap) {
     return Padding(

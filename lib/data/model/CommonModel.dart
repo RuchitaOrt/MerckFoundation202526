@@ -85,17 +85,17 @@ class CarouselItem {
   }
 }
 class ProgramModel {
-  final String id;
+  final String? id;
   final String title;
  
-  final Color bgColor;
+  final Color? bgColor;
 final VoidCallback onTap;
 
   ProgramModel({
-    required this.id,
+     this.id,
     required this.title,
   
-    required this.bgColor, required this.onTap,
+     this.bgColor, required this.onTap,
   });
 }
 
