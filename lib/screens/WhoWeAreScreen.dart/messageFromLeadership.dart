@@ -50,7 +50,7 @@ class _MessageFromLeadershipState extends State<MessageFromLeadership> {
       appBar: CommonAppBar(
         type: AppBarType.inner,
         title: CommonStrings.messageFromLeadership,
-        onBack: () => Navigator.pop(context),
+     
         onSearch: () {},
         onShare: () {},
         shareLink: "",

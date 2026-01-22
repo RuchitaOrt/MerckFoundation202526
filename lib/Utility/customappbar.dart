@@ -64,6 +64,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
                 onDrawer?.call();
               } else {
                 if (onBack != null) {
+                  print("onBack");
                   onBack!.call();
                 } else {
                   Navigator.pushReplacement(

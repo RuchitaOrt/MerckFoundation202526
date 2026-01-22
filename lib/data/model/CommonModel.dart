@@ -415,3 +415,29 @@ class HomeTabModel {
     );
   }
 }
+class FabMenuItem {
+  final String menuId;
+  final String title;
+  final String? url;
+  final List<FabMenuItem> children;
+
+  FabMenuItem({
+    required this.menuId,
+    required this.title,
+    this.url,
+    this.children = const [],
+  });
+
+  factory FabMenuItem.fromJson(Map<String, dynamic> json) {
+    return FabMenuItem(
+      menuId: json['menu_id'] ?? '',
+      title: json['menu_name'] ?? '',
+      url: json['menu_url'],
+      children: json['children'] != null
+          ? (json['children'] as List)
+              .map((c) => FabMenuItem.fromJson(c))
+              .toList()
+          : [],
+    );
+  }
+}

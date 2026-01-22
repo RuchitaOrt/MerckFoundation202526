@@ -33,7 +33,7 @@ class OurVisionState extends State<OurVision> with TickerProviderStateMixin {
       appBar: CommonAppBar(
         type: AppBarType.inner,
         title: CommonStrings.ourVision,
-        onBack: () => Navigator.pop(context),
+       
         onSearch: () {},
         onShare: () {},
         shareLink: "",

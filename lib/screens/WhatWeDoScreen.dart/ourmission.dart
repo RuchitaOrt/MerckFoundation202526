@@ -32,7 +32,7 @@ class OurMissionState extends State<OurMission> with TickerProviderStateMixin {
       appBar: CommonAppBar(
         type: AppBarType.inner,
         title: CommonStrings.ourMission,
-        onBack: () => Navigator.pop(context),
+      
         onSearch: () {},
         onShare: () {},
         shareLink: "",

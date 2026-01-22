@@ -33,7 +33,7 @@ class DataPrivacyState extends State<DataPrivacy> with TickerProviderStateMixin 
       appBar: CommonAppBar(
         type: AppBarType.inner,
         title: CommonStrings.dataPrivacy,
-        onBack: () => Navigator.pop(context),
+      
         onSearch: () {},
         onShare: () {},
         shareLink: "",

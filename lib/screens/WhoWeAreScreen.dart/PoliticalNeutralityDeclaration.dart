@@ -33,7 +33,7 @@ class PoliticalNeutralityDeclarationState extends State<PoliticalNeutralityDecla
       appBar: CommonAppBar(
         type: AppBarType.inner,
         title: CommonStrings.politicalNeutrality,
-        onBack: () => Navigator.pop(context),
+      
         onSearch: () {},
         onShare: () {},
         shareLink: "",

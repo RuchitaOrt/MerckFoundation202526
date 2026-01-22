@@ -33,7 +33,7 @@ class LegalDisclaimerState extends State<LegalDisclaimer> with TickerProviderSta
       appBar: CommonAppBar(
         type: AppBarType.inner,
         title: CommonStrings.legalDisclaimer,
-        onBack: () => Navigator.pop(context),
+
         onSearch: () {},
         onShare: () {},
         shareLink: "",

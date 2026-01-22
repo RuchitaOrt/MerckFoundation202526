@@ -78,8 +78,8 @@ class _CallforApplicationState extends State<CallforApplication>
           child: FormLabel(
             text: CommonStrings.upcomingPrograms,
             textAlignment: TextAlign.center,
-            fontSize: responsive.fontSize(2),
-            labelColor: Colors.black87,
+            fontSize: responsive.fontSize(2.3),
+            labelColor:Customcolor.descriptiontext,
             fontweight: FontWeight.w700,
           ),
         ),
@@ -87,8 +87,8 @@ class _CallforApplicationState extends State<CallforApplication>
           child: FormLabel(
             text: CommonStrings.pastCall,
             textAlignment: TextAlign.center,
-             labelColor: Colors.black87,
-            fontSize: responsive.fontSize(2),
+             labelColor: Customcolor.descriptiontext,
+            fontSize: responsive.fontSize(2.3),
 
             fontweight: FontWeight.w700,
           ),

@@ -33,7 +33,7 @@ void initState() {
       appBar: CommonAppBar(
         type: AppBarType.inner,
         title: CommonStrings.ourActivities,
-        onBack: () => Navigator.pop(context),
+       
         onSearch: () {},
         onShare: () {},
        

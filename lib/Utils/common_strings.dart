@@ -199,4 +199,15 @@ static const winnersText = "Here is the list of winners:";
       "ELIGIBILITY CRITERIA & OVERVIEW OF ONE- YEAR ONLINE DIPLOMA IN RESPIRATORY MEDICINE";
 
   static const String downloadHere = "Download here";
+
+ 
+  static const String objectives = "Objectives";
+  static const String oncologyFellowshipProgram =
+      "Merck Foundation Oncology Fellowship Program";
+  static const String moreThanAPatient =
+      "Merck Foundation More Than a Patient";
+  static const String communityAwareness =
+      "Merck Foundation Community Awareness";
+
+  static const String socialMedia = "Social Media";
 }

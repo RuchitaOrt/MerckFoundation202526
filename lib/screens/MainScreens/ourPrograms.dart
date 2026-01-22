@@ -10,7 +10,7 @@ import 'package:merckfoundation_252026/data/model/CommonModel.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/providers/program_provider.dart';
-import 'package:merckfoundation_252026/screens/OurPrograms/MFMoreThanMotherMovement.dart';
+import 'package:merckfoundation_252026/screens/OurPrograms/MoreThanMotherMovement/MFMoreThanMotherMovement.dart';
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
 import 'package:merckfoundation_252026/widgets/Homewidget.dart/homeSlider.dart';
 import 'package:merckfoundation_252026/widgets/botttomlink.dart';

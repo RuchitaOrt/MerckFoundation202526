@@ -36,7 +36,7 @@ void initState() {
       appBar: CommonAppBar(
         type: AppBarType.inner,
         title: CommonStrings.ourPartners,
-        onBack: () => Navigator.pop(context),
+       
         onSearch: () {},
         onShare: () {},
         shareLink: "",

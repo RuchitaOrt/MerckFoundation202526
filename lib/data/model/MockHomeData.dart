@@ -49,6 +49,8 @@
 //     ),
 //   ];
 // }
+import 'package:merckfoundation_252026/enum/commonEnum.dart';
+
 class MockHomeData {
   static List<Map<String, dynamic>> homeTabsApiResponse() {
     return [
@@ -90,8 +92,11 @@ class MockHomeData {
   }
 }
 class MockProgramData {
-  static List<Map<String, dynamic>> homeTabsApiResponse() {
-    return [
+  static List<Map<String, dynamic>> homeTabsApiResponse(ProgramType type) {
+   
+    switch (type) {
+      case ProgramType.mtm:
+        return[
      
       {
         "key": "mmtm",
@@ -114,5 +119,28 @@ class MockProgramData {
         ]
       }
     ];
+
+      case ProgramType.strategy:
+        return [
+     
+    
+      // {
+      //   "key": "digitalLibrary",
+      //   "title": "Digital Library",
+      //   "items": [
+      //     {
+      //       "image":"https://merck-foundation.com/merckfoundation/public/uploads/news_and_applications/1751618748_389221cd265916300a3a.jpg",
+      //       "title": "Medical Education Resources",
+      //     }
+      //   ]
+      // }
+    ];
+
+      default:
+        return [];
+    }
+   
+  
   }
+  
 }
