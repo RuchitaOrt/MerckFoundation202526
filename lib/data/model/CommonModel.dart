@@ -8,12 +8,13 @@ class OurItemModel {
  
   final Color color;
   final VoidCallback onTap;
+  final IconData icon;
 
   OurItemModel({
     required this.programname,
    
     required this.color,
-    required this.onTap,
+    required this.onTap, required this.icon,
   });
 }
 class SocialIconModel {

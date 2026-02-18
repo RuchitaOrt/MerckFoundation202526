@@ -43,15 +43,15 @@ class CommonRichText extends StatelessWidget {
               text: "$title",
               style: TextStyle(
                 color: titleColor ?? Customcolor.textsubtitlecolor,
-                fontSize: titleSize ?? responsive.fontSize(2.8),
-                fontWeight:titlefontWeight?? FontWeight.w400,
+                fontSize: titleSize ?? responsive.fontSize(3.5),
+                fontWeight:titlefontWeight?? FontWeight.w600,
               ),
             ),
             TextSpan(
               text: subtitle,
               style: TextStyle(
                 color: subTitleColor ?? Customcolor.pink_col,
-                fontSize: SubtitleSize ?? responsive.fontSize(2.8),
+                fontSize: SubtitleSize ?? responsive.fontSize(3.5),
                 fontWeight: subTitlefontWeight ?? FontWeight.bold,
               ),
             ),

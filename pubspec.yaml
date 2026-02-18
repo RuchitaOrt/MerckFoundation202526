@@ -57,6 +57,8 @@ dependencies:
  
   flutter_inappwebview:
   flip_card:
+  google_fonts: ^6.2.1
+  flutter_svg: 
   
 dev_dependencies:
   flutter_test:

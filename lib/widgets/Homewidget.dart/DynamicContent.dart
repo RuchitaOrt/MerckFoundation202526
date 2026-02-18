@@ -51,7 +51,7 @@ class DynamicSectionRenderer extends StatelessWidget {
     return Column(
       children: sections.map((section) {
         // 🔹 SINGLE CARD SECTION
-
+    
         if (section.type == HomeSectionType.content &&
             section.customWidget != null) {
           return Padding(
@@ -59,7 +59,7 @@ class DynamicSectionRenderer extends StatelessWidget {
             child: section.customWidget!,
           );
         }
-
+    
         if (section.singleItem != null) {
           final item = section.singleItem!;
           return Padding(
@@ -78,12 +78,12 @@ class DynamicSectionRenderer extends StatelessWidget {
                 onCardTap: () {},
                 onButtonTap: () {},
                 buttonText: item.buttonText,
-
+    
               ),
             ),
           );
         }
-
+    
         // 🔹 LIST SECTION
         if (section.items != null && section.items!.isNotEmpty) {
           return CommonListSection<SectionItem>(
@@ -118,7 +118,7 @@ class DynamicSectionRenderer extends StatelessWidget {
             onWatchMore: section.onWatchMore,
           );
         }
-
+    
         return const SizedBox.shrink();
       }).toList(),
     );

@@ -85,6 +85,7 @@ class _HomeState extends State<Home> {
         body: ListView(
           padding: EdgeInsets.zero,
           children: [
+             8.0.heightBox,
             const HomeSlider(),
             2.0.heightBox,
             const CommonMarquee(text: CommonStrings.marquee),

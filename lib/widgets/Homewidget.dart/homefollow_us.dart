@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utils/common_images.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
@@ -71,7 +72,7 @@ class FollowUsSection extends StatelessWidget {
       padding: const EdgeInsets.only(right: 8),
       child: GestureDetector(
         onTap: item.onTap,
-        child: Image.asset(
+        child:  SvgPicture.asset(
           item.icon,
           height: size,
           width: size,

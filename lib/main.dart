@@ -4,6 +4,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:merckfoundation_252026/Utility/firebase_options_manual.dart';
 import 'package:merckfoundation_252026/data/Repository/splashRepository.dart';
 
@@ -86,6 +87,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         title: 'Merck Foundation',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
+            textTheme: GoogleFonts.aBeeZeeTextTheme(),
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),

@@ -94,55 +94,64 @@ class HomeSliderProvider extends ChangeNotifier {
 
   /* ---------------- OUR LIST ---------------- */
 
-  List<OurItemModel> buildList() {
-    return [
-      OurItemModel(
-        color: Customcolor.pink_col,
-        programname: CommonStrings.ourVision,
-        onTap: _openVision,
-      ),
-      OurItemModel(
-        color: Customcolor.green_col,
-        programname: CommonStrings.ourPrograms,
-        onTap: _openProgram,
-      ),
-      OurItemModel(
-        color: Customcolor.prog6,
-        programname: CommonStrings.ourAfrica,
-        onTap: _openAfricaSeason,
-      ),
-      OurItemModel(
-        color: Customcolor.lightgreen_col,
-        programname: CommonStrings.newsArticles,
-        onTap: _openArticle,
-      ),
-      OurItemModel(
-        color: Customcolor.violet_col,
-        programname: CommonStrings.ourAwards,
-        onTap: _openAward,
-      ),
-      OurItemModel(
-        color: Customcolor.lightblue_col,
-        programname: CommonStrings.ourMission,
-        onTap: _openMission,
-      ),
-      OurItemModel(
-        color: Customcolor.skyblue_col,
-        programname: CommonStrings.mediaEvents,
-        onTap: _openMediaEvent,
-      ),
-      OurItemModel(
-        color: Customcolor.darkblue_col,
-        programname: CommonStrings.covidResponse,
-        onTap: _openCovid,
-      ),
-      OurItemModel(
-        color: Customcolor.orange_col,
-        programname: CommonStrings.ourPolicies,
-        onTap: _openPolicy,
-      ),
-    ];
-  }
+List<OurItemModel> buildList() {
+  return [
+    OurItemModel(
+      color: Customcolor.pink_col,
+      programname: CommonStrings.ourVision,
+      icon: Icons.visibility_outlined,
+      onTap: _openVision,
+    ),
+    OurItemModel(
+      color: Customcolor.green_col,
+      programname: CommonStrings.ourPrograms,
+      icon: Icons.menu_book_outlined,
+      onTap: _openProgram,
+    ),
+    OurItemModel(
+      color: Customcolor.prog6,
+      programname: CommonStrings.ourAfrica,
+      icon: Icons.public_outlined,
+      onTap: _openAfricaSeason,
+    ),
+    OurItemModel(
+      color: Customcolor.lightgreen_col,
+      programname: CommonStrings.newsArticles,
+      icon: Icons.article_outlined,
+      onTap: _openArticle,
+    ),
+    OurItemModel(
+      color: Customcolor.violet_col,
+      programname: CommonStrings.ourAwards,
+      icon: Icons.emoji_events_outlined,
+      onTap: _openAward,
+    ),
+    OurItemModel(
+      color: Customcolor.lightblue_col,
+      programname: CommonStrings.ourMission,
+      icon: Icons.flag_outlined,
+      onTap: _openMission,
+    ),
+    OurItemModel(
+      color: Customcolor.skyblue_col,
+      programname: CommonStrings.mediaEvents,
+      icon: Icons.mic_none_outlined,
+      onTap: _openMediaEvent,
+    ),
+    OurItemModel(
+      color: Customcolor.darkblue_col,
+      programname: CommonStrings.covidResponse,
+      icon: Icons.health_and_safety_outlined,
+      onTap: _openCovid,
+    ),
+    OurItemModel(
+      color: Customcolor.orange_col,
+      programname: CommonStrings.ourPolicies,
+      icon: Icons.policy_outlined,
+      onTap: _openPolicy,
+    ),
+  ];
+}
 
   /* ---------------- DYNAMIC HOME SECTIONS ---------------- */
 

@@ -146,6 +146,7 @@ class CustomCard extends StatelessWidget {
                   child: Text(
                     subtitle ?? '',
                     maxLines: 2,
+                  style: TextStyle(fontSize: responsive.fontSize(2.5),),
                     overflow: TextOverflow.ellipsis,
                     softWrap: true,
                   ),
