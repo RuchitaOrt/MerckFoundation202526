@@ -53,6 +53,7 @@ class CommonImagePath {
   static const String threads = "assets/newImages/threads.svg";
 
   static const String homeToolbar = "assets/newImages/hometoolbar.png";
+    static const String homeFlowerNew = "assets/newImages/flower_new1.png";
   static const String ambassador = 'assets/newImages/Ambassador_st.png';
   static const String scholarships = 'assets/newImages/Scholarships.png';
   static const String ministera = 'assets/newImages/Ministera_st.png';

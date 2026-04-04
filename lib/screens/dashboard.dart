@@ -4,6 +4,7 @@ import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utils/common_images.dart';
 import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/screens/HomeNewScreen.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/articles.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/callforApplication.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/home.dart';
@@ -44,56 +45,171 @@ class _DashboardState extends State<Dashboard> {
         controller: pageController,
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          Home(),
+         //  Home(),
+          MerckHomeScreen(),
           OurProgramScreen(),
           Stories(),
           ArticlesScreen(),
           CallforApplication(),
         ],
       ),
-      bottomNavigationBar: BottomNavyBar(
-        selectedIndex: currentIndex,
-        showElevation: true,
-        itemCornerRadius: 8,
-        curve: Curves.easeInOut,
-        onItemSelected: (index) {
-          setState(() => currentIndex = index);
-          pageController.jumpToPage(index);
-        },
-        items: [
-          _navItem(
-            index: 0,
-            title: CommonStrings.home,
-            selected: CommonImagePath.homeSelected,
-            unselected: CommonImagePath.homeUnselected,
-          ),
-          _navItem(
-            index: 1,
-            title: CommonStrings.ourPrograms,
-            selected: CommonImagePath.programSelected,
-            unselected: CommonImagePath.programUnselected,
-          ),
-          _navItem(
-            index: 2,
-            title: CommonStrings.stories,
-            selected: CommonImagePath.storiesSelected,
-            unselected: CommonImagePath.storiesUnselected,
-          ),
-          _navItem(
-            index: 3,
-            title: CommonStrings.articles,
-            selected: CommonImagePath.articlesSelected,
-            unselected: CommonImagePath.articlesUnselected,
-          ),
-          _navItem(
-            index: 4,
-            title: CommonStrings.upcomingPrograms,
-            selected: CommonImagePath.callSelected,
-            unselected: CommonImagePath.callUnselected,
-            maxLines: 2,
+      bottomNavigationBar: SafeArea(
+  child: Padding(
+    padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+    child: Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.12),
+            blurRadius: 15,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: SizedBox(
+          height: 56, // 🔥 key
+          child: BottomNavyBar(
+            selectedIndex: currentIndex,
+            showElevation: false,
+            backgroundColor: Colors.white,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            onItemSelected: (index) {
+              setState(() => currentIndex = index);
+              pageController.jumpToPage(index);
+            },
+            items: [
+              _navItem(index: 0, title: CommonStrings.home,
+                  selected: CommonImagePath.homeSelected,
+                  unselected: CommonImagePath.homeUnselected),
+              _navItem(index: 1, title: CommonStrings.ourPrograms,
+                  selected: CommonImagePath.programSelected,
+                  unselected: CommonImagePath.programUnselected),
+              _navItem(index: 2, title: CommonStrings.stories,
+                  selected: CommonImagePath.storiesSelected,
+                  unselected: CommonImagePath.storiesUnselected),
+              _navItem(index: 3, title: CommonStrings.articles,
+                  selected: CommonImagePath.articlesSelected,
+                  unselected: CommonImagePath.articlesUnselected),
+              _navItem(index: 4, title: CommonStrings.upcomingPrograms,
+                  selected: CommonImagePath.callSelected,
+                  unselected: CommonImagePath.callUnselected),
+            ],
+          ),
+        ),
+      ),
+    ),
+  ),
+),
+//       bottomNavigationBar: Padding(
+//   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16), // space from sides & bottom
+//   child: Container(
+//     decoration: BoxDecoration(
+//       color: Colors.white,
+//       borderRadius: BorderRadius.circular(20), // 🔥 rounded like screenshot
+//       boxShadow: [
+//         BoxShadow(
+//           color: Colors.black.withOpacity(0.15),
+//           blurRadius: 20,
+//           offset: const Offset(0, 8),
+//         ),
+//       ],
+//     ),
+//     child: ClipRRect(
+//       borderRadius: BorderRadius.circular(20),
+//       child: BottomNavyBar(
+//         selectedIndex: currentIndex,
+//         showElevation: false, // 🔥 remove internal shadow
+//         backgroundColor: Colors.white,
+//         itemCornerRadius: 12,
+//         curve: Curves.easeInOut,
+//         onItemSelected: (index) {
+//           setState(() => currentIndex = index);
+//           pageController.jumpToPage(index);
+//         },
+//         items: [
+//           _navItem(
+//             index: 0,
+//             title: CommonStrings.home,
+//             selected: CommonImagePath.homeSelected,
+//             unselected: CommonImagePath.homeUnselected,
+//           ),
+//           _navItem(
+//             index: 1,
+//             title: CommonStrings.ourPrograms,
+//             selected: CommonImagePath.programSelected,
+//             unselected: CommonImagePath.programUnselected,
+//           ),
+//           _navItem(
+//             index: 2,
+//             title: CommonStrings.stories,
+//             selected: CommonImagePath.storiesSelected,
+//             unselected: CommonImagePath.storiesUnselected,
+//           ),
+//           _navItem(
+//             index: 3,
+//             title: CommonStrings.articles,
+//             selected: CommonImagePath.articlesSelected,
+//             unselected: CommonImagePath.articlesUnselected,
+//           ),
+//           _navItem(
+//             index: 4,
+//             title: CommonStrings.upcomingPrograms,
+//             selected: CommonImagePath.callSelected,
+//             unselected: CommonImagePath.callUnselected,
+//             maxLines: 2,
+//           ),
+//         ],
+//       ),
+//     ),
+//   ),
+// ),
+      // bottomNavigationBar: BottomNavyBar(
+      //   selectedIndex: currentIndex,
+      //   showElevation: true,
+      //   itemCornerRadius: 8,
+      //   curve: Curves.easeInOut,
+      //   onItemSelected: (index) {
+      //     setState(() => currentIndex = index);
+      //     pageController.jumpToPage(index);
+      //   },
+      //   items: [
+      //     _navItem(
+      //       index: 0,
+      //       title: CommonStrings.home,
+      //       selected: CommonImagePath.homeSelected,
+      //       unselected: CommonImagePath.homeUnselected,
+      //     ),
+      //     _navItem(
+      //       index: 1,
+      //       title: CommonStrings.ourPrograms,
+      //       selected: CommonImagePath.programSelected,
+      //       unselected: CommonImagePath.programUnselected,
+      //     ),
+      //     _navItem(
+      //       index: 2,
+      //       title: CommonStrings.stories,
+      //       selected: CommonImagePath.storiesSelected,
+      //       unselected: CommonImagePath.storiesUnselected,
+      //     ),
+      //     _navItem(
+      //       index: 3,
+      //       title: CommonStrings.articles,
+      //       selected: CommonImagePath.articlesSelected,
+      //       unselected: CommonImagePath.articlesUnselected,
+      //     ),
+      //     _navItem(
+      //       index: 4,
+      //       title: CommonStrings.upcomingPrograms,
+      //       selected: CommonImagePath.callSelected,
+      //       unselected: CommonImagePath.callUnselected,
+      //       maxLines: 2,
+      //     ),
+      //   ],
+      // ),
     );
   }
 

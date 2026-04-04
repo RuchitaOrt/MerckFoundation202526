@@ -25,6 +25,10 @@ class MockHomeData {
           {
             "image": "https://merck-foundation.com/merckfoundation/public/uploads/news_and_applications/1751618748_389221cd265916300a3a.jpg",
             "title": "MMTM Initiative",
+          },
+           {
+            "image": "https://merck-foundation.com/merckfoundation/public/uploads/news_and_applications/1751618748_389221cd265916300a3a.jpg",
+            "title": "MMTM Initiative 2",
           }
         ]
       },
@@ -35,6 +39,11 @@ class MockHomeData {
           {
             "image":"https://merck-foundation.com/merckfoundation/public/uploads/news_and_applications/1751618748_389221cd265916300a3a.jpg",
             "title": "Medical Education Resources",
+          },
+
+           {
+            "image":"https://merck-foundation.com/merckfoundation/public/uploads/news_and_applications/1751618748_389221cd265916300a3a.jpg",
+            "title": "Medical Education",
           }
         ]
       }

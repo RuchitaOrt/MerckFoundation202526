@@ -20,7 +20,7 @@ class CommonRichText extends StatelessWidget {
     super.key,
     required this.title,
     required this.subtitle,
-    this.padding = const EdgeInsets.all(8.0),
+    this.padding = const EdgeInsets.only(left: 15),
     this.textAlign = TextAlign.start,
     this.titleSize,
     this.SubtitleSize,
@@ -41,11 +41,12 @@ class CommonRichText extends StatelessWidget {
           children: [
             TextSpan(
               text: "$title",
-              style: TextStyle(
-                color: titleColor ?? Customcolor.textsubtitlecolor,
-                fontSize: titleSize ?? responsive.fontSize(3.5),
-                fontWeight:titlefontWeight?? FontWeight.w600,
-              ),
+             style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800, 
+                 
+                  color: Customcolor.text_blue,
+                ),
             ),
             TextSpan(
               text: subtitle,

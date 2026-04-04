@@ -182,6 +182,7 @@ import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utils/common_images.dart';
 import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/screens/HomeNewScreen.dart';
 import 'package:merckfoundation_252026/screens/dashboard.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
@@ -363,7 +364,9 @@ class _ContinueButton extends StatelessWidget {
         onPressed: () {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => Dashboard(index: 0)),
+            MaterialPageRoute(builder: (_) =>
+           // MerckHomeScreen())
+              Dashboard(index: 0)),
           );
         },
         child: Row(

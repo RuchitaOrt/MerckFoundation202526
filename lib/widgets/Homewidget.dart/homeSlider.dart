@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+
 import 'package:provider/provider.dart';
 
 import '../../Utility/ResponsiveFlutter.dart';
@@ -59,56 +60,76 @@ class HomeSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     final responsive = ResponsiveFlutter.of(context);
     final provider = context.watch<HomeSliderProvider>();
-
+print("LENT ${provider.products.length}");
     if (provider.products.isEmpty) {
       return const SizedBox.shrink();
     }
 
-    return Column(
-      children: [
-        CarouselSlider.builder(
-          itemCount: provider.products.length,
-          options: CarouselOptions(
-            height: responsive.height(25),
-            viewportFraction: 0.9, // 👈 show side preview
-            enlargeCenterPage: true,
-            autoPlay: true,
-            autoPlayInterval: const Duration(seconds: 4),
-            onPageChanged: (index, _) {
-              provider.updateIndex(index);
-            },
+    return Padding(
+      padding: const EdgeInsets.only(top: 5, left: 0, right: 0, bottom: 8),
+      child: Stack(
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              Container(
+                child: CarouselSlider(
+                  options: CarouselOptions(
+                    viewportFraction: 1.0,
+                    height: 170,
+                    autoPlay: true,
+                    onPageChanged: (index, reason) {
+                     
+                    },
+                  ),
+                  items: provider.products.map((product) {
+                    return  Builder(
+                      builder: (BuildContext context) {
+                        return Slidercard(
+                          cardImage:product['image'],
+                          cardTitle: product['image_title'],
+                          subTitle: product['image_desc'],
+                        );
+
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
+             
+            ],
           ),
-          itemBuilder: (context, index, realIndex) {
-            final product = provider.products[index];
-            return SliderCard(
-              cardImage: product['image'] ?? '',
-              cardTitle: product['image_title'] ?? '',
-              subTitle: product['image_desc'] ?? '',
-            );
-          },
-        ),
-
-        SizedBox(height: responsive.height(1)),
-
-        // Indicator Dots
-        // Row(
-        //   mainAxisAlignment: MainAxisAlignment.center,
-        //   children: List.generate(
-        //     provider.products.length,
-        //     (index) => Container(
-        //       margin: const EdgeInsets.symmetric(horizontal: 4),
-        //       width: provider.currentIndex == index ? 12 : 6,
-        //       height: 6,
-        //       decoration: BoxDecoration(
-        //         borderRadius: BorderRadius.circular(10),
-        //         color: provider.currentIndex == index
-        //             ? Colors.pink
-        //             : Colors.grey.shade400,
-        //       ),
-        //     ),
-        //   ),
-        // ),
-      ],
+        ],
+      ),
     );
+    // Column(
+    //   children: [
+    //     CarouselSlider.builder(
+    //       itemCount: provider.products.length,
+    //       options: CarouselOptions(
+    //         height: responsive.height(25),
+    //         viewportFraction: 0.9, // 👈 show side preview
+    //         enlargeCenterPage: true,
+    //         autoPlay: true,
+    //         autoPlayInterval: const Duration(seconds: 4),
+    //         onPageChanged: (index, _) {
+    //           provider.updateIndex(index);
+    //         },
+    //       ),
+    //       itemBuilder: (context, index, realIndex) {
+    //         final product = provider.products[index];
+    //         return SliderCard(
+    //           cardImage: product['image'] ?? '',
+    //           cardTitle: product['image_title'] ?? '',
+    //           subTitle: product['image_desc'] ?? '',
+    //         );
+    //       },
+    //     ),
+
+    //     SizedBox(height: responsive.height(1)),
+
+    //   ],
+    // );
+    
   }
+  
 }

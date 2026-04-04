@@ -86,8 +86,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       child: MaterialApp(
         title: 'Merck Foundation',
         debugShowCheckedModeBanner: false,
+        builder: (context, child) {
+    final data = MediaQuery.of(context);
+
+    return MediaQuery(
+      data: data.copyWith(
+        textScaler: const TextScaler.linear(1.0), // 🔥 fixes Android font issue
+      ),
+      child: child!,
+    );
+  },
         theme: ThemeData(
-            textTheme: GoogleFonts.aBeeZeeTextTheme(),
+            // textTheme: GoogleFonts.aBeeZeeTextTheme(),
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),

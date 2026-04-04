@@ -100,7 +100,7 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
                     maxLines: 2,
                     textAlignment: TextAlign.center,
                     labelColor: Customcolor.colorBlue,
-                    fontSize: responsive.fontSize(3),
+                    fontSize: responsive.fontSize(2.2),
                   )
                 : SizedBox(),
                 
@@ -110,24 +110,49 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
       ),
     );
   }
-
-  Widget _navigationArrows(BuildContext context) {
-    return Positioned(
-      top: 140,
-      width: MediaQuery.of(context).size.width,
+Widget _navigationArrows(BuildContext context) {
+  return Positioned(
+    top: widget.carouselHeight / 2 - 20, // 🔥 center of image
+    left: 0,
+    right: 0,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back_ios),
-            onPressed: () => widget.controller.previousPage(),
+          _arrowButton(
+            icon: Icons.arrow_back_ios,
+            onTap: () => widget.controller.previousPage(),
           ),
-          IconButton(
-            icon: const Icon(Icons.arrow_forward_ios),
-            onPressed: () => widget.controller.nextPage(),
+          _arrowButton(
+            icon: Icons.arrow_forward_ios,
+            onTap: () => widget.controller.nextPage(),
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
+
+Widget _arrowButton({
+  required IconData icon,
+  required VoidCallback onTap,
+}) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.4),
+        shape: BoxShape.circle,
+      ),
+      child: Icon(
+        icon,
+        color: Colors.white,
+        size: 18,
+      ),
+    ),
+  );
+}
+ 
 }

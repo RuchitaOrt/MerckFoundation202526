@@ -34,13 +34,13 @@ class HomeSliderProvider extends ChangeNotifier {
           "id": 1,
           "image_title": "Empowering Women",
           "image_desc": "Transforming lives through education",
-          "image": "assets/images/slider1.jpg",
+          "image": "https://merck-foundation.com/merckfoundation/public/uploads/newsletter/1764844054_cafe376d20d758ca18dd.jpg",
         },
         {
           "id": 2,
           "image_title": "Healthcare Access",
           "image_desc": "Building a healthier tomorrow",
-          "image": "assets/images/slider2.jpg",
+          "image": "https://merck-foundation.com/merckfoundation/public/uploads/newsletter/1764844054_cafe376d20d758ca18dd.jpg",
         },
       ]);
 

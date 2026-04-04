@@ -47,7 +47,8 @@ class Customcolor {
   static const skyblue_col = const Color(0xff9CD4D1);
 
   //new colo®
-  static const text_blue = const Color(0xff125CAB);
+  static const text_blue =const Color(0xff005FAA);
+  //  const Color(0xff125CAB);
   static const text_grey = const Color(0xff888888);
   static const text_darkblue = const Color(0xff115CAB);
   static const text_darkgrey = const Color(0xff333333);

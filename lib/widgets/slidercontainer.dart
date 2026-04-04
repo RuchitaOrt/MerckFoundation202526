@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
+import 'package:merckfoundation_252026/Utility/sizeConfig.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
@@ -70,74 +71,61 @@ import 'package:merckfoundation_252026/widgets/formLabel.dart';
 //     );
 //   }
 // }
-class SliderCard extends StatelessWidget {
-  final String cardTitle;
-  final String? cardImage;
-  final String subTitle;
 
-  const SliderCard({
+class Slidercard extends StatelessWidget {
+  final String? cardTitle;
+  final String? cardImage;
+  final String? subTitle;
+
+  const Slidercard({
     Key? key,
-    required this.cardTitle,
+    this.cardTitle,
     this.cardImage,
-    required this.subTitle,
+    this.subTitle,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveFlutter.of(context);
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset(
-              cardImage ?? '',
-              fit: BoxFit.cover,
-            ),
-          ),
-
-          // Dark cinematic overlay
-          Positioned.fill(
+    SizeConfig().init(context);
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          image: DecorationImage(
+              image: NetworkImage(cardImage!), fit: BoxFit.cover)),
+      width: SizeConfig.blockSizeHorizontal * 100,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 0, bottom: 15),
             child: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.center,
-                  colors: [
-                    Colors.black87,
-                    Colors.black54,
-                    Colors.transparent,
+              color: Colors.white.withOpacity(0.5),
+              width: SizeConfig.blockSizeHorizontal * 100,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 10, right: 10, top: 5, bottom: 5),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    FormLabel(
+                        text: cardTitle!,
+                        labelColor: Customcolor.pink_col,
+                        fontSize: ResponsiveFlutter.of(context).fontSize(1.6),
+                        maxLines: 2,
+                        fontweight: FontWeight.bold,
+                        textAlignment: TextAlign.center),
+                    SizedBox(
+                      height: 2,
+                    ),
+                    FormLabel(
+                        text: subTitle!,
+                        labelColor: Customcolor.colorBlue,
+                        fontSize: ResponsiveFlutter.of(context).fontSize(1.4),
+                        fontweight: FontWeight.bold,
+                        textAlignment: TextAlign.center),
                   ],
                 ),
               ),
-            ),
-          ),
-
-          Positioned(
-            left: 8,
-            right: 8,
-            bottom: 20,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  cardTitle,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: responsive.fontSize(2.4),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: responsive.height(0.7)),
-                Text(
-                  subTitle,
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: responsive.fontSize(1.8),
-                  ),
-                ),
-              ],
             ),
           ),
         ],

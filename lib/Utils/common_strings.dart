@@ -95,9 +95,9 @@ class CommonStrings {
  static String followMFCancerAccessProgramTitle ='Follow Merck Foundation Cancer Access Program on';
   static String followmsg = "follow us";
   static double tabheight = 500;
-  static double callimageheight = 300;
+  static double callimageheight = 200;
   static double callimagewidth = 220;
-  static double callcoursaheight = 380;
+  static double callcoursaheight = 302;
 
   //call ambassdar width as per client
   static double callAmbassadarimagewidth = 240;

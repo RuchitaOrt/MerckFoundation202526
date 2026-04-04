@@ -75,7 +75,7 @@ class _HomeState extends State<Home> {
           onSearch: () {},
           height: Platform.isAndroid
               ? responsive.height(9)
-              : responsive.height(7),
+              : responsive.height(8),
         ),
 
         drawer: Theme(
