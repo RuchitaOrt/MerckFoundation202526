@@ -44,11 +44,11 @@ class CommonImagePath {
   static const String call = "assets/newImages/call.png";
 
   // Social icons
-  static const String instagram = "assets/newImages/instagram.svg";
-  static const String facebook = "assets/newImages/facebooknew.svg";
-  static const String twitter = "assets/newImages/twitternew.svg";
-  static const String youtube = "assets/newImages/youtube.svg";
-  static const String flickr = "assets/newImages/flickr.png";
+  static const String instagram = "assets/newImages/ins.svg";
+  static const String facebook = "assets/newImages/FB.svg";
+  static const String twitter = "assets/newImages/twitt.svg";
+  static const String youtube = "assets/newImages/youtu.svg";
+  static const String flickr = "assets/newImages/flick.svg";
 
   static const String threads = "assets/newImages/threads.svg";
 

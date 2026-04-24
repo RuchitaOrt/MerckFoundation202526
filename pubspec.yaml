@@ -59,6 +59,7 @@ dependencies:
   flip_card:
   google_fonts: ^6.2.1
   flutter_svg: 
+  fluttertoast: ^8.2.12
   
 dev_dependencies:
   flutter_test:

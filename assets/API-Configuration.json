@@ -1,24 +1,18 @@
 {
-    "environment": "production",
+    "environment": "development",
     "version": "1",
     "development": {
-        "hostUrl":  "https://smitlalai.com/demo/merck_latest/api/",
+        "hostUrl":  "https://mfv1-uat.ortdemo.com/",
      
         "timeout": 120,
         "retry": 3
     },
     "production": {
-        "hostUrl": "https://merck-foundation.com/api/",
-        "timeout": 120,
-        "retry": 3
-    },
-    "UAT": {
-        
-        "hostUrl":  "https://merck.oneroof.tech/merck/api/",
-     
+        "hostUrl": "https://mfv1-uat.ortdemo.com/",
         "timeout": 120,
         "retry": 3
     }
+   
 }
 
  

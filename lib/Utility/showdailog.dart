@@ -2,12 +2,22 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:merckfoundation_252026/Utility/sizeConfig.dart';
 import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+  void showToast(String message) {
+    Fluttertoast.showToast(
+    msg: message,
+    toastLength: Toast.LENGTH_LONG,
+    gravity: ToastGravity.BOTTOM,
+    backgroundColor: Colors.black.withOpacity(0.7),
+    textColor: Colors.white,
+    fontSize: 12.0,
+  );
+  }
 class ShowDialogs {
   ShowDialogs._();
 

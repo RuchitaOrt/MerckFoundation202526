@@ -39,7 +39,8 @@ void initState() {
         shareLink: "",
       ),
       backgroundColor: Customcolor.background,
-      body: Consumer<DigitalLibraryProvider>(
+      body:
+       Consumer<DigitalLibraryProvider>(
         builder: (context, provider, _) {
           return CustomScrollView(
             slivers: [

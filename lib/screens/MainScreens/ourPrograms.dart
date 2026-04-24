@@ -37,7 +37,7 @@ class OurProgramScreen extends StatelessWidget {
       ),
       body: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(child: const HomeSlider()),
+           SliverToBoxAdapter(child: const HomeSlider(content: [],)),
 
           SliverPadding(
             padding: const EdgeInsets.all(12),

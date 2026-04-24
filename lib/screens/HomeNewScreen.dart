@@ -12,7 +12,9 @@ import 'package:merckfoundation_252026/Utils/common_images.dart';
 import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
+import 'package:merckfoundation_252026/providers/PageProvider.dart';
 import 'package:merckfoundation_252026/providers/home_provider.dart';
+import 'package:merckfoundation_252026/widgets/CommonList/HorizontalMediaSection.dart';
 import 'package:merckfoundation_252026/widgets/CommonRichText.dart';
 import 'package:merckfoundation_252026/widgets/DynamicTabView.dart';
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
@@ -46,7 +48,9 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
           data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
           child: AppDrawer(),
         ),
-      body: const _HomeBody(),
+      body: 
+      
+      const _HomeBody(),
       // bottomNavigationBar: const _BottomNavBar(),
     );
   }
@@ -103,78 +107,206 @@ class _HomeBodyState extends State<_HomeBody> {
         provider.loadStaticData();
       }
     });
+
+    Future.microtask(() {
+    Provider.of<PageProvider>(context, listen: false)
+        .fetchPage(context,"1");
+  });
   }
   @override
-  Widget build(BuildContext context) {
-      final tabs = context.watch<HomeSliderProvider>().tabs;
-    return SingleChildScrollView(
-      // padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children:  [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 10, 16, 4),
-            child: HomeSlider(),
-          ),
-          SizedBox(height: 20),
-          Padding(
-             padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-            child: CategorySection(),
-          ),
-          SizedBox(height: 30),
-          FollowSection(title: "Follow Us"),
-          SizedBox(height: 20),
-          FollowSection(title: "Follow Senator, Dr. Rasha Kelej"),
-          SizedBox(height: 10),
-        
-         CommonRichText(
-              title: CommonStrings.impactOfMerck,
-              subtitle: CommonStrings.impactOn,
-            ),
-             CommonStaticGrid(
-              items: context.watch<HomeSliderProvider>().ourStaticList,
-            ),
-          SizedBox(height: 5),
-          Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-            child: OurStorySection(),
-          ),
-           SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-            child: RAHSASection(),
-          ),
-           SizedBox(height: 20),
-           Padding(
-             padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-             child: AfricaSection(),
-           ),
-           SizedBox(height: 20),
-          Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-            child: GallerySection(),
-          ),
-           SizedBox(height: 20),
-          Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-            child: TestimonialSection(),
-          ),
-          8.0.heightBox,
-            SizedBox(
-              height: CommonStrings.tabheight,
-              child: DynamicTabView(
-                tabs: DynamicTabBuilder.build(context, tabs),
-                indicatorColor: Customcolor.pinkbg,
-              ),
-            ),
+Widget build(BuildContext context) {
+  final provider = context.watch<PageProvider>();
 
-            const FooterFlowerImage(),
-            8.0.heightBox,
-            Bottomcardlink(),
-        ],
-      ),
-    );
+  if (provider.isLoading) {
+    return const Center(child: CircularProgressIndicator());
   }
+
+  final data = provider.pageData;
+  final json = data?['data']?['json_data'] ?? {};
+
+  List allLayouts = [];
+
+  allLayouts.addAll(json['slider'] ?? []);
+  allLayouts.addAll(json['top'] ?? []);
+  allLayouts.addAll(json['middle_left'] ?? []);
+  allLayouts.addAll(json['middle_right'] ?? []);
+  allLayouts.addAll(json['bottom'] ?? []);
+
+  allLayouts.sort((a, b) =>
+      (a['layout_index'] ?? 0).compareTo(b['layout_index'] ?? 0));
+
+  return ListView.builder(
+    padding: const EdgeInsets.only(bottom: 20),
+    itemCount: allLayouts.length,
+    itemBuilder: (context, index) {
+      return renderLayout(allLayouts[index]);
+    },
+  );
+}
+Widget renderLayout(Map layout) {
+  final type = layout['layout_type'];
+
+  switch (type) {
+    case "PhotoGallery":
+    case "Episodes":
+      return HorizontalMediaSection(
+        content: layout['content'] ?? [],
+        title: layout['title'],
+        showDescription: false,
+      );
+
+    case "Testimonials":
+      return HorizontalMediaSection(
+        content: layout['content'] ?? [],
+        title: layout['title'],
+        showDescription: true,
+      );
+
+    case "OurPartners":
+      return buildOurPartners(layout['content'], layout['title']);
+
+    case "Slider":
+      return HomeSlider(content: layout['content']);
+
+    default:
+      return const SizedBox();
+  }
+}
+
+Widget buildOurPartners(List content, String? title) {
+  if (content.isEmpty) return const SizedBox();
+
+  return Padding(
+    padding: const EdgeInsets.all(12),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title ?? "Our Partners",
+          style: const TextStyle(
+              fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: content.length,
+          gridDelegate:
+              const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: 1.2,
+          ),
+          itemBuilder: (context, index) {
+            final item = content[index];
+
+            return Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if ((item['thumbnail'] ?? "").isNotEmpty)
+                    Image.network(
+                      item['thumbnail'],
+                      height: 60,
+                      fit: BoxFit.contain,
+                    ),
+
+                  const SizedBox(height: 8),
+
+                  Text(
+                    item['title'] ?? "",
+                    textAlign: TextAlign.center,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
+    ),
+  );
+}
+  // @override
+  // Widget build(BuildContext context) {
+  //     final tabs = context.watch<HomeSliderProvider>().tabs;
+  //   return SingleChildScrollView(
+  //     // padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children:  [
+  //         Padding(
+  //           padding: const EdgeInsets.fromLTRB(16, 10, 16, 4),
+  //           child: HomeSlider(),
+  //         ),
+  //         SizedBox(height: 20),
+  //         Padding(
+  //            padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+  //           child: CategorySection(),
+  //         ),
+  //         SizedBox(height: 30),
+  //         FollowSection(title: "Follow Us"),
+  //         SizedBox(height: 20),
+  //         FollowSection(title: "Follow Senator, Dr. Rasha Kelej"),
+  //         SizedBox(height: 10),
+        
+  //        CommonRichText(
+  //             title: CommonStrings.impactOfMerck,
+  //             subtitle: CommonStrings.impactOn,
+  //           ),
+  //            CommonStaticGrid(
+  //             items: context.watch<HomeSliderProvider>().ourStaticList,
+  //           ),
+  //         SizedBox(height: 5),
+  //         Padding(
+  //             padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+  //           child: OurStorySection(),
+  //         ),
+  //          SizedBox(height: 20),
+  //         Padding(
+  //           padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+  //           child: RAHSASection(),
+  //         ),
+  //          SizedBox(height: 20),
+  //          Padding(
+  //            padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+  //            child: AfricaSection(),
+  //          ),
+  //          SizedBox(height: 20),
+  //         Padding(
+  //             padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+  //           child: GallerySection(),
+  //         ),
+  //          SizedBox(height: 20),
+  //         Padding(
+  //             padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+  //           child: TestimonialSection(),
+  //         ),
+  //         8.0.heightBox,
+  //           SizedBox(
+  //             height: CommonStrings.tabheight,
+  //             child: DynamicTabView(
+  //               tabs: DynamicTabBuilder.build(context, tabs),
+  //               indicatorColor: Customcolor.pinkbg,
+  //             ),
+  //           ),
+
+  //           const FooterFlowerImage(),
+  //           8.0.heightBox,
+  //           Bottomcardlink(),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
 
 //////////////////////////////////////////////////////////////
@@ -334,66 +466,6 @@ class CategoryChip extends StatelessWidget {
     );
   }
 }
-// class CategoryChip extends StatefulWidget {
-//   final String title;
-//   final Color color;
-
-//   const CategoryChip({
-//     super.key,
-//     required this.title,
-//     required this.color,
-//   });
-
-//   @override
-//   State<CategoryChip> createState() => _CategoryChipState();
-// }
-
-// class _CategoryChipState extends State<CategoryChip> {
-//   bool isPressed = false;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return AnimatedScale(
-//       duration: const Duration(milliseconds: 120),
-//       scale: isPressed ? 0.96 : 1,
-//       child: InkWell(
-//         borderRadius: BorderRadius.circular(12),
-//         onTap: () {},
-//         onTapDown: (_) => setState(() => isPressed = true),
-//         onTapUp: (_) => setState(() => isPressed = false),
-//         onTapCancel: () => setState(() => isPressed = false),
-//         child: Container(
-//           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-//           decoration: BoxDecoration(
-//             color: Colors.white,
-//             borderRadius: BorderRadius.circular(12),
-//             border: Border.all(color: widget.color, width: 2),
-//             boxShadow: [
-//               BoxShadow(
-//                 color: widget.color.withOpacity(0.15),
-//                 blurRadius: 10,
-//                 offset: const Offset(0, 4),
-//               )
-//             ],
-//           ),
-//           child: Text(
-//             widget.title,
-//             textAlign: TextAlign.center,
-//             style: const TextStyle(
-//               fontSize: 14.5,
-//               fontWeight: FontWeight.w600,
-//               color: Colors.black87,
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-//////////////////////////////////////////////////////////////
-/// FOLLOW SECTION
-//////////////////////////////////////////////////////////////
 
 class FollowSection extends StatelessWidget {
   final String title;
@@ -477,24 +549,7 @@ class SocialIcon extends StatelessWidget {
     );
   }
 }
-// class SocialIcon extends StatelessWidget {
-//   final String icon;
-//   const SocialIcon(this.icon, {super.key});
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//        padding: const EdgeInsets.all(14),
-//       decoration: BoxDecoration(
-//         shape: BoxShape.circle,
-//         color: Colors.white,
-       
-        
-//       ),
-//       child: SvgPicture.asset(icon,width: 30,height: 30,),
-//     );
-//   }
-// }
 class GallerySection extends StatelessWidget {
   const GallerySection({super.key});
 
@@ -550,7 +605,7 @@ class GallerySection extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                           fontSize: MediaQuery.of(context).size.width * 0.055,
+                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -585,100 +640,7 @@ class GallerySection extends StatelessWidget {
     );
   }
 }
-// class GallerySection extends StatelessWidget {
-//   const GallerySection({super.key});
 
-//   @override
-//   Widget build(BuildContext context) {
-//     final screenWidth = MediaQuery.of(context).size.width;
-
-//     // Width for each gallery item ~ 80% of screen
-//     final itemWidth = screenWidth * 0.85;
-
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         const Text(
-//           "Photo Gallery",
-//           style: TextStyle(
-//             fontSize: 22,
-//             fontWeight: FontWeight.w800,
-//             color: Customcolor.text_blue,
-//           ),
-//         ),
-//         const SizedBox(height: 12),
-// SizedBox(
-//   height: 260,
-//   child: ListView.separated(
-//     padding: const EdgeInsets.symmetric(horizontal: 4),
-//     scrollDirection: Axis.horizontal,
-//     itemCount: 6,
-//     separatorBuilder: (_, __) => const SizedBox(width: 20),
-//     itemBuilder: (_, index) {
-//       return SizedBox(
-//         width: itemWidth,
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//       Container(
-//   width: itemWidth,
-//   decoration: BoxDecoration(
-//     color: Colors.white,
-//     borderRadius: BorderRadius.circular(30),
-//   ),
-//   clipBehavior: Clip.antiAlias,
-//   child: Image.network(
-//     "https://merck-foundation.com/merckfoundation/public/uploads/gallery/1698904631_8be7e035d15fd6d4b188.jpeg",
-//     height: 200,
-//     width: double.infinity,
-//     fit: BoxFit.cover,
-//   ),
-// ),
-
-//             const SizedBox(height: 10),
-
-//              Padding(
-//               padding: EdgeInsets.symmetric(horizontal: 4),
-//               child: Text(
-//                 "Dr. Rasha Kelej at Inauguration of Merck Foundation First Ladies Initiative - MFFLI Summit 2025",
-//                 maxLines: 2,
-//                 overflow: TextOverflow.ellipsis,
-//                 style: TextStyle(color: Customcolor.colorblack,fontSize: 14,fontWeight: FontWeight.w600),
-//               ),
-//             ),
-//           ],
-//         ),
-//       );
-//     },
-//   ),
-// ),
-// SizedBox(height: 2,),
-//         Center(
-//           child: Container(
-//                     width: MediaQuery.of(context).size.width /4,
-//                     decoration: BoxDecoration(
-//                      border: BoxBorder.all(color: Colors.yellow.shade700,width: 3),
-//                       borderRadius: BorderRadius.circular(8),
-//                     ),
-//                     child: Center(
-//                       child: Padding(
-//                         padding: const EdgeInsets.symmetric(vertical: 12,horizontal: 8),
-//                         child: Text(
-//                           "View All",
-//                           style: TextStyle(
-//                             fontSize: 13,
-//                             fontWeight: FontWeight.bold,
-//                             color: Colors.black,
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//         )
-//       ],
-//     );
-//   }
-// }
 
 class OurStorySection extends StatelessWidget {
   const OurStorySection({super.key});

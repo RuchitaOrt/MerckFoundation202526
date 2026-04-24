@@ -26,7 +26,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
     /// run after first frame → safe for context
     SchedulerBinding.instance.addPostFrameCallback((_) {
+      
       context.read<SplashProvider>().init(context);
+
+      
     });
   }
 

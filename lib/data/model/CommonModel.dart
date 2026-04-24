@@ -127,6 +127,14 @@ class MediaCardData {
     this.onTap,
     this.showPlayIcon = true,
   });
+  factory MediaCardData.fromJson(Map<String, dynamic> json) {
+    return MediaCardData(
+      title: json['title'] ?? "",
+      image: json['image'] ?? "",
+      onTap: json['onTap'] ?? "",
+      showPlayIcon: json['showPlayIcon'] ?? "",
+    );
+  }
 }
 class ArticleModel {
   final String id;

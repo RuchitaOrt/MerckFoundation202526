@@ -5,10 +5,13 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:merckfoundation_252026/Provider/navbar_provider.dart';
 import 'package:merckfoundation_252026/Utility/firebase_options_manual.dart';
+import 'package:merckfoundation_252026/Utils/UtilityFile.dart';
 import 'package:merckfoundation_252026/data/Repository/splashRepository.dart';
 
 import 'package:merckfoundation_252026/providers/CovidProvider.dart';
+import 'package:merckfoundation_252026/providers/PageProvider.dart';
 import 'package:merckfoundation_252026/providers/callforapplication_provider.dart';
 import 'package:merckfoundation_252026/providers/digital_library_provider.dart';
 import 'package:merckfoundation_252026/providers/home_provider.dart';
@@ -41,6 +44,8 @@ Future main() async {
     FlutterError.presentError(details);
   };
 
+   await Utility().loadAPIConfig();
+
   runApp(MyApp());
 }
 
@@ -67,10 +72,21 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        // ChangeNotifierProvider(
+        //   create: (_) => SplashProvider(SplashRepository()),
+        // ),
+
+        /// ✅ ADD THIS
         ChangeNotifierProvider(
-          create: (_) => SplashProvider(SplashRepository()),
+          create: (_) => SplashProvider(),
+        ),
+
+        /// ✅ ALSO KEEP THIS
+        ChangeNotifierProvider(
+          create: (_) => NavbarProvider(),
         ),
         ChangeNotifierProvider(create: (_) => HomeSliderProvider()),
+         ChangeNotifierProvider(create: (_) => PageProvider()),
         ChangeNotifierProvider(create: (_) => StoriesProvider()),
         ChangeNotifierProvider(create: (_) => ProgramProvider()),
         ChangeNotifierProvider(create: (_) => CallApplicationProvider()),
@@ -79,6 +95,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ChangeNotifierProvider(create: (_) => NewsReleaseProvider()),
         ChangeNotifierProvider(create: (_) => OurActivityProvider()),
         ChangeNotifierProvider(create: (_) => OurAwardProvider()),
+        ChangeNotifierProvider(create: (_) => NavbarProvider()),
         ChangeNotifierProvider(
           create: (_) => CovidProvider()..loadInitialData(),
         ),
