@@ -59,7 +59,7 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
                 items: widget.items.map(_buildItem).toList(),
               ),
             
-              16.0.heightBox,
+              8.0.heightBox,
               CommonActionButton(
                 text: CommonStrings.viewAll,
                 onTap: widget.onViewAll,
@@ -78,9 +78,10 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
       onTap: item.onTap,
       child: Container(
         color: Colors.white,
-        child: ListView(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
+        child: Column(
+           mainAxisSize: MainAxisSize.min,
+          // shrinkWrap: true,
+          // physics: const NeverScrollableScrollPhysics(),
           children: [
             
             Padding(
@@ -141,7 +142,7 @@ Widget _arrowButton({
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.black.withOpacity(0.4),
         shape: BoxShape.circle,

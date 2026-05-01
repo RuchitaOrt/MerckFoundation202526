@@ -26,23 +26,17 @@ class SocialIconModel {
     required this.onTap,
   });
 }
-class Staticlistclass {
-  final String? imagename;
-
-  Staticlistclass({this.imagename});
-}
 class StaticListItem {
   final String image;
-  final String? title;
   final VoidCallback? onTap;
+  final bool isNetwork; // 👈 ADD THIS
 
-  const StaticListItem({
+  StaticListItem({
     required this.image,
-    this.title,
     this.onTap,
+    this.isNetwork = false,
   });
 }
-
 class HomeSectionModel {
   final HomeSectionType type;
   final Map<String, dynamic> payload; // API / static flexible data
@@ -136,17 +130,7 @@ class MediaCardData {
     );
   }
 }
-class ArticleModel {
-  final String id;
-  final String titleHtml;
-  final String imageUrl;
 
-  ArticleModel({
-    required this.id,
-    required this.titleHtml,
-    required this.imageUrl,
-  });
-}
 class CallApplicationModel {
   final String title;
   final String image;

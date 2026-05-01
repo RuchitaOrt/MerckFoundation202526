@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/widgets/CommonFunctions.dart';
+import 'package:merckfoundation_252026/widgets/CommonTitle.dart';
 
 class HorizontalMediaSection extends StatelessWidget {
   final List content;
   final String? title;
+  
   final bool showDescription;
 
   const HorizontalMediaSection({
@@ -28,6 +30,11 @@ class HorizontalMediaSection extends StatelessWidget {
         children: [
           /// 🔹 TITLE
           if ((title ?? "").isNotEmpty)
+  //        dynamicHighlightTitle(
+  //   text: title ?? "",
+  //   // normalWordCount: 2, // default
+  // ),
+          //  highlightWordsByIndex(title ?? "",3),
             Text(
               title!,
               style: TextStyle(
@@ -68,29 +75,45 @@ class HorizontalMediaSection extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min, // ✅ FIX
                     children: [
                       /// 🔹 IMAGE
-                      AspectRatio(
-                        aspectRatio: 16 / 9,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image.network(
-                            imageUrl,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            loadingBuilder:
-                                (context, child, progress) {
-                              if (progress == null) return child;
-                              return Container(
-                                color: Colors.grey.shade200,
-                              );
-                            },
-                            errorBuilder: (_, __, ___) =>
-                                Container(color: Colors.grey.shade200),
+                      Stack(
+                          alignment: Alignment.center,
+                        children: [
+                          AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Image.network(
+                                imageUrl,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                loadingBuilder:
+                                    (context, child, progress) {
+                                  if (progress == null) return child;
+                                  return Container(
+                                    color: Colors.grey.shade200,
+                                  );
+                                },
+                                errorBuilder: (_, __, ___) =>
+                                    Container(color: Colors.grey.shade200),
+                              ),
+                            ),
                           ),
-                        ),
+                            if (isYoutube)
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.black54,
+                                shape: BoxShape.circle,
+                              ),
+                              padding: EdgeInsets.all(10),
+                              child: Icon(Icons.play_arrow,
+                                  color: Colors.white),
+                            ),
+                        ],
                       ),
 
                       const SizedBox(height: 8),
-
+      /// ▶ Play icon for YouTube
+                        
                       /// 🔹 TITLE
                       Text(
                         stripHtml(item['title'] ?? ""),

@@ -30,7 +30,7 @@ class MFMoreThanMotherMovement extends StatelessWidget {
         return ListView(
           children: [
             8.0.heightBox,
-            const HomeSlider(),
+            const HomeSlider(content: [],),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: responsive.width(4)),
               child: DynamicSectionRenderer(

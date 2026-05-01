@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+String getYoutubeThumbnail(String url) {
+  final id = url.split('/').last;
+  return "https://img.youtube.com/vi/$id/0.jpg";
+}
 class YouTubePreview extends StatelessWidget {
   final String videoId;
 

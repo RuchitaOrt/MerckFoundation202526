@@ -13,7 +13,7 @@ class Routers {
         );
           case OurVision.route:
         return MaterialPageRoute(
-          builder: (_) => OurVision(),
+          builder: (_) => OurVision(menuID: settings.arguments as String?,),
         );
 
       default:

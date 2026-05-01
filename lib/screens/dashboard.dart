@@ -4,12 +4,14 @@ import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utils/common_images.dart';
 import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
-import 'package:merckfoundation_252026/screens/HomeNewScreen.dart';
+import 'package:merckfoundation_252026/enum/commonEnum.dart';
+import 'package:merckfoundation_252026/screens/MainScreens/HomeNewScreen.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/articles.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/callforApplication.dart';
-import 'package:merckfoundation_252026/screens/MainScreens/home.dart';
+
 import 'package:merckfoundation_252026/screens/MainScreens/ourPrograms.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/stories.dart';
+import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
 class Dashboard extends StatefulWidget {
@@ -48,7 +50,9 @@ class _DashboardState extends State<Dashboard> {
          //  Home(),
           MerckHomeScreen(),
           OurProgramScreen(),
-          Stories(),
+          MediaListingScreen(type: MediaType.stories),
+
+          // Stories(),
           ArticlesScreen(),
           CallforApplication(),
         ],
@@ -104,112 +108,7 @@ class _DashboardState extends State<Dashboard> {
     ),
   ),
 ),
-//       bottomNavigationBar: Padding(
-//   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16), // space from sides & bottom
-//   child: Container(
-//     decoration: BoxDecoration(
-//       color: Colors.white,
-//       borderRadius: BorderRadius.circular(20), // 🔥 rounded like screenshot
-//       boxShadow: [
-//         BoxShadow(
-//           color: Colors.black.withOpacity(0.15),
-//           blurRadius: 20,
-//           offset: const Offset(0, 8),
-//         ),
-//       ],
-//     ),
-//     child: ClipRRect(
-//       borderRadius: BorderRadius.circular(20),
-//       child: BottomNavyBar(
-//         selectedIndex: currentIndex,
-//         showElevation: false, // 🔥 remove internal shadow
-//         backgroundColor: Colors.white,
-//         itemCornerRadius: 12,
-//         curve: Curves.easeInOut,
-//         onItemSelected: (index) {
-//           setState(() => currentIndex = index);
-//           pageController.jumpToPage(index);
-//         },
-//         items: [
-//           _navItem(
-//             index: 0,
-//             title: CommonStrings.home,
-//             selected: CommonImagePath.homeSelected,
-//             unselected: CommonImagePath.homeUnselected,
-//           ),
-//           _navItem(
-//             index: 1,
-//             title: CommonStrings.ourPrograms,
-//             selected: CommonImagePath.programSelected,
-//             unselected: CommonImagePath.programUnselected,
-//           ),
-//           _navItem(
-//             index: 2,
-//             title: CommonStrings.stories,
-//             selected: CommonImagePath.storiesSelected,
-//             unselected: CommonImagePath.storiesUnselected,
-//           ),
-//           _navItem(
-//             index: 3,
-//             title: CommonStrings.articles,
-//             selected: CommonImagePath.articlesSelected,
-//             unselected: CommonImagePath.articlesUnselected,
-//           ),
-//           _navItem(
-//             index: 4,
-//             title: CommonStrings.upcomingPrograms,
-//             selected: CommonImagePath.callSelected,
-//             unselected: CommonImagePath.callUnselected,
-//             maxLines: 2,
-//           ),
-//         ],
-//       ),
-//     ),
-//   ),
-// ),
-      // bottomNavigationBar: BottomNavyBar(
-      //   selectedIndex: currentIndex,
-      //   showElevation: true,
-      //   itemCornerRadius: 8,
-      //   curve: Curves.easeInOut,
-      //   onItemSelected: (index) {
-      //     setState(() => currentIndex = index);
-      //     pageController.jumpToPage(index);
-      //   },
-      //   items: [
-      //     _navItem(
-      //       index: 0,
-      //       title: CommonStrings.home,
-      //       selected: CommonImagePath.homeSelected,
-      //       unselected: CommonImagePath.homeUnselected,
-      //     ),
-      //     _navItem(
-      //       index: 1,
-      //       title: CommonStrings.ourPrograms,
-      //       selected: CommonImagePath.programSelected,
-      //       unselected: CommonImagePath.programUnselected,
-      //     ),
-      //     _navItem(
-      //       index: 2,
-      //       title: CommonStrings.stories,
-      //       selected: CommonImagePath.storiesSelected,
-      //       unselected: CommonImagePath.storiesUnselected,
-      //     ),
-      //     _navItem(
-      //       index: 3,
-      //       title: CommonStrings.articles,
-      //       selected: CommonImagePath.articlesSelected,
-      //       unselected: CommonImagePath.articlesUnselected,
-      //     ),
-      //     _navItem(
-      //       index: 4,
-      //       title: CommonStrings.upcomingPrograms,
-      //       selected: CommonImagePath.callSelected,
-      //       unselected: CommonImagePath.callUnselected,
-      //       maxLines: 2,
-      //     ),
-      //   ],
-      // ),
+
     );
   }
 

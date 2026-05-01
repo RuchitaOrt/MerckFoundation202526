@@ -5,6 +5,10 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:merckfoundation_252026/Provider/FilterProvider.dart';
+import 'package:merckfoundation_252026/Provider/MediaProvider.dart';
+import 'package:merckfoundation_252026/Provider/MediaListingProvider.dart';
+import 'package:merckfoundation_252026/Provider/article_provider.dart';
 import 'package:merckfoundation_252026/Provider/navbar_provider.dart';
 import 'package:merckfoundation_252026/Utility/firebase_options_manual.dart';
 import 'package:merckfoundation_252026/Utils/UtilityFile.dart';
@@ -44,7 +48,7 @@ Future main() async {
     FlutterError.presentError(details);
   };
 
-   await Utility().loadAPIConfig();
+  await Utility().loadAPIConfig();
 
   runApp(MyApp());
 }
@@ -72,30 +76,32 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // ChangeNotifierProvider(
-        //   create: (_) => SplashProvider(SplashRepository()),
-        // ),
-
-        /// ✅ ADD THIS
-        ChangeNotifierProvider(
-          create: (_) => SplashProvider(),
-        ),
+        ChangeNotifierProvider(create: (_) => SplashProvider()),
 
         /// ✅ ALSO KEEP THIS
-        ChangeNotifierProvider(
-          create: (_) => NavbarProvider(),
-        ),
+        ChangeNotifierProvider(create: (_) => NavbarProvider()),
+
+        ChangeNotifierProvider(create: (_) => ArticleProvider()),
+        ChangeNotifierProvider(create: (_) => NavbarProvider()),
+        ChangeNotifierProvider(create: (_) => MediaProvider()),
+        ChangeNotifierProvider(create: (_) => MediaListingProvider()),
+        ChangeNotifierProvider(create: (_) => FilterProvider()),
+
+
+
+
+//---------------------------------------------------------------------
         ChangeNotifierProvider(create: (_) => HomeSliderProvider()),
-         ChangeNotifierProvider(create: (_) => PageProvider()),
-        ChangeNotifierProvider(create: (_) => StoriesProvider()),
+        ChangeNotifierProvider(create: (_) => PageProvider()),
+
         ChangeNotifierProvider(create: (_) => ProgramProvider()),
         ChangeNotifierProvider(create: (_) => CallApplicationProvider()),
         ChangeNotifierProvider(create: (_) => DigitalLibraryProvider()),
         ChangeNotifierProvider(create: (_) => PhotoGalleryProvider()),
-        ChangeNotifierProvider(create: (_) => NewsReleaseProvider()),
+
         ChangeNotifierProvider(create: (_) => OurActivityProvider()),
         ChangeNotifierProvider(create: (_) => OurAwardProvider()),
-        ChangeNotifierProvider(create: (_) => NavbarProvider()),
+
         ChangeNotifierProvider(
           create: (_) => CovidProvider()..loadInitialData(),
         ),
@@ -104,17 +110,19 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         title: 'Merck Foundation',
         debugShowCheckedModeBanner: false,
         builder: (context, child) {
-    final data = MediaQuery.of(context);
+          final data = MediaQuery.of(context);
 
-    return MediaQuery(
-      data: data.copyWith(
-        textScaler: const TextScaler.linear(1.0), // 🔥 fixes Android font issue
-      ),
-      child: child!,
-    );
-  },
+          return MediaQuery(
+            data: data.copyWith(
+              textScaler: const TextScaler.linear(
+                1.0,
+              ), // 🔥 fixes Android font issue
+            ),
+            child: child!,
+          );
+        },
         theme: ThemeData(
-            // textTheme: GoogleFonts.aBeeZeeTextTheme(),
+          // textTheme: GoogleFonts.aBeeZeeTextTheme(),
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),

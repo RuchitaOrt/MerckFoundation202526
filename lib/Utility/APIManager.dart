@@ -1,22 +1,23 @@
 import 'dart:convert';
 
-
 import 'package:dio/dio.dart';
-import 'package:merckfoundation_252026/Utility/AppEror.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
 import 'package:merckfoundation_252026/Utils/InternetConnection.dart';
 import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/model/NavBarResponse.dart';
 
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 
 enum API {
   navbarmenulist,
   pageStructure,
-  
+  mediaList,
+  getnewslettersarticles,
+  gettestimonials,
+  getstories,
+  getcountrylist,
+  getvideocategorylist,
+  getvideolibrary
 }
 
 enum HTTPMethod { GET, POST, PUT, DELETE }
@@ -27,7 +28,6 @@ class APIManager {
   static String? apiVersion;
 
   late Dio dio;
-  
 
   /// 🔒 Singleton
   static final APIManager _instance = APIManager._privateConstructor();
@@ -45,16 +45,13 @@ class APIManager {
       ),
     );
 
-   
     _addInterceptors();
   }
 
- 
   /// 🔍 LOGGING + ERROR INTERCEPTOR
   void _addInterceptors() {
     dio.interceptors.add(
       InterceptorsWrapper(
-       
         onRequest: (options, handler) async {
           final hasInternet = await hasInternetConnection();
 
@@ -86,14 +83,10 @@ class APIManager {
         onError: (DioException e, handler) async {
           if (e.response?.statusCode == 401) {
             print("🔒 401 detected");
-
- 
           }
 
           handler.next(e);
         },
-
-       
       ),
     );
   }
@@ -161,9 +154,11 @@ class APIManager {
     print('=' * 60);
     print('✅ Status Code: ${response.statusCode}');
     print(
-        '🔗 URL: ${response.requestOptions.baseUrl}${response.requestOptions.path}');
+      '🔗 URL: ${response.requestOptions.baseUrl}${response.requestOptions.path}',
+    );
     print(
-        '🆔 API Endpoint: ${_getApiNameFromUrl(response.requestOptions.path)}');
+      '🆔 API Endpoint: ${_getApiNameFromUrl(response.requestOptions.path)}',
+    );
 
     // Log response headers
     if (response.headers.map.isNotEmpty) {
@@ -178,8 +173,9 @@ class APIManager {
       print('📦 Response Body:');
       try {
         if (response.data is Map) {
-          final prettyJson =
-              JsonEncoder.withIndent('  ').convert(response.data);
+          final prettyJson = JsonEncoder.withIndent(
+            '  ',
+          ).convert(response.data);
           print(prettyJson);
         } else if (response.data is String) {
           final jsonData = jsonDecode(response.data as String);
@@ -202,7 +198,7 @@ class APIManager {
   }
 
   /// 📝 ERROR LOGGER
- 
+
   /// 🎭 MASK SENSITIVE DATA
   /// 🎭 MASK SENSITIVE DATA
   Map<String, dynamic> _maskSensitiveData(dynamic data) {
@@ -263,7 +259,7 @@ class APIManager {
       'social_security',
       'ssn',
       'bank_account',
-      'api_key'
+      'api_key',
     ];
 
     return sensitiveFields.contains(fieldName.toLowerCase());
@@ -299,24 +295,37 @@ class APIManager {
     switch (api) {
       case API.navbarmenulist:
         return "api/users/navbar-menu-list";
-     
-     case API.pageStructure:
-        return "api/page_structure/render-full-page";
 
+      case API.pageStructure:
+        return "api/page_structure/render-full-page";
+      case API.mediaList:
+        return "api/page_structure/merck-foundation-in-media";
+      case API.getnewslettersarticles:
+        return "api/page_structure/get-newsletters-articles";
+      case API.gettestimonials:
+        return "api/page_structure/get-testimonials";
+      case API.getstories:
+        return "api/page_structure/get-stories";
+      case API.getcountrylist:
+        return "api/masters/get-country-list";
+      case API.getvideocategorylist:
+        return "api/video_library/get-video-category-list";
+         case API.getvideolibrary:
+        return "api/page_structure/get-video-library";
+        
     }
   }
 
   /// 🔁 HTTP METHOD
   HTTPMethod apiHTTPMethod(API api) {
     switch (api) {
-      
       case API.navbarmenulist:
-        case API.pageStructure:
+      case API.pageStructure:
+      case API.mediaList:
+      case API.getcountrylist:
+      case API.getvideocategorylist:
         return HTTPMethod.GET;
-      
-        // return HTTPMethod.PUT;
-     
-        // return HTTPMethod.DELETE;
+
       default:
         return HTTPMethod.POST;
     }
@@ -327,7 +336,7 @@ class APIManager {
     switch (api) {
       case API.navbarmenulist:
         return NavBarResponse.fromJson(json);
-       case API.pageStructure:
+      case API.pageStructure:
         return json;
       default:
         return json;
@@ -339,48 +348,29 @@ class APIManager {
     BuildContext context,
     API api, {
     dynamic jsonval,
-    String? path,
+
     Map<String, dynamic>? queryParams,
   }) async {
     try {
+      final url = apiEndPoint(api);
+
       final response = await dio.request(
-        apiEndPoint(api) + (path ?? ""),
+        url,
         data: jsonval,
         queryParameters: queryParams,
-        options: Options(
-          method: apiHTTPMethod(api).name,
-          // validateStatus: (_) => true,
-        ),
+        options: Options(method: apiHTTPMethod(api).name),
       );
-      print('Response code: ${response.statusCode}');
-       print('Response code: ${response}');
+
       if (response.statusCode == 200) {
+        /// 🔥 IMPORTANT FIX
+
+        /// 👉 normal API → parse model
         return parseResponse(api, response.data);
       }
 
-      if (response.statusCode == 400) {
-        throw BadRequestError(_serverMessage(response.data));
-      }
-
-      throw FetchDataError(_serverMessage(response.data));
-    } on DioException catch (e) {
-      print(e.error.toString());
-      throw FetchDataError(
-        e.response != null
-            ? _serverMessage(e.response?.data)
-            : e.message ?? "Network error",
-      );
+      throw Exception("API Error");
+    } catch (e) {
+      rethrow;
     }
   }
-
-  String _serverMessage(dynamic data) {
-    if (data is Map) {
-      return data['message'] ??
-          data['desc'] ??
-          data['status_Message'] ??
-          "Something went wrong";
-    }
-    return data?.toString() ?? "Something went wrong";
-  }
-
 }

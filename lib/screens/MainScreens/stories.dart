@@ -1,75 +1,142 @@
-import 'package:flutter/material.dart';
-import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
-import 'package:merckfoundation_252026/Utility/customappbar.dart';
-import 'package:merckfoundation_252026/Utils/common_strings.dart';
-import 'package:merckfoundation_252026/Utils/customcolor.dart';
-import 'package:merckfoundation_252026/enum/commonEnum.dart';
-import 'package:merckfoundation_252026/providers/stories_provider.dart';
-import 'package:merckfoundation_252026/widgets/CommonSliverGrid.dart';
-import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
-import 'package:merckfoundation_252026/widgets/botttomlink.dart';
-import 'package:merckfoundation_252026/widgets/mediaCard.dart';
-import 'package:provider/provider.dart';
-class Stories extends StatefulWidget {
-  const Stories({super.key});
+// import 'package:flutter/material.dart';
+// import 'package:merckfoundation_252026/Provider/FilterProvider.dart';
+// import 'package:merckfoundation_252026/Provider/StoryProvider.dart';
+// import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
+// import 'package:merckfoundation_252026/Utility/customappbar.dart';
+// import 'package:merckfoundation_252026/Utility/showdailog.dart';
+// import 'package:merckfoundation_252026/Utils/common_strings.dart';
+// import 'package:merckfoundation_252026/Utils/customcolor.dart';
+// import 'package:merckfoundation_252026/enum/commonEnum.dart';
+// import 'package:merckfoundation_252026/widgets/CommonSliverGrid.dart';
+// import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
+// import 'package:merckfoundation_252026/widgets/YouTubePreview.dart';
+// import 'package:merckfoundation_252026/widgets/botttomlink.dart';
+// import 'package:merckfoundation_252026/widgets/filterdrawer.dart';
+// import 'package:merckfoundation_252026/widgets/mediaCard.dart';
+// import 'package:provider/provider.dart';
 
-  @override
-  State<Stories> createState() => _StoriesState();
-}
+// class Stories extends StatefulWidget {
+//   const Stories({super.key});
 
-class _StoriesState extends State<Stories> {
-  @override
-void initState() {
-  super.initState();
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    context.read<StoriesProvider>().loadStaticStories();
-  });
-}
+//   @override
+//   State<Stories> createState() => _StoriesState();
+// }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CommonAppBar(
-        type: AppBarType.inner,
-        title: CommonStrings.stories,
-       
-        onSearch: () {},
-        onShare: () {},
-        onFilter: () {},
-        shareLink: "",
-      ),
-      backgroundColor: Customcolor.background,
-      body: Consumer<StoriesProvider>(
-        builder: (context, provider, _) {
-          return CustomScrollView(
-            slivers: [
-              /// 🔹 STORIES GRID
-              CommonSliverGrid(
-                    items: provider.cards,
-                    itemBuilder: (context, item, index) {
-                      return MediaCard(data: item);
-                    },
-                  ),
+// class _StoriesState extends State<Stories> {
+//   final ScrollController _controller = ScrollController();
+//   final GlobalKey<ScaffoldState> _scaffoldKey1 = new GlobalKey<ScaffoldState>();
+//   @override
+//   void initState() {
+//     super.initState();
 
-              /// 🔹 FOOTER IMAGE
-              const SliverToBoxAdapter(
-                child: FooterFlowerImage(),
-              ),
+//     final filter = context.read<FilterProvider>();
 
-               SliverToBoxAdapter(
-                child: 8.0.heightBox,
-              ),
+//     WidgetsBinding.instance.addPostFrameCallback((_) {
+//       if (!mounted) return;
+//       context.read<StoryProvider>().loadInitial(context, "");
+//     });
+//     if (filter.countries.isEmpty) {
+//       filter.loadFilters(context);
+//     }
+//     _controller.addListener(() {
+//       final provider = context.read<StoryProvider>();
 
-              /// 🔹 BOTTOM LINKS
-              const SliverToBoxAdapter(
-                child: Bottomcardlink(),
-              ),
+//       if (_controller.position.pixels >=
+//           _controller.position.maxScrollExtent - 200) {
+//         /// ✅ Only load if empty (important)
+//         final countryId = filter.selectedCountry?.id.toString() ?? "";
 
-            
-            ],
-          );
-        },
-      ),
-    );
-  }
-}
+//         provider.loadMore(context, countryId);
+//       }
+//     });
+//   }
+
+//   @override
+//   void dispose() {
+//     _controller.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       key: _scaffoldKey1,
+//       endDrawer: AppDrawerfilter(index: 2),
+//       appBar: CommonAppBar(
+//         type: AppBarType.inner,
+//         title: CommonStrings.stories,
+//         onSearch: () {},
+//         onShare: () {},
+//         onFilter: () {
+//           _scaffoldKey1.currentState!.openEndDrawer();
+//         },
+
+//         shareLink: "",
+//       ),
+//       backgroundColor: Customcolor.background,
+//       body: Consumer<StoryProvider>(
+//         builder: (context, provider, _) {
+//           /// 🔴 FIRST LOADER (same as MediaScreen)
+//           if (provider.isLoading && provider.storyList.isEmpty) {
+//             return const Center(child: CircularProgressIndicator());
+//           }
+
+//           return CustomScrollView(
+//             controller: _controller,
+//             slivers: [
+//               /// 🔹 GRID WITH PAGINATION
+//               SliverGrid(
+//                 delegate: SliverChildBuilderDelegate(
+//                   (context, index) {
+//                     /// ✅ NORMAL ITEMS
+//                     if (index < provider.storyList.length) {
+//                       final item = provider.storyList[index];
+
+//                       return MediaCard(
+//                         image: getYoutubeThumbnail(item.videoLink),
+//                         title: item.title,
+//                         showPlayIcon: true,
+//                         onTap: () {
+//                                 var storykey = provider.storyList[index].videoLink
+//                                                 .substring(provider.storyList[index].videoLink
+//                                                         .length -
+//                                                     11);
+//                                             ShowDialogs.youtubevideolink(
+//                                                 "https://www.youtube.com/watch?v=${storykey}?rel=0&autoplay=1");
+//                         },
+//                       );
+//                     }
+
+//                     /// 🔽 PAGINATION LOADER (same logic)
+//                     return provider.hasMore
+//                         ? const Center(
+//                             child: Padding(
+//                               padding: EdgeInsets.all(16),
+//                               child: CircularProgressIndicator(),
+//                             ),
+//                           )
+//                         : const SizedBox();
+//                   },
+
+//                   /// 🔥 IMPORTANT (same trick as MediaScreen)
+//                   childCount: provider.storyList.length + 1,
+//                 ),
+
+//                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+//                   crossAxisCount: 2,
+//                   childAspectRatio: 0.75,
+//                 ),
+//               ),
+
+//               /// FOOTER
+//               const SliverToBoxAdapter(child: FooterFlowerImage()),
+//               const SliverToBoxAdapter(child: SizedBox(height: 8)),
+//               const SliverToBoxAdapter(child: Bottomcardlink()),
+//             ],
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
+

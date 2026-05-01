@@ -10,7 +10,7 @@ class PageService {
       API.pageStructure,
       queryParams: {
         "menu_id": menuId,
-        "channel": "web",
+        "channel": "android",
         "json_type": "preview_json",
       },
     );

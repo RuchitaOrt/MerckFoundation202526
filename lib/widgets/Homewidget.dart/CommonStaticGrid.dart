@@ -48,12 +48,17 @@ class _GridItem extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Expanded(
-              child: Image.asset(
-                item.image,
-                fit: BoxFit.contain,
-              ),
-            ),
+          Expanded(
+  child: item.isNetwork
+      ? Image.network(
+          item.image,
+          fit: BoxFit.contain,
+        )
+      : Image.asset(
+          item.image,
+          fit: BoxFit.contain,
+        ),
+),
           ],
         ),
       ),

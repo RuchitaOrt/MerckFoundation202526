@@ -15,7 +15,8 @@ class DynamicTabBuilder {
         .map(
           (tab) => DynamicTabItem(
             key: tab.key,
-            title: tab.key =="callForApp"?Callforapptext(): tab.key =="mmtm"?Merckmtmtext():Digitaltext(),
+            // title: Container(),
+          title: tab.key=="callForApp"?Callforapptext(): tab.key =="mmtm"?Merckmtmtext():Digitaltext(),
             content: CommonCarouselSection(
               controller: CarouselSliderController(),
               carouselHeight: CommonStrings.callcoursaheight,

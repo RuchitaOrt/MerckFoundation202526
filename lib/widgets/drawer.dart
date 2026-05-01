@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/Provider/MediaProvider.dart';
 import 'package:merckfoundation_252026/Provider/navbar_provider.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utils/common_images.dart';
 import 'package:merckfoundation_252026/Utils/common_strings.dart';
+import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/providers/follow_us_provider.dart';
 import 'package:merckfoundation_252026/screens/ContactUs/ContactUs.dart';
+import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
+import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaScreen.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/videoLibrary.dart';
 import 'package:merckfoundation_252026/screens/OurPartnersScreen/ourPartners.dart';
 import 'package:merckfoundation_252026/screens/WhoWeAreScreen.dart/Leadership.dart';
@@ -76,7 +80,7 @@ class _AppDrawerState extends State<AppDrawer> {
                             widget = DrawerWidget(
                               value: item.menuName,
                               onTapfun: () {
-                                handleNavigation(context, item.menuUrl);
+                                handleNavigation(context, item.menuUrl,item.submenu[0].id.toString(),item.menuName);
                               },
                             );
                           } else {
@@ -94,7 +98,7 @@ class _AppDrawerState extends State<AppDrawer> {
                                 return DrawerWidget(
                                   value: sub.menuName,
                                   onTapfun: () {
-                                    handleNavigation(context, sub.menuUrl);
+                                    handleNavigation(context, sub.menuUrl,sub.id.toString(),sub.menuName);
                                   },
                                 );
                               }).toList(),
@@ -176,7 +180,7 @@ class _AppDrawerState extends State<AppDrawer> {
     );
   }
 
-  void handleNavigation(BuildContext context, String url) {
+  void handleNavigation(BuildContext context, String url,String menuId,String title) {
     switch (url) {
       case '/home':
         Navigator.pushReplacement(
@@ -184,9 +188,18 @@ class _AppDrawerState extends State<AppDrawer> {
           MaterialPageRoute(builder: (_) => Dashboard(index: 0)),
         );
         break;
+          case '/media':
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => ChangeNotifierProvider(
+  create: (_) => MediaProvider(),
+  child: MediaScreen(),
+)),
+        );
+        break;
 
-      case '/vision':
-        Navigator.push(context, MaterialPageRoute(builder: (_) => OurVision()));
+      case '/who-we-are/Vision':
+        Navigator.push(context, MaterialPageRoute(builder: (_) => OurVision(menuID: menuId,title: title,)));
         break;
 
       case '/leadership':
@@ -203,21 +216,26 @@ class _AppDrawerState extends State<AppDrawer> {
         );
         break;
 
-      case '/our-partners':
-        Navigator.push(context, MaterialPageRoute(builder: (_) => Ourpatner()));
-        break;
+      // case '/our-partners':
+      //   Navigator.push(context, MaterialPageRoute(builder: (_) => Ourpatner()));
+      //   break;
 
       case '/contact-us':
         Navigator.push(context, MaterialPageRoute(builder: (_) => ContactUs()));
         break;
 
-      case '/video-library':
+      case '/videos':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => VideoLibrary()),
+          MaterialPageRoute(builder: (_) => MediaListingScreen(type: MediaType.videoLibrary)),
         );
         break;
-
+  case '/Merck-Foundation-Alumni-Testimonials':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => MediaListingScreen(type: MediaType.testimonial)),
+        );
+        break;
       default:
         print("⚠️ Unknown route: $url");
     }

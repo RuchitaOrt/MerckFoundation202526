@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:merckfoundation_252026/widgets/YouTubePreview.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 class SmartHtmlWidget extends StatelessWidget {
   final String html;
   final Color? textColor;
@@ -19,41 +18,48 @@ class SmartHtmlWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HtmlWidget(
-      html,
-      textStyle: TextStyle(
-        color: textColor ?? Colors.black87,
-        fontSize: fontSize ?? 14,
-        fontWeight: fontWeight ?? FontWeight.normal,
-        height: 1.5,
-      ),
+    return
+HtmlWidget(
+  html,
 
-      /// 👇 THIS IS THE KEY PART
-      customWidgetBuilder: (element) {
-        /// Handle YouTube iframe ONLY
-        if (element.localName == 'iframe') {
-          final src = element.attributes['src'] ?? '';
+  /// 🔥 THIS IS IMPORTANT
+  renderMode: RenderMode.column,
 
-          if (src.contains('youtube.com') || src.contains('youtu.be')) {
-            final videoId = _extractYoutubeId(src);
-            if (videoId != null) {
-              return YouTubePreview(videoId: videoId);
-            }
-          }
+  /// ❌ Remove color from here
+  textStyle: TextStyle(
+    fontSize: fontSize ?? 14,
+    fontWeight: fontWeight ?? FontWeight.normal,
+    height: 1.5,
+  ),
+
+  /// ✅ Default fallback color ONLY if no HTML style
+  // defaultTextStyle: TextStyle(
+  //   color: textColor ?? Colors.black87,
+  // ),
+
+  customWidgetBuilder: (element) {
+    if (element.localName == 'iframe') {
+      final src = element.attributes['src'] ?? '';
+
+      if (src.contains('youtube.com') || src.contains('youtu.be')) {
+        final videoId = _extractYoutubeId(src);
+        if (videoId != null) {
+          return YouTubePreview(videoId: videoId);
         }
+      }
+    }
+    return null;
+  },
 
-        return null; // let normal HTML render
-      },
+  onTapUrl: (url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+    return true;
+  },
+);
 
-      /// Open all links externally
-      onTapUrl: (url) async {
-        final uri = Uri.parse(url);
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
-        }
-        return true;
-      },
-    );
   }
 
   String? _extractYoutubeId(String url) {
