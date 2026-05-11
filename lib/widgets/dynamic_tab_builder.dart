@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_controller.dart';
-import 'package:merckfoundation_252026/data/model/CommonModel.dart';
+import 'package:merckfoundation_252026/model/CommonModel.dart';
 import '../widgets/CommonCarouselSection.dart';
 import '../widgets/DynamicTabView.dart';
 import '../Utils/common_strings.dart';

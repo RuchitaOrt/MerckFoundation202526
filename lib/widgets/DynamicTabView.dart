@@ -1,7 +1,7 @@
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
-import 'package:merckfoundation_252026/data/model/CommonModel.dart';
+import 'package:merckfoundation_252026/model/CommonModel.dart';
 
 class Callforapptext extends StatelessWidget {
   @override

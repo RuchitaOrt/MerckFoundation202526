@@ -1,4 +1,4 @@
-import 'dart:io';
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,6 +8,7 @@ import 'package:merckfoundation_252026/Utils/common_images.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/screens/MainUIBody.dart/CommonBody.dart';
+import 'package:merckfoundation_252026/screens/SubScreens/OurAwardScreen.dart';
 import 'package:merckfoundation_252026/widgets/drawer.dart';
 
 class MerckHomeScreen extends StatelessWidget {
@@ -24,9 +25,7 @@ class MerckHomeScreen extends StatelessWidget {
         type: AppBarType.home,
         onDrawer: () => _scaffoldKey.currentState?.openDrawer(),
         onSearch: () {},
-        height: Platform.isAndroid
-            ? responsive.height(9)
-            : responsive.height(8),
+        height:responsive.height(9),
       ),
 
       drawer: Theme(
@@ -78,25 +77,48 @@ class CategoryChip extends StatelessWidget {
   final String title;
   final Color color;
 
-  const CategoryChip({super.key, required this.title, required this.color});
+  const CategoryChip({
+    super.key,
+    required this.title,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color, width: 2),
-      ),
-      child: Text(
-        title,
-        textAlign: TextAlign.center,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(fontSize: width * 0.035, fontWeight: FontWeight.w600),
+    return GestureDetector(
+      onTap: () {
+        /// ✅ OPEN OUR AWARD SCREEN
+        if (title == "Our Awards") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const OurAwardScreen(),
+            ),
+          );
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 12,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color, width: 2),
+        ),
+        child: Text(
+          title,
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: width * 0.035,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }
@@ -108,6 +130,7 @@ class FollowSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+     final screenWidth = MediaQuery.of(context).size.width;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -118,8 +141,10 @@ class FollowSection extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
               child: Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 22,
+                style:  TextStyle(
+                  fontSize:screenWidth * 0.055,
+                  
+                  // Platform.isAndroid? 22:20,
                   fontWeight: FontWeight.w800,
 
                   color: Customcolor.text_blue,

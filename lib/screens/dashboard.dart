@@ -6,11 +6,11 @@ import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/HomeNewScreen.dart';
-import 'package:merckfoundation_252026/screens/MainScreens/articles.dart';
-import 'package:merckfoundation_252026/screens/MainScreens/callforApplication.dart';
+import 'package:merckfoundation_252026/screens/MainScreens/Articles.dart';
+import 'package:merckfoundation_252026/screens/MainScreens/CallforApplication.dart';
 
 import 'package:merckfoundation_252026/screens/MainScreens/ourPrograms.dart';
-import 'package:merckfoundation_252026/screens/MainScreens/stories.dart';
+
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
@@ -50,7 +50,7 @@ class _DashboardState extends State<Dashboard> {
          //  Home(),
           MerckHomeScreen(),
           OurProgramScreen(),
-          MediaListingScreen(type: MediaType.stories),
+          MediaListingScreen(type: MediaType.stories,categoryID: "",albumID: "",albumName: "",),
 
           // Stories(),
           ArticlesScreen(),

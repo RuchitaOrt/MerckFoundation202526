@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:merckfoundation_252026/screens/WhoWeAreScreen.dart/vision.dart';
+import 'package:merckfoundation_252026/screens/WhoWeAreScreen.dart/CommonContentPage.dart';
 import 'package:merckfoundation_252026/screens/splashScreen.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
@@ -11,9 +11,9 @@ class Routers {
         return MaterialPageRoute(
           builder: (_) => SplashScreen(),
         );
-          case OurVision.route:
+          case CommonContentPage.route:
         return MaterialPageRoute(
-          builder: (_) => OurVision(menuID: settings.arguments as String?,),
+          builder: (_) => CommonContentPage(menuID: settings.arguments as String?,),
         );
 
       default:

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/MediaProvider.dart';
+import 'package:merckfoundation_252026/Provider/NewsReleaseProvider.dart';
 import 'package:merckfoundation_252026/Provider/navbar_provider.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utils/common_images.dart';
@@ -9,11 +10,11 @@ import 'package:merckfoundation_252026/providers/follow_us_provider.dart';
 import 'package:merckfoundation_252026/screens/ContactUs/ContactUs.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaScreen.dart';
-import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/videoLibrary.dart';
-import 'package:merckfoundation_252026/screens/OurPartnersScreen/ourPartners.dart';
-import 'package:merckfoundation_252026/screens/WhoWeAreScreen.dart/Leadership.dart';
-import 'package:merckfoundation_252026/screens/WhoWeAreScreen.dart/messageFromLeadership.dart';
-import 'package:merckfoundation_252026/screens/WhoWeAreScreen.dart/vision.dart';
+import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/NewsRelease.dart';
+import 'package:merckfoundation_252026/screens/OurPartnersScreen/OurPartnersScreen.dart';
+
+import 'package:merckfoundation_252026/screens/WhoWeAreScreen.dart/ContentCarouselWidget.dart';
+import 'package:merckfoundation_252026/screens/WhoWeAreScreen.dart/CommonContentPage.dart';
 import 'package:merckfoundation_252026/screens/dashboard.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/widgets/Homewidget.dart/homefollow_us.dart';
@@ -80,7 +81,13 @@ class _AppDrawerState extends State<AppDrawer> {
                             widget = DrawerWidget(
                               value: item.menuName,
                               onTapfun: () {
-                                handleNavigation(context, item.menuUrl,item.submenu[0].id.toString(),item.menuName);
+                                print("Main MENU");
+                                handleNavigation(
+                                  context,
+                                  item.menuUrl,
+                                  item.id.toString(),
+                                  item.menuName,
+                                );
                               },
                             );
                           } else {
@@ -98,7 +105,12 @@ class _AppDrawerState extends State<AppDrawer> {
                                 return DrawerWidget(
                                   value: sub.menuName,
                                   onTapfun: () {
-                                    handleNavigation(context, sub.menuUrl,sub.id.toString(),sub.menuName);
+                                    handleNavigation(
+                                      context,
+                                      sub.menuUrl,
+                                      sub.id.toString(),
+                                      sub.menuName,
+                                    );
                                   },
                                 );
                               }).toList(),
@@ -180,45 +192,72 @@ class _AppDrawerState extends State<AppDrawer> {
     );
   }
 
-  void handleNavigation(BuildContext context, String url,String menuId,String title) {
+  void handleNavigation(
+    BuildContext context,
+    String url,
+    String menuId,
+    String title,
+  ) {
     switch (url) {
-      case '/home':
+      case '/Home':
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => Dashboard(index: 0)),
         );
         break;
-          case '/media':
+
+      case '/media':
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => ChangeNotifierProvider(
-  create: (_) => MediaProvider(),
-  child: MediaScreen(),
-)),
+          MaterialPageRoute(
+            builder: (_) => ChangeNotifierProvider(
+              create: (_) => MediaProvider(),
+              child: MediaScreen(),
+            ),
+          ),
+        );
+        break;
+      case '/News-Releases':
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ChangeNotifierProvider(
+              create: (_) => NewsReleaseProvider(),
+              child: NewsRelease(),
+            ),
+          ),
         );
         break;
 
       case '/who-we-are/Vision':
-        Navigator.push(context, MaterialPageRoute(builder: (_) => OurVision(menuID: menuId,title: title,)));
-        break;
-
-      case '/leadership':
+      case '/what-we-do/Privacy-Statement':
+      case '/what-we-do/Legal-Disclaimer':
+      case '/what-we-do/Our-Policies':
+      case '/what-we-do/Mission':
+      case '/what-we-do/political-neutrality-declaration':
+      case '/who-we-are/Leadership-Team':
+      case '/merck-foundation-overview':
+      case '/who-we-are/Leadership-Team-Message':
+        case '/message-from-leadership-team':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => Leadership()),
+          MaterialPageRoute(
+            builder: (_) => CommonContentPage(menuID: menuId, title: title),
+          ),
         );
         break;
 
-      case '/message-from-leadership-team':
+    
+     
+
+      case '/our-partners':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => MessageFromLeadership()),
+          MaterialPageRoute(
+            builder: (_) => OurPartnersScreen(menuID: menuId, title: title),
+          ),
         );
         break;
-
-      // case '/our-partners':
-      //   Navigator.push(context, MaterialPageRoute(builder: (_) => Ourpatner()));
-      //   break;
 
       case '/contact-us':
         Navigator.push(context, MaterialPageRoute(builder: (_) => ContactUs()));
@@ -227,15 +266,44 @@ class _AppDrawerState extends State<AppDrawer> {
       case '/videos':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => MediaListingScreen(type: MediaType.videoLibrary)),
+          MaterialPageRoute(
+            builder: (_) => MediaListingScreen(type: MediaType.videoLibrary,categoryID: "",albumID: "",albumName: "",),
+          ),
         );
         break;
-  case '/Merck-Foundation-Alumni-Testimonials':
+      case '/Merck-Foundation-Alumni-Testimonials':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => MediaListingScreen(type: MediaType.testimonial)),
+          MaterialPageRoute(
+            builder: (_) => MediaListingScreen(type: MediaType.testimonial,categoryID: "",albumID: "",albumName: ""),
+          ),
         );
         break;
+      case '/Photo-Gallery':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MediaListingScreen(type: MediaType.photoGallery,categoryID: "",albumID: "",albumName: ""),
+          ),
+        );
+        break;
+      case '/what-we-do/Our-Activities':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MediaListingScreen(type: MediaType.activity,categoryID: "",albumID: "",albumName: ""),
+          ),
+        );
+        break;
+      case '/Digital-Library':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MediaListingScreen(type: MediaType.digitalLibrary,categoryID: "",albumID: "",albumName: ""),
+          ),
+        );
+        break;
+
       default:
         print("⚠️ Unknown route: $url");
     }

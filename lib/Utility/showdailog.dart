@@ -286,22 +286,21 @@ class ShowDialogs {
     }
   }
 
-  static Future<void> launchURL(String urlIs) async {
-    final Uri uri = Uri.parse(urlIs);
+ 
 
-    try {
-      final bool launched = await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      );
+ static  Future<void> launchURL(String url) async {
+  try {
+     print("CLICKED: $url");
+    final uri = Uri.parse(
+      url.startsWith('http') ? url : 'https://$url',
+    );
 
-      if (!launched) {
-        print("Fallback launch failed: $uri");
-        throw "Could not launch $uri";
-      }
-    } catch (e) {
-      print("Error launching URL: $e");
-      throw "Could not launch $uri";
-    }
+    await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    );
+  } catch (e) {
+    debugPrint("Launch error: $e");
   }
+}
 }

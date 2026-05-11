@@ -1,200 +1,11 @@
-// // ignore_for_file: unused_field
 
-// import 'package:flutter/material.dart';
-// import 'package:merckfoundation_252026/Provider/FilterProvider.dart';
-// import 'package:merckfoundation_252026/Provider/StoryProvider.dart';
-// import 'package:merckfoundation_252026/Utility/sizeConfig.dart';
-// import 'package:merckfoundation_252026/Utils/customcolor.dart';
-
-// import 'package:provider/provider.dart';
-
-// class AppDrawerfilter extends StatefulWidget {
-//   final int? index;
-
-//   const AppDrawerfilter({Key? key, this.index}) : super(key: key);
-//   @override
-//   _AppDrawerfilterState createState() => _AppDrawerfilterState();
-// }
-
-// class _AppDrawerfilterState extends State<AppDrawerfilter> {
-//   bool iscountryexpanded = false;
-//   List option = ["option1", "option2", "option3"];
-//   var countryController = TextEditingController();
-//   bool isvideocategoryexpanded = false;
-//   var videocategoryController = TextEditingController();
-//   bool isyearexpanded = false;
-//   var yearController = TextEditingController();
-//   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
-//   String countryid = "";
-//   String catid = "";
-//   String title = "";
-//   String langid = "";
-//   bool isfilterLoaded = true;
-
-//   bool isdigitalcategoryexpanded = false;
-//   var digitalcategoryController = TextEditingController();
-
-//   bool islanexpanded = false;
-//   var languageController = TextEditingController();
-//   @override
-//   void initState() {
-//     super.initState();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     SizeConfig().init(context);
-//     return Drawer(
-//       //  ScaffoldState().openDrawer() ,
-//       child: Container(
-//         color: Colors.white,
-//         child: Stack(
-//           children: [
-//             Padding(
-//               padding: const EdgeInsets.only(bottom: 0),
-//               child: widget.index == 2
-//                   ? ListView(
-//                       padding: const EdgeInsets.fromLTRB(20, 60, 20, 0),
-//                       shrinkWrap: true,
-//                       children: [
-//                         Text("Country"),
-//                         SizedBox(height: 10),
-//                         Container(
-//                           height: 80,
-//                           child: GestureDetector(
-//                             onTap: () {
-//                               setState(() {
-//                                 print("in state");
-//                                 iscountryexpanded = !iscountryexpanded;
-//                               });
-//                             },
-//                             child: TextField(
-//                               enabled: false,
-//                               controller: countryController,
-//                               decoration: InputDecoration(
-//                                 // contentPadding:
-//                                 //     EdgeInsets.fromLTRB(20.0, 5, 20.0, 5),
-//                                 hintText: "Select Country",
-//                                 border: OutlineInputBorder(
-//                                   borderRadius: BorderRadius.circular(5.0),
-//                                 ),
-//                                 suffixIcon: Icon(Icons.arrow_drop_down),
-//                               ),
-//                             ),
-//                           ),
-//                         ),
-//                         iscountryexpanded == true
-//                             ? coutryDropdown()
-//                             : Container(),
-//                         SizedBox(height: 15),
-//                       ],
-//                     )
-//                   : Container(),
-//             ),
-//             Visibility(
-//               visible: isfilterLoaded,
-//               replacement: Center(child: CircularProgressIndicator()),
-//               child: Container(),
-//             ),
-//             Align(
-//               alignment: Alignment.bottomCenter,
-//               child: Container(
-//                 padding: EdgeInsets.only(bottom: 10, left: 15),
-//                 height: 60,
-//                 child: GestureDetector(
-//                   onTap: () {
-//                     final filter = context.read<FilterProvider>();
-//                     final storyProvider = context.read<StoryProvider>();
-
-//                     Navigator.pop(context);
-
-//                     /// ✅ RESET DATA
-//                     storyProvider.currentPage = 1;
-//                     storyProvider.storyList.clear();
-
-//                     /// ✅ LOAD NEW FILTER DATA
-//                     storyProvider.loadInitial(
-//                       context,
-//                       filter.selectedCountry?.id.toString() ?? "",
-//                     );
-
-//                     Scrollable.ensureVisible(
-//                       context,
-//                       duration: Duration(milliseconds: 300),
-//                     );
-//                   },
-//                   child: Container(
-//                     width: 110,
-//                     height: 40,
-//                     decoration: BoxDecoration(
-//                       color: Customcolor.text_darkblue,
-//                       borderRadius: BorderRadius.circular(5),
-//                     ),
-//                     child: Center(
-//                       child: Text(
-//                         "Apply",
-//                         style: TextStyle(
-//                           color: Colors.white,
-//                           fontWeight: FontWeight.w500,
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//       // ),
-//     );
-//   }
-
-//   Widget coutryDropdown() {
-//     return Consumer<FilterProvider>(
-//       builder: (context, provider, _) {
-//         if (provider.isLoading) {
-//           return const SizedBox(
-//             height: 200,
-//             child: Center(child: CircularProgressIndicator()),
-//           );
-//         }
-
-//         return Container(
-//           height: 200,
-//           child: ListView.builder(
-//             itemCount: provider.countries.length,
-//             itemBuilder: (context, index) {
-//               final item = provider.countries[index];
-
-//               return GestureDetector(
-//                 onTap: () {
-//                   provider.selectCountry(item);
-//                   provider.selectedCountryID = item.id.toString();
-//                   countryController.text = item.name;
-//                   countryid = item.id.toString();
-
-//                   setState(() => iscountryexpanded = false);
-//                 },
-//                 child: Padding(
-//                   padding: const EdgeInsets.symmetric(vertical: 8),
-//                   child: Text(item.name),
-//                 ),
-//               );
-//             },
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/Provider/TestimonialProvider.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:provider/provider.dart';
 import '../Provider/FilterProvider.dart';
 import '../Provider/MediaListingProvider.dart';
 import '../Utils/customcolor.dart';
-
 
 class AppDrawerfilter extends StatefulWidget {
   final MediaType type;
@@ -208,164 +19,296 @@ class AppDrawerfilter extends StatefulWidget {
 class _AppDrawerfilterState extends State<AppDrawerfilter> {
   bool isCountryExpanded = false;
   bool isCategoryExpanded = false;
-
-  TextEditingController countryController = TextEditingController();
-  TextEditingController categoryController = TextEditingController();
-
-  bool showCountry() {
-    return widget.type == MediaType.stories ||
-        widget.type == MediaType.videoLibrary;
-  }
-
-  bool showCategory() {
-    return widget.type == MediaType.videoLibrary ||
-        widget.type == MediaType.testimonial;
-  }
+  bool isLanguageExpanded = false; // ✅ NEW
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(20, 60, 20, 0),
-        child: Column(
-          children: [
-            if (showCountry()) ...[
-              const Text("Country"),
-              const SizedBox(height: 10),
-              GestureDetector(
-                onTap: () {
-                  setState(() => isCountryExpanded = !isCountryExpanded);
-                },
-                child: TextField(
-                  controller: countryController,
-                  enabled: false,
-                  decoration: const InputDecoration(
-                    hintText: "Select Country",
-                    suffixIcon: Icon(Icons.arrow_drop_down),
+      child: SafeArea(
+        child: Consumer<FilterProvider>(
+          builder: (context, provider, _) {
+            return Column(
+              children: [
+
+                /// 🔹 HEADER
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  width: double.infinity,
+                  color: Customcolor.text_darkblue,
+                  child: const Text(
+                    "Filters",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-              if (isCountryExpanded) countryDropdown(),
-              const SizedBox(height: 20),
-            ],
 
-            if (showCategory()) ...[
-              const Text("Category"),
-              const SizedBox(height: 10),
-              GestureDetector(
-                onTap: () {
-                  setState(() => isCategoryExpanded = !isCategoryExpanded);
-                },
-                child: TextField(
-                  controller: categoryController,
-                  enabled: false,
-                  decoration: const InputDecoration(
-                    hintText: "Select Category",
-                    suffixIcon: Icon(Icons.arrow_drop_down),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+
+                        /// ✅ CATEGORY (ALL TYPES EXCEPT STORIES)
+                        if (widget.type != MediaType.stories)
+                          _buildDropdown(
+                            title: "Category",
+                            value:
+                                provider.selectedCategory?.name ?? "All",
+                            expanded: isCategoryExpanded,
+                            onTap: () => setState(() =>
+                                isCategoryExpanded =
+                                    !isCategoryExpanded),
+                            children: _buildCategoryList(provider),
+                          ),
+
+                        const SizedBox(height: 16),
+
+                        /// ✅ LANGUAGE (ONLY DIGITAL LIBRARY)
+                        if (widget.type == MediaType.digitalLibrary)
+                          _buildDropdown(
+                            title: "Language",
+                            value:
+                                provider.selectedLanguage?.name ??
+                                    "All",
+                            expanded: isLanguageExpanded,
+                            onTap: () => setState(() =>
+                                isLanguageExpanded =
+                                    !isLanguageExpanded),
+                            children: _buildLanguageList(provider),
+                          ),
+
+                        /// ✅ COUNTRY (EXCEPT DIGITAL LIBRARY & TESTIMONIAL)
+                        if (widget.type != MediaType.testimonial &&
+                         widget.type != MediaType.testimonialArticle &&
+                            widget.type != MediaType.digitalLibrary)
+                          Column(
+                            children: [
+                              const SizedBox(height: 16),
+                              _buildDropdown(
+                                title: "Country",
+                                value:
+                                    provider.selectedCountry?.name ??
+                                        "All",
+                                expanded: isCountryExpanded,
+                                onTap: () => setState(() =>
+                                    isCountryExpanded =
+                                        !isCountryExpanded),
+                                children:
+                                    _buildCountryList(provider),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              // 👉 you can plug category dropdown here later
-              if (isCategoryExpanded) categoryDropdown(),
-              const SizedBox(height: 20),
-            ],
 
-            const Spacer(),
+                /// 🔹 APPLY BUTTON
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          Customcolor.text_darkblue,
+                      minimumSize:
+                          const Size(double.infinity, 50),
+                    ),
+                    // onPressed: () {
+                    //   final filter =
+                    //       context.read<FilterProvider>();
+                    //   final provider =
+                    //       context.read<MediaListingProvider>();
 
-            GestureDetector(
-             onTap: () {
+                    //   Navigator.pop(context);
+
+                    //   provider.loadInitial(
+                    //     context: context,
+                    //     type: widget.type,
+                    //     countryId: widget.type ==
+                    //             MediaType.digitalLibrary
+                    //         ? "" // ❌ no country
+                    //         : (filter.selectedCountry?.id == 0
+                    //             ? ""
+                    //             : filter.selectedCountry!.id
+                    //                 .toString()),
+                    //     categoryId:
+                    //         filter.selectedCategory?.id == 0
+                    //             ? ""
+                    //             : filter.selectedCategory!.id
+                    //                 .toString(),
+
+                    //     /// ✅ ADD LANGUAGE PARAM
+                    //     languageId: widget.type ==
+                    //             MediaType.digitalLibrary
+                    //         ? (filter.selectedLanguage?.id == 0
+                    //             ? ""
+                    //             : filter.selectedLanguage!.id
+                    //                 .toString())
+                    //         : "",
+                    //   );
+                    // },
+                    onPressed: () async {
   final filter = context.read<FilterProvider>();
-  final provider = context.read<MediaListingProvider>();
 
   Navigator.pop(context);
+
+  /// ✅ TESTIMONIAL ARTICLE
+  if (widget.type == MediaType.testimonialArticle) {
+
+    final categoryId =
+        filter.selectedCategory?.id == 0
+            ? ""
+            : filter.selectedCategory!.id.toString();
+
+    await context
+        .read<TestimonialArticleProvider>()
+        .fetchTestimonials(categoryId);
+
+    return;
+  }
+
+  /// ✅ OTHER SCREENS
+  final provider =
+      context.read<MediaListingProvider>();
 
   provider.loadInitial(
     context: context,
     type: widget.type,
-    countryId: filter.selectedCountry?.id.toString() ?? "",
-    categoryId: filter.selectedCategory?.id.toString() ?? "",
+    countryId: widget.type ==
+            MediaType.digitalLibrary
+        ? ""
+        : (filter.selectedCountry?.id == 0
+            ? ""
+            : filter.selectedCountry!.id
+                .toString()),
+    categoryId:
+        filter.selectedCategory?.id == 0
+            ? ""
+            : filter.selectedCategory!.id
+                .toString(),
+    languageId: widget.type ==
+            MediaType.digitalLibrary
+        ? (filter.selectedLanguage?.id == 0
+            ? ""
+            : filter.selectedLanguage!.id
+                .toString())
+        : "",
   );
 },
-              child: Container(
-                width: 120,
-                height: 45,
-                decoration: BoxDecoration(
-                  color: Customcolor.text_darkblue,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const Center(
-                  child: Text("Apply",
-                      style: TextStyle(color: Colors.white)),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-          ],
+                    child: const Text(
+                      "Apply",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                )
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget countryDropdown() {
-    return Consumer<FilterProvider>(
-      builder: (context, provider, _) {
-        if (provider.isLoading) {
-          return const CircularProgressIndicator();
-        }
-
-        return SizedBox(
-          height: 200,
-          child: ListView.builder(
-            itemCount: provider.countries.length,
-            itemBuilder: (context, index) {
-              final item = provider.countries[index];
-
-              return ListTile(
-                title: Text(item.name),
-                onTap: () {
-                  provider.selectCountry(item);
-                  countryController.text = item.name;
-                  setState(() => isCountryExpanded = false);
-                },
-              );
-            },
+  /// 🔹 COMMON DROPDOWN UI
+  Widget _buildDropdown({
+    required String title,
+    required String value,
+    required bool expanded,
+    required VoidCallback onTap,
+    required List<Widget> children,
+  }) {
+    return Card(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10)),
+      child: Column(
+        children: [
+          ListTile(
+            title: Text(title),
+            subtitle: Text(value),
+            trailing: Icon(
+              expanded
+                  ? Icons.keyboard_arrow_up
+                  : Icons.keyboard_arrow_down,
+            ),
+            onTap: onTap,
           ),
-        );
-      },
+          if (expanded) ...children
+        ],
+      ),
     );
   }
 
-Widget categoryDropdown() {
-  return Consumer<FilterProvider>(
-    builder: (context, provider, _) {
-      if (provider.isLoading) {
-        return const CircularProgressIndicator();
-      }
+  /// 🔹 CATEGORY LIST
+  List<Widget> _buildCategoryList(FilterProvider provider) {
+    return provider.categories
+        .map(
+          (e) => ListTile(
+            title: Text(
+              widget.type ==
+                  MediaType.testimonialArticle?e.catgname ?? "":
+              e.name),
+            selected:
+                provider.selectedCategory?.id == e.id,
+            onTap: () async {
+              provider.selectCategory(e);
 
-      if (provider.categories.isEmpty) {
-        return const Text("No categories found");
-      }
+              if (widget.type ==
+                  MediaType.videoLibrary) {
+                provider.selectedCountry =
+                    provider.allCountry;
+                await provider.loadFilters(context,
+                    type: widget.type);
+              }
 
-      return SizedBox(
-        height: 200,
-        child: ListView.builder(
-          itemCount: provider.categories.length,
-          itemBuilder: (context, index) {
-            final item = provider.categories[index];
+              
 
-            return ListTile(
-              title: Text(item.name),
-              onTap: () {
-                provider.selectCategory(item);
-                categoryController.text = item.name;
-                setState(() => isCategoryExpanded = false);
-              },
-            );
-          },
-        ),
-      );
-    },
-  );
-}
+            
+
+  if (widget.type == MediaType.digitalLibrary) {
+    await provider.loadFilters(context, type: widget.type);
+  }
+
+  setState(() => isCategoryExpanded = false);
+            },
+          ),
+        )
+        .toList();
+  }
+
+  /// 🔹 COUNTRY LIST
+  List<Widget> _buildCountryList(FilterProvider provider) {
+    return provider.countries
+        .map(
+          (e) => ListTile(
+            title: Text(e.name),
+            selected:
+                provider.selectedCountry?.id == e.id,
+            onTap: () {
+              provider.selectCountry(e);
+              setState(() => isCountryExpanded = false);
+            },
+          ),
+        )
+        .toList();
+  }
+
+  /// 🔹 LANGUAGE LIST ✅ NEW
+ List<Widget> _buildLanguageList(FilterProvider provider) {
+    return provider.languages
+        .map(
+          (e) => ListTile(
+            title: Text(e.name),
+            selected:
+                provider.selectedLanguage?.id == e.id,
+            onTap: () {
+              provider.selectLanguage(e);
+              setState(() => isLanguageExpanded = false);
+            },
+          ),
+        )
+        .toList();
+  }
 }

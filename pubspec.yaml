@@ -51,7 +51,7 @@ dependencies:
   url_launcher:
   bubble_tab_indicator: 
   flutter_staggered_animations: 
- 
+  
   flutter_widget_from_html:
   youtube_player_flutter: 
  
@@ -60,6 +60,9 @@ dependencies:
   google_fonts: ^6.2.1
   flutter_svg: 
   fluttertoast: ^8.2.12
+  flutter_html: ^3.0.0
+  webview_flutter: 
+  
   
 dev_dependencies:
   flutter_test:

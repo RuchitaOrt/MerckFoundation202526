@@ -4,6 +4,7 @@ class MediaModel {
   final String image;
   final String articleUrl;
   final String description;
+  final String? pdfFile;
 
   MediaModel({
     required this.id,
@@ -11,6 +12,7 @@ class MediaModel {
     required this.image,
     required this.articleUrl,
     required this.description,
+    this.pdfFile
   });
 
   factory MediaModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class MediaModel {
       image: (json['image'] ?? "").toString(),
       articleUrl: (json['media_url'] ?? "").toString(),
       description: (json['description'] ?? "").toString(),
+      pdfFile:json['pdf_file'] ?? ""
     );
   }
 }

@@ -4,28 +4,27 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:merckfoundation_252026/Provider/AwardProvider.dart';
+import 'package:merckfoundation_252026/Provider/EpisodeProvider.dart';
 import 'package:merckfoundation_252026/Provider/FilterProvider.dart';
 import 'package:merckfoundation_252026/Provider/MediaProvider.dart';
 import 'package:merckfoundation_252026/Provider/MediaListingProvider.dart';
+import 'package:merckfoundation_252026/Provider/OurPartnersProvider.dart';
+import 'package:merckfoundation_252026/Provider/PhotoAlbumProvider.dart';
+
+import 'package:merckfoundation_252026/Provider/TestimonialProvider.dart';
 import 'package:merckfoundation_252026/Provider/article_provider.dart';
 import 'package:merckfoundation_252026/Provider/navbar_provider.dart';
 import 'package:merckfoundation_252026/Utility/firebase_options_manual.dart';
 import 'package:merckfoundation_252026/Utils/UtilityFile.dart';
-import 'package:merckfoundation_252026/data/Repository/splashRepository.dart';
 
 import 'package:merckfoundation_252026/providers/CovidProvider.dart';
-import 'package:merckfoundation_252026/providers/PageProvider.dart';
-import 'package:merckfoundation_252026/providers/callforapplication_provider.dart';
-import 'package:merckfoundation_252026/providers/digital_library_provider.dart';
-import 'package:merckfoundation_252026/providers/home_provider.dart';
-import 'package:merckfoundation_252026/providers/newsrelease_provider.dart';
-import 'package:merckfoundation_252026/providers/our_award_provider.dart';
-import 'package:merckfoundation_252026/providers/ouractivities_provider.dart';
-import 'package:merckfoundation_252026/providers/photogallery_provider.dart';
+import 'package:merckfoundation_252026/Provider/PageProvider.dart';
+import 'package:merckfoundation_252026/Provider/callforapplication_provider.dart';
+
+
 import 'package:merckfoundation_252026/providers/program_provider.dart';
 import 'package:merckfoundation_252026/providers/splash_provider.dart';
-import 'package:merckfoundation_252026/providers/stories_provider.dart';
 import 'package:merckfoundation_252026/routes/routers.dart';
 import 'package:merckfoundation_252026/screens/splashScreen.dart';
 import 'package:provider/provider.dart';
@@ -39,10 +38,6 @@ Future main() async {
       options: Platform.isAndroid ? DefaultFirebaseOptionsManual.android : null,
     );
   }
-
-  //   await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptionsManual.android,
-  // );
 
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
@@ -86,21 +81,20 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ChangeNotifierProvider(create: (_) => MediaProvider()),
         ChangeNotifierProvider(create: (_) => MediaListingProvider()),
         ChangeNotifierProvider(create: (_) => FilterProvider()),
+        ChangeNotifierProvider(create: (_) => OurPartnersProvider()),
+        ChangeNotifierProvider(create: (_) => TestimonialArticleProvider()),
 
+        ChangeNotifierProvider(create: (_) => PhotoAlbumProvider()),
+ChangeNotifierProvider(create: (_) => EpisodeProvider()),
+      ChangeNotifierProvider(create: (_) => AwardProvider()),
 
-
-
-//---------------------------------------------------------------------
-        ChangeNotifierProvider(create: (_) => HomeSliderProvider()),
+        //---------------------------------------------------------------------
         ChangeNotifierProvider(create: (_) => PageProvider()),
 
         ChangeNotifierProvider(create: (_) => ProgramProvider()),
         ChangeNotifierProvider(create: (_) => CallApplicationProvider()),
-        ChangeNotifierProvider(create: (_) => DigitalLibraryProvider()),
-        ChangeNotifierProvider(create: (_) => PhotoGalleryProvider()),
 
-        ChangeNotifierProvider(create: (_) => OurActivityProvider()),
-        ChangeNotifierProvider(create: (_) => OurAwardProvider()),
+       
 
         ChangeNotifierProvider(
           create: (_) => CovidProvider()..loadInitialData(),

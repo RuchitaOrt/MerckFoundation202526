@@ -20,6 +20,11 @@ enum MediaType {
   stories,
   videoLibrary,
   testimonial,
+  photoGallery,
+  activity,
+  digitalLibrary,
+  testimonialArticle,
+  photoAlbum,episodes
 }
 const homelayoutOrder = {
   "Slider": 1,
@@ -45,3 +50,69 @@ const tabTypes = [
   "MerckMoreThanAmbasdar",
   "DigitalLibrary",
 ];
+
+enum HomeLayoutType {
+  slider,
+  impact,
+  photoGallery,
+  episodes,
+  video,
+  newsLettersAndArticles,
+  merckFoundationInMedia,
+  testimonials,
+  content,
+  leadership,
+  marquee,
+  socialLinks,
+  CallForApplication,
+  episodesviewall,
+  nocontent
+}
+
+extension HomeLayoutTypeExtension on String {
+  HomeLayoutType toHomeLayoutType() {
+    switch (this) {
+      case "Slider":
+        return HomeLayoutType.slider;
+
+      case "Impact":
+        return HomeLayoutType.impact;
+
+      case "PhotoGallery":
+        return HomeLayoutType.photoGallery;
+
+      case "Episodes":
+        return HomeLayoutType.episodes;
+
+      case "Video":
+        return HomeLayoutType.video;
+
+      case "NewsLettersAndArticles":
+        return HomeLayoutType.newsLettersAndArticles;
+
+      case "MerckFoundationInMedia":
+        return HomeLayoutType.merckFoundationInMedia;
+
+      case "Testimonials":
+        return HomeLayoutType.testimonials;
+
+      case "Content":
+        return HomeLayoutType.content;
+
+      case "LeaderShip":
+        return HomeLayoutType.leadership;
+
+      case "Marquee":
+        return HomeLayoutType.marquee;
+
+      case "SocialLinks":
+        return HomeLayoutType.socialLinks;
+         case "CallForApplication":
+        return HomeLayoutType.CallForApplication;
+
+      default:
+        return HomeLayoutType.  nocontent
+;
+    }
+  }
+}

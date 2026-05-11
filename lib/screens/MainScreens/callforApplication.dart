@@ -5,7 +5,7 @@ import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/main.dart';
-import 'package:merckfoundation_252026/providers/callforapplication_provider.dart';
+import 'package:merckfoundation_252026/Provider/callforapplication_provider.dart';
 import 'package:merckfoundation_252026/widgets/CustomeSwiper.dart';
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
 
@@ -24,12 +24,17 @@ class _CallforApplicationState extends State<CallforApplication>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
+ @override
+void initState() {
+  super.initState();
 
+  _tabController = TabController(length: 2, vsync: this);
+
+  /// 🔥 CALL INITIAL API
+  Future.microtask(() {
+    context.read<CallApplicationProvider>().loadInitial(context);
+  });
+}
   @override
   void dispose() {
     _tabController.dispose();
@@ -66,38 +71,51 @@ class _CallforApplicationState extends State<CallforApplication>
     );
   }
 
-  Widget _buildTabs() {
-     final responsive = ResponsiveFlutter.of(routeGlobalKey.currentContext!);
-    return TabBar(
-      controller: _tabController,
-      labelColor: Customcolor.text_darkblue,
-      unselectedLabelColor: Customcolor.text_grey,
-      indicatorColor: Customcolor.text_darkblue,
-      tabs: [
-        Tab(
-          child: FormLabel(
+ Widget _buildTabs() {
+  final responsive =
+      ResponsiveFlutter.of(routeGlobalKey.currentContext!);
+
+  return AnimatedBuilder(
+    animation: _tabController,
+    builder: (context, _) {
+      return TabBar(
+        controller: _tabController,
+        indicatorColor: Customcolor.text_darkblue,
+
+        tabs: [
+          _buildTab(
             text: CommonStrings.upcomingPrograms,
-            textAlignment: TextAlign.center,
-            fontSize: responsive.fontSize(2.3),
-            labelColor:Customcolor.descriptiontext,
-            fontweight: FontWeight.w700,
+            isSelected: _tabController.index == 0,
+            responsive: responsive,
           ),
-        ),
-        Tab(
-          child: FormLabel(
+          _buildTab(
             text: CommonStrings.pastCall,
-            textAlignment: TextAlign.center,
-             labelColor: Customcolor.descriptiontext,
-            fontSize: responsive.fontSize(2.3),
-
-            fontweight: FontWeight.w700,
+            isSelected: _tabController.index == 1,
+            responsive: responsive,
           ),
-        ),
-      ],
-    );
-  }
+        ],
+      );
+    },
+  );
 }
-
+Widget _buildTab({
+  required String text,
+  required bool isSelected,
+  required dynamic responsive,
+}) {
+  return Tab(
+    child: FormLabel(
+      text: text,
+      textAlignment: TextAlign.center,
+      fontSize: responsive.fontSize(2.3),
+      labelColor: isSelected
+          ? Customcolor.text_darkblue // ✅ selected = blue
+          : Customcolor.text_grey,    // ❌ unselected = grey
+      fontweight: FontWeight.w700,
+    ),
+  );
+}
+}
 class _EventTab extends StatelessWidget {
   final bool isUpcoming;
 
@@ -106,15 +124,22 @@ class _EventTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CallApplicationProvider>();
+
     final data = isUpcoming ? provider.upcoming : provider.past;
 
+    final isLoadingMore =
+        isUpcoming ? provider.isFetchingMoreUpcoming : provider.isFetchingMorePast;
+
+    final hasMore =
+        isUpcoming ? provider.hasMoreUpcoming : provider.hasMorePast;
+
+    if (provider.isLoading && data.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     if (data.isEmpty) {
-      return Center(child:
-       FormLabel(
-            text: CommonStrings.emptyData
-           
-          ),
-      
+      return Center(
+        child: FormLabel(text: CommonStrings.emptyData),
       );
     }
 
@@ -122,7 +147,30 @@ class _EventTab extends StatelessWidget {
       child: Column(
         children: [
           8.0.heightBox,
-          CustomSwiper(items: data),
+
+          /// 🔥 SWIPER WITH PAGINATION
+          CustomSwiper(
+            items: data,
+            onIndexChanged: (index) {
+              final provider = context.read<CallApplicationProvider>();
+
+              if (index >= data.length - 2 && !isLoadingMore && hasMore) {
+                if (isUpcoming) {
+                  provider.loadMoreUpcoming(context);
+                } else {
+                  provider.loadMorePast(context);
+                }
+              }
+            },
+          ),
+
+          /// 🔹 LOAD MORE LOADER
+          if (isLoadingMore)
+            const Padding(
+              padding: EdgeInsets.all(12),
+              child: CircularProgressIndicator(),
+            ),
+
           8.0.heightBox,
           const FooterFlowerImage(),
           8.0.heightBox,

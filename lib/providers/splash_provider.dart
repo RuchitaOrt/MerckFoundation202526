@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/navbar_provider.dart';
 import 'package:merckfoundation_252026/const/GlobalLists.dart';
 
-import 'package:merckfoundation_252026/data/Repository/splashRepository.dart';
 import 'package:merckfoundation_252026/screens/Landingpage.dart';
 import 'package:provider/provider.dart';
 // import 'package:package_info/package_info.dart';

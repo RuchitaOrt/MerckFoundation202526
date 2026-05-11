@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
-import 'package:merckfoundation_252026/data/model/CommonModel.dart';
+import 'package:merckfoundation_252026/model/CommonModel.dart';
 import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 

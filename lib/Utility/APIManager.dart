@@ -7,17 +7,53 @@ import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/model/NavBarResponse.dart';
 
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/model/OurPartnerResponse.dart';
 
 enum API {
   navbarmenulist,
   pageStructure,
   mediaList,
   getnewslettersarticles,
+
+  //testimonial
   gettestimonials,
+  getvideocategorytestimoniallist,
+
   getstories,
   getcountrylist,
   getvideocategorylist,
-  getvideolibrary
+
+  getvideolibrary,
+  getcountrybyvcat,
+
+  ourPartners,
+  getphotogallerycategory,
+
+  getactivities,
+  getUpcomingApplication,
+  getpastapplication,
+
+  //DIGITAL LIBRARY
+  getdigitallibrary,
+  getlangbydigitalcat,
+  listdglibrarycategory,
+
+  getnewsrelease,
+
+  //Testimonial Article
+  testimonialarticles,
+  testimonialcategory,
+
+  getphotoalbum,
+  getphotogalleryimages,
+
+  //EPISODE
+  homeseasonlist,
+  gethomeepisodelist,
+  getepisodeinfo,
+
+  //Our Award
+  getawardlist,
 }
 
 enum HTTPMethod { GET, POST, PUT, DELETE }
@@ -37,7 +73,7 @@ class APIManager {
   APIManager._privateConstructor() {
     dio = Dio(
       BaseOptions(
-        responseType: ResponseType.json,
+        responseType: ResponseType.plain,
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json",
@@ -302,17 +338,70 @@ class APIManager {
         return "api/page_structure/merck-foundation-in-media";
       case API.getnewslettersarticles:
         return "api/page_structure/get-newsletters-articles";
+
+      //TESTIMONIAL
       case API.gettestimonials:
         return "api/page_structure/get-testimonials";
+      case API.getvideocategorytestimoniallist:
+        return "api/video_library/get-video-category-testimonial-list";
+
+      //STORIES
       case API.getstories:
         return "api/page_structure/get-stories";
       case API.getcountrylist:
         return "api/masters/get-country-list";
+
+      //VIDEO LIBRARY
       case API.getvideocategorylist:
         return "api/video_library/get-video-category-list";
-         case API.getvideolibrary:
+      case API.getvideolibrary:
         return "api/page_structure/get-video-library";
-        
+      case API.getcountrybyvcat:
+        return "api/page_structure/get-countryby-vcat";
+
+      //OUR PARTNER
+      case API.ourPartners:
+        return "api/page_structure/our-partners";
+
+      //Photo Gallery
+      case API.getphotogallerycategory:
+        return "api/page_structure/get-photo-category";
+
+      //ACTIVITY
+      case API.getactivities:
+        return "api/page_structure/get-activities";
+
+      case API.getUpcomingApplication:
+        return "api/page_structure/get-upcoming-application";
+      case API.getpastapplication:
+        return "api/page_structure/get-past-application";
+
+      case API.getdigitallibrary:
+        return "api/page_structure/digital-library";
+
+      case API.listdglibrarycategory:
+        return "api/digital_library/list-dglibrary-category";
+
+      case API.getlangbydigitalcat:
+        return "api/page_structure/get-lang-bydigitalcat";
+      case API.getnewsrelease:
+        return "api/page_structure/get-news-release";
+      case API.testimonialarticles:
+        return "api/page_structure/testimonial-articles";
+      case API.testimonialcategory:
+        return "api/page_structure/testimonial-category";
+      case API.getphotoalbum:
+        return "api/page_structure/get-photo-album";
+      case API.getphotogalleryimages:
+        return "api/page_structure/get-photo-gallery-images";
+      case API.homeseasonlist:
+        return "api/seasons/home-season-list";
+      case API.gethomeepisodelist:
+        return "api/seasons/get-home-episode-list";
+      case API.getepisodeinfo:
+        return "api/seasons/get-episode-info";
+      case API.getawardlist:
+        return "api/masters/get-award-list";
     }
   }
 
@@ -324,6 +413,18 @@ class APIManager {
       case API.mediaList:
       case API.getcountrylist:
       case API.getvideocategorylist:
+      case API.ourPartners:
+      case API.getvideocategorytestimoniallist:
+      case API.getphotogallerycategory:
+      case API.getactivities:
+      case API.getUpcomingApplication:
+      case API.getpastapplication:
+      case API.getnewslettersarticles:
+      case API.listdglibrarycategory:
+      case API.getnewsrelease:
+      case API.testimonialcategory:
+      case API.homeseasonlist:
+      case API.getawardlist:
         return HTTPMethod.GET;
 
       default:
@@ -331,24 +432,23 @@ class APIManager {
     }
   }
 
-  /// 🧩 PARSER
   dynamic parseResponse(API api, dynamic json) {
     switch (api) {
       case API.navbarmenulist:
         return NavBarResponse.fromJson(json);
       case API.pageStructure:
         return json;
+      case API.ourPartners:
+        return OurPartnersResponse.fromJson(json);
       default:
         return json;
     }
   }
 
-  /// 🌐 MAIN REQUEST
   Future<dynamic> apiRequest(
     BuildContext context,
     API api, {
     dynamic jsonval,
-
     Map<String, dynamic>? queryParams,
   }) async {
     try {
@@ -361,14 +461,17 @@ class APIManager {
         options: Options(method: apiHTTPMethod(api).name),
       );
 
-      if (response.statusCode == 200) {
-        /// 🔥 IMPORTANT FIX
+      final data = response.data;
 
-        /// 👉 normal API → parse model
-        return parseResponse(api, response.data);
+      if (data is String) {
+        try {
+          return parseResponse(api, jsonDecode(data));
+        } catch (_) {
+          return data;
+        }
       }
 
-      throw Exception("API Error");
+      return parseResponse(api, data);
     } catch (e) {
       rethrow;
     }

@@ -85,10 +85,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           const Spacer(),
 
           // LOGO
-          Image.asset(
-            CommonImagePath.drawerImg,
-            height: 45,
-          ),
+          Image.asset(CommonImagePath.drawerImg, height: 45),
 
           const Spacer(),
 
@@ -97,39 +94,38 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           8.0.heightBox,
           if (onSearch != null) _icon(CommonImagePath.search, onSearch),
 
-          10.0.heightBox
+          10.0.heightBox,
         ],
       ),
     );
   }
-Widget _bottomTitleBar(BuildContext context) {
-  return Container(
-    height: 50,
-    width: double.infinity,
-    color: Customcolor.colorVoilet,
-    padding: const EdgeInsets.symmetric(horizontal: 12),
-    child: Row(
-      children: [
-       Expanded(
-  child: FormLabel(
-    text: title ?? "",
-    maxLines: 1,
-    softWrap: true,
-    textOverflow: TextOverflow.ellipsis,
-    labelColor: Colors.white,
-    fontweight: FontWeight.bold,
-    textAlignment: TextAlign.start,
-  ),
-),
 
-        if (onFilter != null)
-          _icon(CommonImagePath.filter, onFilter),
-      ],
-    ),
-  );
-}
+  Widget _bottomTitleBar(BuildContext context) {
+    return Container(
+      height: 50,
+      width: double.infinity,
+      color: Customcolor.colorVoilet,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Row(
+        children: [
+          Expanded(
+            child: FormLabel(
+              text: title ?? "",
+              maxLines: 1,
+              fontSize: 14,
+              softWrap: true,
+              textOverflow: TextOverflow.ellipsis,
+              labelColor: Colors.white,
+              fontweight: FontWeight.bold,
+              textAlignment: TextAlign.start,
+            ),
+          ),
 
-
+          if (onFilter != null) _icon(CommonImagePath.filter, onFilter),
+        ],
+      ),
+    );
+  }
 
   Widget _icon(String asset, VoidCallback? onTap) {
     return Padding(

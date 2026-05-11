@@ -15,7 +15,7 @@ class NavbarProvider extends ChangeNotifier {
     try {
       final response = await _service.fetchNavbar(context);
 
-      menuList = response.data;
+      menuList = response.data; 
     } catch (e) {
       print("Navbar Error: $e");
     }

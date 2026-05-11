@@ -1,84 +1,199 @@
-import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
+import 'package:merckfoundation_252026/Utility/showdailog.dart';
 import 'package:merckfoundation_252026/Utils/common_images.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
-import 'package:merckfoundation_252026/data/model/CommonModel.dart';
-import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
 class CustomSwiper extends StatefulWidget {
-  final List<CallApplicationModel> items;
+  final List items;
+  final Function(int index)? onIndexChanged;
 
-  const CustomSwiper({super.key, required this.items});
+  const CustomSwiper({
+    super.key,
+    required this.items,
+    this.onIndexChanged,
+  });
 
   @override
   State<CustomSwiper> createState() => _CustomSwiperState();
 }
 
 class _CustomSwiperState extends State<CustomSwiper> {
-  final PageController _controller = PageController(viewportFraction: 0.75);
-  int _index = 0;
+  final PageController _controller = PageController();
+  int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveFlutter.of(context);
-    return Column(
-      children: [
-        SizedBox(
-          height: 360,
-          child: PageView.builder(
+    return AspectRatio(
+      aspectRatio: 1, // 🔥 responsive for all devices
+      child: Stack(
+        children: [
+          /// 🔥 PAGE VIEW
+          PageView.builder(
             controller: _controller,
             itemCount: widget.items.length,
-            onPageChanged: (i) => setState(() => _index = i),
-            itemBuilder: (_, i) =>
-                _SwiperCard(model: widget.items[i], active: i == _index),
+            onPageChanged: (index) {
+              currentIndex = index;
+
+              /// 🔥 trigger pagination
+              widget.onIndexChanged?.call(index);
+
+              setState(() {});
+            },
+            itemBuilder: (context, index) {
+              final item = widget.items[index];
+
+              return Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: _SwiperCard(item: item),
+              );
+            },
+          ),
+
+          /// ⬅️ LEFT ARROW
+          Positioned(
+            left: 5,
+            top: 0,
+            bottom: 0,
+            child: AnimatedOpacity(
+              opacity: currentIndex > 0 ? 1 : 0,
+              duration: const Duration(milliseconds: 200),
+              child: _arrowButton(
+                icon: Icons.arrow_back_ios_new,
+                onTap: () {
+                  if (currentIndex > 0) {
+                    _controller.previousPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  }
+                },
+              ),
+            ),
+          ),
+
+          /// ➡️ RIGHT ARROW
+          Positioned(
+            right: 5,
+            top: 0,
+            bottom: 0,
+            child: AnimatedOpacity(
+              opacity:
+                  currentIndex < widget.items.length - 1 ? 1 : 0,
+              duration: const Duration(milliseconds: 200),
+              child: _arrowButton(
+                icon: Icons.arrow_forward_ios,
+                onTap: () {
+                  if (currentIndex < widget.items.length - 1) {
+                    _controller.nextPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 🔥 Arrow Button UI
+  Widget _arrowButton({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Center(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 6),
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.black45,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            icon,
+            color: Colors.white,
+            size: 18,
           ),
         ),
-
-        DotsIndicator(
-          dotsCount: widget.items.length,
-          position: _index.toDouble(),
-          decorator: DotsDecorator(
-            activeColor: Customcolor.pink_col,
-            color: Customcolor.ligthpink,
-          ),
-        ),
-
-        8.0.heightBox,
-        FormLabel(
-          text: widget.items[_index].title,
-          textAlignment: TextAlign.center,
-          fontSize: responsive.fontSize(2),
-          fontweight: FontWeight.w600,
-        ),
-      ],
+      ),
     );
   }
 }
 
+/// 🔥 CARD UI
 class _SwiperCard extends StatelessWidget {
-  final CallApplicationModel model;
-  final bool active;
+  final dynamic item;
 
-  const _SwiperCard({required this.model, required this.active});
+  const _SwiperCard({required this.item});
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      margin: EdgeInsets.symmetric(vertical: active ? 0 : 20, horizontal: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 6)],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: FadeInImage.assetNetwork(
-          placeholder: CommonImagePath.placeHolder,
-          image: model.image,
-          fit: BoxFit.cover,
+    final width = MediaQuery.of(context).size.width;
+
+    return Column(
+      children: [
+        /// 🔹 IMAGE
+        Expanded(
+          child: GestureDetector(
+            onTap: ()
+            {
+              ShowDialogs.launchURL(item.pdfFile);
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: const [
+                  BoxShadow(color: Colors.black26, blurRadius: 6),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: (item.image != null &&
+                        item.image.toString().isNotEmpty)
+                    ? FadeInImage.assetNetwork(
+                        placeholder: CommonImagePath.placeHolder,
+                        image: item.image,
+                        fit: BoxFit.cover,
+            
+                        /// 🔥 ERROR HANDLING
+                        imageErrorBuilder: (_, __, ___) => Image.asset(
+                          CommonImagePath.placeHolder,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : Image.asset(
+                        CommonImagePath.placeHolder,
+                        fit: BoxFit.cover,
+                      ),
+              ),
+            ),
+          ),
         ),
-      ),
+
+        const SizedBox(height: 8),
+
+        /// 🔹 TITLE
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Text(
+            item.title ?? "",
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: width * 0.035, // 🔥 responsive text
+              fontWeight: FontWeight.w700,
+              color: Customcolor.pink_col,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

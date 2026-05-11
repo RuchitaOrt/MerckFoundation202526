@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:merckfoundation_252026/data/model/CommonModel.dart';
+import 'package:merckfoundation_252026/model/CommonModel.dart';
 import 'package:merckfoundation_252026/model/ArticleModel.dart';
 import 'package:merckfoundation_252026/service/ArticleService.dart';
 class  ArticleProvider extends ChangeNotifier {

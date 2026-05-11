@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/Utility/showdailog.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/model/StoryModel.dart';
 
 import 'package:merckfoundation_252026/service/MediaListiingService.dart';
-import 'package:flutter/material.dart';
-import 'package:merckfoundation_252026/model/StoryModel.dart';
-import 'package:merckfoundation_252026/service/MediaListiingService.dart';
-import '../enum/commonEnum.dart';
 
 class MediaListingProvider extends ChangeNotifier {
   final MediaListingService _service = MediaListingService();
@@ -21,13 +18,16 @@ class MediaListingProvider extends ChangeNotifier {
   MediaType? currentType;
   String countryId = "";
   String categoryId = "";
-
+  String languageId = "";
+String albumID = "";
   /// 🔹 INITIAL LOAD
   Future<void> loadInitial({
     required BuildContext context,
     required MediaType type,
     String countryId = "",
     String categoryId = "",
+    String languageId = "",
+    String albumID = "",
   }) async {
     if (isLoading) return;
 
@@ -42,24 +42,33 @@ class MediaListingProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final response = await _service.fetchMedia(
-      context,
-      currentPage,
-      type,
-      countryId: countryId,
-      categoryId: categoryId,
-    );
+    try {
+      final response = await _service.fetchMedia(
+        context,
+        currentPage,
+        type,
+        countryId: countryId,
+        categoryId: categoryId,
+        languageId: languageId,
+        albumID: albumID,
+      );
 
-    final data = response['data'] ?? [];
+      final data = response['data'] ?? [];
 
-    storyList = data
-        .map<StoryModel>((e) => StoryModel.fromJson(e))
-        .toList();
+      storyList = data.map<StoryModel>((e) => StoryModel.fromJson(e)).toList();
 
-    hasMore = response['next'] != null;
+      hasMore = type == MediaType.photoGallery
+    ? false
+    : response['next'] != null;
+    } catch (e) {
+      debugPrint("Initial Load Error: $e");
 
-    isLoading = false;
-    notifyListeners();
+      /// ✅ SHOW ERROR TO USER
+      showToast(e.toString());
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 
   /// 🔹 PAGINATION
@@ -69,26 +78,35 @@ class MediaListingProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final nextPage = currentPage + 1;
+    try {
+      final nextPage = currentPage + 1;
 
-    final response = await _service.fetchMedia(
-      context,
-      nextPage,
-      currentType!,
-      countryId: countryId,
-      categoryId: categoryId,
-    );
+      final response = await _service.fetchMedia(
+        context,
+        nextPage,
+        currentType!,
+        countryId: countryId,
+        categoryId: categoryId,
+        languageId: languageId,
+        albumID: albumID,
+      );
 
-    final data = response['data'] ?? [];
+      final data = response['data'] ?? [];
 
-    storyList.addAll(
-      data.map<StoryModel>((e) => StoryModel.fromJson(e)).toList(),
-    );
+      storyList.addAll(
+        data.map<StoryModel>((e) => StoryModel.fromJson(e)).toList(),
+      );
 
-    currentPage = nextPage;
-    hasMore = response['next'] != null;
+      currentPage = nextPage;
+      hasMore = response['next'] != null;
+    } catch (e) {
+      debugPrint("Load More Error: $e");
 
-    isLoading = false;
-    notifyListeners();
+      /// ✅ SHOW ERROR
+      showToast(e.toString());
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 }

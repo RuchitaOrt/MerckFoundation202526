@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:merckfoundation_252026/data/model/CommonModel.dart';
+import 'package:merckfoundation_252026/model/CommonModel.dart';
 
 class CovidProvider extends ChangeNotifier {
   bool isLoading = false;
