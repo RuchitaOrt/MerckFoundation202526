@@ -34,9 +34,14 @@ class ArticlesScreen extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (_) => DetailScreen(
-              item.title ?? "",
-              item.details ?? "",
+              "","",
+              // item.title ?? "",
+              // item.details ?? "",
               title: "Articles",
+              articleId:item.id.toString(),
+              languageId: item.language_id ?? "",
+              isDetailApiCalled: true,
+
             ),
           ),
         );

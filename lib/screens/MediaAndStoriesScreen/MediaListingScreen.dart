@@ -63,8 +63,11 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
     if (filter.countries.isEmpty ||
         filter.categories.isEmpty ||
         filter.languages.isEmpty) {
+          if(widget.type!=MediaType.episodes){
       filter.loadFilters(context, type: widget.type);
+          }
     }
+
     if (widget.type == MediaType.photoAlbum) {
       return;
     }
@@ -111,6 +114,7 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
         return widget.albumName;
       case MediaType.episodes:
         return widget.albumName;
+        
     }
   }
 
@@ -130,7 +134,7 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
                 widget.type == MediaType.activity)
             ? null
             : () => _scaffoldKey.currentState!.openEndDrawer(),
-onBack: ()
+onBack:(widget.type ==MediaType.stories)?null: ()
 {
   Navigator.pop(context);
 },
@@ -180,7 +184,7 @@ onBack: ()
                             ? const Padding(
                                 padding: EdgeInsets.all(16),
                                 child: Center(
-                                  child: CircularProgressIndicator(),
+                                  child: CommonLoader(),
                                 ),
                               )
                             : const SizedBox();

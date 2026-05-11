@@ -3,6 +3,7 @@ import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utils/common_images.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/screens/MainUIBody.dart/DetailScreen.dart';
+import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
 
 import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 
@@ -50,7 +51,7 @@ class LeaderCard extends StatelessWidget {
                 fit: BoxFit.contain,
                 loadingBuilder: (c, w, l) => l == null
                     ? w
-                    : const Center(child: CircularProgressIndicator()),
+                    : const Center(child: CommonLoader()),
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     color: Colors.grey.shade300,

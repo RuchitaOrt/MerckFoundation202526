@@ -7,6 +7,7 @@ import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/model/CommonModel.dart';
 
 class FollowUsProvider {
+ 
   static List<SocialIconModel> merckFoundationIcons(BuildContext context) {
     return [
       SocialIconModel(

@@ -69,6 +69,7 @@ class MediaListingService {
         api = API.gethomeepisodelist;
         body = {"season_id": categoryId,};
         break;
+        
     }
 
     final response = await APIManager().apiRequest(

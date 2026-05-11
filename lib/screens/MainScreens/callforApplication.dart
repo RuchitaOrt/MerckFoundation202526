@@ -6,7 +6,9 @@ import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/Provider/callforapplication_provider.dart';
+import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/CustomeSwiper.dart';
+import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
 
 import 'package:merckfoundation_252026/widgets/botttomlink.dart';
@@ -134,13 +136,28 @@ class _EventTab extends StatelessWidget {
         isUpcoming ? provider.hasMoreUpcoming : provider.hasMorePast;
 
     if (provider.isLoading && data.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: CommonLoader());
     }
 
     if (data.isEmpty) {
-      return Center(
-        child: FormLabel(text: CommonStrings.emptyData),
-      );
+      return  CustomScrollView(
+              slivers: [
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Column(
+                    children: [
+                      /// CENTER CONTENT
+                      Expanded(child: EmptyStateWidget()),
+
+                      const FooterFlowerImage(),
+
+                      const SizedBox(height: 8),
+                      const Bottomcardlink(),
+                    ],
+                  ),
+                ),
+              ],
+            );
     }
 
     return SingleChildScrollView(
@@ -168,7 +185,7 @@ class _EventTab extends StatelessWidget {
           if (isLoadingMore)
             const Padding(
               padding: EdgeInsets.all(12),
-              child: CircularProgressIndicator(),
+              child: CommonLoader(),
             ),
 
           8.0.heightBox,

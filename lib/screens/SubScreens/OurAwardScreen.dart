@@ -9,6 +9,7 @@ import 'package:merckfoundation_252026/model/AwardResponse.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 
 import 'package:merckfoundation_252026/widgets/CommonActionButton.dart';
+import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
 import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 import 'package:merckfoundation_252026/widgets/botttomlink.dart';
@@ -59,7 +60,7 @@ class _OurAwardScreenState extends State<OurAwardScreen> {
       ),
 
       body: provider.isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CommonLoader())
           : ListView(
               children: [
                 /// AWARD LIST

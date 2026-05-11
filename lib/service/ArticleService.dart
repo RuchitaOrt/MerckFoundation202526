@@ -14,4 +14,33 @@ class ArticleService {
 
     return response;
   }
+   /// DETAIL API
+Future<Map<String, dynamic>?> fetchArticleDetail(
+  BuildContext context, {
+  required String articleId,
+  required String languageId,
+}) async {
+
+  try {
+
+    final response = await APIManager().apiRequest(
+      context,
+      API.getnewsletterarticlebylanguage,
+      jsonval: {
+        "article_id": articleId,
+        "language_id": languageId,
+      },
+    );
+
+    return response;
+
+  } catch (e) {
+
+    debugPrint(
+      "DETAIL API ERROR: $e",
+    );
+
+    return null;
+  }
+}
 }

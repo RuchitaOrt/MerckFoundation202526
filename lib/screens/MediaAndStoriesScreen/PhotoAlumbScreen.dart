@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
+import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:provider/provider.dart';
 
 import 'package:merckfoundation_252026/Provider/PhotoAlbumProvider.dart';
@@ -49,9 +51,9 @@ class _PhotoAlumbScreenPageState extends State<PhotoAlumbScreen> {
         onShare: () {},
       ),
       body: provider.isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CommonLoader())
           : provider.albums.isEmpty
-          ? const Center(child: Text("No Albums Found"))
+          ? const Center(child:EmptyStateWidget(),)
           : ListView.builder(
               padding: const EdgeInsets.only(bottom: 20),
               itemCount: provider.albums.length,

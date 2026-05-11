@@ -8,6 +8,8 @@ import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/providers/follow_us_provider.dart';
 import 'package:merckfoundation_252026/screens/ContactUs/ContactUs.dart';
+import 'package:merckfoundation_252026/screens/MainScreens/CallforApplication.dart';
+import 'package:merckfoundation_252026/screens/MainScreens/HomeNewScreen.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaScreen.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/NewsRelease.dart';
@@ -17,6 +19,7 @@ import 'package:merckfoundation_252026/screens/WhoWeAreScreen.dart/ContentCarous
 import 'package:merckfoundation_252026/screens/WhoWeAreScreen.dart/CommonContentPage.dart';
 import 'package:merckfoundation_252026/screens/dashboard.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/Homewidget.dart/homefollow_us.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 import 'package:provider/provider.dart';
@@ -67,7 +70,7 @@ class _AppDrawerState extends State<AppDrawer> {
             /// Scrollable drawer content
             Expanded(
               child: navbarProvider.isLoading
-                  ? Center(child: CircularProgressIndicator())
+                  ? Center(child: CommonLoader())
                   : ListView(
                       padding: EdgeInsets.zero,
                       children: [
@@ -132,13 +135,8 @@ class _AppDrawerState extends State<AppDrawer> {
                       ],
                     ),
             ),
-
-            FollowUsSection(
-              showFlower: false,
-              iconSize: 30,
-              title: "",
-              icons: FollowUsProvider.merckFoundationIcons(context),
-            ),
+            FollowSection(title: "", iconSize: 15),
+            SizedBox(height: 10),
           ],
         ),
       ),
@@ -199,7 +197,7 @@ class _AppDrawerState extends State<AppDrawer> {
     String title,
   ) {
     switch (url) {
-      case '/Home':
+      case '':
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => Dashboard(index: 0)),
@@ -238,7 +236,7 @@ class _AppDrawerState extends State<AppDrawer> {
       case '/who-we-are/Leadership-Team':
       case '/merck-foundation-overview':
       case '/who-we-are/Leadership-Team-Message':
-        case '/message-from-leadership-team':
+      case '/message-from-leadership-team':
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -246,9 +244,6 @@ class _AppDrawerState extends State<AppDrawer> {
           ),
         );
         break;
-
-    
-     
 
       case '/our-partners':
         Navigator.push(
@@ -259,15 +254,27 @@ class _AppDrawerState extends State<AppDrawer> {
         );
         break;
 
-      case '/contact-us':
+      case '/contact-uss':
+      case '/who-we-are/Contact-Us':
         Navigator.push(context, MaterialPageRoute(builder: (_) => ContactUs()));
+        break;
+          case '/News-Articles':
+        Navigator.push(context, MaterialPageRoute(builder: (_) => Dashboard(index: 3,)));
+        break;
+         case '/Upcoming-Programs-&-Call-For-Applications':
+        Navigator.push(context, MaterialPageRoute(builder: (_) => Dashboard(index: 4,)));
         break;
 
       case '/videos':
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => MediaListingScreen(type: MediaType.videoLibrary,categoryID: "",albumID: "",albumName: "",),
+            builder: (_) => MediaListingScreen(
+              type: MediaType.videoLibrary,
+              categoryID: "",
+              albumID: "",
+              albumName: "",
+            ),
           ),
         );
         break;
@@ -275,7 +282,12 @@ class _AppDrawerState extends State<AppDrawer> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => MediaListingScreen(type: MediaType.testimonial,categoryID: "",albumID: "",albumName: ""),
+            builder: (_) => MediaListingScreen(
+              type: MediaType.testimonial,
+              categoryID: "",
+              albumID: "",
+              albumName: "",
+            ),
           ),
         );
         break;
@@ -283,7 +295,12 @@ class _AppDrawerState extends State<AppDrawer> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => MediaListingScreen(type: MediaType.photoGallery,categoryID: "",albumID: "",albumName: ""),
+            builder: (_) => MediaListingScreen(
+              type: MediaType.photoGallery,
+              categoryID: "",
+              albumID: "",
+              albumName: "",
+            ),
           ),
         );
         break;
@@ -291,7 +308,12 @@ class _AppDrawerState extends State<AppDrawer> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => MediaListingScreen(type: MediaType.activity,categoryID: "",albumID: "",albumName: ""),
+            builder: (_) => MediaListingScreen(
+              type: MediaType.activity,
+              categoryID: "",
+              albumID: "",
+              albumName: "",
+            ),
           ),
         );
         break;
@@ -299,7 +321,12 @@ class _AppDrawerState extends State<AppDrawer> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => MediaListingScreen(type: MediaType.digitalLibrary,categoryID: "",albumID: "",albumName: ""),
+            builder: (_) => MediaListingScreen(
+              type: MediaType.digitalLibrary,
+              categoryID: "",
+              albumID: "",
+              albumName: "",
+            ),
           ),
         );
         break;

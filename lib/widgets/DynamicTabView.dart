@@ -178,13 +178,13 @@ class _DynamicTabViewState extends State<DynamicTabView> {
               Expanded(
                 child: DefaultTextStyle(
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 13,
                     color: isSelected
                         ? widget.indicatorColor
-                        : Colors.black87,
+                        :Customcolor.colorBlue,
                     fontWeight: isSelected
                         ? FontWeight.w600
-                        : FontWeight.w400,
+                        : FontWeight.w800,
                   ),
                   child: widget.tabs[index].title,
                 ),

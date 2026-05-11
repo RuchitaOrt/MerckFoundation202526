@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
 import 'package:provider/provider.dart';
 
 import 'package:merckfoundation_252026/Utility/customappbar.dart';
@@ -21,6 +22,7 @@ class CommonListingScreen<T, P> extends StatefulWidget {
   final String Function(T item) getImage;
   final String Function(T item) getTitle;
   final void Function(BuildContext, T item) onTap;
+  final Widget? topWidget;
 
   const CommonListingScreen({
     super.key,
@@ -33,6 +35,7 @@ class CommonListingScreen<T, P> extends StatefulWidget {
     required this.getImage,
     required this.getTitle,
     required this.onTap,
+    this.topWidget,
   });
 
   @override
@@ -85,12 +88,17 @@ class _CommonListingScreenState<T, P>
 
           /// 🔴 First Loader
           if (widget.isLoading(provider) && list.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CommonLoader());
           }
 
           return CustomScrollView(
             controller: _controller,
             slivers: [
+               /// 🔥 TOP WIDGET
+  if (widget.topWidget != null)
+    SliverToBoxAdapter(
+      child: widget.topWidget!,
+    ),
               SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
@@ -109,7 +117,7 @@ class _CommonListingScreenState<T, P>
                         ? const Padding(
                             padding: EdgeInsets.all(16),
                             child: Center(
-                                child: CircularProgressIndicator()),
+                                child: CommonLoader()),
                           )
                         : const SizedBox();
                   },

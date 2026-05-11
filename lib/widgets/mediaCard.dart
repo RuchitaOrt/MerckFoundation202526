@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utils/common_images.dart';
 import 'package:merckfoundation_252026/screens/EpisodeScreen/EpisodeInformation.dart';
+import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/CommonPopupMenu.dart';
 import 'package:merckfoundation_252026/widgets/PauseImage.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
@@ -60,7 +61,7 @@ class MediaCard extends StatelessWidget {
                             child: SizedBox(
                               width: 20,
                               height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
+                              child: CommonLoader(),
                             ),
                           );
                         },

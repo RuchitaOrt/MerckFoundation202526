@@ -5,6 +5,7 @@ import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
 import 'package:merckfoundation_252026/widgets/CommonBorderButton.dart';
+import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
 
 class HorizontalAlbumWidget<T> extends StatelessWidget {
   final String title;
@@ -68,7 +69,7 @@ class HorizontalAlbumWidget<T> extends StatelessWidget {
                       imageUrl: imageUrl(item),
                       fit: BoxFit.cover,
                       placeholder: (context, url) =>
-                          const Center(child: CircularProgressIndicator()),
+                          const Center(child: CommonLoader()),
                       errorWidget: (_, __, ___) => Container(
                         color: Colors.grey.shade200,
                         alignment: Alignment.center,

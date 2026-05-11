@@ -8,6 +8,7 @@ import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/providers/follow_us_provider.dart';
 import 'package:merckfoundation_252026/screens/ContactUs/ContactEnquiryCard.dart';
+import 'package:merckfoundation_252026/screens/MainScreens/HomeNewScreen.dart';
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
 import 'package:merckfoundation_252026/widgets/Homewidget.dart/homefollow_us.dart';
 import 'package:merckfoundation_252026/widgets/botttomlink.dart';
@@ -60,18 +61,10 @@ class ContactUs extends StatelessWidget {
             
           ),
           ContactEnquiryCard(contacts: contacts),
-          FollowUsSection(
-            showFlower: false,
-            iconSize: 45,
-            title: CommonStrings.followUsTitle,
-            icons: FollowUsProvider.merckFoundationIcons(context),
-          ),
-          FollowUsSection(
-            showFlower: false,
-            iconSize: 45,
-            title: CommonStrings.followUsRashaTitle,
-            icons: FollowUsProvider.rashaIcons(context),
-          ),
+          FollowSection(title: "Follow Us"),
+                  SizedBox(height: 20),
+                  FollowSection(title: "Follow Senator, Dr. Rasha Kelej"),
+                  SizedBox(height: 10),
           8.0.heightBox,
           const FooterFlowerImage(),
           8.0.heightBox,

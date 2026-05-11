@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
@@ -7,6 +5,7 @@ import 'package:merckfoundation_252026/Utility/customappbar.dart';
 import 'package:merckfoundation_252026/Utils/common_images.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
+import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/screens/MainUIBody.dart/CommonBody.dart';
 import 'package:merckfoundation_252026/screens/SubScreens/OurAwardScreen.dart';
 import 'package:merckfoundation_252026/widgets/drawer.dart';
@@ -25,18 +24,17 @@ class MerckHomeScreen extends StatelessWidget {
         type: AppBarType.home,
         onDrawer: () => _scaffoldKey.currentState?.openDrawer(),
         onSearch: () {},
-        height:responsive.height(9),
+        height: responsive.height(9),
       ),
 
       drawer: Theme(
         data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
         child: AppDrawer(),
       ),
-      body:  CommonBody("1"),
+      body: CommonBody("1"),
     );
   }
 }
-
 
 class CategorySection extends StatelessWidget {
   const CategorySection({super.key});
@@ -77,11 +75,7 @@ class CategoryChip extends StatelessWidget {
   final String title;
   final Color color;
 
-  const CategoryChip({
-    super.key,
-    required this.title,
-    required this.color,
-  });
+  const CategoryChip({super.key, required this.title, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -93,17 +87,12 @@ class CategoryChip extends StatelessWidget {
         if (title == "Our Awards") {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (_) => const OurAwardScreen(),
-            ),
+            MaterialPageRoute(builder: (_) => const OurAwardScreen()),
           );
         }
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 12,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -126,11 +115,12 @@ class CategoryChip extends StatelessWidget {
 
 class FollowSection extends StatelessWidget {
   final String title;
-  const FollowSection({super.key, required this.title});
+  final double? iconSize;
+  const FollowSection({super.key, required this.title,  this.iconSize});
 
   @override
   Widget build(BuildContext context) {
-     final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.of(context).size.width;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -141,9 +131,9 @@ class FollowSection extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
               child: Text(
                 title,
-                style:  TextStyle(
-                  fontSize:screenWidth * 0.055,
-                  
+                style: TextStyle(
+                  fontSize: screenWidth * 0.055,
+
                   // Platform.isAndroid? 22:20,
                   fontWeight: FontWeight.w800,
 
@@ -151,7 +141,9 @@ class FollowSection extends StatelessWidget {
                 ),
               ),
             ),
-            title == "Follow Us"
+            title == ""
+                ? Container()
+                : title == "Follow Us"
                 ? Image.asset(CommonImagePath.homeFlowerNew, height: 70)
                 : Container(),
           ],
@@ -159,21 +151,23 @@ class FollowSection extends StatelessWidget {
         const SizedBox(height: 12),
         Padding(
           padding: const EdgeInsets.only(left: 10, right: 10),
-          child: const Row(
+          child:  Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              SocialIcon("assets/newImages/ins.svg"),
+              SocialIcon("assets/newImages/ins.svg",iconSize:iconSize ,),
 
-              SocialIcon("assets/newImages/FB.svg"),
-              SocialIcon("assets/newImages/twitt.svg"),
-              SocialIcon("assets/newImages/youtu.svg"),
-              SocialIcon("assets/newImages/flick.svg"),
+              SocialIcon("assets/newImages/FB.svg",iconSize:iconSize ),
+              SocialIcon("assets/newImages/twitt.svg",iconSize:iconSize ),
+              SocialIcon("assets/newImages/youtu.svg",iconSize:iconSize ),
+              SocialIcon("assets/newImages/flick.svg",iconSize:iconSize ),
 
-              SocialIcon("assets/newImages/threads.svg"),
+              SocialIcon("assets/newImages/threads.svg",iconSize:iconSize ),
             ],
           ),
         ),
-        title == "Follow Us"
+        title == ""
+            ? Container()
+            : title == "Follow Us"
             ? Container()
             : Padding(
                 padding: const EdgeInsets.only(top: 10),
@@ -186,11 +180,21 @@ class FollowSection extends StatelessWidget {
 
 class SocialIcon extends StatelessWidget {
   final String icon;
-  const SocialIcon(this.icon, {super.key});
+  final double? iconSize;
+
+  const SocialIcon(
+    this.icon, {
+    super.key,
+    this.iconSize,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size.width * 0.12;
+    final size =
+        MediaQuery.of(routeGlobalKey.currentContext!)
+                .size
+                .width *
+            0.12;
 
     return Container(
       padding: EdgeInsets.all(size * 0.25),
@@ -198,7 +202,12 @@ class SocialIcon extends StatelessWidget {
         shape: BoxShape.circle,
         color: Colors.white,
       ),
-      child: SvgPicture.asset(icon, width: size * 0.5, height: size * 0.5),
+      child: SvgPicture.asset(
+        icon,
+        width: iconSize ?? size * 0.5,
+        height: iconSize ?? size * 0.5,
+      ),
     );
   }
+
 }

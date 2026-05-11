@@ -6,6 +6,7 @@ import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/providers/program_provider.dart';
 import 'package:merckfoundation_252026/screens/OurPrograms/FABS/ProgramExpansionFab.dart';
 import 'package:merckfoundation_252026/screens/OurPrograms/FABS/ProgramFab.dart';
+import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
 import 'package:provider/provider.dart';
 class BaseProgramPage extends StatefulWidget {
   final String title;
@@ -52,7 +53,7 @@ class _BaseProgramPageState extends State<BaseProgramPage> {
       body: Consumer<ProgramProvider>(
         builder: (context, provider, _) {
           if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CommonLoader());
           }
           return widget.bodyBuilder(context);
         },

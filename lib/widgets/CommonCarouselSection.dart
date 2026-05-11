@@ -7,6 +7,8 @@ import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/model/CommonModel.dart';
 import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/widgets/CommonActionButton.dart';
+import 'package:merckfoundation_252026/widgets/CommonBorderButton.dart';
+import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
 class CommonCarouselSection extends StatefulWidget {
@@ -37,7 +39,7 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
   @override
   Widget build(BuildContext context) {
     if (widget.items.isEmpty) {
-      return Center(child: FormLabel(text: CommonStrings.emptyData));
+      return Center(child:EmptyStateWidget());
     }
 
     return Stack(
@@ -60,10 +62,18 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
               ),
             
               8.0.heightBox,
-              CommonActionButton(
-                text: CommonStrings.viewAll,
-                onTap: widget.onViewAll,
-              ),
+               Center(
+            child: CommonBorderButton(
+              title: CommonStrings.viewAll,
+              onTap: () {
+                
+              },
+            ),
+          ),
+              // CommonActionButton(
+              //   text: CommonStrings.viewAll,
+              //   onTap: widget.onViewAll,
+              // ),
             ],
           ),
         ),
@@ -96,13 +106,17 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
             ),
             16.0.heightBox,
              item.title != null
-                ? FormLabel(
-                    text: item.title!,
-                    maxLines: 2,
-                    textAlignment: TextAlign.center,
-                    labelColor: Customcolor.colorBlue,
-                    fontSize: responsive.fontSize(2.2),
-                  )
+                ? Padding(
+                  padding: const EdgeInsets.only(left: 20,right: 20),
+                  child: FormLabel(
+                      text: item.title!,
+                      maxLines: 2,
+                      textAlignment: TextAlign.center,
+                      labelColor: Colors.black,
+                      fontweight: FontWeight.w500,
+                      fontSize: responsive.fontSize(2.2),
+                    ),
+                )
                 : SizedBox(),
                 
            

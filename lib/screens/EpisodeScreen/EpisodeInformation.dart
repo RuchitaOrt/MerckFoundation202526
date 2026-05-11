@@ -5,6 +5,8 @@ import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utils/common_images.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
 import 'package:merckfoundation_252026/widgets/CommonBorderButton.dart';
+import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
+import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
 import 'package:merckfoundation_252026/widgets/botttomlink.dart';
 
@@ -58,9 +60,9 @@ class _EpisodeInformationState extends State<EpisodeInformation> {
         onShare: () {},
       ),
       body: provider.isLoading
-          ?  Center(child: CircularProgressIndicator())
+          ?  Center(child: CommonLoader())
           : data == null
-              ?  Center(child: Text("No Data Found"))
+              ?  Center(child:EmptyStateWidget(),)
               : ListView(
                   children: [
                     _buildSectionTitle(

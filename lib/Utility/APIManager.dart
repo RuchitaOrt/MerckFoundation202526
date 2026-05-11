@@ -54,6 +54,7 @@ enum API {
 
   //Our Award
   getawardlist,
+  getnewsletterarticlebylanguage,
 }
 
 enum HTTPMethod { GET, POST, PUT, DELETE }
@@ -402,6 +403,9 @@ class APIManager {
         return "api/seasons/get-episode-info";
       case API.getawardlist:
         return "api/masters/get-award-list";
+
+      case API.getnewsletterarticlebylanguage:
+        return "api/page_structure/get-newsletter-article-by-language";
     }
   }
 
@@ -425,6 +429,7 @@ class APIManager {
       case API.testimonialcategory:
       case API.homeseasonlist:
       case API.getawardlist:
+      
         return HTTPMethod.GET;
 
       default:
@@ -445,35 +450,117 @@ class APIManager {
     }
   }
 
+  // Future<dynamic> apiRequest(
+  //   BuildContext context,
+  //   API api, {
+  //   dynamic jsonval,
+  //   Map<String, dynamic>? queryParams,
+  // }) async {
+  //   try {
+  //     final url = apiEndPoint(api);
+
+  //     final response = await dio.request(
+  //       url,
+  //       data: jsonval,
+  //       queryParameters: queryParams,
+  //       options: Options(method: apiHTTPMethod(api).name),
+  //     );
+
+  //     final data = response.data;
+
+  //     if (data is String) {
+  //       try {
+  //         return parseResponse(api, jsonDecode(data));
+  //       } catch (_) {
+  //         return data;
+  //       }
+  //     }
+
+  //     return parseResponse(api, data);
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
   Future<dynamic> apiRequest(
-    BuildContext context,
-    API api, {
-    dynamic jsonval,
-    Map<String, dynamic>? queryParams,
-  }) async {
-    try {
-      final url = apiEndPoint(api);
+  BuildContext context,
+  API api, {
+  dynamic jsonval,
+  Map<String, dynamic>? queryParams,
+}) async {
+  try {
+    final url = apiEndPoint(api);
 
-      final response = await dio.request(
-        url,
-        data: jsonval,
-        queryParameters: queryParams,
-        options: Options(method: apiHTTPMethod(api).name),
-      );
+    final response = await dio.request(
+      url,
+      data: jsonval,
+      queryParameters: queryParams,
+      options: Options(method: apiHTTPMethod(api).name),
+    );
 
-      final data = response.data;
+    final data = response.data;
 
-      if (data is String) {
-        try {
-          return parseResponse(api, jsonDecode(data));
-        } catch (_) {
-          return data;
-        }
+    if (data is String) {
+      try {
+        return parseResponse(api, jsonDecode(data));
+      } catch (_) {
+        return data;
       }
-
-      return parseResponse(api, data);
-    } catch (e) {
-      rethrow;
     }
+
+    return parseResponse(api, data);
+
+  } on DioException catch (e) {
+final apiName = api.toString().split('.').last;
+  final url = apiEndPoint(api);
+
+  print('\n' + '❌' * 20);
+  print("❌ API ERROR");
+  print("🆔 API: $apiName");
+  print("🔗 URL: $url");
+  print("📡 STATUS CODE: ${e.response?.statusCode}");
+  print("📦 RESPONSE: ${e.response?.data}");
+  print("📨 MESSAGE: ${e.message}");
+  print('❌' * 20 + '\n');
+
+    /// 🔴 SERVER ERROR
+    if (e.response?.statusCode == 500) {
+
+      print("❌ SERVER ERROR 500");
+
+      showToast("Server error. Please try again later.");
+
+      return null;
+    }
+
+    /// 🔴 NO INTERNET
+    if (e.type == DioExceptionType.connectionError) {
+
+      showToast("No internet connection.");
+
+      return null;
+    }
+
+    /// 🔴 TIMEOUT
+    if (e.type == DioExceptionType.connectionTimeout ||
+        e.type == DioExceptionType.receiveTimeout) {
+
+      showToast("Request timeout. Please try again.");
+
+      return null;
+    }
+
+    /// 🔴 OTHER ERROR
+    showToast("Something went wrong.");
+
+    return null;
+
+  } catch (e) {
+
+    print("❌ UNKNOWN ERROR: $e");
+
+    showToast("Something went wrong.");
+
+    return null;
   }
+}
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/widgets/CommonList/HorizontalMediaSection.dart';
+import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
+import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
 import 'package:merckfoundation_252026/widgets/botttomlink.dart';
 import 'package:provider/provider.dart';
@@ -47,9 +50,26 @@ class _EpisodeListingScreenState
 
     body: provider.isLoading
     ? const Center(
-        child: CircularProgressIndicator(),
+        child: CommonLoader(),
       )
-    : ListView.builder(
+    : provider.seasons.isEmpty? Column(
+                  children: [
+                    /// CENTER EMPTY CONTENT
+                    const Expanded(
+                      child: Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: EmptyStateWidget(),
+                        ),
+                      ),
+                    ),
+
+                    /// FIXED FOOTER BOTTOM
+                    FooterFlowerImage(),
+
+                    Bottomcardlink(),
+                  ],
+                ):ListView.builder(
         physics: const BouncingScrollPhysics(),
         itemCount: provider.seasons.length + 2,
         itemBuilder: (context, index) {
@@ -73,7 +93,7 @@ class _EpisodeListingScreenState
             ),
             child: HorizontalMediaSection(
               title: season.seasonName,
-              
+              buttonText: CommonStrings.viewAll,
               seasonID: season.id.toString(),
               showMenu: true,
               type: HomeLayoutType.episodesviewall,

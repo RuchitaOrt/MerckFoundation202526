@@ -27,7 +27,7 @@ class MediaContactTile extends StatelessWidget {
           FormLabel(
             text: data.name,
             textAlignment: TextAlign.center,
-            fontSize: responsive.fontSize(2),
+            fontSize: responsive.fontSize(3),
             labelColor: Color(0xffffcb04),
             fontweight: FontWeight.w500,
           ),

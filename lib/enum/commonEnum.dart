@@ -24,7 +24,8 @@ enum MediaType {
   activity,
   digitalLibrary,
   testimonialArticle,
-  photoAlbum,episodes
+  photoAlbum,episodes,
+ 
 }
 const homelayoutOrder = {
   "Slider": 1,

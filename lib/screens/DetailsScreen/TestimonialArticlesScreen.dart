@@ -9,6 +9,8 @@ import 'package:merckfoundation_252026/Utility/customappbar.dart';
 import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/model/TestimonialModel.dart';
+import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
+import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:merckfoundation_252026/widgets/filterdrawer.dart';
 import 'package:provider/provider.dart';
 
@@ -86,14 +88,14 @@ void initState() {
           if (provider.isLoading) {
             return const Center(
               child:
-                  CircularProgressIndicator(),
+                  CommonLoader(),
             );
           }
 
           if (provider
               .testimonials.isEmpty) {
             return const Center(
-              child: Text("No Data Found"),
+              child:EmptyStateWidget(),
             );
           }
 

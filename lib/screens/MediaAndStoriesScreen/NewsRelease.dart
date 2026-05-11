@@ -4,20 +4,70 @@ import 'package:merckfoundation_252026/Provider/NewsReleaseProvider.dart';
 
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
 import 'package:merckfoundation_252026/Utils/common_strings.dart';
+import 'package:merckfoundation_252026/model/CommonModel.dart';
 
 import 'package:merckfoundation_252026/model/MediaModel.dart';
+import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaEnquiryCard.dart';
+import 'package:merckfoundation_252026/widgets/mediaCard.dart';
 
 import 'package:provider/provider.dart';
 
 import 'package:merckfoundation_252026/screens/MainScreens/CommonListingScreen.dart';
 
-class NewsRelease extends StatelessWidget {
-  const NewsRelease({super.key});
+// class NewsRelease extends StatelessWidget {
+//   const NewsRelease({super.key});
 
+//   @override
+//   Widget build(BuildContext context) {
+//     return CommonListingScreen<MediaModel, NewsReleaseProvider>(
+//       title: CommonStrings.newsRelease,
+
+//       getList: (provider) => provider.mediaList,
+//       isLoading: (provider) => provider.isLoading,
+//       hasMore: (provider) => provider.hasMore,
+
+//       loadInitial: (context) =>
+//           context.read<NewsReleaseProvider>().loadInitial(context),
+
+//       loadMore: (context) =>
+//           context.read<NewsReleaseProvider>().loadMore(context),
+
+//       getImage: (item) =>  "assets/newImages/pdf.png",
+//       getTitle: (item) => item.title ?? "",
+
+//       onTap: (context, item) {
+//         ShowDialogs.launchURL(item.pdfFile ?? "");
+//       },
+//     );
+//   }
+// }
+
+class NewsRelease extends StatelessWidget {
+   NewsRelease({super.key});
+ final contacts = [
+    MediaContactModel(
+      name: "Ms. Mehak Handa",
+      phone: "+91 9319606669",
+      email: "mehak.handa@external.merckgroup.com",
+      image: "assets/newImages/profile1.png",
+    ),
+    MediaContactModel(
+      name: "Mr. Harsh Sharma",
+      phone: "+91 9540932090",
+      email: "harsh.sharma@external.merckgroup.com",
+      image: "assets/newImages/profile2.png",
+    ),
+  ];
   @override
   Widget build(BuildContext context) {
     return CommonListingScreen<MediaModel, NewsReleaseProvider>(
       title: CommonStrings.newsRelease,
+
+      /// 🔥 ADD THIS
+      topWidget: Padding(
+        padding: const EdgeInsets.all(1),
+        child: MediaEnquiryCard(contacts: contacts,)
+      ),
 
       getList: (provider) => provider.mediaList,
       isLoading: (provider) => provider.isLoading,
@@ -29,7 +79,8 @@ class NewsRelease extends StatelessWidget {
       loadMore: (context) =>
           context.read<NewsReleaseProvider>().loadMore(context),
 
-      getImage: (item) =>  "assets/newImages/pdf.png",
+      getImage: (item) => "assets/newImages/pdf.png",
+
       getTitle: (item) => item.title ?? "",
 
       onTap: (context, item) {

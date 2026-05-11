@@ -10,6 +10,7 @@ import 'package:merckfoundation_252026/providers/CovidProvider.dart';
 import 'package:merckfoundation_252026/screens/SubScreens/Covid/CovidBanner.dart';
 import 'package:merckfoundation_252026/screens/SubScreens/Covid/CovidDescriptionList.dart';
 import 'package:merckfoundation_252026/widgets/CommonListSection.dart';
+import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/Customcard.dart';
 
 import 'package:provider/provider.dart';
@@ -35,7 +36,7 @@ class CovidResponseScreen extends StatelessWidget {
       body: Consumer<CovidProvider>(
         builder: (context, provider, _) {
           if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CommonLoader());
           }
 
           return ListView(

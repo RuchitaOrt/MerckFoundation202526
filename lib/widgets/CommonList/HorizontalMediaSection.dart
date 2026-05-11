@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
+import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/screens/DetailsScreen/TestimonialArticlesScreen.dart';
@@ -23,6 +24,7 @@ class HorizontalMediaSection extends StatelessWidget {
 
   /// ✅ MENU CLICK
   final VoidCallback? onMenuTap;
+  final String buttonText;
 
   const HorizontalMediaSection({
     super.key,
@@ -32,7 +34,7 @@ class HorizontalMediaSection extends StatelessWidget {
     this.showMenu = false,
     this.onMenuTap,
     this.type,
-    this.seasonID,
+    this.seasonID, required this.buttonText,
   });
 
   @override
@@ -214,7 +216,7 @@ onTap: ()
           /// 🔹 BUTTON
           Center(
             child: CommonBorderButton(
-              title: "View All",
+              title:buttonText,
               onTap: () {
                 if (type == HomeLayoutType.testimonials) {
                   Navigator.push(
