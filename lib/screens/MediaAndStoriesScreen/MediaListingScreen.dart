@@ -4,6 +4,7 @@ import 'package:merckfoundation_252026/Provider/MediaListingProvider.dart';
 import 'package:merckfoundation_252026/Utility/customappbar.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/const/GlobalLists.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/screens/MainUIBody.dart/DetailScreen.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/PhotoAlumbScreen.dart';
@@ -21,13 +22,19 @@ class MediaListingScreen extends StatefulWidget {
   final String categoryID;
   final String albumName;
   final String albumID;
+    final String menuID;
+  final String title;
+  
+
+  final String? shareLink;
+
 
   const MediaListingScreen({
     super.key,
     required this.type,
     required this.categoryID,
     required this.albumID,
-    required this.albumName,
+    required this.albumName, required this.menuID, required this.title, this.shareLink,
   });
 
   @override
@@ -97,19 +104,20 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
   String getTitle() {
     switch (widget.type) {
       case MediaType.stories:
-        return "Stories";
+        // return widget.title;
       case MediaType.videoLibrary:
-        return "Video Library";
+        // return "Video Library";
       case MediaType.testimonial:
-        return "Testimonials";
+        // return "Testimonials";
       case MediaType.photoGallery:
-        return "Photo Gallery";
+        // return "Photo Gallery";
       case MediaType.activity:
-        return "Our Activities";
+        // return "Our Activities";
       case MediaType.digitalLibrary:
-        return "Digital Library";
+        // return "Digital Library";
       case MediaType.testimonialArticle:
-        return "Testimonials of Merck Foundation Alumni";
+        // return "Testimonials of Merck Foundation Alumni";
+            return widget.title;
       case MediaType.photoAlbum:
         return widget.albumName;
       case MediaType.episodes:
@@ -139,8 +147,8 @@ onBack:(widget.type ==MediaType.stories)?null: ()
   Navigator.pop(context);
 },
         onSearch: () {},
-        onShare:widget.type == MediaType.episodes ?null: () {},
-        shareLink: "",
+        shareLink: widget.shareLink,
+      
       ),
 
       backgroundColor: Customcolor.background,
@@ -198,6 +206,8 @@ onBack:(widget.type ==MediaType.stories)?null: ()
                           widget.type == MediaType.photoAlbum ||
                           widget.type == MediaType.activity) {
                         return MediaCard(
+                          menuID: widget.menuID,
+                          shareLink: widget.shareLink,
                           id: item.id.toString(),
                           image: widget.type == MediaType.photoAlbum
                               ? item.photo ?? ""
@@ -222,6 +232,8 @@ onBack:(widget.type ==MediaType.stories)?null: ()
                                     pageTile: getTitle(),
                                     tile: item.photo_category_name,
                                     categoryID: item.id.toString(),
+                                       menuID: widget.menuID,
+                          shareLink: widget.shareLink,
                                   ),
                                 ),
                               );
@@ -233,6 +245,7 @@ onBack:(widget.type ==MediaType.stories)?null: ()
                                     item.title,
                                     item.details,
                                     title: getTitle(),
+                                    shareLink: widget.shareLink,
                                   ),
                                 ),
                               );
@@ -243,6 +256,8 @@ onBack:(widget.type ==MediaType.stories)?null: ()
 
                       /// 🎥 VIDEO TYPES
                       return MediaCard(
+                           menuID: widget.menuID,
+                          shareLink: widget.shareLink,
                          id: item.id.toString(),
                         image: getYoutubeThumbnail(item.videoLink),
                         title: widget.type==MediaType.episodes?item.episode_name ?? "" :item.videoDesc ?? "",

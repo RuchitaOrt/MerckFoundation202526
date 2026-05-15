@@ -9,8 +9,9 @@ import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 
 class LeaderCard extends StatelessWidget {
   final List content;
+  final String shareLink;
 
-  const LeaderCard({super.key, required this.content});
+  const LeaderCard({super.key, required this.content, required this.shareLink});
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +93,7 @@ class LeaderCard extends StatelessWidget {
                           content['description'],
                           title: content['title'],
                           image: content['thumbnail'],
+                          shareLink: shareLink ,
                         ),
                       ),
                     );

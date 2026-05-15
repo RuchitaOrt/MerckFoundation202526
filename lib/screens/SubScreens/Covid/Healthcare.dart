@@ -20,8 +20,7 @@ class Healthcare extends StatelessWidget {
         type: AppBarType.inner,
         title: CommonStrings.healthCareText,
         onSearch: () {},
-        onShare: () {},
-        shareLink: "",
+       
       ),
       body: ListView(
     

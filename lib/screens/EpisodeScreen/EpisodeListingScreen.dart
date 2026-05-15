@@ -14,7 +14,12 @@ import 'package:merckfoundation_252026/enum/commonEnum.dart';
 
 
 class EpisodeListingScreen extends StatefulWidget {
-  const EpisodeListingScreen({super.key});
+   final String menuID;
+  final String title;
+  
+
+  final String? shareLink;
+  const EpisodeListingScreen({super.key, required this.menuID, required this.title, this.shareLink});
 
   @override
   State<EpisodeListingScreen> createState() =>
@@ -45,7 +50,7 @@ class _EpisodeListingScreenState
         type: AppBarType.inner,
         title: "Episodes",
         onSearch: () {},
-        onShare: () {},
+       shareLink: widget.shareLink,
       ),
 
     body: provider.isLoading
@@ -96,6 +101,10 @@ class _EpisodeListingScreenState
               buttonText: CommonStrings.viewAll,
               seasonID: season.id.toString(),
               showMenu: true,
+              buttonLink: "episodes_viewall",
+                menuID: widget.menuID,
+                     
+                        shareLink: widget.shareLink,
               type: HomeLayoutType.episodesviewall,
               content: season.episodes
                   .map((e) => e.toMap())

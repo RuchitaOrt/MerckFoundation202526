@@ -12,12 +12,17 @@ import 'package:provider/provider.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/CommonListingScreen.dart';
 
 class MediaScreen extends StatelessWidget {
-  const MediaScreen({super.key});
+  final String menuID;
+  final String title;
+  
+
+  final String? shareLink;
+  const MediaScreen({super.key, required this.menuID, required this.title, this.shareLink});
 
   @override
   Widget build(BuildContext context) {
     return CommonListingScreen<MediaModel, MediaProvider>(
-      title:CommonStrings.merckInMedia,
+      title:title,
 
       getList: (provider) => provider.mediaList,
       isLoading: (provider) => provider.isLoading,
@@ -31,7 +36,8 @@ class MediaScreen extends StatelessWidget {
 
       getImage: (item) => item.image ?? "",
       getTitle: (item) => item.title ?? "",
-
+ shareLink: shareLink,
+      menuID: menuID,
       onTap: (context, item) {
         ShowDialogs.launchURL(item.articleUrl ?? "");
       },

@@ -13,12 +13,15 @@ class PhotoAlumbScreen extends StatefulWidget {
   final String? pageTile;
   final String? tile;
   final String? categoryID;
+   final String menuID;
+
+  final String? shareLink;
 
   const PhotoAlumbScreen({
     super.key,
     this.tile,
     this.categoryID,
-    this.pageTile,
+    this.pageTile, required this.menuID, this.shareLink,
   });
 
   @override
@@ -48,7 +51,7 @@ class _PhotoAlumbScreenPageState extends State<PhotoAlumbScreen> {
         type: AppBarType.inner,
         title: "${widget.tile} ${widget.pageTile}" ?? "",
         onSearch: () {},
-        onShare: () {},
+        shareLink: widget.shareLink,
       ),
       body: provider.isLoading
           ? const Center(child: CommonLoader())
@@ -71,6 +74,9 @@ class _PhotoAlumbScreenPageState extends State<PhotoAlumbScreen> {
                   alubumID: album.id.toString(),
                   alubumName: album.albumName,
                   categoryID: widget.categoryID.toString(),
+                  menuID: widget.menuID,
+                                  
+                                  shareLink: widget.shareLink,
                 );
               },
             ),

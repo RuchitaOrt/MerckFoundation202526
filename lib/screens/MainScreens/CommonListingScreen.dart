@@ -23,7 +23,11 @@ class CommonListingScreen<T, P> extends StatefulWidget {
   final String Function(T item) getTitle;
   final void Function(BuildContext, T item) onTap;
   final Widget? topWidget;
+  final String menuID;
+ 
+  
 
+  final String? shareLink;
   const CommonListingScreen({
     super.key,
     required this.title,
@@ -35,7 +39,7 @@ class CommonListingScreen<T, P> extends StatefulWidget {
     required this.getImage,
     required this.getTitle,
     required this.onTap,
-    this.topWidget,
+    this.topWidget, required this.menuID, this.shareLink,
   });
 
   @override
@@ -79,8 +83,7 @@ class _CommonListingScreenState<T, P>
         type: AppBarType.inner,
         title: widget.title,
         onSearch: () {},
-        onShare: () {},
-        shareLink: "",
+        shareLink: widget.shareLink,
       ),
       body: Consumer<P>(
         builder: (context, provider, _) {

@@ -11,7 +11,13 @@ import 'package:merckfoundation_252026/screens/SubScreens/OurAwardScreen.dart';
 import 'package:merckfoundation_252026/widgets/drawer.dart';
 
 class MerckHomeScreen extends StatelessWidget {
-  MerckHomeScreen({super.key});
+   final String menuID;
+  final String title;
+  
+
+  final String? shareLink;
+
+  MerckHomeScreen({super.key, required this.menuID, required this.title, this.shareLink});
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
@@ -31,46 +37,57 @@ class MerckHomeScreen extends StatelessWidget {
         data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
         child: AppDrawer(),
       ),
-      body: CommonBody("1"),
+      body: CommonBody(menuID),
     );
   }
 }
 
 class CategorySection extends StatelessWidget {
-  const CategorySection({super.key});
+  final List content;
+
+  const CategorySection({
+    super.key,
+    required this.content,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final items = [
-      ["Our Vision", Customcolor.pink_col],
-      ["Our Programs", Customcolor.green_col],
-      ["Our Articles", Customcolor.lightgreen_col],
-      ["Our Awards", Customcolor.violet_col],
-      ["Media & Events", Customcolor.skyblue_col],
-      ["Our Policies", Customcolor.orange_col],
-      ["Our Mission", Customcolor.darkblue_col],
-      ["Covid Response", Customcolor.covid_19_tile],
-      ["Our Africa By Merck Foundation (TV Program)", Customcolor.prog3],
-    ];
 
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          children: items.map((e) {
-            return SizedBox(
-              // width: MediaQuery.of(context).size.width / 2 - 22,
-              child: CategoryChip(title: e[0] as String, color: e[1] as Color),
-            );
-          }).toList(),
-        ),
-      ],
+    /// ✅ hide if empty
+    if (content.isEmpty) {
+      return const SizedBox();
+    }
+
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: content.map<Widget>((e) {
+
+        final String title =
+            e['title'] is String ? e['title'] : "";
+
+        final String description =
+            e['description'] is String
+                ? e['description']
+                : "";
+                 final String colorString =
+            e['subdescription'] is String
+                ? e['subdescription']
+                : "";
+final Color color =
+    Color(int.parse(colorString));
+       
+        return CategoryChip(
+          title: title,
+          color: color,
+        
+        );
+      }).toList(),
     );
   }
-}
 
+
+}
 class CategoryChip extends StatelessWidget {
   final String title;
   final Color color;
@@ -92,7 +109,7 @@ class CategoryChip extends StatelessWidget {
         }
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -116,7 +133,8 @@ class CategoryChip extends StatelessWidget {
 class FollowSection extends StatelessWidget {
   final String title;
   final double? iconSize;
-  const FollowSection({super.key, required this.title,  this.iconSize});
+  final int position;
+  const FollowSection({super.key, required this.title,  this.iconSize,  this.position=0});
 
   @override
   Widget build(BuildContext context) {
@@ -141,9 +159,9 @@ class FollowSection extends StatelessWidget {
                 ),
               ),
             ),
-            title == ""
+            position == 0
                 ? Container()
-                : title == "Follow Us"
+                : position == 1
                 ? Image.asset(CommonImagePath.homeFlowerNew, height: 70)
                 : Container(),
           ],
@@ -154,20 +172,32 @@ class FollowSection extends StatelessWidget {
           child:  Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              SocialIcon("assets/newImages/ins.svg",iconSize:iconSize ,),
+              SocialIcon("assets/newImages/ins.svg",iconSize:iconSize ,onTap: () {
+                
+              },),
 
-              SocialIcon("assets/newImages/FB.svg",iconSize:iconSize ),
-              SocialIcon("assets/newImages/twitt.svg",iconSize:iconSize ),
-              SocialIcon("assets/newImages/youtu.svg",iconSize:iconSize ),
-              SocialIcon("assets/newImages/flick.svg",iconSize:iconSize ),
+              SocialIcon("assets/newImages/FB.svg",iconSize:iconSize ,onTap: () {
+                
+              },),
+              SocialIcon("assets/newImages/twitt.svg",iconSize:iconSize,onTap: () {
+                
+              }, ),
+              SocialIcon("assets/newImages/youtu.svg",iconSize:iconSize ,onTap: () {
+                
+              },),
+              SocialIcon("assets/newImages/flick.svg",iconSize:iconSize ,onTap: () {
+                
+              },),
 
-              SocialIcon("assets/newImages/threads.svg",iconSize:iconSize ),
+              SocialIcon("assets/newImages/threads.svg",iconSize:iconSize,onTap: () {
+                
+              },),
             ],
           ),
         ),
-        title == ""
+        position == 0
             ? Container()
-            : title == "Follow Us"
+            : position == 1
             ? Container()
             : Padding(
                 padding: const EdgeInsets.only(top: 10),
@@ -181,11 +211,12 @@ class FollowSection extends StatelessWidget {
 class SocialIcon extends StatelessWidget {
   final String icon;
   final double? iconSize;
+  final VoidCallback onTap;
 
   const SocialIcon(
     this.icon, {
     super.key,
-    this.iconSize,
+    this.iconSize, required this.onTap,
   });
 
   @override
@@ -196,16 +227,19 @@ class SocialIcon extends StatelessWidget {
                 .width *
             0.12;
 
-    return Container(
-      padding: EdgeInsets.all(size * 0.25),
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white,
-      ),
-      child: SvgPicture.asset(
-        icon,
-        width: iconSize ?? size * 0.5,
-        height: iconSize ?? size * 0.5,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(size * 0.25),
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+         color: Colors.white,
+        ),
+        child: SvgPicture.asset(
+          icon,
+          width: iconSize ?? size * 0.5,
+          height: iconSize ?? size * 0.5,
+        ),
       ),
     );
   }

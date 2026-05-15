@@ -13,6 +13,9 @@ class MediaCard extends StatelessWidget {
   final bool showPlayIcon;
   final Color fontColor;
   final bool showmenu;
+  final String menuID;
+
+  final String? shareLink;
 
   const MediaCard({
     super.key,
@@ -21,7 +24,7 @@ class MediaCard extends StatelessWidget {
     this.onTap,
     this.showPlayIcon = false,
     this.fontColor = Colors.black87,
-    this.showmenu=false, required this.id
+    this.showmenu=false, required this.id, required this.menuID, this.shareLink
   });
 
   @override
@@ -100,7 +103,9 @@ class MediaCard extends StatelessWidget {
             Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) =>  EpisodeInformation(episodeid:id ,),
+                      builder: (_) =>  EpisodeInformation(episodeid:id , menuID: menuID,
+                                  title: title ?? "",
+                                  shareLink: shareLink,),
                     ),
                   );
           

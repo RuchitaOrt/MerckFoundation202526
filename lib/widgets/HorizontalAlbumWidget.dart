@@ -14,12 +14,17 @@ class HorizontalAlbumWidget<T> extends StatelessWidget {
   final String alubumID;
   final String alubumName;
   final String Function(T item) imageUrl;
+   final String menuID;
+  
+  
+
+  final String? shareLink;
 
   const HorizontalAlbumWidget({
     super.key,
     required this.title,
     required this.images,
-    required this.imageUrl, required this.categoryID, required this.alubumID, required this.alubumName,
+    required this.imageUrl, required this.categoryID, required this.alubumID, required this.alubumName, required this.menuID, this.shareLink,
   });
 
   @override
@@ -95,7 +100,8 @@ class HorizontalAlbumWidget<T> extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (_) =>
-                        MediaListingScreen(type: MediaType.photoAlbum,categoryID:categoryID ,albumID:alubumID ,albumName:alubumName,),
+                        MediaListingScreen(type: MediaType.photoAlbum,categoryID:categoryID ,albumID:alubumID ,albumName:alubumName,
+                        menuID: menuID,shareLink: shareLink,title: title,),
                   ),
                 );
               },

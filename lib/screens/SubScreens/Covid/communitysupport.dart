@@ -29,8 +29,7 @@ class CommunitysupportState extends State<Communitysupport>
         type: AppBarType.inner,
         title: CommonStrings.communitySupport,
         onSearch: () {},
-        onShare: () {},
-        shareLink: "",
+       
       ),
 
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,

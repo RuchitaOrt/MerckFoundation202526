@@ -13,11 +13,14 @@ import 'package:provider/provider.dart';
 class OurPartnersScreen extends StatefulWidget {
   final String menuID;
   final String title;
+  
+
+  final String? shareLink;
 
   const OurPartnersScreen({
     super.key,
     required this.menuID,
-    required this.title,
+    required this.title, this.shareLink,
   });
 
   @override
@@ -65,8 +68,7 @@ class _OurPartnersScreenState extends State<OurPartnersScreen> {
         type: AppBarType.inner,
         title: widget.title,
         onSearch: () {},
-        onShare: () {},
-        shareLink: "",
+        shareLink: widget.shareLink,
       ),
       body: Consumer<OurPartnersProvider>(
         builder: (context, provider, child) {

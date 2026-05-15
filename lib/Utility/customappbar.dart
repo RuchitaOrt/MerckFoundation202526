@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utils/common_images.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
+
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
+
 import 'package:merckfoundation_252026/screens/dashboard.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
+import 'package:merckfoundation_252026/widgets/share_bottom_sheet.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final AppBarType type;
@@ -69,7 +72,10 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
                 } else {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (_) => Dashboard(index: 0)),
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          Dashboard(index: 0, menuID: "1", shareLink: ""),
+                    ),
                   );
                 }
               }
@@ -88,11 +94,27 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           Image.asset(CommonImagePath.drawerImg, height: 45),
 
           const Spacer(),
+if (onShare != null || shareLink != null)
+  _icon(
+    CommonImagePath.share,
+    () {
+      if (shareLink != null &&
+          shareLink!.isNotEmpty) {
 
-          if (onShare != null) _icon(CommonImagePath.share, () {}),
-          // ACTION ICONS
+        ShareBottomSheet.show(
+          context,
+          shareLink:
+              "$shareLink",
+        );
+      } else {
+        onShare?.call();
+      }
+    },true
+  ),
+          // if (onShare != null) _icon(CommonImagePath.share, onShare,true),
+          // // ACTION ICONS
           8.0.heightBox,
-          if (onSearch != null) _icon(CommonImagePath.search, onSearch),
+          if (onSearch != null) _icon(CommonImagePath.search, onSearch,false),
 
           10.0.heightBox,
         ],
@@ -121,17 +143,17 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
 
-          if (onFilter != null) _icon(CommonImagePath.filter, onFilter),
+          if (onFilter != null) _icon(CommonImagePath.filter, onFilter,false),
         ],
       ),
     );
   }
 
-  Widget _icon(String asset, VoidCallback? onTap) {
+  Widget _icon(String asset, VoidCallback? onTap,bool isShare) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: GestureDetector(
-        onTap: onTap,
+        onTap:onTap,
         child: Image.asset(asset, height: 22),
       ),
     );

@@ -9,7 +9,12 @@ import 'package:merckfoundation_252026/screens/MainScreens/CommonListingScreen.d
 import 'package:merckfoundation_252026/screens/MainUIBody.dart/DetailScreen.dart';
 
 class ArticlesScreen extends StatelessWidget {
-  const ArticlesScreen({super.key});
+   final String menuID;
+  final String title;
+  
+
+  final String? shareLink;
+  const ArticlesScreen({super.key, required this.menuID, required this.title, this.shareLink});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +33,8 @@ class ArticlesScreen extends StatelessWidget {
 
       getImage: (item) => item.image ?? "",
       getTitle: (item) => item.title ?? "",
-
+      shareLink: shareLink,
+      menuID: menuID,
       onTap: (context, item) {
         Navigator.push(
           context,
@@ -41,6 +47,7 @@ class ArticlesScreen extends StatelessWidget {
               articleId:item.id.toString(),
               languageId: item.language_id ?? "",
               isDetailApiCalled: true,
+              shareLink: shareLink,
 
             ),
           ),

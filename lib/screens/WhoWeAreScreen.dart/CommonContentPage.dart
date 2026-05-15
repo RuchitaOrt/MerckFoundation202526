@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:merckfoundation_252026/Utility/customappbar.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/const/GlobalLists.dart';
 
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 
@@ -35,11 +36,8 @@ class _CommonContentPageState extends State<CommonContentPage> {
       appBar: CommonAppBar(
         type: AppBarType.inner,
         title: widget.title,
-        onSearch: () {},
-        onShare: () {
-          // use widget.shareLink here
-        },
-        shareLink: widget.shareLink ?? "",
+      
+        shareLink: widget.shareLink,
       ),
       body: CommonBody(widget.menuID),
     );

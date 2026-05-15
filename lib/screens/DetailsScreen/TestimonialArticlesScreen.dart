@@ -23,8 +23,9 @@ import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 
 class TestimonialArticlesScreen
     extends StatefulWidget {
+      final String shareLink;
   const TestimonialArticlesScreen({
-    super.key,
+    super.key, required this.shareLink,
   });
 
   @override
@@ -78,8 +79,8 @@ void initState() {
           () => _scaffoldKey.currentState!.openEndDrawer(),
 
         onSearch: () {},
-        onShare: () {},
-        shareLink: "",
+      
+        shareLink: widget.shareLink,
       ),
 
       backgroundColor: Customcolor.background,

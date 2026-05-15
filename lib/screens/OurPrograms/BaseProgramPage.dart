@@ -43,11 +43,11 @@ class _BaseProgramPageState extends State<BaseProgramPage> {
         type: AppBarType.inner,
         title: widget.title,
         onSearch: () {},
-        onShare: () {},
+        
         onBack: () {
          Navigator.pop(context);
         },
-        shareLink: "",
+       
       ),
       floatingActionButton:(widget.programType==ProgramType.stem || widget.programType==ProgramType.africa)?const ProgramExpansionFab():  ProgramFab(programType: widget.programType.name,),
       body: Consumer<ProgramProvider>(

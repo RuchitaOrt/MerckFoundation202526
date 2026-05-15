@@ -15,6 +15,7 @@ class CommonCarouselSection extends StatefulWidget {
   final List<CarouselItem> items;
   final CarouselSliderController controller;
   final VoidCallback onViewAll;
+  final String buttonText;
   final double imageWidth;
   final double imageHeight;
   final double carouselHeight;
@@ -27,6 +28,7 @@ class CommonCarouselSection extends StatefulWidget {
     required this.imageWidth,
     required this.imageHeight,
     required this.carouselHeight,
+    required this.buttonText
   });
 
   @override
@@ -62,9 +64,10 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
               ),
             
               8.0.heightBox,
-               Center(
+             widget.buttonText==""?SizedBox():   Center(
             child: CommonBorderButton(
-              title: CommonStrings.viewAll,
+              title: widget.buttonText,
+              //  CommonStrings.viewAll,
               onTap: () {
                 
               },
@@ -102,6 +105,10 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
                 width: widget.imageWidth,
                 height: widget.imageHeight,
                 fit: BoxFit.contain,
+                    imageErrorBuilder: (_, __, ___) => Image.asset(
+                          CommonImagePath.placeHolder,
+                          fit: BoxFit.cover,
+                        ),
               ),
             ),
             16.0.heightBox,

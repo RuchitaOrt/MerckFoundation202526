@@ -16,7 +16,12 @@ import 'package:merckfoundation_252026/widgets/formLabel.dart';
 import 'package:provider/provider.dart';
 
 class CallforApplication extends StatefulWidget {
-  const CallforApplication({super.key});
+   final String menuID;
+  final String title;
+  
+
+  final String? shareLink;
+  const CallforApplication({super.key, required this.menuID, required this.title, this.shareLink});
 
   @override
   State<CallforApplication> createState() => _CallforApplicationState();
@@ -52,7 +57,7 @@ void initState() {
         title: CommonStrings.upcomingPastTitle,
 
         onSearch: () {},
-        onShare: () {},
+       shareLink: widget.shareLink,
       ),
       body: Column(
         children: [

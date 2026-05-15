@@ -43,7 +43,12 @@ import 'package:merckfoundation_252026/screens/MainScreens/CommonListingScreen.d
 // }
 
 class NewsRelease extends StatelessWidget {
-   NewsRelease({super.key});
+  final String menuID;
+  final String title;
+  
+
+  final String? shareLink;
+   NewsRelease({super.key, required this.menuID, required this.title, this.shareLink});
  final contacts = [
     MediaContactModel(
       name: "Ms. Mehak Handa",
@@ -61,7 +66,7 @@ class NewsRelease extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CommonListingScreen<MediaModel, NewsReleaseProvider>(
-      title: CommonStrings.newsRelease,
+      title:title,
 
       /// 🔥 ADD THIS
       topWidget: Padding(
@@ -82,7 +87,8 @@ class NewsRelease extends StatelessWidget {
       getImage: (item) => "assets/newImages/pdf.png",
 
       getTitle: (item) => item.title ?? "",
-
+ shareLink: shareLink,
+      menuID: menuID,
       onTap: (context, item) {
         ShowDialogs.launchURL(item.pdfFile ?? "");
       },

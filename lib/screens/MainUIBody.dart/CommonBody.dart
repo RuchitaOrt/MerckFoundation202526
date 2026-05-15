@@ -2,8 +2,9 @@ import 'dart:convert';
 
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:marquee/marquee.dart';
+
 import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
+import 'package:merckfoundation_252026/widgets/CommonMarqueeWidget.dart';
 import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:provider/provider.dart';
 
@@ -55,7 +56,9 @@ class _CommonBodyState extends State<CommonBody> {
   void initState() {
     super.initState();
 
-    loadPage();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      loadPage();
+    });
   }
 
   Future<void> loadPage() async {
@@ -145,13 +148,7 @@ class _CommonBodyState extends State<CommonBody> {
         ],
       );
     }
-    allLayouts.sort((a, b) {
-      final aOrder = homelayoutOrder[a['layout_type']] ?? 999;
-
-      final bOrder = homelayoutOrder[b['layout_type']] ?? 999;
-
-      return aOrder.compareTo(bOrder);
-    });
+    
 
     int extraCount = 0;
 
@@ -187,43 +184,49 @@ class _CommonBodyState extends State<CommonBody> {
 
   Widget renderLayout(Map layout, List allLayouts) {
     final responsive = ResponsiveFlutter.of(context);
-
+    final bool showViewButton = layout['view_button'] == true;
     final HomeLayoutType type = (layout['layout_type'] ?? "")
         .toString()
         .toHomeLayoutType();
 
     /// ✅ HANDLE TABS (GLOBAL)
     if (tabTypes.contains(layout['layout_type'])) {
-      /// 👉 get all tab layouts from FULL list
-      final tabLayouts = allLayouts
-          .where(
-            (e) =>
-                tabTypes.contains(e['layout_type']) &&
-                (e['content'] ?? []).isNotEmpty,
-          )
-          .toList();
+      /// ✅ only layouts having content
+      final validTabLayouts = allLayouts.where((e) {
+        final List content = e['content'] ?? [];
 
-      /// ❌ prevent duplicate rendering
-      if (layout != tabLayouts.first) {
+        return tabTypes.contains(e['layout_type']) && content.isNotEmpty;
+      }).toList();
+
+      /// ✅ if no valid tabs -> hide whole section
+      if (validTabLayouts.isEmpty) {
         return const SizedBox();
       }
 
-      /// 👉 build tabs dynamically
-      final tabs = tabLayouts.map<DynamicTabItem>((tabLayout) {
-        final List content = tabLayout['content'];
+      /// ✅ prevent duplicate rendering
+      if (layout != validTabLayouts.first) {
+        return const SizedBox();
+      }
+
+      /// ✅ build only valid tabs
+      final tabs = validTabLayouts.map<DynamicTabItem>((tabLayout) {
+        final List content = tabLayout['content'] ?? [];
+
+        final bool tabShowViewButton = tabLayout['view_button'] == true;
 
         final items = content.map<CarouselItem>((e) {
+          final image = e['thumbnail'];
+          final title = e['title'];
+
           return CarouselItem(
-            image: e['thumbnail'] ?? "",
-            title: e['title'],
+            image: image is String ? image : "",
+            title: title is String ? title : "",
             onTap: () {},
           );
         }).toList();
-
         return DynamicTabItem(
           key: tabLayout['layout_type'],
 
-          /// ✅ TITLE FROM API (dynamic)
           title: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
@@ -233,28 +236,34 @@ class _CommonBodyState extends State<CommonBody> {
             ),
           ),
 
-          /// ✅ CONTENT
           content: CommonCarouselSection(
             controller: CarouselSliderController(),
             carouselHeight: CommonStrings.callcoursaheight,
             imageWidth: CommonStrings.callimagewidth,
             imageHeight: CommonStrings.callimageheight,
-            onViewAll: () {
-              debugPrint("View all → ${tabLayout['layout_type']}");
-            },
+
+            /// ✅ hide button if false
+            buttonText: tabShowViewButton
+                ? (tabLayout['button_text'] ?? "")
+                : "",
+
+            onViewAll: () {},
+
             items: items,
           ),
         );
       }).toList();
 
-      if (tabs.isEmpty) return const SizedBox();
+      /// ✅ final safety
+      if (tabs.isEmpty) {
+        return const SizedBox();
+      }
 
       return SizedBox(
         height: CommonStrings.tabheight,
         child: DynamicTabView(tabs: tabs, indicatorColor: Customcolor.pinkbg),
       );
     }
-
     switch (type) {
       case HomeLayoutType.slider:
         return HomeSlider(content: layout['content']);
@@ -282,14 +291,15 @@ class _CommonBodyState extends State<CommonBody> {
       case HomeLayoutType.testimonials:
         return HorizontalMediaSection(
           content: layout['content'] ?? [],
-          buttonText:(type == HomeLayoutType.newsLettersAndArticles || type == HomeLayoutType.photoGallery || type == HomeLayoutType.merckFoundationInMedia || type == HomeLayoutType.testimonials )
-              ? CommonStrings.viewMore: (type == HomeLayoutType.video ||type == HomeLayoutType.episodes)
-              ? CommonStrings.watchMore
-              : CommonStrings.viewAll,
+          shareLink:layout['button_link'] ?? '',
+          buttonText: showViewButton ? (layout['button_text'] ?? "") : "",
+
+          buttonLink: layout['button_link'] ?? '',
           type: type,
-          title: layout['title'],
+          title: layout['title'] ?? "",
           showDescription: type == HomeLayoutType.testimonials,
           showMenu: type == HomeLayoutType.episodes,
+          menuID:  layout['current_menu_id'] ?? '',
         );
 
       case HomeLayoutType.content:
@@ -328,57 +338,71 @@ class _CommonBodyState extends State<CommonBody> {
 
         return ContentCarouselWidget(contentList: contentList);
       case HomeLayoutType.leadership:
-        return LeaderCard(content: layout['content'] ?? []);
+        return LeaderCard(content: layout['content'] ?? [],shareLink: layout['button_link'] ?? '',);
 
       case HomeLayoutType.marquee:
         return Column(
+          children: [CommonMarqueeWidget(title: layout['title'] ?? "")],
+        );
+      case HomeLayoutType.MenuManagement:
+        return Column(
           children: [
-            _buildMarquee(layout['title']),
             SizedBox(height: 10),
-            CategorySection(),
-            SizedBox(height: 30),
-            FollowSection(title: "Follow Us"),
-            SizedBox(height: 20),
-            FollowSection(title: "Follow Senator, Dr. Rasha Kelej"),
-            SizedBox(height: 10),
+            CategorySection(content: layout['content'] ?? []),
           ],
         );
-
       case HomeLayoutType.socialLinks:
-        return widget.menuID == "1"
-            ? Column(
-                children: [
-                  FollowSection(title: "Follow Us"),
-                  SizedBox(height: 20),
-                  FollowSection(title: "Follow Senator, Dr. Rasha Kelej"),
-                  SizedBox(height: 10),
-                ],
-              )
-            : Container();
+        final List content = layout['content'] ?? [];
+
+        if (content.isEmpty) {
+          return const SizedBox();
+        }
+
+        return Column(
+          children: content.map<Widget>((item) {
+            final String title = item['title'] is String ? item['title'] : "";
+            final int position = item['position'] is int ? item['position'] : 0;
+            List socialLinks = [];
+
+            try {
+              final description = item['description'] is String
+                  ? item['description']
+                  : "[]";
+
+              socialLinks = jsonDecode(description);
+
+              /// ✅ add placeholder image if missing
+              socialLinks = socialLinks.map((e) {
+                final map = Map<String, dynamic>.from(e);
+
+                map['social_media_image'] =
+                    (map['social_media_image'] is String &&
+                        map['social_media_image'].toString().isNotEmpty)
+                    ? map['social_media_image']
+                    : "https://via.placeholder.com/100";
+
+                return map;
+              }).toList();
+            } catch (e) {
+              debugPrint("Social parse error: $e");
+            }
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: FollowSection(
+                title: title,
+
+                position: position,
+
+                /// ✅ pass parsed API data
+                //  socialLinks: socialLinks,
+              ),
+            );
+          }).toList(),
+        );
+
       default:
         return const SizedBox();
     }
-  }
-
-  Widget _buildMarquee(String title) {
-    return GestureDetector(
-      onTap: () {
-        print("hint");
-      },
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Container(
-          height: 20,
-          child: Marquee(
-            text: title,
-            style: TextStyle(
-              color: Customcolor.text_blue,
-              fontStyle: FontStyle.normal,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }

@@ -27,25 +27,25 @@ enum MediaType {
   photoAlbum,episodes,
  
 }
-const homelayoutOrder = {
-  "Slider": 1,
-  "Content": 2,
-  "Marquee": 3,
-  "SocialLinks": 4,
-  "Impact": 5,
+// const homelayoutOrder = {
+//   "Slider": 1,
+//   "Content": 2,
+//   "Marquee": 3,
+//   "SocialLinks": 4,
+//   "Impact": 5,
 
-  "Video": 6,
-  "NewsLettersAndArticles": 7,
-  "Episodes": 8,
-  "MerckFoundationInMedia": 9,
-  "PhotoGallery": 10,
-  "Testimonials": 11,
+//   "Video": 6,
+//   "NewsLettersAndArticles": 7,
+//   "Episodes": 8,
+//   "MerckFoundationInMedia": 9,
+//   "PhotoGallery": 10,
+//   "Testimonials": 11,
 
-  // Tabs always last
-  "CallForApplication": 100,
-  "MerckMoreThanAmbasdar": 101,
-  "DigitalLibrary": 102,
-};
+//   // Tabs always last
+//   "CallForApplication": 100,
+//   "MerckMoreThanAmbasdar": 101,
+//   "DigitalLibrary": 102,
+// };
 const tabTypes = [
   "CallForApplication",
   "MerckMoreThanAmbasdar",
@@ -67,7 +67,8 @@ enum HomeLayoutType {
   socialLinks,
   CallForApplication,
   episodesviewall,
-  nocontent
+  nocontent,
+  MenuManagement
 }
 
 extension HomeLayoutTypeExtension on String {
@@ -110,6 +111,8 @@ extension HomeLayoutTypeExtension on String {
         return HomeLayoutType.socialLinks;
          case "CallForApplication":
         return HomeLayoutType.CallForApplication;
+         case "Menu Management":
+        return HomeLayoutType.MenuManagement;
 
       default:
         return HomeLayoutType.  nocontent

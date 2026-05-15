@@ -24,6 +24,7 @@ class PageProvider extends ChangeNotifier {
       pageData = cleanData;
     } catch (e) {
       showToast(e.toString());
+       isLoading = false;
     }
 
     isLoading = false;

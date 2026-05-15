@@ -23,10 +23,16 @@ import 'package:merckfoundation_252026/enum/commonEnum.dart';
 
 class EpisodeInformation extends StatefulWidget {
   final String episodeid;
+ final String menuID;
+  final String title;
+  
+
+  final String? shareLink;
+
 
    EpisodeInformation({
     Key? key,
-    required this.episodeid,
+    required this.episodeid, required this.menuID, required this.title, this.shareLink,
   }) : super(key: key);
 
   @override
@@ -57,7 +63,7 @@ class _EpisodeInformationState extends State<EpisodeInformation> {
         type: AppBarType.inner,
         title: "Episode Information",
         onSearch: () {},
-        onShare: () {},
+       shareLink: widget.shareLink,
       ),
       body: provider.isLoading
           ?  Center(child: CommonLoader())
@@ -96,6 +102,9 @@ class _EpisodeInformationState extends State<EpisodeInformation> {
                         categoryID: widget.episodeid ?? "",
                         albumID: "",
                         albumName:"Episodes",
+                        menuID: widget.menuID,
+                        title: widget.title,
+                        shareLink: widget.shareLink,
                       ),
                     ),
                   );

@@ -55,8 +55,7 @@ class _OurAwardScreenState extends State<OurAwardScreen> {
         type: AppBarType.inner,
         title: CommonStrings.ourAwards,
         onSearch: () {},
-        onShare: () {},
-        shareLink: "",
+       
       ),
 
       body: provider.isLoading

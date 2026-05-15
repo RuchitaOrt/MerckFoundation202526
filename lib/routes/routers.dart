@@ -13,7 +13,7 @@ class Routers {
         );
           case CommonContentPage.route:
         return MaterialPageRoute(
-          builder: (_) => CommonContentPage(menuID: settings.arguments as String?,),
+          builder: (_) => CommonContentPage(menuID: settings.arguments as String?,shareLink: settings.arguments as String?,),
         );
 
       default:

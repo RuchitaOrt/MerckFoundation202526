@@ -169,27 +169,30 @@ class ShowDialogs {
     }
   }
 
-  static Future<void> shareToFacebook(String shareUrl) async {
-    final Uri url =
-        Uri.parse("https://www.facebook.com/sharer/sharer.php?u=$shareUrl");
+static Future<void> shareToFacebook(String shareUrl) async {
+  final Uri url = Uri.parse(
+    "https://www.facebook.com/sharer/sharer.php?u=${Uri.encodeComponent(shareUrl)}",
+  );
+  print("FACEBOOK");
+print(url);
+  await launchUrl(
+    url,
+    mode: LaunchMode.externalApplication,
+  );
+}
+static Future<void> shareToTwitter(
+  String text,
+  String shareUrl,
+) async {
+  final Uri url = Uri.parse(
+    "https://twitter.com/intent/tweet?text=${Uri.encodeComponent(text)}&url=${Uri.encodeComponent(shareUrl)}",
+  );
 
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      print('Could not launch Facebook share');
-    }
-  }
-
-  static Future<void> shareToTwitter(String text, String shareUrl) async {
-    final String tweetText = Uri.encodeComponent(text);
-    final String tweetUrl = Uri.encodeComponent(shareUrl);
-
-    final Uri url = Uri.parse(
-        "https://twitter.com/intent/tweet?text=$tweetText&url=$tweetUrl");
-
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      print('Could not launch Twitter share');
-    }
-  }
-
+  await launchUrl(
+    url,
+    mode: LaunchMode.externalApplication,
+  );
+}
   static Future<void> followuslink(String url, String msg) async {
     final Uri uri = Uri.parse(url);
 
@@ -197,7 +200,27 @@ class ShowDialogs {
       print('Could not launch $uri');
     }
   }
+static Future<void> launchLinkedin(String url) async {
+  final Uri linkedInUri = Uri.parse(
+    "https://www.linkedin.com/sharing/share-offsite/?url=${Uri.encodeComponent(url)}",
+  );
 
+  await launchUrl(
+    linkedInUri,
+    mode: LaunchMode.externalApplication,
+  );
+}
+static Future<void> launchWhatsappshare(String msg) async {
+  final Uri uri = Uri.parse(
+    "https://wa.me/?text=${Uri.encodeComponent(msg)}",
+  );
+  print("Whatsup");
+print(uri.toString());
+  await launchUrl(
+    uri,
+    mode: LaunchMode.externalApplication,
+  );
+}
   static Future<void> launchTwitter(String url) async {
     final Uri twitterAppUri =
         Uri.parse('twitter://user?screen_name=merckfoundation');

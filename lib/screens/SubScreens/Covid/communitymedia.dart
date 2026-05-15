@@ -37,8 +37,7 @@ class _CommunityMediaState extends State<CommunityMedia> {
         type: AppBarType.inner,
         title: CommonStrings.communityTitle,
         onSearch: () {},
-        onShare: () {},
-        shareLink: "",
+       
       ),
       body: ListView(
         children: [

@@ -18,7 +18,12 @@ import 'package:merckfoundation_252026/widgets/formLabel.dart';
 import 'package:provider/provider.dart';
 
 class OurProgramScreen extends StatelessWidget {
-  const OurProgramScreen({super.key});
+   final String menuID;
+  final String title;
+  
+
+  final String? shareLink;
+  const OurProgramScreen({super.key, required this.menuID, required this.title, this.shareLink});
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +37,7 @@ class OurProgramScreen extends StatelessWidget {
         title: CommonStrings.ourPrograms,
 
         onSearch: () {},
-        onShare: () {},
-        shareLink: "",
+       
       ),
       body: CustomScrollView(
         slivers: [

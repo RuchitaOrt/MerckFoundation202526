@@ -18,27 +18,37 @@ class SplashProvider with ChangeNotifier {
   String? iosVersion;
   String? deviceId;
 
-  Future<void> init(BuildContext context) async {
-    isLoading = true;
-    notifyListeners();
+ 
+Future<void> init(BuildContext context) async {
+  isLoading = true;
+  notifyListeners();
 
-    await _getAppVersion();
-    await _getDeviceId();
-    // await _checkVersionFromServer(context);
+  await _getAppVersion();
+  await _getDeviceId();
 
+  await Provider.of<NavbarProvider>(
+    context,
+    listen: false,
+  ).getNavbar(context);
 
-  Future.microtask(() async {
-    await Provider.of<NavbarProvider>(context, listen: false)
-        .getNavbar(context);
+  isLoading = false;
+  notifyListeners();
 
-  
-  });
-    isLoading = false;
-    notifyListeners();
+  final navbarProvider =
+      Provider.of<NavbarProvider>(context, listen: false);
 
-    _handleNavigation(context);
-  }
+  /// example
+ final String menuId =
+    navbarProvider.menuList.isNotEmpty
+        ? navbarProvider.menuList.first.id.toString()
+        : "1";
+         final String shareLink =
+    navbarProvider.menuList.isNotEmpty
+        ? navbarProvider.menuList.first.menuUrl.toString()
+        : "";
 
+  _handleNavigation(context, menuId,shareLink);
+}
   Future<void> _getAppVersion() async {
     // final info = await PackageInfo.fromPlatform();
     // appVersion = info.version;
@@ -58,26 +68,37 @@ class SplashProvider with ChangeNotifier {
     GlobalLists.deviceid = deviceId ?? "";
   }
 
-  // Future<void> _checkVersionFromServer(BuildContext context) async {
-  //   final resp = await repo.checkVersion();
-  //   serverVersion = resp.list?.version;
-  //   iosVersion = resp.list?.iosVersion;
-  //    _handleNavigation(context);
-  // }
-
-  void _handleNavigation(BuildContext context) {
-    Timer(const Duration(seconds: 2), () {
-      onDoneLoading(context);
-    });
-  }
-
-  Future<void> onDoneLoading(BuildContext context) async {
+void _handleNavigation(
+  BuildContext context,
+  String menuId,
+  String shareLink
+) {
+  Timer(const Duration(seconds: 2), () {
+    onDoneLoading(context, menuId,shareLink);
+  });
+}
+Future<void> onDoneLoading(
+  BuildContext context,
+  String menuId,
+  String shareLink
+) async {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (_) => Landingpage(
+        menuId: menuId,
+        shareLink: shareLink,
+      ),
+    ),
+  );
+}
+  // Future<void> onDoneLoading(BuildContext context) async {
   
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => Landingpage()),
-      );
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(builder: (_) => Landingpage()),
+  //     );
  
-  }
+  // }
 }

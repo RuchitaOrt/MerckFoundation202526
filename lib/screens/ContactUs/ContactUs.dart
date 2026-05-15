@@ -41,8 +41,7 @@ class ContactUs extends StatelessWidget {
         type: AppBarType.inner,
         title: CommonStrings.contactUs,
         onSearch: () {},
-        onShare: () {},
-        shareLink: "",
+       
       ),
       body: ListView(
         children: [

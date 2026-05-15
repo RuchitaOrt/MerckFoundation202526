@@ -29,9 +29,7 @@ class CovidResponseScreen extends StatelessWidget {
         title: CommonStrings.covidResponse,
 
         onSearch: () {},
-        onShare: () {},
-
-        shareLink: "",
+       
       ),
       body: Consumer<CovidProvider>(
         builder: (context, provider, _) {

@@ -18,6 +18,9 @@ class HorizontalMediaSection extends StatelessWidget {
   final String? title;
   final HomeLayoutType? type;
   final bool showDescription;
+  final String menuID;
+
+  final String? shareLink;
 
   /// ✅ SHOW 3 DOT MENU CONDITIONALLY
   final bool showMenu;
@@ -25,6 +28,7 @@ class HorizontalMediaSection extends StatelessWidget {
   /// ✅ MENU CLICK
   final VoidCallback? onMenuTap;
   final String buttonText;
+  final String buttonLink;
 
   const HorizontalMediaSection({
     super.key,
@@ -34,7 +38,11 @@ class HorizontalMediaSection extends StatelessWidget {
     this.showMenu = false,
     this.onMenuTap,
     this.type,
-    this.seasonID, required this.buttonText,
+    this.seasonID,
+    required this.buttonText,
+    required this.buttonLink,
+    required this.menuID,
+    this.shareLink,
   });
 
   @override
@@ -99,15 +107,16 @@ class HorizontalMediaSection extends StatelessWidget {
                 }
 
                 return GestureDetector(
-
-onTap: ()
-{
-  if (isYoutube) {
-  ShowDialogs.launchURL(item['thumbnail']);
-  }
-},                  child: Container(
+                  onTap: () {
+                    if (isYoutube) {
+                      ShowDialogs.launchURL(item['thumbnail']);
+                    }
+                  },
+                  child: Container(
                     width: itemWidth,
-                    margin: EdgeInsets.only(right: content.length == 1 ? 0 : 12),
+                    margin: EdgeInsets.only(
+                      right: content.length == 1 ? 0 : 12,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
@@ -126,11 +135,15 @@ onTap: ()
                                   width: double.infinity,
                                   loadingBuilder: (context, child, progress) {
                                     if (progress == null) return child;
-                  
-                                    return Container(color: Colors.grey.shade200);
+
+                                    return Container(
+                                      color: Colors.grey.shade200,
+                                    );
                                   },
                                   errorBuilder: (_, __, ___) {
-                                    return Container(color: Colors.grey.shade200);
+                                    return Container(
+                                      color: Colors.grey.shade200,
+                                    );
                                   },
                                 ),
                               ),
@@ -155,6 +168,9 @@ onTap: ()
                                           MaterialPageRoute(
                                             builder: (_) => EpisodeInformation(
                                               episodeid: episodeId,
+                                               menuID: menuID,
+                                  title: title ?? "",
+                                  shareLink: shareLink,
                                             ),
                                           ),
                                         );
@@ -163,7 +179,7 @@ onTap: ()
                                   ),
                                 ),
                               ),
-                  
+
                             /// ▶ PLAY ICON
                             if (isYoutube)
                               Container(
@@ -179,9 +195,9 @@ onTap: ()
                               ),
                           ],
                         ),
-                  
+
                         const SizedBox(height: 8),
-                  
+
                         Text(
                           stripHtml(item['title'] ?? ""),
                           maxLines: 2,
@@ -191,7 +207,7 @@ onTap: ()
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                  
+
                         /// 🔹 DESCRIPTION
                         if (showDescription)
                           Padding(
@@ -214,40 +230,87 @@ onTap: ()
           const SizedBox(height: 10),
 
           /// 🔹 BUTTON
-          Center(
-            child: CommonBorderButton(
-              title:buttonText,
-              onTap: () {
-                if (type == HomeLayoutType.testimonials) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const TestimonialArticlesScreen(),
-                    ),
-                  );
-                } else if (type == HomeLayoutType.episodes) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const EpisodeListingScreen(),
-                    ),
-                  );
-                } else if (type == HomeLayoutType.episodesviewall) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => MediaListingScreen(
-                        type: MediaType.episodes,
-                        categoryID: seasonID ?? "",
-                        albumID: "",
-                        albumName: title ?? "",
-                      ),
-                    ),
-                  );
-                }
-              },
-            ),
-          ),
+          buttonText == ""
+              ? SizedBox()
+              : Center(
+                  child: CommonBorderButton(
+                    title: buttonText,
+                    onTap: () {
+                      if ((buttonLink ?? '').isNotEmpty) {
+                        switch (buttonLink) {
+                          case '/videos':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => MediaListingScreen(
+                                  type: MediaType.videoLibrary,
+                                  categoryID: "",
+                                  albumID: "",
+                                  albumName: "",
+                                  menuID: menuID,
+                                  title: title ?? "",
+                                  shareLink: shareLink,
+                                ),
+                              ),
+                            );
+                            return;
+
+                          case '/Photo-Gallery':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => MediaListingScreen(
+                                  type: MediaType.photoGallery,
+                                  categoryID: "",
+                                  albumID: "",
+                                  albumName: "",
+                                  menuID: menuID,
+                                  title: title ?? "",
+                                  shareLink: shareLink,
+                                ),
+                              ),
+                            );
+                            return;
+                        }
+                      }
+
+                      if (type == HomeLayoutType.testimonials) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>  TestimonialArticlesScreen(shareLink: shareLink ?? "",),
+                          ),
+                        );
+                      } else if (type == HomeLayoutType.episodes) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>  EpisodeListingScreen(
+                              menuID: menuID,
+                              title: title ?? "",
+                              shareLink: shareLink,
+                            ),
+                          ),
+                        );
+                      } else if (type == HomeLayoutType.episodesviewall) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => MediaListingScreen(
+                              type: MediaType.episodes,
+                              categoryID: seasonID ?? "",
+                              albumID: "",
+                              albumName: title ?? "",
+                              menuID: menuID,
+                              title: title ?? "",
+                              shareLink: shareLink,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ),
         ],
       ),
     );

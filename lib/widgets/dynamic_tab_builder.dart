@@ -9,6 +9,7 @@ class DynamicTabBuilder {
   static List<DynamicTabItem> build(
     BuildContext context,
     List<HomeTabModel> tabsFromApi,
+    // String buttonText
   ) {
     return tabsFromApi
         .where((tab) => tab.items.isNotEmpty)
@@ -16,12 +17,14 @@ class DynamicTabBuilder {
           (tab) => DynamicTabItem(
             key: tab.key,
             // title: Container(),
-          title: tab.key=="callForApp"?Callforapptext(): tab.key =="mmtm"?Merckmtmtext():Digitaltext(),
+          title: 
+          tab.key=="callForApp"?Callforapptext(): tab.key =="mmtm"?Merckmtmtext():Digitaltext(),
             content: CommonCarouselSection(
               controller: CarouselSliderController(),
               carouselHeight: CommonStrings.callcoursaheight,
               imageWidth: CommonStrings.callimagewidth,
               imageHeight: CommonStrings.callimageheight,
+              buttonText: CommonStrings.viewAll,
               onViewAll: () {
                 debugPrint("View all → ${tab.key}");
               },

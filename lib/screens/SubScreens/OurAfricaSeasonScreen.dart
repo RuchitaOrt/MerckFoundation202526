@@ -13,7 +13,8 @@ import 'package:merckfoundation_252026/widgets/botttomlink.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
 class OurAfricaSeasonScreen extends StatelessWidget {
-  const OurAfricaSeasonScreen({super.key});
+  final String? shareLink;
+  const OurAfricaSeasonScreen({super.key, required this.shareLink});
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +27,7 @@ class OurAfricaSeasonScreen extends StatelessWidget {
         type: AppBarType.inner,
         title: CommonStrings.ourAfrica,
         onSearch: () {},
-        onShare: () {},
-        shareLink: "",
+        shareLink: shareLink,
       ),
       body: ListView(
         children: [

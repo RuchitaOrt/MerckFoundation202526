@@ -21,6 +21,7 @@ class DetailScreen extends StatefulWidget {
   final String? articleId;
   final String? languageId;
   final bool isDetailApiCalled;
+  final String? shareLink;
 
   const DetailScreen(
     this.titleContent,
@@ -30,7 +31,7 @@ class DetailScreen extends StatefulWidget {
     this.image = "",
     this.articleId = "",
     this.languageId = "",
-    this.isDetailApiCalled = false,
+    this.isDetailApiCalled = false, this.shareLink,
   });
 
   @override
@@ -65,8 +66,7 @@ class _DetailScreenState extends State<DetailScreen> {
         type: AppBarType.inner,
         title: widget.title,
         onSearch: () {},
-        onShare: () {},
-        shareLink: "",
+        shareLink: widget.shareLink,
       ),
 
       body: Consumer<ArticleProvider>(

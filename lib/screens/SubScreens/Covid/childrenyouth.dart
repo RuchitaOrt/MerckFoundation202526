@@ -27,8 +27,7 @@ class ChildrenyouthState extends State<Childrenyouth>
         type: AppBarType.inner,
         title: CommonStrings.communityYouth,
         onSearch: () {},
-        onShare: () {},
-        shareLink: "",
+      
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Stack(
