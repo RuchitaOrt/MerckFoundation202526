@@ -1,19 +1,70 @@
 import 'package:flutter/material.dart';
 
 import 'package:merckfoundation_252026/Utility/APIManager.dart';
+import 'package:merckfoundation_252026/Utility/api_result.dart';
 import 'package:merckfoundation_252026/main.dart';
+import 'package:merckfoundation_252026/model/TestimonialModel.dart';
 
+// // class TestimonialService {
+// //   final APIManager _apiManager = APIManager();
+
+// //   Future<dynamic> fetchTestimonials(
+   
+// //     String categoryId,
+// //   ) async {
+// //     return await _apiManager.apiRequest(
+// //       routeGlobalKey.currentContext!,
+// //       API.testimonialarticles,
+// //       jsonval: {"category_id": categoryId ?? ""},
+// //     );
+// //   }
+// // }
+// import 'package:merckfoundation_252026/Utility/APIManager.dart';
+// import 'package:merckfoundation_252026/main.dart';
+
+// class TestimonialService {
+//   final APIManager _apiManager = APIManager();
+
+//   Future<dynamic> fetchTestimonials(String categoryId) async {
+//     return await _apiManager.apiRequest(
+//       routeGlobalKey.currentContext!,
+//       API.testimonialarticles,
+//       jsonval: {
+//         "category_id": categoryId,
+//       },
+//     );
+//   }
+// }
 class TestimonialService {
   final APIManager _apiManager = APIManager();
 
-  Future<dynamic> fetchTestimonials(
-   
-    String categoryId,
+  Future<ApiResult<List<TestimonialModel>>> fetchTestimonials(
+      BuildContext context,
+      String categoryId,
   ) async {
-    return await _apiManager.apiRequest(
-      routeGlobalKey.currentContext!,
+
+    final result = await _apiManager.apiRequest(
+      context,
       API.testimonialarticles,
-      jsonval: {"category_id": categoryId ?? ""},
+      jsonval: {"category_id": categoryId},
+    );
+
+    if (!result.isSuccess) {
+      return ApiResult(
+        status: result.status,
+        message: result.message,
+      );
+    }
+
+    final data = result.data['data'];
+
+    final list = (data as List)
+        .map((e) => TestimonialModel.fromJson(e))
+        .toList();
+
+    return ApiResult(
+      status: result.status,
+      data: list,
     );
   }
 }

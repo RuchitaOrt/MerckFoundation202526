@@ -28,6 +28,21 @@ class MediaScreen extends StatelessWidget {
       isLoading: (provider) => provider.isLoading,
       hasMore: (provider) => provider.hasMore,
 
+      /// API STATUS
+      getStatus: (provider) =>
+          provider.status,
+
+      getErrorMessage:
+          (provider) =>
+              provider.errorMessage,
+
+      onRetry: (context) =>
+          context
+              .read<MediaProvider>()
+              .retryInitial(
+                context,
+              ),
+
       loadInitial: (context) =>
           context.read<MediaProvider>().loadInitial(context),
 

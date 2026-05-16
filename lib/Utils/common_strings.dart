@@ -1,7 +1,7 @@
 class CommonStrings {
   CommonStrings._();
   static const String ourVision = "Our Vision";
-
+static const String noInternetConnection = "No Internet Connection";
   static const String visionTitle =
       "A WORLD WHERE EVERYONE CAN LEAD A HEALTHY AND FULFILLING LIFE";
 

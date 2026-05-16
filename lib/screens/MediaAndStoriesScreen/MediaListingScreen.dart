@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/FilterProvider.dart';
 import 'package:merckfoundation_252026/Provider/MediaListingProvider.dart';
+import 'package:merckfoundation_252026/Utility/api_status.dart';
 import 'package:merckfoundation_252026/Utility/customappbar.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
+import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/const/GlobalLists.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/screens/MainUIBody.dart/DetailScreen.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/PhotoAlumbScreen.dart';
+import 'package:merckfoundation_252026/widgets/CommonApiStatusWidget.dart';
 import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
@@ -156,10 +159,84 @@ onBack:(widget.type ==MediaType.stories)?null: ()
       body: Consumer<MediaListingProvider>(
         builder: (context, provider, _) {
          
-          if (provider.isLoading && provider.storyList.isEmpty) {
-            return const Center(child:CommonLoader());
-          }
+          // if (provider.isLoading && provider.storyList.isEmpty) {
+          //   return const Center(child:CommonLoader());
+          // }
+/// LOADING
+if (provider.status ==
+        ApiStatus.loading &&
+    provider.storyList.isEmpty) {
 
+  return const Center(
+    child: CommonLoader(),
+  );
+}
+
+/// NO INTERNET
+if (provider.status ==
+    ApiStatus.noInternet) {
+
+  return CommonApiStatusWidget(
+    icon: Icons.wifi_off,
+
+    title:
+     CommonStrings.noInternetConnection,
+
+    onRetry: () {
+
+      provider.retry(context);
+    },
+  );
+}
+
+/// TIMEOUT
+if (provider.status ==
+    ApiStatus.timeout) {
+
+  return CommonApiStatusWidget(
+    icon: Icons.access_time,
+
+    title: "Request Timeout",
+
+    onRetry: () {
+
+      provider.retry(context);
+    },
+  );
+}
+
+/// SERVER ERROR
+if (provider.status ==
+    ApiStatus.serverError) {
+
+  return CommonApiStatusWidget(
+    icon: Icons.cloud_off,
+
+    title: "Server Error",
+
+    onRetry: () {
+
+      provider.retry(context);
+    },
+  );
+}
+
+/// OTHER ERROR
+if (provider.status ==
+    ApiStatus.error) {
+
+  return CommonApiStatusWidget(
+    icon: Icons.error_outline,
+
+    title:
+        provider.errorMessage,
+
+    onRetry: () {
+
+      provider.retry(context);
+    },
+  );
+}
           return CustomScrollView(
             controller: _controller,
             slivers: [
@@ -246,6 +323,9 @@ onBack:(widget.type ==MediaType.stories)?null: ()
                                     item.details,
                                     title: getTitle(),
                                     shareLink: widget.shareLink,
+                                    isDetailApiCalled:true,
+                                    articleId: item.id.toString(),
+                                    languageId: item.languageid,
                                   ),
                                 ),
                               );

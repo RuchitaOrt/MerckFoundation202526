@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:merckfoundation_252026/Utility/api_result.dart';
+import 'package:merckfoundation_252026/Utility/api_status.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
 import 'package:merckfoundation_252026/Utils/InternetConnection.dart';
+import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/model/NavBarResponse.dart';
 
@@ -90,21 +93,7 @@ class APIManager {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final hasInternet = await hasInternetConnection();
-
-          if (!hasInternet) {
-            handler.reject(
-              DioException(
-                requestOptions: options,
-                type: DioExceptionType.connectionError,
-                error: "No internet connection",
-              ),
-            );
-
-            FocusScope.of(routeGlobalKey.currentContext!).unfocus();
-            showToast("No internet connection. Please check your network.");
-            return;
-          }
+        
 
           _logRequest(options);
           handler.next(options);
@@ -450,117 +439,210 @@ class APIManager {
     }
   }
 
-  // Future<dynamic> apiRequest(
-  //   BuildContext context,
-  //   API api, {
-  //   dynamic jsonval,
-  //   Map<String, dynamic>? queryParams,
-  // }) async {
-  //   try {
-  //     final url = apiEndPoint(api);
+//   Future<dynamic> apiRequest(
+//   BuildContext context,
+//   API api, {
+//   dynamic jsonval,
+//   Map<String, dynamic>? queryParams,
+// }) async {
+//   try {
+//     final url = apiEndPoint(api);
 
-  //     final response = await dio.request(
-  //       url,
-  //       data: jsonval,
-  //       queryParameters: queryParams,
-  //       options: Options(method: apiHTTPMethod(api).name),
-  //     );
+//     final response = await dio.request(
+//       url,
+//       data: jsonval,
+//       queryParameters: queryParams,
+//       options: Options(method: apiHTTPMethod(api).name),
+//     );
 
-  //     final data = response.data;
+//     final data = response.data;
 
-  //     if (data is String) {
-  //       try {
-  //         return parseResponse(api, jsonDecode(data));
-  //       } catch (_) {
-  //         return data;
-  //       }
-  //     }
+//     if (data is String) {
+//       try {
+//         return parseResponse(api, jsonDecode(data));
+//       } catch (_) {
+//         return data;
+//       }
+//     }
 
-  //     return parseResponse(api, data);
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
-  Future<dynamic> apiRequest(
+//     return parseResponse(api, data);
+
+//   } on DioException catch (e) {
+// final apiName = api.toString().split('.').last;
+//   final url = apiEndPoint(api);
+
+//   print('\n' + '❌' * 20);
+//   print("❌ API ERROR");
+//   print("🆔 API: $apiName");
+//   print("🔗 URL: $url");
+//   print("📡 STATUS CODE: ${e.response?.statusCode}");
+//   print("📦 RESPONSE: ${e.response?.data}");
+//   print("📨 MESSAGE: ${e.message}");
+//   print('❌' * 20 + '\n');
+
+//     /// 🔴 SERVER ERROR
+//     if (e.response?.statusCode == 500) {
+
+//       print("❌ SERVER ERROR 500");
+
+//       showToast("Server error. Please try again later.");
+
+//       return null;
+//     }
+
+//     /// 🔴 NO INTERNET
+//     if (e.type == DioExceptionType.connectionError) {
+
+//       showToast("No internet connection.");
+
+//       return null;
+//     }
+
+//     /// 🔴 TIMEOUT
+//     if (e.type == DioExceptionType.connectionTimeout ||
+//         e.type == DioExceptionType.receiveTimeout) {
+
+//       showToast("Request timeout. Please try again.");
+
+//       return null;
+//     }
+
+//     /// 🔴 OTHER ERROR
+//     showToast("Something went wrong.");
+
+//     return null;
+
+//   } catch (e) {
+
+//     print("❌ UNKNOWN ERROR: $e");
+
+//     showToast("Something went wrong.");
+
+//     return null;
+//   }
+// }
+
+Future<ApiResult<dynamic>> apiRequest(
   BuildContext context,
   API api, {
   dynamic jsonval,
   Map<String, dynamic>? queryParams,
 }) async {
+
   try {
+
     final url = apiEndPoint(api);
 
     final response = await dio.request(
       url,
       data: jsonval,
       queryParameters: queryParams,
-      options: Options(method: apiHTTPMethod(api).name),
+      options: Options(
+        method: apiHTTPMethod(api).name,
+      ),
     );
 
     final data = response.data;
 
+    dynamic parsedData;
+
     if (data is String) {
+
       try {
-        return parseResponse(api, jsonDecode(data));
+
+        parsedData =
+            parseResponse(
+              api,
+              jsonDecode(data),
+            );
+
       } catch (_) {
-        return data;
+
+        parsedData = data;
       }
+
+    } else {
+
+      parsedData =
+          parseResponse(api, data);
     }
 
-    return parseResponse(api, data);
+    return ApiResult(
+      status: ApiStatus.success,
+      data: parsedData,
+    );
 
   } on DioException catch (e) {
-final apiName = api.toString().split('.').last;
-  final url = apiEndPoint(api);
 
-  print('\n' + '❌' * 20);
-  print("❌ API ERROR");
-  print("🆔 API: $apiName");
-  print("🔗 URL: $url");
-  print("📡 STATUS CODE: ${e.response?.statusCode}");
-  print("📦 RESPONSE: ${e.response?.data}");
-  print("📨 MESSAGE: ${e.message}");
-  print('❌' * 20 + '\n');
+    final apiName =
+        api.toString().split('.').last;
 
-    /// 🔴 SERVER ERROR
+    final url = apiEndPoint(api);
+
+    print('\n' + '❌' * 20);
+
+    print("❌ API ERROR");
+
+    print("🆔 API: $apiName");
+
+    print("🔗 URL: $url");
+
+    print(
+      "📡 STATUS CODE: ${e.response?.statusCode}",
+    );
+
+    print(
+      "📦 RESPONSE: ${e.response?.data}",
+    );
+
+    print("📨 MESSAGE: ${e.message}");
+
+    print('❌' * 20 + '\n');
+
+    /// NO INTERNET
+    if (e.type ==
+        DioExceptionType.connectionError) {
+
+      return ApiResult(
+        status: ApiStatus.noInternet,
+        message: CommonStrings.noInternetConnection,
+      );
+    }
+
+    /// TIMEOUT
+    if (e.type ==
+            DioExceptionType.connectionTimeout ||
+        e.type ==
+            DioExceptionType.receiveTimeout) {
+
+      return ApiResult(
+        status: ApiStatus.timeout,
+        message: "Request timeout",
+      );
+    }
+
+    /// SERVER ERROR
     if (e.response?.statusCode == 500) {
 
-      print("❌ SERVER ERROR 500");
-
-      showToast("Server error. Please try again later.");
-
-      return null;
+      return ApiResult(
+        status: ApiStatus.serverError,
+        message: "Server error",
+      );
     }
 
-    /// 🔴 NO INTERNET
-    if (e.type == DioExceptionType.connectionError) {
-
-      showToast("No internet connection.");
-
-      return null;
-    }
-
-    /// 🔴 TIMEOUT
-    if (e.type == DioExceptionType.connectionTimeout ||
-        e.type == DioExceptionType.receiveTimeout) {
-
-      showToast("Request timeout. Please try again.");
-
-      return null;
-    }
-
-    /// 🔴 OTHER ERROR
-    showToast("Something went wrong.");
-
-    return null;
+    return ApiResult(
+      status: ApiStatus.error,
+      message: "Something went wrong",
+    );
 
   } catch (e) {
 
     print("❌ UNKNOWN ERROR: $e");
 
-    showToast("Something went wrong.");
-
-    return null;
+    return ApiResult(
+      status: ApiStatus.error,
+      message: e.toString(),
+    );
   }
 }
 }

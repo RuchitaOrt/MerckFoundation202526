@@ -1,29 +1,71 @@
+// import 'package:flutter/material.dart';
+
+
+
+// import 'package:merckfoundation_252026/Utility/APIManager.dart';
+// import 'package:merckfoundation_252026/Utility/api_result.dart';
+
+// class ArticleService {
+
+//   Future<ApiResult<dynamic>> fetchArticle(
+//     BuildContext context,
+//     int page,
+//   ) async {
+
+//     final response =
+//         await APIManager().apiRequest(
+//       context,
+//       API.getnewslettersarticles,
+//       queryParams: {
+//         "p": page,
+//       },
+//     );
+
+//     return response;
+//   }
+
+//   /// DETAIL API
+//   Future<ApiResult<dynamic>> fetchArticleDetail(
+//     BuildContext context, {
+//     required String articleId,
+//     required String languageId,
+//   }) async {
+
+//     final response =
+//         await APIManager().apiRequest(
+//       context,
+//       API.getnewsletterarticlebylanguage,
+//       jsonval: {
+//         "article_id": articleId,
+//         "language_id": languageId,
+//       },
+//     );
+
+//     return response;
+//   }
+// }
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/APIManager.dart';
+import 'package:merckfoundation_252026/Utility/api_result.dart';
+
 class ArticleService {
-  Future<Map<String, dynamic>> fetchArticle(
-      BuildContext context, int page) async {
-
-    final response = await APIManager().apiRequest(
+  Future<ApiResult<dynamic>> fetchArticle(
+    BuildContext context,
+    int page,
+  ) async {
+    return await APIManager().apiRequest(
       context,
-      API.getnewslettersarticles, // ✅ NEW ENUM
-      queryParams: {
-        "p": page, // ✅ page instead of full URL
-      },
+      API.getnewslettersarticles,
+      queryParams: {"p": page},
     );
-
-    return response;
   }
-   /// DETAIL API
-Future<Map<String, dynamic>?> fetchArticleDetail(
-  BuildContext context, {
-  required String articleId,
-  required String languageId,
-}) async {
 
-  try {
-
-    final response = await APIManager().apiRequest(
+  Future<ApiResult<dynamic>> fetchArticleDetail(
+    BuildContext context, {
+    required String articleId,
+    required String languageId,
+  }) async {
+    return await APIManager().apiRequest(
       context,
       API.getnewsletterarticlebylanguage,
       jsonval: {
@@ -31,16 +73,5 @@ Future<Map<String, dynamic>?> fetchArticleDetail(
         "language_id": languageId,
       },
     );
-
-    return response;
-
-  } catch (e) {
-
-    debugPrint(
-      "DETAIL API ERROR: $e",
-    );
-
-    return null;
   }
-}
 }

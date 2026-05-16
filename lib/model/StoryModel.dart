@@ -15,6 +15,7 @@ class StoryModel {
   final String? photo;
   final String? photo_description;
   final String? episode_name;
+   final String? languageid;
   
 
   StoryModel({
@@ -30,7 +31,7 @@ class StoryModel {
     required this.categories,
     this.photo_category_name,
     this.thumbnail_image,
-    this.document, this.photo, this.photo_description,this.episode_name
+    this.document, this.photo, this.photo_description,this.episode_name,this.languageid
   });
 
   factory StoryModel.fromJson(Map<String, dynamic> json) {
@@ -73,7 +74,8 @@ class StoryModel {
             : [],
             photo:json['photo'] ?? "",
             photo_description:json['photo_description'] ?? "",
-            episode_name: json['episode_name'] ?? ""
+            episode_name: json['episode_name'] ?? "",
+            languageid:json['language_id'] ?? ""
   );
 }
 }

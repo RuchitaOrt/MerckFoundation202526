@@ -1,17 +1,42 @@
-import 'package:flutter/material.dart';
-import 'package:merckfoundation_252026/Utility/APIManager.dart';
-class NewReleaseService {
-  Future<Map<String, dynamic>> fetchNewRelease(
-      BuildContext context, int page) async {
+// import 'package:flutter/material.dart';
+// import 'package:merckfoundation_252026/Utility/APIManager.dart';
+// class NewReleaseService {
+//   Future<Map<String, dynamic>> fetchNewRelease(
+//       BuildContext context, int page) async {
 
-    final response = await APIManager().apiRequest(
+//     final response = await APIManager().apiRequest(
+//       context,
+//       API.getnewsrelease, // ✅ NEW ENUM
+//       queryParams: {
+//         "p": page, // ✅ page instead of full URL
+//       },
+//     );
+
+//     return response;
+//   }
+// }
+import 'package:flutter/material.dart';
+
+import 'package:merckfoundation_252026/Utility/APIManager.dart';
+import 'package:merckfoundation_252026/Utility/api_result.dart';
+
+class NewReleaseService {
+
+  Future<ApiResult<dynamic>>
+      fetchNewRelease(
+    BuildContext context,
+    int page,
+  ) async {
+
+    final result =
+        await APIManager().apiRequest(
       context,
-      API.getnewsrelease, // ✅ NEW ENUM
+      API.getnewsrelease,
       queryParams: {
-        "p": page, // ✅ page instead of full URL
+        "p": page,
       },
     );
 
-    return response;
+    return result;
   }
 }

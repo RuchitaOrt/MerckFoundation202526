@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/Utility/api_status.dart';
+import 'package:merckfoundation_252026/Utils/common_strings.dart';
+import 'package:merckfoundation_252026/widgets/CommonApiStatusWidget.dart';
 import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
+import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:provider/provider.dart';
 
 import 'package:merckfoundation_252026/Utility/customappbar.dart';
@@ -28,6 +32,16 @@ class CommonListingScreen<T, P> extends StatefulWidget {
   
 
   final String? shareLink;
+
+  final ApiStatus Function(P provider)
+    getStatus;
+
+final String Function(P provider)
+    getErrorMessage;
+
+final Future<void> Function(
+  BuildContext context,
+) onRetry;
   const CommonListingScreen({
     super.key,
     required this.title,
@@ -40,6 +54,9 @@ class CommonListingScreen<T, P> extends StatefulWidget {
     required this.getTitle,
     required this.onTap,
     this.topWidget, required this.menuID, this.shareLink,
+    required this.getStatus,
+required this.getErrorMessage,
+required this.onRetry,
   });
 
   @override
@@ -86,54 +103,254 @@ class _CommonListingScreenState<T, P>
         shareLink: widget.shareLink,
       ),
       body: Consumer<P>(
-        builder: (context, provider, _) {
-          final list = widget.getList(provider);
+  builder: (context, provider, _) {
 
-          /// 🔴 First Loader
-          if (widget.isLoading(provider) && list.isEmpty) {
-            return const Center(child: CommonLoader());
-          }
+    final list =
+        widget.getList(provider);
 
-          return CustomScrollView(
-            controller: _controller,
-            slivers: [
-               /// 🔥 TOP WIDGET
-  if (widget.topWidget != null)
-    SliverToBoxAdapter(
-      child: widget.topWidget!,
-    ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    if (index < list.length) {
-                      final item = list[index];
+    final status =
+        widget.getStatus(provider);
 
-                      return CommonListCard(
-                        imageUrl: widget.getImage(item),
-                        htmlTitle: widget.getTitle(item),
-                        onTap: () => widget.onTap(context, item),
-                      );
-                    }
+    final errorMessage =
+        widget.getErrorMessage(
+      provider,
+    );
 
-                    /// Pagination Loader
-                    return widget.hasMore(provider)
-                        ? const Padding(
-                            padding: EdgeInsets.all(16),
-                            child: Center(
-                                child: CommonLoader()),
-                          )
-                        : const SizedBox();
-                  },
-                  childCount: list.length + 1,
-                ),
-              ),
+    /// =========================
+    /// INITIAL LOADER
+    /// =========================
 
-              const SliverToBoxAdapter(child: FooterFlowerImage()),
-              const SliverToBoxAdapter(child: Bottomcardlink()),
-            ],
-          );
+    if (status ==
+            ApiStatus.loading &&
+        list.isEmpty) {
+
+      return const Center(
+        child: CommonLoader(),
+      );
+    }
+
+    /// =========================
+    /// NO INTERNET
+    /// =========================
+
+    if (status ==
+            ApiStatus.noInternet &&
+        list.isEmpty) {
+
+      return CommonApiStatusWidget(
+        icon: Icons.wifi_off,
+
+        title:
+           CommonStrings.noInternetConnection,
+
+        onRetry: () {
+
+          widget.onRetry(context);
         },
-      ),
+      );
+    }
+
+    /// =========================
+    /// TIMEOUT
+    /// =========================
+
+    if (status ==
+            ApiStatus.timeout &&
+        list.isEmpty) {
+
+      return CommonApiStatusWidget(
+        icon: Icons.access_time,
+
+        title: "Request Timeout",
+
+        onRetry: () {
+
+          widget.onRetry(context);
+        },
+      );
+    }
+
+    /// =========================
+    /// SERVER ERROR
+    /// =========================
+
+    if (status ==
+            ApiStatus.serverError &&
+        list.isEmpty) {
+
+      return CommonApiStatusWidget(
+        icon: Icons.cloud_off,
+
+        title: "Server Error",
+
+        onRetry: () {
+
+          widget.onRetry(context);
+        },
+      );
+    }
+
+    /// =========================
+    /// OTHER ERROR
+    /// =========================
+
+    if (status ==
+            ApiStatus.error &&
+        list.isEmpty) {
+
+      return CommonApiStatusWidget(
+        icon: Icons.error_outline,
+
+        title: errorMessage.isEmpty
+            ? "Something went wrong"
+            : errorMessage,
+
+        onRetry: () {
+
+          widget.onRetry(context);
+        },
+      );
+    }
+
+    /// =========================
+    /// EMPTY
+    /// =========================
+
+    if (list.isEmpty) {
+
+      return const EmptyStateWidget();
+    }
+
+    /// =========================
+    /// SUCCESS UI
+    /// =========================
+
+    return CustomScrollView(
+      controller: _controller,
+
+      slivers: [
+
+        /// TOP WIDGET
+        if (widget.topWidget != null)
+          SliverToBoxAdapter(
+            child:
+                widget.topWidget!,
+          ),
+
+        /// LIST
+        SliverList(
+          delegate:
+              SliverChildBuilderDelegate(
+            (context, index) {
+
+              if (index <
+                  list.length) {
+
+                final item =
+                    list[index];
+
+                return CommonListCard(
+                  imageUrl:
+                      widget.getImage(
+                    item,
+                  ),
+
+                  htmlTitle:
+                      widget.getTitle(
+                    item,
+                  ),
+
+                  onTap: () {
+
+                    widget.onTap(
+                      context,
+                      item,
+                    );
+                  },
+                );
+              }
+
+              /// PAGINATION LOADER
+              return widget.hasMore(
+                      provider)
+                  ? const Padding(
+                      padding:
+                          EdgeInsets.all(
+                        16,
+                      ),
+                      child: Center(
+                        child:
+                            CommonLoader(),
+                      ),
+                    )
+                  : const SizedBox();
+            },
+
+            childCount:
+                list.length + 1,
+          ),
+        ),
+
+        const SliverToBoxAdapter(
+          child: FooterFlowerImage(),
+        ),
+
+        const SliverToBoxAdapter(
+          child: Bottomcardlink(),
+        ),
+      ],
+    );
+  },
+),
+  //     body: Consumer<P>(
+  //       builder: (context, provider, _) {
+  //         final list = widget.getList(provider);
+
+  //         /// 🔴 First Loader
+  //         if (widget.isLoading(provider) && list.isEmpty) {
+  //           return const Center(child: CommonLoader());
+  //         }
+
+  //         return CustomScrollView(
+  //           controller: _controller,
+  //           slivers: [
+  //              /// 🔥 TOP WIDGET
+  // if (widget.topWidget != null)
+  //   SliverToBoxAdapter(
+  //     child: widget.topWidget!,
+  //   ),
+  //             SliverList(
+  //               delegate: SliverChildBuilderDelegate(
+  //                 (context, index) {
+  //                   if (index < list.length) {
+  //                     final item = list[index];
+
+  //                     return CommonListCard(
+  //                       imageUrl: widget.getImage(item),
+  //                       htmlTitle: widget.getTitle(item),
+  //                       onTap: () => widget.onTap(context, item),
+  //                     );
+  //                   }
+
+  //                   /// Pagination Loader
+  //                   return widget.hasMore(provider)
+  //                       ? const Padding(
+  //                           padding: EdgeInsets.all(16),
+  //                           child: Center(
+  //                               child: CommonLoader()),
+  //                         )
+  //                       : const SizedBox();
+  //                 },
+  //                 childCount: list.length + 1,
+  //               ),
+  //             ),
+
+  //             const SliverToBoxAdapter(child: FooterFlowerImage()),
+  //             const SliverToBoxAdapter(child: Bottomcardlink()),
+  //           ],
+  //         );
+  //       },
+  //     ),
     );
   }
 }

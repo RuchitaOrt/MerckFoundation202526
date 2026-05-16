@@ -41,7 +41,6 @@ class MerckHomeScreen extends StatelessWidget {
     );
   }
 }
-
 class CategorySection extends StatelessWidget {
   final List content;
 
@@ -52,42 +51,80 @@ class CategorySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (content.isEmpty) return const SizedBox();
 
-    /// ✅ hide if empty
-    if (content.isEmpty) {
-      return const SizedBox();
-    }
+    return Container(
+      width: double.infinity, // ⭐ IMPORTANT: forces full width alignment
+      padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 5), // match other sections
+      child: Wrap(
+        alignment: WrapAlignment.start, // ⭐ key fix
+        runAlignment: WrapAlignment.start,
+        crossAxisAlignment: WrapCrossAlignment.start,
+        spacing: 10,
+        runSpacing: 10,
+        children: content.map<Widget>((e) {
+          final String title = e['title'] is String ? e['title'] : "";
 
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      children: content.map<Widget>((e) {
+          final String colorString =
+              e['subdescription'] is String ? e['subdescription'] : "0xFF000000";
 
-        final String title =
-            e['title'] is String ? e['title'] : "";
+          final Color color = Color(int.parse(colorString));
 
-        final String description =
-            e['description'] is String
-                ? e['description']
-                : "";
-                 final String colorString =
-            e['subdescription'] is String
-                ? e['subdescription']
-                : "";
-final Color color =
-    Color(int.parse(colorString));
-       
-        return CategoryChip(
-          title: title,
-          color: color,
-        
-        );
-      }).toList(),
+          return CategoryChip(
+            title: title,
+            color: color,
+          );
+        }).toList(),
+      ),
     );
   }
-
-
 }
+// class CategorySection extends StatelessWidget {
+//   final List content;
+
+//   const CategorySection({
+//     super.key,
+//     required this.content,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+
+//     /// ✅ hide if empty
+//     if (content.isEmpty) {
+//       return const SizedBox();
+//     }
+
+//     return Wrap(
+//       spacing: 10,
+//       runSpacing: 10,
+//       children: content.map<Widget>((e) {
+
+//         final String title =
+//             e['title'] is String ? e['title'] : "";
+
+//         final String description =
+//             e['description'] is String
+//                 ? e['description']
+//                 : "";
+//                  final String colorString =
+//             e['subdescription'] is String
+//                 ? e['subdescription']
+//                 : "";
+// final Color color =
+//     Color(int.parse(colorString));
+       
+//         return CategoryChip(
+//           title: title,
+//           color: color,
+        
+//         );
+//       }).toList(),
+//     );
+//   }
+
+
+// }
 class CategoryChip extends StatelessWidget {
   final String title;
   final Color color;

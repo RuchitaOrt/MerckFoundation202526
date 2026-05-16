@@ -116,40 +116,7 @@ class _AppDrawerfilterState extends State<AppDrawerfilter> {
                       minimumSize:
                           const Size(double.infinity, 50),
                     ),
-                    // onPressed: () {
-                    //   final filter =
-                    //       context.read<FilterProvider>();
-                    //   final provider =
-                    //       context.read<MediaListingProvider>();
-
-                    //   Navigator.pop(context);
-
-                    //   provider.loadInitial(
-                    //     context: context,
-                    //     type: widget.type,
-                    //     countryId: widget.type ==
-                    //             MediaType.digitalLibrary
-                    //         ? "" // ❌ no country
-                    //         : (filter.selectedCountry?.id == 0
-                    //             ? ""
-                    //             : filter.selectedCountry!.id
-                    //                 .toString()),
-                    //     categoryId:
-                    //         filter.selectedCategory?.id == 0
-                    //             ? ""
-                    //             : filter.selectedCategory!.id
-                    //                 .toString(),
-
-                    //     /// ✅ ADD LANGUAGE PARAM
-                    //     languageId: widget.type ==
-                    //             MediaType.digitalLibrary
-                    //         ? (filter.selectedLanguage?.id == 0
-                    //             ? ""
-                    //             : filter.selectedLanguage!.id
-                    //                 .toString())
-                    //         : "",
-                    //   );
-                    // },
+                  
                     onPressed: () async {
   final filter = context.read<FilterProvider>();
 
@@ -165,7 +132,7 @@ class _AppDrawerfilterState extends State<AppDrawerfilter> {
 
     await context
         .read<TestimonialArticleProvider>()
-        .fetchTestimonials(categoryId);
+        .fetchTestimonials(context,categoryId);
 
     return;
   }
@@ -174,7 +141,7 @@ class _AppDrawerfilterState extends State<AppDrawerfilter> {
   final provider =
       context.read<MediaListingProvider>();
 
-  provider.loadInitial(
+ await provider.loadInitial(
     context: context,
     type: widget.type,
     countryId: widget.type ==

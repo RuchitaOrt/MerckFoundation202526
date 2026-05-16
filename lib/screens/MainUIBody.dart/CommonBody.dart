@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/widgets/CommonApiStatusWidget.dart';
 
 import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/CommonMarqueeWidget.dart';
@@ -60,47 +61,121 @@ class _CommonBodyState extends State<CommonBody> {
       loadPage();
     });
   }
-
+  bool hasLoaded = false;
   Future<void> loadPage() async {
-    final provider = Provider.of<PageProvider>(context, listen: false);
+  final provider = Provider.of<PageProvider>(context, listen: false);
 
-    await provider.fetchPage(context, widget.menuID ?? "");
+  setState(() {
+    hasLoaded = false; // reset before API
+  });
 
-    final data = provider.pageData;
+  await provider.fetchPage(context, widget.menuID ?? "");
 
-    if (data is Map) {
-      final dataType =
-          data['data']?['data_type']?.toString().toLowerCase() ?? "";
+  final data = provider.pageData;
 
-      /// PDF
-      if (dataType == "pdf") {
-        isPdfPage = true;
+  if (!mounted) return;
 
-        final pdfUrl = data['data']?['pdf_data']?['pdf_url'] ?? "";
+  if (data == null) {
+    setState(() => hasLoaded = true);
+    return;
+  }
 
-        if (pdfUrl.toString().isNotEmpty) {
-          await ShowDialogs.launchURL(pdfUrl);
+  final root = data['data'];
+  if (root is Map) {
+    final dataType = (root['data_type'] ?? "").toString().toLowerCase();
 
-          if (mounted && Navigator.canPop(context)) {
-            Navigator.pop(context);
-          }
-        }
-
-        return;
-      }
-
-      /// LAYOUT
-      if (dataType == "layout") {
-        json = data['data']?['json_data'] ?? {};
-      }
-    } else if (data is String) {
-      json = jsonDecode(data);
+    if (dataType == "layout") {
+      json = root['json_data'] ?? {};
     }
 
-    if (mounted) {
-      setState(() {});
+    if (dataType == "pdf") {
+      isPdfPage = true;
     }
   }
+
+  setState(() {
+    hasLoaded = true; // ✅ IMPORTANT
+  });
+}
+// Future<void> loadPage() async {
+//   final provider = Provider.of<PageProvider>(context, listen: false);
+
+//   await provider.fetchPage(context, widget.menuID ?? "");
+
+//   final data = provider.pageData;
+
+//   debugPrint("PAGE DATA => $data");
+
+//   if (data == null) return;
+
+//   final root = data['data'];
+
+//   if (root is! Map) return;
+
+//   final dataType = (root['data_type'] ?? "").toString().toLowerCase();
+
+//   /// PDF
+//   if (dataType == "pdf") {
+//     isPdfPage = true;
+
+//     final pdfUrl = root['pdf_data']?['pdf_url'] ?? "";
+
+//     if (pdfUrl.toString().isNotEmpty) {
+//       await ShowDialogs.launchURL(pdfUrl);
+//       if (mounted && Navigator.canPop(context)) {
+//         Navigator.pop(context);
+//       }
+//     }
+//     return;
+//   }
+
+//   /// LAYOUT
+//   if (dataType == "layout") {
+//     json = root['json_data'] ?? {};
+//   }
+
+//   setState(() {});
+// }
+  // Future<void> loadPage() async {
+  //   final provider = Provider.of<PageProvider>(context, listen: false);
+
+  //   await provider.fetchPage(context, widget.menuID ?? "");
+
+  //   final data = provider.pageData;
+
+  //   if (data is Map) {
+  //     final dataType =
+  //         data['data']?['data_type']?.toString().toLowerCase() ?? "";
+
+  //     /// PDF
+  //     if (dataType == "pdf") {
+  //       isPdfPage = true;
+
+  //       final pdfUrl = data['data']?['pdf_data']?['pdf_url'] ?? "";
+
+  //       if (pdfUrl.toString().isNotEmpty) {
+  //         await ShowDialogs.launchURL(pdfUrl);
+
+  //         if (mounted && Navigator.canPop(context)) {
+  //           Navigator.pop(context);
+  //         }
+  //       }
+
+  //       return;
+  //     }
+
+  //     /// LAYOUT
+  //     if (dataType == "layout") {
+  //       json = data['data']?['json_data'] ?? {};
+  //     }
+  //   } else if (data is String) {
+  //     json = jsonDecode(data);
+  //   }
+
+  //   if (mounted) {
+  //     setState(() {});
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -110,45 +185,95 @@ class _CommonBodyState extends State<CommonBody> {
     if (provider.isLoading) {
       return const Center(child: CommonLoader());
     }
+if (provider.hasError) {
+  return CommonApiStatusWidget(
+        icon: Icons.wifi_off,
 
+        title:
+          CommonStrings.noInternetConnection,
+
+        onRetry: () {
+
+          loadPage();
+        },
+      );
+}
     /// PDF SCREEN
     if (isPdfPage) {
       return const SizedBox();
     }
 
-    List allLayouts = [];
+    // List allLayouts = [];
 
-    allLayouts.addAll(json['slider'] ?? []);
-    allLayouts.addAll(json['top'] ?? []);
-    allLayouts.addAll(json['middle_left'] ?? []);
-    allLayouts.addAll(json['middle_right'] ?? []);
-    allLayouts.addAll(json['bottom'] ?? []);
+    // allLayouts.addAll(json['slider'] ?? []);
+    // allLayouts.addAll(json['top'] ?? []);
+    // allLayouts.addAll(json['middle_left'] ?? []);
+    // allLayouts.addAll(json['middle_right'] ?? []);
+    // allLayouts.addAll(json['bottom'] ?? []);
+List allLayouts = [];
 
+if (json['slider'] is List) {
+  allLayouts.addAll(json['slider']);
+}
+
+if (json['top'] is List) {
+  allLayouts.addAll(json['top']);
+}
+
+if (json['middle_left'] is List) {
+  allLayouts.addAll(json['middle_left']);
+}
+
+if (json['middle_right'] is List) {
+  allLayouts.addAll(json['middle_right']);
+}
+
+if (json['bottom'] is List) {
+  allLayouts.addAll(json['bottom']);
+}
     /// NO DATA
-    if (allLayouts.isEmpty) {
-      return CustomScrollView(
-        slivers: [
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Column(
-              children: [
-                /// CENTER CONTENT
-                Expanded(child: EmptyStateWidget()),
+    // if (allLayouts.isEmpty) {
+    //   return CustomScrollView(
+    //     slivers: [
+    //       SliverFillRemaining(
+    //         hasScrollBody: false,
+    //         child: Column(
+    //           children: [
+    //             /// CENTER CONTENT
+    //             Expanded(child: EmptyStateWidget()),
 
-                /// FOOTER AT SCREEN BOTTOM
-                if (widget.showFooter) const FooterFlowerImage(),
+    //             /// FOOTER AT SCREEN BOTTOM
+    //             if (widget.showFooter) const FooterFlowerImage(),
 
-                if (widget.showBottomLinks) ...[
-                  const SizedBox(height: 8),
-                  const Bottomcardlink(),
-                ],
-              ],
-            ),
-          ),
-        ],
-      );
-    }
-    
+    //             if (widget.showBottomLinks) ...[
+    //               const SizedBox(height: 8),
+    //               const Bottomcardlink(),
+    //             ],
+    //           ],
+    //         ),
+    //       ),
+    //     ],
+    //   );
+    // }
+    if (!provider.isLoading && hasLoaded && allLayouts.isEmpty) {
+  return CustomScrollView(
+    slivers: [
+      SliverFillRemaining(
+        hasScrollBody: false,
+        child: Column(
+          children: [
+            Expanded(child: EmptyStateWidget()),
+            if (widget.showFooter) const FooterFlowerImage(),
+            if (widget.showBottomLinks) ...[
+              const SizedBox(height: 8),
+              const Bottomcardlink(),
+            ],
+          ],
+        ),
+      ),
+    ],
+  );
+}
 
     int extraCount = 0;
 

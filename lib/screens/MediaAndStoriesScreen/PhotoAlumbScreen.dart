@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/Utility/api_status.dart';
+import 'package:merckfoundation_252026/Utils/common_strings.dart';
+import 'package:merckfoundation_252026/widgets/CommonApiStatusWidget.dart';
 import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:provider/provider.dart';
@@ -53,33 +56,129 @@ class _PhotoAlumbScreenPageState extends State<PhotoAlumbScreen> {
         onSearch: () {},
         shareLink: widget.shareLink,
       ),
-      body: provider.isLoading
-          ? const Center(child: CommonLoader())
-          : provider.albums.isEmpty
-          ? const Center(child:EmptyStateWidget(),)
-          : ListView.builder(
-              padding: const EdgeInsets.only(bottom: 20),
-              itemCount: provider.albums.length,
-              itemBuilder: (context, index) {
-                final album = provider.albums[index];
+     body: provider.isLoading
+    ? const Center(
+        child: CommonLoader(),
+      )
 
-                if (album.imagelist.isEmpty) {
-                  return const SizedBox();
-                }
+    : provider.status ==
+            ApiStatus.noInternet
+        ? CommonApiStatusWidget(
+            icon: Icons.wifi_off,
+            title:
+               CommonStrings.noInternetConnection,
+            onRetry: () {
+              provider.retry(
+                context,
+                widget.categoryID!,
+              );
+            },
+          )
 
-                return HorizontalAlbumWidget(
-                  title: album.albumName,
-                  images: album.imagelist,
-                  imageUrl: (item) => item.photo,
-                  alubumID: album.id.toString(),
-                  alubumName: album.albumName,
-                  categoryID: widget.categoryID.toString(),
-                  menuID: widget.menuID,
+        : provider.status ==
+                ApiStatus.serverError
+            ? CommonApiStatusWidget(
+                icon: Icons.cloud_off,
+                title:
+                    "Server Error",
+                onRetry: () {
+                  provider.retry(
+                    context,
+                    widget.categoryID!,
+                  );
+                },
+              )
+
+            : provider.status ==
+                    ApiStatus.error
+                ? CommonApiStatusWidget(
+                    icon: Icons.error,
+                    title:
+                        provider.errorMessage,
+                    onRetry: () {
+                      provider.retry(
+                        context,
+                        widget.categoryID!,
+                      );
+                    },
+                  )
+
+                : provider.albums.isEmpty
+                    ? const Center(
+                        child:
+                            EmptyStateWidget(),
+                      )
+
+                    : ListView.builder(
+                        padding:
+                            const EdgeInsets.only(
+                          bottom: 20,
+                        ),
+                        itemCount:
+                            provider.albums.length,
+                        itemBuilder:
+                            (context, index) {
+
+                          final album =
+                              provider
+                                  .albums[index];
+
+                          if (album
+                              .imagelist
+                              .isEmpty) {
+                            return const SizedBox();
+                          }
+
+                          return HorizontalAlbumWidget(
+                            title:
+                                album.albumName,
+                            images:
+                                album.imagelist,
+                            imageUrl:
+                                (item) =>
+                                    item.photo,
+                            alubumID:
+                                album.id
+                                    .toString(),
+                            alubumName:
+                                album.albumName,
+                            categoryID:
+                                widget.categoryID
+                                    .toString(),
+                            menuID:
+                                widget.menuID,
+                            shareLink:
+                                widget.shareLink,
+                          );
+                        },
+                      ),
+      // body: provider.isLoading
+      //     ? const Center(child: CommonLoader())
+      //     : provider.albums.isEmpty
+      //     ? const Center(child:EmptyStateWidget(),)
+      //     : ListView.builder(
+      //         padding: const EdgeInsets.only(bottom: 20),
+      //         itemCount: provider.albums.length,
+      //         itemBuilder: (context, index) {
+      //           final album = provider.albums[index];
+
+      //           if (album.imagelist.isEmpty) {
+      //             return const SizedBox();
+      //           }
+
+      //           return HorizontalAlbumWidget(
+      //             title: album.albumName,
+      //             images: album.imagelist,
+      //             imageUrl: (item) => item.photo,
+      //             alubumID: album.id.toString(),
+      //             alubumName: album.albumName,
+      //             categoryID: widget.categoryID.toString(),
+      //             menuID: widget.menuID,
                                   
-                                  shareLink: widget.shareLink,
-                );
-              },
-            ),
+      //                             shareLink: widget.shareLink,
+      //           );
+      //         },
+      //       ),
     );
   }
 }

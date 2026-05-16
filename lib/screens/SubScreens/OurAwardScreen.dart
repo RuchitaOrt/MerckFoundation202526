@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/AwardProvider.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
+import 'package:merckfoundation_252026/Utility/api_status.dart';
 import 'package:merckfoundation_252026/Utility/customappbar.dart';
 import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/model/AwardResponse.dart';
 
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
+import 'package:merckfoundation_252026/widgets/CommonApiStatusWidget.dart';
 
-import 'package:merckfoundation_252026/widgets/CommonActionButton.dart';
 import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
-import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 import 'package:merckfoundation_252026/widgets/botttomlink.dart';
 
 import 'package:provider/provider.dart';
@@ -28,9 +28,11 @@ class _OurAwardScreenState extends State<OurAwardScreen> {
   void initState() {
     super.initState();
 
-    Future.microtask(() {
-      context.read<AwardProvider>().getAwards();
-    });
+   Future.microtask(() {
+  context
+      .read<AwardProvider>()
+      .getAwards(context);
+});
   }
 
   final List<Color> _cardColors = [
@@ -58,42 +60,207 @@ class _OurAwardScreenState extends State<OurAwardScreen> {
        
       ),
 
-      body: provider.isLoading
-          ? const Center(child: CommonLoader())
-          : ListView(
-              children: [
-                /// AWARD LIST
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
+    body: Builder(
+  builder: (context) {
 
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
+    /// LOADING
+    if (provider.status ==
+        ApiStatus.loading) {
 
-                    itemCount: awards.length,
+      return const Center(
+        child: CommonLoader(),
+      );
+    }
 
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+    /// NO INTERNET
+    if (provider.status ==
+        ApiStatus.noInternet) {
 
-                    itemBuilder: (context, index) {
-                      final award = awards[index];
+      return 
+       CommonApiStatusWidget(
+              icon: Icons.wifi_off,
 
-                      return AwardCard(
-                        award: award,
-                        color: _cardColors[index % _cardColors.length],
-                      );
-                    },
-                  ),
-                ),
 
-                8.0.heightBox,
+              title:
+                  provider.errorMessage,
 
-                const FooterFlowerImage(),
+              onRetry: () {
 
-                8.0.heightBox,
+                provider.retry(
+                  context,
+                );
+              },);
+    }
 
-                Bottomcardlink(),
-              ],
+    /// TIMEOUT
+    if (provider.status ==
+        ApiStatus.timeout) {
+
+      return Center(
+        child: Column(
+          mainAxisAlignment:
+              MainAxisAlignment.center,
+          children: [
+
+            const Icon(
+              Icons.access_time,
+              size: 70,
+              color: Colors.grey,
             ),
+
+            const SizedBox(height: 20),
+
+            const Text(
+              "Request Timeout",
+            ),
+
+            const SizedBox(height: 20),
+
+            ElevatedButton(
+              onPressed: () {
+
+                provider.retry(
+                  context,
+                );
+              },
+              child:
+                  const Text("Retry"),
+            ),
+          ],
+        ),
+      );
+    }
+
+    /// SERVER ERROR
+    if (provider.status ==
+        ApiStatus.serverError) {
+
+      return Center(
+        child: Column(
+          mainAxisAlignment:
+              MainAxisAlignment.center,
+          children: [
+
+            const Icon(
+              Icons.cloud_off,
+              size: 70,
+              color: Colors.grey,
+            ),
+
+            const SizedBox(height: 20),
+
+            const Text(
+              "Server Error",
+            ),
+
+            const SizedBox(height: 20),
+
+            ElevatedButton(
+              onPressed: () {
+
+                provider.retry(
+                  context,
+                );
+              },
+              child:
+                  const Text("Retry"),
+            ),
+          ],
+        ),
+      );
+    }
+
+    /// OTHER ERROR
+    if (provider.status ==
+        ApiStatus.error) {
+
+      return Center(
+        child: Column(
+          mainAxisAlignment:
+              MainAxisAlignment.center,
+          children: [
+
+            const Icon(
+              Icons.error_outline,
+              size: 70,
+              color: Colors.grey,
+            ),
+
+            const SizedBox(height: 20),
+
+            Text(
+              provider.errorMessage,
+            ),
+
+            const SizedBox(height: 20),
+
+            ElevatedButton(
+              onPressed: () {
+
+                provider.retry(
+                  context,
+                );
+              },
+              child:
+                  const Text("Retry"),
+            ),
+          ],
+        ),
+      );
+    }
+
+    /// SUCCESS UI
+    return ListView(
+      children: [
+
+        /// AWARD LIST
+        Padding(
+          padding:
+              const EdgeInsets.all(8.0),
+
+          child: ListView.separated(
+            shrinkWrap: true,
+
+            physics:
+                const NeverScrollableScrollPhysics(),
+
+            itemCount: awards.length,
+
+            separatorBuilder:
+                (_, __) =>
+                    const SizedBox(
+              height: 12,
+            ),
+
+            itemBuilder:
+                (context, index) {
+
+              final award =
+                  awards[index];
+
+              return AwardCard(
+                award: award,
+
+                color: _cardColors[
+                    index %
+                        _cardColors
+                            .length],
+              );
+            },
+          ),
+        ),
+
+        8.0.heightBox,
+
+        const FooterFlowerImage(),
+
+        8.0.heightBox,
+
+        Bottomcardlink(),
+      ],
+    );
+  },
+),
     );
   }
 }

@@ -69,7 +69,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   : ListView(
                       padding: EdgeInsets.zero,
                       children: [
-                        _buildHeader(context,"1","",""),
+                        _buildHeader(context, "1", "", ""),
                         16.0.heightBox,
 
                         ...navbarProvider.menuList.map((item) {
@@ -140,9 +140,12 @@ class _AppDrawerState extends State<AppDrawer> {
     );
   }
 
-  Widget _buildHeader(BuildContext context ,String menuId,
+  Widget _buildHeader(
+    BuildContext context,
+    String menuId,
     String title,
-    String shareLink,) {
+    String shareLink,
+  ) {
     final responsive = ResponsiveFlutter.of(context);
 
     return Container(
@@ -168,7 +171,13 @@ class _AppDrawerState extends State<AppDrawer> {
                     print("Clicked on aarow");
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (_) => Dashboard(index: 0, menuID: menuId, shareLink: shareLink)),
+                      MaterialPageRoute(
+                        builder: (_) => Dashboard(
+                          index: 0,
+                          menuID: menuId,
+                          shareLink: shareLink,
+                        ),
+                      ),
                     );
                   },
                   child: Container(
@@ -251,7 +260,10 @@ class _AppDrawerState extends State<AppDrawer> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => OurPartnersScreen(menuID: menuId, title: title, shareLink: shareLink,
+            builder: (_) => OurPartnersScreen(
+              menuID: menuId,
+              title: title,
+              shareLink: shareLink,
             ),
           ),
         );
@@ -266,9 +278,10 @@ class _AppDrawerState extends State<AppDrawer> {
               type: MediaType.videoLibrary,
               categoryID: "",
               albumID: "",
-              albumName: "",  menuID: menuId,
+              albumName: "",
+              menuID: menuId,
               title: title,
-            shareLink: shareLink,
+              shareLink: shareLink,
             ),
           ),
         );
@@ -278,8 +291,10 @@ class _AppDrawerState extends State<AppDrawer> {
       case '27':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => Dashboard(index: 2,  menuID: menuId,
-            shareLink: shareLink,)),
+          MaterialPageRoute(
+            builder: (_) =>
+                Dashboard(index: 2, menuID: menuId, shareLink: shareLink),
+          ),
         );
         break;
 
@@ -292,8 +307,28 @@ class _AppDrawerState extends State<AppDrawer> {
               type: MediaType.testimonial,
               categoryID: "",
               albumID: "",
-              albumName: "",  menuID: menuId,title: title,
-            shareLink: shareLink,
+              albumName: "",
+              menuID: menuId,
+              title: title,
+              shareLink: shareLink,
+            ),
+          ),
+        );
+        break;
+
+      /// Activity
+      case '11':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MediaListingScreen(
+              type: MediaType.activity,
+              categoryID: "",
+              albumID: "",
+              albumName: "",
+              menuID: menuId,
+              title: title,
+              shareLink: shareLink,
             ),
           ),
         );
@@ -303,8 +338,10 @@ class _AppDrawerState extends State<AppDrawer> {
       case '29':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => Dashboard(index: 3,  menuID: menuId,
-            shareLink: shareLink,)),
+          MaterialPageRoute(
+            builder: (_) =>
+                Dashboard(index: 3, menuID: menuId, shareLink: shareLink),
+          ),
         );
         break;
 
@@ -312,8 +349,10 @@ class _AppDrawerState extends State<AppDrawer> {
       case '30':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => Dashboard(index: 4,  menuID: menuId,
-            shareLink: shareLink,)),
+          MaterialPageRoute(
+            builder: (_) =>
+                Dashboard(index: 4, menuID: menuId, shareLink: shareLink),
+          ),
         );
         break;
 
@@ -324,8 +363,11 @@ class _AppDrawerState extends State<AppDrawer> {
           MaterialPageRoute(
             builder: (_) => ChangeNotifierProvider(
               create: (_) => NewsReleaseProvider(),
-              child: NewsRelease(  menuID: menuId,
-            shareLink: shareLink, title: title,),
+              child: NewsRelease(
+                menuID: menuId,
+                shareLink: shareLink,
+                title: title,
+              ),
             ),
           ),
         );
@@ -338,8 +380,11 @@ class _AppDrawerState extends State<AppDrawer> {
           MaterialPageRoute(
             builder: (_) => ChangeNotifierProvider(
               create: (_) => MediaProvider(),
-              child: MediaScreen(  menuID: menuId,title: title,
-            shareLink: shareLink,),
+              child: MediaScreen(
+                menuID: menuId,
+                title: title,
+                shareLink: shareLink,
+              ),
             ),
           ),
         );
@@ -355,8 +400,9 @@ class _AppDrawerState extends State<AppDrawer> {
               categoryID: "",
               albumID: "",
               albumName: "",
-                menuID: menuId,
-            shareLink: shareLink,title: title,
+              menuID: menuId,
+              shareLink: shareLink,
+              title: title,
             ),
           ),
         );
@@ -372,9 +418,9 @@ class _AppDrawerState extends State<AppDrawer> {
               categoryID: "",
               albumID: "",
               albumName: "",
-                menuID: menuId,
-            shareLink: shareLink,
-            title: title,
+              menuID: menuId,
+              shareLink: shareLink,
+              title: title,
             ),
           ),
         );

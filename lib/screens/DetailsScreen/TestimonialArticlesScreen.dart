@@ -2,13 +2,15 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/FilterProvider.dart';
-import 'package:merckfoundation_252026/Provider/MediaListingProvider.dart';
+
 
 import 'package:merckfoundation_252026/Provider/TestimonialProvider.dart';
+import 'package:merckfoundation_252026/Utility/api_status.dart';
 import 'package:merckfoundation_252026/Utility/customappbar.dart';
 import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/model/TestimonialModel.dart';
+import 'package:merckfoundation_252026/widgets/CommonApiStatusWidget.dart';
 import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:merckfoundation_252026/widgets/filterdrawer.dart';
@@ -61,13 +63,15 @@ void initState() {
     );
 
     /// 🔥 INITIAL API
-    await provider.fetchTestimonials("");
+    await provider.fetchTestimonials(context,"");
   });
 }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
+      final provider = context.watch<TestimonialArticleProvider>();
+
     return Scaffold(
        key: _scaffoldKey,
       endDrawer: AppDrawerfilter(type: MediaType.testimonialArticle),
@@ -84,29 +88,71 @@ void initState() {
       ),
 
       backgroundColor: Customcolor.background,
-      body: Consumer<TestimonialArticleProvider>(
-        builder: (context, provider, _) {
-          if (provider.isLoading) {
-            return const Center(
-              child:
-                  CommonLoader(),
-            );
-          }
+      body: _buildBody(provider),
+      // body:
+      //  Consumer<TestimonialArticleProvider>(
+      //   builder: (context, provider, _) {
+      //     if (provider.isLoading) {
+      //       return const Center(
+      //         child:
+      //             CommonLoader(),
+      //       );
+      //     }
 
-          if (provider
-              .testimonials.isEmpty) {
-            return const Center(
-              child:EmptyStateWidget(),
-            );
-          }
+      //     if (provider
+      //         .testimonials.isEmpty) {
+      //       return const Center(
+      //         child:EmptyStateWidget(),
+      //       );
+      //     }
 
-          return TestimonialCarouselWidget(
-            items: provider.testimonials,
-          );
-        },
-      ),
+      //     return TestimonialCarouselWidget(
+      //       items: provider.testimonials,
+      //     );
+      //   },
+      // ),
     );
   }
+Widget _buildBody(TestimonialArticleProvider provider) {
+
+  if (provider.status == ApiStatus.loading) {
+    return const Center(child: CommonLoader());
+  }
+
+  if (provider.status == ApiStatus.noInternet) {
+    return CommonApiStatusWidget(
+      icon: Icons.wifi_off,
+      title: CommonStrings.noInternetConnection,
+      onRetry: () => provider.retry(context),
+    );
+  }
+
+  if (provider.status == ApiStatus.timeout) {
+    return CommonApiStatusWidget(
+      icon: Icons.access_time,
+      title: "Request Timeout",
+      onRetry: () => provider.retry(context),
+    );
+  }
+
+  if (provider.status == ApiStatus.error) {
+    return CommonApiStatusWidget(
+      icon: Icons.error_outline,
+      title: provider.errorMessage,
+      onRetry: () => provider.retry(context),
+    );
+  }
+
+  if (provider.status == ApiStatus.success &&
+      provider.testimonials.isEmpty) {
+    return const EmptyStateWidget();
+  }
+
+  return TestimonialCarouselWidget(
+    items: provider.testimonials,
+  );
+}
+  
 }
 
 class TestimonialCarouselWidget

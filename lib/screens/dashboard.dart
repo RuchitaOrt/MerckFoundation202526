@@ -2,6 +2,8 @@ import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/navbar_provider.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
+import 'package:merckfoundation_252026/Utility/api_status.dart';
+import 'package:merckfoundation_252026/Utility/customappbar.dart';
 import 'package:merckfoundation_252026/Utils/common_images.dart';
 import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
@@ -12,6 +14,7 @@ import 'package:merckfoundation_252026/screens/MainScreens/CallforApplication.da
 import 'package:merckfoundation_252026/screens/MainScreens/HomeNewScreen.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/ourPrograms.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
+import 'package:merckfoundation_252026/widgets/CommonApiStatusWidget.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 import 'package:provider/provider.dart';
 
@@ -42,60 +45,98 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
-print("DASHBOARD ${widget.shareLink}");
+    print("DASHBOARD ${widget.shareLink}");
     currentIndex = widget.index;
 
-    pageController = PageController(
-      initialPage: widget.index,
-    );
+    pageController = PageController(initialPage: widget.index);
   }
 
   Widget getScreen(MobileBottomMenu menu) {
-  switch (menu.id) {
+    switch (menu.id) {
+      case 1:
+        return MerckHomeScreen(
+          menuID: menu.id.toString(),
+          title: menu.menuTitle,
+        );
 
-    case 1:
-      return MerckHomeScreen(
-        menuID: menu.id.toString(),
-        shareLink: menu.menuUrl ?? "",
-        title: menu.menuTitle ?? "",
-      );
+      case 16:
+        return OurProgramScreen(
+          menuID: menu.id.toString(),
+          title: menu.menuTitle,
+        );
 
-    case 16:
-      return OurProgramScreen(
-        menuID: menu.id.toString(),
-        shareLink: menu.menuUrl ?? "",
-        title: menu.menuTitle ?? "",
-      );
+      case 27:
+        return MediaListingScreen(
+          type: MediaType.stories,
+          categoryID: "",
+          albumID: "",
+          albumName: "",
+          menuID: menu.id.toString(),
+          title: menu.menuTitle,
+        );
 
-    case 27:
-      return MediaListingScreen(
-        type: MediaType.stories,
-        categoryID: "",
-        albumID: "",
-        albumName: "",
-        menuID: menu.id.toString(),
-        shareLink: menu.menuUrl ?? "",
-        title: menu.menuTitle ?? "",
-      );
+      case 29:
+        return ArticlesScreen(
+          menuID: menu.id.toString(),
+          title: menu.menuTitle,
+        );
 
-    case 29:
-      return ArticlesScreen(
-        menuID: menu.id.toString(),
-        shareLink: menu.menuUrl ?? "",
-        title: menu.menuTitle ?? "",
-      );
+      case 30:
+        return CallforApplication(
+          menuID: menu.id.toString(),
+          title: menu.menuTitle,
+        );
 
-    case 30:
-      return CallforApplication(
-        menuID: menu.id.toString(),
-        shareLink: menu.menuUrl ?? "",
-        title: menu.menuTitle ?? "",
-      );
-
-    default:
-      return const SizedBox();
+      default:
+        return const SizedBox();
+    }
   }
-}
+  //   Widget getScreen(MobileBottomMenu menu) {
+  //   switch (menu.id) {
+
+  //     case 1:
+  //       return MerckHomeScreen(
+  //         menuID: menu.id.toString(),
+  //         shareLink: menu.menuUrl ?? "",
+  //         title: menu.menuTitle ?? "",
+  //       );
+
+  //     case 16:
+  //       return OurProgramScreen(
+  //         menuID: menu.id.toString(),
+  //         shareLink: menu.menuUrl ?? "",
+  //         title: menu.menuTitle ?? "",
+  //       );
+
+  //     case 27:
+  //       return MediaListingScreen(
+  //         type: MediaType.stories,
+  //         categoryID: "",
+  //         albumID: "",
+  //         albumName: "",
+  //         menuID: menu.id.toString(),
+  //         shareLink: menu.menuUrl ?? "",
+  //         title: menu.menuTitle ?? "",
+  //       );
+
+  //     case 29:
+  //       return ArticlesScreen(
+  //         menuID: menu.id.toString(),
+  //         shareLink: menu.menuUrl ?? "",
+  //         title: menu.menuTitle ?? "",
+  //       );
+
+  //     case 30:
+  //       return CallforApplication(
+  //         menuID: menu.id.toString(),
+  //         shareLink: menu.menuUrl ?? "",
+  //         title: menu.menuTitle ?? "",
+  //       );
+
+  //     default:
+  //       return const SizedBox();
+  //   }
+  // }
   BottomNavyBarItem _navItemDynamic({
     required int index,
     required int menuId,
@@ -107,7 +148,6 @@ print("DASHBOARD ${widget.shareLink}");
     String unselectedIcon = CommonImagePath.homeUnselected;
 
     switch (menuId) {
-
       // Home
       case 1:
         selectedIcon = CommonImagePath.homeSelected;
@@ -141,9 +181,7 @@ print("DASHBOARD ${widget.shareLink}");
 
     return BottomNavyBarItem(
       icon: Image.asset(
-        currentIndex == index
-            ? selectedIcon
-            : unselectedIcon,
+        currentIndex == index ? selectedIcon : unselectedIcon,
         height: responsive.height(3),
       ),
       title: FormLabel(
@@ -159,115 +197,303 @@ print("DASHBOARD ${widget.shareLink}");
       textAlign: TextAlign.center,
     );
   }
+@override
+Widget build(BuildContext context) {
+  final navbarProvider = Provider.of<NavbarProvider>(context);
+  final navMenus = navbarProvider.mobileBottomMenus;
+ final responsive = ResponsiveFlutter.of(context);
+  return Scaffold(
+    backgroundColor: Customcolor.background,
 
-  @override
-  Widget build(BuildContext context) {
-    final navbarProvider = Provider.of<NavbarProvider>(context);
+  
+    // ✅ ONLY BODY CHANGES
+    body: _buildBody(navbarProvider, navMenus),
 
-   final navMenus =
-    navbarProvider.mobileBottomMenus;
+    bottomNavigationBar: _buildBottomBar(navbarProvider, navMenus),
+  );
+}
+Widget _buildBody(NavbarProvider navbarProvider, List navMenus) {
+  final status = navbarProvider.status;
 
-    return Scaffold(
-      backgroundColor: Customcolor.background,
+  /// LOADING
+  if (status == ApiStatus.loading) {
+    return const Center(child: CircularProgressIndicator());
+  }
 
-      body: navMenus.isEmpty
-          ?  Center(
-        child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center,
-          children: [
+  /// NO INTERNET
+ if (status == ApiStatus.noInternet && navMenus.isEmpty) {
+  return CommonApiStatusWidget(
+    icon: Icons.wifi_off,
+    title: CommonStrings.noInternetConnection,
+    onRetry: () => navbarProvider.retryNavbar(context),
+  );
+}
+  /// ERROR
+  if (status == ApiStatus.error ||
+      status == ApiStatus.serverError ||
+      status == ApiStatus.timeout) {
+    return CommonApiStatusWidget(
+      icon: Icons.error_outline,
+      title: navbarProvider.errorMessage.isEmpty
+          ? "Something went wrong"
+          : navbarProvider.errorMessage,
+      onRetry: () => navbarProvider.retryNavbar(context),
+    );
+  }
 
-            const Icon(
-              Icons.wifi_off,
-              size: 70,
-              color: Colors.grey,
-            ),
+  /// EMPTY
+  if (navMenus.isEmpty) {
+    return const Center(child: Text("No menu found"));
+  }
 
-            const SizedBox(height: 16),
+  /// SUCCESS
+   return Stack(
+  children: [
+    PageView(
+      controller: pageController,
+      physics: const NeverScrollableScrollPhysics(),
+      children: navMenus.map((e) => getScreen(e)).toList(),
+    ),
 
-            const Text(
+    if (status == ApiStatus.noInternet)
+      Positioned(
+        top: 0,
+        left: 0,
+        right: 0,
+        child: Material(
+          color: Colors.red,
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Text(
               "No internet connection",
+              style: TextStyle(color: Colors.white),
+              textAlign: TextAlign.center,
             ),
+          ),
+        ),
+      ),
+  ],
+);
+  // return PageView(
+  //   controller: pageController,
+  //   physics: const NeverScrollableScrollPhysics(),
+  //   children: navMenus.map((e) => getScreen(e)).toList(),
+  // );
+}
+Widget _buildBottomBar(NavbarProvider navbarProvider, List navMenus) {
+  if (navbarProvider.status != ApiStatus.success || navMenus.isEmpty) {
+    return const SizedBox();
+  }
 
-            const SizedBox(height: 20),
-
-            ElevatedButton(
-              onPressed: () {
-
-            
-
-              },
-              child: const Text("Retry"),
+  return SafeArea(
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.12),
+              blurRadius: 15,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
-      )
-          : PageView(
-              controller: pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: navMenus
-    .map(
-      (e) => getScreen(e),
-    )
-    .toList(),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: SizedBox(
+            height: 56,
+            child: BottomNavyBar(
+              selectedIndex: currentIndex,
+              showElevation: false,
+              backgroundColor: Colors.white,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              onItemSelected: (index) {
+                setState(() {
+                  currentIndex = index;
+                });
+                pageController.jumpToPage(index);
+              },
+              items: List.generate(navMenus.length, (index) {
+                final item = navMenus[index];
+                return _navItemDynamic(
+                  index: index,
+                  menuId: item.id,
+                  title: item.menuTitle,
+                );
+              }),
             ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+  // @override
+  // Widget build(BuildContext context) {
+  //   final navbarProvider = Provider.of<NavbarProvider>(context);
 
-      bottomNavigationBar: navMenus.isEmpty
-          ? const SizedBox()
-          : SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.12),
-                        blurRadius: 15,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: SizedBox(
-                      height: 56,
-                      child: BottomNavyBar(
-                        selectedIndex: currentIndex,
-                        showElevation: false,
-                        backgroundColor: Colors.white,
-                        mainAxisAlignment:
-                            MainAxisAlignment.spaceAround,
+  //   final navMenus = navbarProvider.mobileBottomMenus;
 
-                        onItemSelected: (index) {
-                          setState(() {
-                            currentIndex = index;
-                          });
+  //   return Scaffold(
+  //     backgroundColor: Customcolor.background,
+  //     body: Builder(
+  //       builder: (_) {
+  //         /// LOADING
+  //         if (navbarProvider.status == ApiStatus.loading) {
+  //           return const Center(child: CircularProgressIndicator());
+  //         }
 
-                          pageController.jumpToPage(index);
-                        },
+  //         /// NO INTERNET
+  //         if (navbarProvider.status == ApiStatus.noInternet) {
+  //           return 
+  //           CommonApiStatusWidget(
+  //     icon: Icons.wifi_off,
+  //     title: CommonStrings.noInternetConnection,
+  //     onRetry: () =>  navbarProvider.retryNavbar(context)
+  //   );
+            
+          
+  //         }
 
-                        items: List.generate(
-                          navMenus.length,
-                          (index) {
-                            final item = navMenus[index];
+  //         /// ERROR
+  //         if (navbarProvider.status == ApiStatus.error ||
+  //             navbarProvider.status == ApiStatus.serverError ||
+  //             navbarProvider.status == ApiStatus.timeout) {
+  //           return Center(
+  //             child: Column(
+  //               mainAxisAlignment: MainAxisAlignment.center,
+  //               children: [
+  //                 const Icon(Icons.error_outline, size: 70, color: Colors.grey),
 
-                            return _navItemDynamic(
-                              index: index,
-                              menuId: item.id,
-                              title: item.menuTitle,
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-    );
-  }
+  //                 const SizedBox(height: 16),
+
+  //                 Text(
+  //                   navbarProvider.errorMessage.isEmpty
+  //                       ? "Something went wrong"
+  //                       : navbarProvider.errorMessage,
+  //                   textAlign: TextAlign.center,
+  //                 ),
+
+  //                 const SizedBox(height: 20),
+
+  //                 ElevatedButton(
+  //                   onPressed: () {
+  //                     navbarProvider.retryNavbar(context);
+  //                   },
+  //                   child: const Text("Retry"),
+  //                 ),
+  //               ],
+  //             ),
+  //           );
+  //         }
+
+  //         /// EMPTY
+  //         if (navMenus.isEmpty) {
+  //           return const Center(child: Text("No menu found"));
+  //         }
+
+  //         /// SUCCESS
+  //         return PageView(
+  //           controller: pageController,
+  //           physics: const NeverScrollableScrollPhysics(),
+  //           children: navMenus.map((e) => getScreen(e)).toList(),
+  //         );
+  //       },
+  //     ),
+  //     //   body: navMenus.isEmpty
+  //     //       ?  Center(
+  //     //     child: Column(
+  //     //       mainAxisAlignment:
+  //     //           MainAxisAlignment.center,
+  //     //       children: [
+
+  //     //         const Icon(
+  //     //           Icons.wifi_off,
+  //     //           size: 70,
+  //     //           color: Colors.grey,
+  //     //         ),
+
+  //     //         const SizedBox(height: 16),
+
+  //     //         const Text(
+  //     //           "No internet connection",
+  //     //         ),
+
+  //     //         const SizedBox(height: 20),
+
+  //     //         ElevatedButton(
+  //     //           onPressed: () {
+
+  //     //           },
+  //     //           child: const Text("Retry"),
+  //     //         ),
+  //     //       ],
+  //     //     ),
+  //     //   )
+  //     //       : PageView(
+  //     //           controller: pageController,
+  //     //           physics: const NeverScrollableScrollPhysics(),
+  //     //           children: navMenus
+  //     // .map(
+  //     //   (e) => getScreen(e),
+  //     // )
+  //     // .toList(),
+  //     //         ),
+  //     bottomNavigationBar:
+  //         navbarProvider.status != ApiStatus.success || navMenus.isEmpty
+  //         ? const SizedBox()
+  //         : SafeArea(
+  //             child: Padding(
+  //               padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+  //               child: Container(
+  //                 decoration: BoxDecoration(
+  //                   color: Colors.white,
+  //                   borderRadius: BorderRadius.circular(10),
+  //                   boxShadow: [
+  //                     BoxShadow(
+  //                       color: Colors.black.withOpacity(0.12),
+  //                       blurRadius: 15,
+  //                       offset: const Offset(0, 6),
+  //                     ),
+  //                   ],
+  //                 ),
+  //                 child: ClipRRect(
+  //                   borderRadius: BorderRadius.circular(10),
+  //                   child: SizedBox(
+  //                     height: 56,
+  //                     child: BottomNavyBar(
+  //                       selectedIndex: currentIndex,
+  //                       showElevation: false,
+  //                       backgroundColor: Colors.white,
+  //                       mainAxisAlignment: MainAxisAlignment.spaceAround,
+
+  //                       onItemSelected: (index) {
+  //                         setState(() {
+  //                           currentIndex = index;
+  //                         });
+
+  //                         pageController.jumpToPage(index);
+  //                       },
+
+  //                       items: List.generate(navMenus.length, (index) {
+  //                         final item = navMenus[index];
+
+  //                         return _navItemDynamic(
+  //                           index: index,
+  //                           menuId: item.id,
+  //                           title: item.menuTitle,
+  //                         );
+  //                       }),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //   );
+  // }
 
   @override
   void dispose() {
@@ -322,7 +548,7 @@ print("DASHBOARD ${widget.shareLink}");
 
 //     return Scaffold(
 //       backgroundColor: Customcolor.background,
-       
+
 //       body: PageView(
 //         controller: pageController,
 //         physics: const NeverScrollableScrollPhysics(),

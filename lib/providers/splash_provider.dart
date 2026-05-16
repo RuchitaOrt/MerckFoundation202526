@@ -17,13 +17,16 @@ class SplashProvider with ChangeNotifier {
   String? serverVersion;
   String? iosVersion;
   String? deviceId;
+Future<void> init(
+  BuildContext context,
+) async {
 
- 
-Future<void> init(BuildContext context) async {
   isLoading = true;
+
   notifyListeners();
 
   await _getAppVersion();
+
   await _getDeviceId();
 
   await Provider.of<NavbarProvider>(
@@ -31,24 +34,69 @@ Future<void> init(BuildContext context) async {
     listen: false,
   ).getNavbar(context);
 
+  final navbarProvider =
+      Provider.of<NavbarProvider>(
+    context,
+    listen: false,
+  );
+
   isLoading = false;
+
   notifyListeners();
 
-  final navbarProvider =
-      Provider.of<NavbarProvider>(context, listen: false);
+  /// DEFAULT VALUES
+  String menuId = "1";
 
-  /// example
- final String menuId =
-    navbarProvider.menuList.isNotEmpty
-        ? navbarProvider.menuList.first.id.toString()
-        : "1";
-         final String shareLink =
-    navbarProvider.menuList.isNotEmpty
-        ? navbarProvider.menuList.first.menuUrl.toString()
-        : "";
+  String menuUrl = "";
 
-  _handleNavigation(context, menuId,shareLink);
+  if (navbarProvider
+      .menuList.isNotEmpty) {
+
+    menuId = navbarProvider
+        .menuList.first.id
+        .toString();
+
+    menuUrl = navbarProvider
+        .menuList.first.menuUrl;
+  }
+
+  _handleNavigation(
+    context,
+    menuId,
+    menuUrl,
+  );
 }
+ 
+// Future<void> init(BuildContext context) async {
+//   isLoading = true;
+//   notifyListeners();
+
+//   await _getAppVersion();
+//   await _getDeviceId();
+
+//   await Provider.of<NavbarProvider>(
+//     context,
+//     listen: false,
+//   ).getNavbar(context);
+
+//   isLoading = false;
+//   notifyListeners();
+
+//   final navbarProvider =
+//       Provider.of<NavbarProvider>(context, listen: false);
+
+//   /// example
+//  final String menuId =
+//     navbarProvider.menuList.isNotEmpty
+//         ? navbarProvider.menuList.first.id.toString()
+//         : "1";
+//          final String shareLink =
+//     navbarProvider.menuList.isNotEmpty
+//         ? navbarProvider.menuList.first.menuUrl.toString()
+//         : "";
+
+//   _handleNavigation(context, menuId,shareLink);
+// }
   Future<void> _getAppVersion() async {
     // final info = await PackageInfo.fromPlatform();
     // appVersion = info.version;

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:merckfoundation_252026/Provider/EpisodeProvider.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
+import 'package:merckfoundation_252026/Utility/api_status.dart';
 import 'package:merckfoundation_252026/Utils/common_images.dart';
+import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
+import 'package:merckfoundation_252026/widgets/CommonApiStatusWidget.dart';
 import 'package:merckfoundation_252026/widgets/CommonBorderButton.dart';
 import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
@@ -56,7 +59,77 @@ class _EpisodeInformationState extends State<EpisodeInformation> {
 
     final provider = context.watch<EpisodeProvider>();
     final data = provider.episodeInfo;
+/// NO INTERNET
+if (provider.infoStatus ==
+    ApiStatus.noInternet) {
 
+  return Scaffold(
+    body: CommonApiStatusWidget(
+      icon: Icons.wifi_off,
+      title: CommonStrings.noInternetConnection,
+      onRetry: () {
+        provider.retryEpisodeInfo(
+          context,
+          int.parse(widget.episodeid),
+        );
+      },
+    ),
+  );
+}
+
+/// TIMEOUT
+if (provider.infoStatus ==
+    ApiStatus.timeout) {
+
+  return Scaffold(
+    body: CommonApiStatusWidget(
+      icon: Icons.access_time,
+      title: "Request Timeout",
+      onRetry: () {
+        provider.retryEpisodeInfo(
+          context,
+          int.parse(widget.episodeid),
+        );
+      },
+    ),
+  );
+}
+
+/// SERVER ERROR
+if (provider.infoStatus ==
+    ApiStatus.serverError) {
+
+  return Scaffold(
+    body: CommonApiStatusWidget(
+      icon: Icons.cloud_off,
+      title: "Server Error",
+      onRetry: () {
+        provider.retryEpisodeInfo(
+          context,
+          int.parse(widget.episodeid),
+        );
+      },
+    ),
+  );
+}
+
+/// OTHER ERROR
+if (provider.infoStatus ==
+    ApiStatus.error) {
+
+  return Scaffold(
+    body: CommonApiStatusWidget(
+      icon: Icons.error_outline,
+      title: provider.errorMessage,
+      onRetry: () {
+        provider.retryEpisodeInfo(
+          context,
+          int.parse(widget.episodeid),
+        );
+      },
+    ),
+  );
+}
     return Scaffold(
       backgroundColor: Customcolor.background,
       appBar: CommonAppBar(

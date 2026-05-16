@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
+import 'package:merckfoundation_252026/Utility/api_status.dart';
 import 'package:merckfoundation_252026/Utility/customappbar.dart';
 import 'package:merckfoundation_252026/Utils/common_strings.dart';
 import 'package:merckfoundation_252026/Utils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/Provider/callforapplication_provider.dart';
+import 'package:merckfoundation_252026/widgets/CommonApiStatusWidget.dart';
 import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/CustomeSwiper.dart';
 import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
@@ -38,9 +40,11 @@ void initState() {
   _tabController = TabController(length: 2, vsync: this);
 
   /// 🔥 CALL INITIAL API
-  Future.microtask(() {
-    context.read<CallApplicationProvider>().loadInitial(context);
-  });
+WidgetsBinding.instance.addPostFrameCallback((_) {
+  context
+      .read<CallApplicationProvider>()
+      .loadInitial(context);
+});
 }
   @override
   void dispose() {
@@ -59,22 +63,84 @@ void initState() {
         onSearch: () {},
        shareLink: widget.shareLink,
       ),
-      body: Column(
-        children: [
-          16.0.heightBox,
-          _buildTabs(),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: const [
-                _EventTab(isUpcoming: true),
-                _EventTab(isUpcoming: false),
-              ],
-            ),
+      body: Consumer<CallApplicationProvider>(
+  builder: (context, provider, child) {
+
+    /// LOADING
+    if (provider.isLoading &&
+        provider.upcoming.isEmpty &&
+        provider.past.isEmpty) {
+
+      return const Center(
+        child: CommonLoader(),
+      );
+    }
+
+    /// ERROR
+    if (provider.status ==
+            ApiStatus.error &&
+        provider.upcoming.isEmpty &&
+        provider.past.isEmpty) {
+
+      return
+       CommonApiStatusWidget(
+              icon: Icons.wifi_off,
+
+
+              title:
+                  provider.errorMessage,
+
+              onRetry: () {
+
+                provider.retry(
+                  context,
+                );
+              },);
+    }
+
+    /// SUCCESS UI
+    return Column(
+      children: [
+
+        16.0.heightBox,
+
+        _buildTabs(),
+
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            physics:
+                const NeverScrollableScrollPhysics(),
+            children: const [
+              _EventTab(
+                isUpcoming: true,
+              ),
+              _EventTab(
+                isUpcoming: false,
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
+    );
+  },
+),
+      // body: Column(
+      //   children: [
+      //     16.0.heightBox,
+      //     _buildTabs(),
+      //     Expanded(
+      //       child: TabBarView(
+      //         controller: _tabController,
+      //         physics: const NeverScrollableScrollPhysics(),
+      //         children: const [
+      //           _EventTab(isUpcoming: true),
+      //           _EventTab(isUpcoming: false),
+      //         ],
+      //       ),
+      //     ),
+      //   ],
+      // ),
     );
   }
 
