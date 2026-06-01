@@ -1,182 +1,148 @@
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/FilterProvider.dart';
 
-
 import 'package:merckfoundation_252026/Provider/TestimonialProvider.dart';
+import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
-import 'package:merckfoundation_252026/Utility/customappbar.dart';
-import 'package:merckfoundation_252026/Utils/common_strings.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/customappbar.dart';
+
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/model/TestimonialModel.dart';
-import 'package:merckfoundation_252026/widgets/CommonApiStatusWidget.dart';
-import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
-import 'package:merckfoundation_252026/widgets/filterdrawer.dart';
+import 'package:merckfoundation_252026/widgets/AppDrawerfilter.dart';
 import 'package:provider/provider.dart';
 
-
-
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
-import 'package:merckfoundation_252026/Utils/common_images.dart';
-import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 
-class TestimonialArticlesScreen
-    extends StatefulWidget {
-      final String shareLink;
+class TestimonialArticlesScreen extends StatefulWidget {
+  final String shareLink;
+  final String title;
+  final List<TestimonialModel>? initialList;
+  final bool useLocalPagination;
   const TestimonialArticlesScreen({
-    super.key, required this.shareLink,
+    super.key,
+    required this.shareLink,
+    required this.title,
+    this.initialList,
+    this.useLocalPagination = false,
   });
 
   @override
-  State<TestimonialArticlesScreen>
-      createState() =>
-          _TestimonialArticlesScreenState();
+  State<TestimonialArticlesScreen> createState() =>
+      _TestimonialArticlesScreenState();
 }
 
-class _TestimonialArticlesScreenState
-    extends State<
-      TestimonialArticlesScreen
-    > {
-@override
-void initState() {
-  super.initState();
+class _TestimonialArticlesScreenState extends State<TestimonialArticlesScreen> {
+  final ScrollController _scrollController = ScrollController();
+  @override
+  void initState() {
+    super.initState();
 
-  WidgetsBinding.instance
-      .addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final filter = context.read<FilterProvider>();
 
-    final filter =
-        context.read<FilterProvider>();
+      final provider = context.read<TestimonialArticleProvider>();
 
-    final provider =
-        context.read<TestimonialArticleProvider>();
+      /// 🔥 RESET OLD FILTERS
+      filter.clearFilters();
 
-    /// 🔥 RESET OLD FILTERS
-    filter.clearFilters();
+      /// 🔥 LOAD CATEGORY FILTERS
+      await filter.loadFilters(context, type: MediaType.testimonialArticle);
 
-    /// 🔥 LOAD CATEGORY FILTERS
-    await filter.loadFilters(
-      context,
-      type: MediaType.testimonialArticle,
-    );
+      /// 🔥 INITIAL API
+      if (widget.useLocalPagination && widget.initialList != null) {
+        provider.loadLocalTestimonials(widget.initialList!);
+      } else {
+        await provider.fetchTestimonials(context, "");
+      }
 
-    /// 🔥 INITIAL API
-    await provider.fetchTestimonials(context,"");
-  });
-}
+      _scrollController.addListener(() {
+        final provider = context.read<TestimonialArticleProvider>();
+
+        if (_scrollController.position.pixels >=
+                _scrollController.position.maxScrollExtent - 200 &&
+            provider.hasMore &&
+            !provider.isLoading) {
+          provider.loadMoreLocal();
+        }
+      });
+      // await provider.fetchTestimonials(context,"");
+    });
+  }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
-      final provider = context.watch<TestimonialArticleProvider>();
+    final provider = context.watch<TestimonialArticleProvider>();
 
     return Scaffold(
-       key: _scaffoldKey,
+      key: _scaffoldKey,
       endDrawer: AppDrawerfilter(type: MediaType.testimonialArticle),
 
       appBar: CommonAppBar(
         type: AppBarType.inner,
-        title:CommonStrings.alumniTestimonies,
-        onFilter:
-          () => _scaffoldKey.currentState!.openEndDrawer(),
+        title: widget.title,
+        onFilter: () => _scaffoldKey.currentState!.openEndDrawer(),
 
         onSearch: () {},
-      
+
         shareLink: widget.shareLink,
       ),
 
       backgroundColor: Customcolor.background,
       body: _buildBody(provider),
-      // body:
-      //  Consumer<TestimonialArticleProvider>(
-      //   builder: (context, provider, _) {
-      //     if (provider.isLoading) {
-      //       return const Center(
-      //         child:
-      //             CommonLoader(),
-      //       );
-      //     }
-
-      //     if (provider
-      //         .testimonials.isEmpty) {
-      //       return const Center(
-      //         child:EmptyStateWidget(),
-      //       );
-      //     }
-
-      //     return TestimonialCarouselWidget(
-      //       items: provider.testimonials,
-      //     );
-      //   },
-      // ),
-    );
-  }
-Widget _buildBody(TestimonialArticleProvider provider) {
-
-  if (provider.status == ApiStatus.loading) {
-    return const Center(child: CommonLoader());
-  }
-
-  if (provider.status == ApiStatus.noInternet) {
-    return CommonApiStatusWidget(
-      icon: Icons.wifi_off,
-      title: CommonStrings.noInternetConnection,
-      onRetry: () => provider.retry(context),
     );
   }
 
-  if (provider.status == ApiStatus.timeout) {
-    return CommonApiStatusWidget(
-      icon: Icons.access_time,
-      title: "Request Timeout",
-      onRetry: () => provider.retry(context),
+  Widget _buildBody(TestimonialArticleProvider provider) {
+    if (provider.status == ApiStatus.loading) {
+      return const Center(child: CommonLoader());
+    }
+    if (provider.status != ApiStatus.success &&
+        provider.status != ApiStatus.loading &&
+        provider.status != ApiStatus.initial) {
+      return ApiStatusHandler(
+        status: provider.status,
+        errorMessage: provider.errorMessage,
+        onRetry: () {
+          provider.retry(context);
+        },
+      );
+    }
+
+    if (provider.status == ApiStatus.success && provider.testimonials.isEmpty) {
+      return const EmptyStateWidget();
+    }
+
+    return TestimonialCarouselWidget(
+      items: provider.testimonials,
+      scrollController: _scrollController,
     );
   }
-
-  if (provider.status == ApiStatus.error) {
-    return CommonApiStatusWidget(
-      icon: Icons.error_outline,
-      title: provider.errorMessage,
-      onRetry: () => provider.retry(context),
-    );
-  }
-
-  if (provider.status == ApiStatus.success &&
-      provider.testimonials.isEmpty) {
-    return const EmptyStateWidget();
-  }
-
-  return TestimonialCarouselWidget(
-    items: provider.testimonials,
-  );
-}
-  
 }
 
-class TestimonialCarouselWidget
-    extends StatefulWidget {
+class TestimonialCarouselWidget extends StatefulWidget {
   final List<TestimonialModel> items;
+  final ScrollController scrollController;
 
   const TestimonialCarouselWidget({
     super.key,
     required this.items,
+    required this.scrollController,
   });
 
   @override
-  State<TestimonialCarouselWidget>
-      createState() =>
-          _TestimonialCarouselWidgetState();
+  State<TestimonialCarouselWidget> createState() =>
+      _TestimonialCarouselWidgetState();
 }
 
-class _TestimonialCarouselWidgetState
-    extends State<
-      TestimonialCarouselWidget
-    > {
-  final CarouselSliderController
-  _controller =
-      CarouselSliderController();
+class _TestimonialCarouselWidgetState extends State<TestimonialCarouselWidget> {
+  final CarouselSliderController _controller = CarouselSliderController();
 
   int currentIndex = 0;
 
@@ -187,87 +153,59 @@ class _TestimonialCarouselWidgetState
         CarouselSlider.builder(
           itemCount: widget.items.length,
 
-          carouselController:
-              _controller,
+          carouselController: _controller,
 
           options: CarouselOptions(
             viewportFraction: 1,
 
-            height:
-                MediaQuery.of(
-                  context,
-                ).size.height,
+            height: MediaQuery.of(context).size.height,
 
-            enableInfiniteScroll:
-                widget.items.length > 1,
+            enableInfiniteScroll: widget.items.length > 1,
 
-            onPageChanged: (
-              index,
-              reason,
-            ) {
+            onPageChanged: (index, reason) {
               setState(() {
                 currentIndex = index;
               });
             },
           ),
 
-          itemBuilder:
-              (
-                context,
-                index,
-                realIndex,
-              ) {
-                final item =
-                    widget.items[index];
+          itemBuilder: (context, index, realIndex) {
+            final item = widget.items[index];
 
-                return _TestimonialPage(
-                  item: item,
-                );
-              },
+            return _TestimonialPage(
+              item: item,
+              scrollController: widget.scrollController,
+            );
+          },
         ),
 
         /// ARROWS
         if (widget.items.length > 1)
           Positioned(
-            top:
-                MediaQuery.of(
-                  context,
-                ).size.height *
-                0.22,
+            top: MediaQuery.of(context).size.height * 0.22,
 
             left: 0,
             right: 0,
 
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(
-                    horizontal: 12,
-                  ),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
 
               child: Row(
-                mainAxisAlignment:
-                    MainAxisAlignment
-                        .spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
                 children: [
                   _arrowButton(
-                    icon:
-                        Icons
-                            .arrow_back_ios_new,
+                    icon: Icons.arrow_back_ios_new,
 
-                    onTap:
-                        currentIndex == 0
+                    onTap: currentIndex == 0
                         ? null
                         : () {
-                            _controller
-                                .previousPage();
+                            _controller.previousPage();
                           },
                   ),
 
                   _arrowButton(
-                    icon:
-                        Icons
-                            .arrow_forward_ios,
+                    icon: Icons.arrow_forward_ios,
 
                     onTap: () {
                       _controller.nextPage();
@@ -281,10 +219,7 @@ class _TestimonialCarouselWidgetState
     );
   }
 
-  Widget _arrowButton({
-    required IconData icon,
-    required VoidCallback? onTap,
-  }) {
+  Widget _arrowButton({required IconData icon, required VoidCallback? onTap}) {
     return Container(
       height: 42,
       width: 42,
@@ -292,13 +227,11 @@ class _TestimonialCarouselWidgetState
       decoration: BoxDecoration(
         color: Colors.white,
 
-        borderRadius:
-            BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14),
 
         boxShadow: [
           BoxShadow(
-            color: Colors.black
-                .withOpacity(0.08),
+            color: Colors.black.withOpacity(0.08),
 
             blurRadius: 10,
 
@@ -308,12 +241,7 @@ class _TestimonialCarouselWidgetState
       ),
 
       child: IconButton(
-        icon: Icon(
-          icon,
-          size: 18,
-          color:
-              Customcolor.colorVoilet,
-        ),
+        icon: Icon(icon, size: 18, color: Customcolor.colorVoilet),
 
         onPressed: onTap,
       ),
@@ -321,88 +249,60 @@ class _TestimonialCarouselWidgetState
   }
 }
 
-class _TestimonialPage
-    extends StatelessWidget {
+class _TestimonialPage extends StatelessWidget {
   final TestimonialModel item;
+  final ScrollController scrollController;
 
-  const _TestimonialPage({
-    required this.item,
-  });
-
+  const _TestimonialPage({required this.item, required this.scrollController});
   @override
   Widget build(BuildContext context) {
-    final responsive =
-        ResponsiveFlutter.of(context);
+    final responsive = ResponsiveFlutter.of(context);
 
     return ListView(
-      physics:
-          const BouncingScrollPhysics(),
+      controller: scrollController,
+      physics: const BouncingScrollPhysics(),
 
       children: [
         Padding(
-          padding:
-              const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
 
           child: Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
 
             children: [
               /// IMAGE
               if (item.image.isNotEmpty)
                 ClipRRect(
-                  borderRadius:
-                      BorderRadius.circular(
-                        24,
-                      ),
+                  borderRadius: BorderRadius.circular(24),
 
                   child: AspectRatio(
                     aspectRatio: 4 / 4,
 
-                    child:
-                        FadeInImage.assetNetwork(
-                          placeholder:
-                              CommonImagePath
-                                  .placeHolder,
+                    child: FadeInImage.assetNetwork(
+                      placeholder: CommonImagePath.placeHolder,
 
-                          image: item.image,
+                      image: item.image,
 
-                          fit: BoxFit.cover,
+                      fit: BoxFit.cover,
 
-                          placeholderFit:
-                              BoxFit.cover,
+                      placeholderFit: BoxFit.cover,
 
-                          fadeInDuration:
-                              const Duration(
-                                milliseconds:
-                                    200,
-                              ),
+                      fadeInDuration: const Duration(milliseconds: 200),
 
-                          imageErrorBuilder:
-                              (
-                                context,
-                                error,
-                                stackTrace,
-                              ) {
-                                return Container(
-                                  color:
-                                      Colors
-                                          .grey
-                                          .shade200,
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey.shade200,
 
-                                  child: const Icon(
-                                    Icons
-                                        .broken_image,
+                          child: const Icon(
+                            Icons.broken_image,
 
-                                    size: 40,
+                            size: 40,
 
-                                    color:
-                                        Colors
-                                            .grey,
-                                  ),
-                                );
-                              },
-                        ),
+                            color: Colors.grey,
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
 
@@ -412,48 +312,29 @@ class _TestimonialPage
               SmartHtmlWidget(
                 html: item.title,
 
-                textColor:
-                    Customcolor
-                        .colorVoilet,
+                textColor: Customcolor.colorVoilet,
 
-                fontSize:
-                    responsive.fontSize(
-                      3,
-                    ),
+                fontSize: responsive.fontSize(3),
 
-                fontWeight:
-                    FontWeight.bold,
+                fontWeight: FontWeight.bold,
               ),
 
               const SizedBox(height: 12),
 
               /// DEPARTMENT
-              if (item
-                  .departmentName
-                  .isNotEmpty)
-                SmartHtmlWidget(
-                  html:
-                      item.departmentName,
-                ),
+              if (item.departmentName.isNotEmpty)
+                SmartHtmlWidget(html: item.departmentName),
 
               const SizedBox(height: 12),
 
               /// SHORT DESCRIPTION
-              if (item
-                  .shortDescription
-                  .isNotEmpty)
-                SmartHtmlWidget(
-                  html:
-                      item.shortDescription,
-                ),
+              if (item.shortDescription.isNotEmpty)
+                SmartHtmlWidget(html: item.shortDescription),
 
               const SizedBox(height: 12),
 
               /// DETAILS
-              if (item.details.isNotEmpty)
-                SmartHtmlWidget(
-                  html: item.details,
-                ),
+              if (item.details.isNotEmpty) SmartHtmlWidget(html: item.details),
 
               const SizedBox(height: 30),
             ],

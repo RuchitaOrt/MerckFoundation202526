@@ -1,0 +1,188 @@
+
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:merckfoundation_252026/Utility/showdailog.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
+import 'package:merckfoundation_252026/main.dart';
+
+class FollowSocialSection extends StatelessWidget {
+  final String title;
+  final double? iconSize;
+  final int position;
+  final List<dynamic> socialLinks;
+
+  const FollowSocialSection({
+    super.key,
+    required this.title,
+    required this.socialLinks,
+    this.iconSize,
+    this.position = 0,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        /// TITLE
+        Row(
+          mainAxisAlignment:
+              MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Padding(
+                padding:
+                    const EdgeInsets.fromLTRB(
+                  16,
+                  0,
+                  10,
+                  0,
+                ),
+                child: Text(
+                  title,
+                  maxLines: 2,
+                  overflow:
+                      TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize:
+                        screenWidth * 0.055,
+                    fontWeight:
+                        FontWeight.w800,
+                    color:
+                        Customcolor.textBlueColor,
+                  ),
+                ),
+              ),
+            ),
+
+            /// TOP FLOWER
+            if (position == 1)
+              Image.asset(
+                CommonImagePath.homeFlowerNew,
+                height: 70,
+              ),
+          ],
+        ),
+
+        const SizedBox(height: 12),
+
+        /// SOCIAL ICONS
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 10,
+          ),
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 14,
+            runSpacing: 14,
+            children:
+                socialLinks.map<Widget>((social) {
+              final image =
+                  social['social_media_image']
+                          ?.toString() ??
+                      "";
+
+              final link =
+                  social['social_media_link']
+                          ?.toString() ??
+                      "";
+
+              return SocialIcon(
+                image,
+                iconSize: iconSize,
+                onTap: () async {
+                  if (link.isNotEmpty) {
+                    await ShowDialogs
+                        .launchURL(link);
+                  }
+                },
+              );
+            }).toList(),
+          ),
+        ),
+
+        /// BOTTOM FLOWER
+        if (position == 2)
+          Padding(
+            padding:
+                const EdgeInsets.only(top: 10),
+            child: Image.asset(
+              CommonImagePath.homeFlowerNew,
+              height: 70,
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class SocialIcon extends StatelessWidget {
+  final String icon;
+  final double? iconSize;
+  final VoidCallback onTap;
+
+  const SocialIcon(
+    this.icon, {
+    super.key,
+    this.iconSize,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final size =
+        MediaQuery.of(
+          routeGlobalKey.currentContext!,
+        ).size.width *
+            0.12;
+
+    final bool isSvg =
+        icon.toLowerCase().endsWith(".svg");
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(size * 0.25),
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+        ),
+        child: isSvg
+            ? SvgPicture.network(
+                icon,
+                width:
+                    iconSize ?? size * 0.5,
+                height:
+                    iconSize ?? size * 0.5,
+                fit: BoxFit.contain,
+                placeholderBuilder: (_) =>
+                    const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child:
+                      CircularProgressIndicator(
+                    strokeWidth: 2,
+                  ),
+                ),
+              )
+            : Image.network(
+                icon,
+                width:
+                    iconSize ?? size * 0.5,
+                height:
+                    iconSize ?? size * 0.5,
+                fit: BoxFit.contain,
+                errorBuilder:
+                    (_, __, ___) =>
+                        const Icon(
+                  Icons.image_not_supported,
+                  size: 18,
+                ),
+              ),
+      ),
+    );
+  }
+}

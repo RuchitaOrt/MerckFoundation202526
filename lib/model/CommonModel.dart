@@ -1,7 +1,7 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:merckfoundation_252026/widgets/Homewidget.dart/DynamicContent.dart';
+import 'package:merckfoundation_252026/enum/commonEnum.dart';
+
 
 class OurItemModel {
   final String programname;
@@ -82,30 +82,32 @@ class CarouselItem {
 class ProgramModel {
   final String? id;
   final String title;
- 
+   final String shareLink;
   final Color? bgColor;
-final VoidCallback onTap;
+  final String menuID;
+// final VoidCallback onTap;
 
   ProgramModel({
      this.id,
     required this.title,
   
-     this.bgColor, required this.onTap,
+     this.bgColor, required this.menuID, required this.shareLink, 
+    //  required this.onTap,
   });
 }
 
-class StoryModel {
-  final String videoLink;
-  final String description;
+// class StoryModel {
+//   final String videoLink;
+//   final String description;
 
-  StoryModel({
-    required this.videoLink,
-    required this.description,
-  });
+//   StoryModel({
+//     required this.videoLink,
+//     required this.description,
+//   });
 
-  String get youtubeThumb =>
-      'https://img.youtube.com/vi/${videoLink.substring(videoLink.length - 11)}/mqdefault.jpg';
-}
+//   String get youtubeThumb =>
+//       'https://img.youtube.com/vi/${videoLink.substring(videoLink.length - 11)}/mqdefault.jpg';
+// }
 
 
 class MediaCardData {

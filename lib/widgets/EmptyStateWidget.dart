@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 
 class EmptyStateWidget extends StatelessWidget {
   final String title;
@@ -39,7 +39,7 @@ class EmptyStateWidget extends StatelessWidget {
               child: Icon(
                 icon,
                 size: 34,
-                color: Customcolor.darkblue_col,
+                color: Customcolor.darkBlueColor,
               ),
             ),
 
@@ -52,7 +52,7 @@ class EmptyStateWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
-                color: Customcolor.text_blue,
+                color: Customcolor.textBlueColor,
               ),
             ),
 

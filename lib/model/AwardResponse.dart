@@ -8,6 +8,7 @@ class AwardModel {
   final String? altText;
   final bool status;
   final String? colorCode;
+  final int? menuId;
 
   AwardModel({
     required this.id,
@@ -18,7 +19,7 @@ class AwardModel {
     required this.image,
     this.altText,
     required this.status,
-    this.colorCode,
+    this.colorCode, required this.menuId,
   });
 
   factory AwardModel.fromJson(Map<String, dynamic> json) {
@@ -32,6 +33,7 @@ class AwardModel {
       altText: json['alt_text'],
       status: json['status'] ?? false,
       colorCode: json['color_code'],
+      menuId: json['menu_id'] 
     );
   }
 }

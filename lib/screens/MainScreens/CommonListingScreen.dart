@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
-import 'package:merckfoundation_252026/Utils/common_strings.dart';
-import 'package:merckfoundation_252026/widgets/CommonApiStatusWidget.dart';
-import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:provider/provider.dart';
 
-import 'package:merckfoundation_252026/Utility/customappbar.dart';
-import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/customappbar.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
-import 'package:merckfoundation_252026/widgets/CommonListCard.dart';
+import 'package:merckfoundation_252026/widgets/CommonList/CommonListCard.dart';
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
-import 'package:merckfoundation_252026/widgets/botttomlink.dart';
+import 'package:merckfoundation_252026/widgets/Bottomcardlink.dart';
 
 class CommonListingScreen<T, P> extends StatefulWidget {
   final String title;
@@ -100,7 +99,8 @@ class _CommonListingScreenState<T, P>
         type: AppBarType.inner,
         title: widget.title,
         onSearch: () {},
-        shareLink: widget.shareLink,
+        shareLink: widget.shareLink ?? "",
+        menuID: widget.menuID,
       ),
       body: Consumer<P>(
   builder: (context, provider, _) {
@@ -128,93 +128,18 @@ class _CommonListingScreenState<T, P>
         child: CommonLoader(),
       );
     }
+if (status != ApiStatus.success &&
+    status != ApiStatus.loading &&
+    status != ApiStatus.initial) {
 
-    /// =========================
-    /// NO INTERNET
-    /// =========================
-
-    if (status ==
-            ApiStatus.noInternet &&
-        list.isEmpty) {
-
-      return CommonApiStatusWidget(
-        icon: Icons.wifi_off,
-
-        title:
-           CommonStrings.noInternetConnection,
-
-        onRetry: () {
-
-          widget.onRetry(context);
-        },
-      );
-    }
-
-    /// =========================
-    /// TIMEOUT
-    /// =========================
-
-    if (status ==
-            ApiStatus.timeout &&
-        list.isEmpty) {
-
-      return CommonApiStatusWidget(
-        icon: Icons.access_time,
-
-        title: "Request Timeout",
-
-        onRetry: () {
-
-          widget.onRetry(context);
-        },
-      );
-    }
-
-    /// =========================
-    /// SERVER ERROR
-    /// =========================
-
-    if (status ==
-            ApiStatus.serverError &&
-        list.isEmpty) {
-
-      return CommonApiStatusWidget(
-        icon: Icons.cloud_off,
-
-        title: "Server Error",
-
-        onRetry: () {
-
-          widget.onRetry(context);
-        },
-      );
-    }
-
-    /// =========================
-    /// OTHER ERROR
-    /// =========================
-
-    if (status ==
-            ApiStatus.error &&
-        list.isEmpty) {
-
-      return CommonApiStatusWidget(
-        icon: Icons.error_outline,
-
-        title: errorMessage.isEmpty
-            ? "Something went wrong"
-            : errorMessage,
-
-        onRetry: () {
-
-          widget.onRetry(context);
-        },
-      );
-    }
-
-    /// =========================
-    /// EMPTY
-    /// =========================
+  return ApiStatusHandler(
+    status: status,
+    errorMessage: errorMessage,
+    onRetry: () {
+      widget.onRetry(context);
+      },
+  );
+}
 
     if (list.isEmpty) {
 
@@ -302,55 +227,7 @@ class _CommonListingScreenState<T, P>
     );
   },
 ),
-  //     body: Consumer<P>(
-  //       builder: (context, provider, _) {
-  //         final list = widget.getList(provider);
-
-  //         /// 🔴 First Loader
-  //         if (widget.isLoading(provider) && list.isEmpty) {
-  //           return const Center(child: CommonLoader());
-  //         }
-
-  //         return CustomScrollView(
-  //           controller: _controller,
-  //           slivers: [
-  //              /// 🔥 TOP WIDGET
-  // if (widget.topWidget != null)
-  //   SliverToBoxAdapter(
-  //     child: widget.topWidget!,
-  //   ),
-  //             SliverList(
-  //               delegate: SliverChildBuilderDelegate(
-  //                 (context, index) {
-  //                   if (index < list.length) {
-  //                     final item = list[index];
-
-  //                     return CommonListCard(
-  //                       imageUrl: widget.getImage(item),
-  //                       htmlTitle: widget.getTitle(item),
-  //                       onTap: () => widget.onTap(context, item),
-  //                     );
-  //                   }
-
-  //                   /// Pagination Loader
-  //                   return widget.hasMore(provider)
-  //                       ? const Padding(
-  //                           padding: EdgeInsets.all(16),
-  //                           child: Center(
-  //                               child: CommonLoader()),
-  //                         )
-  //                       : const SizedBox();
-  //                 },
-  //                 childCount: list.length + 1,
-  //               ),
-  //             ),
-
-  //             const SliverToBoxAdapter(child: FooterFlowerImage()),
-  //             const SliverToBoxAdapter(child: Bottomcardlink()),
-  //           ],
-  //         );
-  //       },
-  //     ),
+ 
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
-import 'package:merckfoundation_252026/Utils/common_strings.dart';
-import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_strings.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/model/CommonModel.dart';
 import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaContactTile.dart';
@@ -18,7 +18,7 @@ class MediaEnquiryCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       child: Card(
-        color: Customcolor.prog1,
+        color: Customcolor.darkProgramBlueColor,
         elevation: 5,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),

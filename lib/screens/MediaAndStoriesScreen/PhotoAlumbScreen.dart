@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
-import 'package:merckfoundation_252026/Utils/common_strings.dart';
-import 'package:merckfoundation_252026/widgets/CommonApiStatusWidget.dart';
-import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
+
 import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:provider/provider.dart';
 
 import 'package:merckfoundation_252026/Provider/PhotoAlbumProvider.dart';
-import 'package:merckfoundation_252026/Utility/customappbar.dart';
-import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/customappbar.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
-import 'package:merckfoundation_252026/widgets/HorizontalAlbumWidget.dart';
+import 'package:merckfoundation_252026/widgets/CommonList/HorizontalAlbumWidget.dart';
 
 class PhotoAlumbScreen extends StatefulWidget {
   final String? pageTile;
@@ -52,21 +52,25 @@ class _PhotoAlumbScreenPageState extends State<PhotoAlumbScreen> {
       backgroundColor: Customcolor.background,
       appBar: CommonAppBar(
         type: AppBarType.inner,
-        title: "${widget.tile} ${widget.pageTile}" ?? "",
+        title: "${widget.tile} ${widget.pageTile}" ,
         onSearch: () {},
-        shareLink: widget.shareLink,
+        shareLink: widget.shareLink ?? "",
+        menuID: widget.menuID,
+        onBack: ()
+        {
+          Navigator.pop(context);
+        },
       ),
      body: provider.isLoading
     ? const Center(
         child: CommonLoader(),
       )
 
-    : provider.status ==
-            ApiStatus.noInternet
-        ? CommonApiStatusWidget(
-            icon: Icons.wifi_off,
-            title:
-               CommonStrings.noInternetConnection,
+    :   (provider.status != ApiStatus.success &&
+            provider.status != ApiStatus.initial)
+        ? ApiStatusHandler(
+            status: provider.status,
+            errorMessage: provider.errorMessage,
             onRetry: () {
               provider.retry(
                 context,
@@ -75,35 +79,7 @@ class _PhotoAlumbScreenPageState extends State<PhotoAlumbScreen> {
             },
           )
 
-        : provider.status ==
-                ApiStatus.serverError
-            ? CommonApiStatusWidget(
-                icon: Icons.cloud_off,
-                title:
-                    "Server Error",
-                onRetry: () {
-                  provider.retry(
-                    context,
-                    widget.categoryID!,
-                  );
-                },
-              )
-
-            : provider.status ==
-                    ApiStatus.error
-                ? CommonApiStatusWidget(
-                    icon: Icons.error,
-                    title:
-                        provider.errorMessage,
-                    onRetry: () {
-                      provider.retry(
-                        context,
-                        widget.categoryID!,
-                      );
-                    },
-                  )
-
-                : provider.albums.isEmpty
+        : provider.albums.isEmpty
                     ? const Center(
                         child:
                             EmptyStateWidget(),
@@ -152,33 +128,7 @@ class _PhotoAlumbScreenPageState extends State<PhotoAlumbScreen> {
                           );
                         },
                       ),
-      // body: provider.isLoading
-      //     ? const Center(child: CommonLoader())
-      //     : provider.albums.isEmpty
-      //     ? const Center(child:EmptyStateWidget(),)
-      //     : ListView.builder(
-      //         padding: const EdgeInsets.only(bottom: 20),
-      //         itemCount: provider.albums.length,
-      //         itemBuilder: (context, index) {
-      //           final album = provider.albums[index];
-
-      //           if (album.imagelist.isEmpty) {
-      //             return const SizedBox();
-      //           }
-
-      //           return HorizontalAlbumWidget(
-      //             title: album.albumName,
-      //             images: album.imagelist,
-      //             imageUrl: (item) => item.photo,
-      //             alubumID: album.id.toString(),
-      //             alubumName: album.albumName,
-      //             categoryID: widget.categoryID.toString(),
-      //             menuID: widget.menuID,
-                                  
-      //                             shareLink: widget.shareLink,
-      //           );
-      //         },
-      //       ),
+      
     );
   }
 }

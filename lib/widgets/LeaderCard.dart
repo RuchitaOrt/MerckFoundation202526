@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
-import 'package:merckfoundation_252026/Utils/common_images.dart';
-import 'package:merckfoundation_252026/Utils/customcolor.dart';
-import 'package:merckfoundation_252026/screens/MainUIBody.dart/DetailScreen.dart';
-import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
+import 'package:merckfoundation_252026/screens/DetailsScreen/DetailScreen.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
 
 import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 
 class LeaderCard extends StatelessWidget {
   final List content;
   final String shareLink;
+  final String menuID;
 
-  const LeaderCard({super.key, required this.content, required this.shareLink});
+  const LeaderCard({super.key, required this.content, required this.shareLink, required this.menuID});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,7 @@ class LeaderCard extends StatelessWidget {
           Text(
             content['subtitle'],
             style: TextStyle(
-              color: Customcolor.pink_col,
+              color: Customcolor.pinkColor,
               fontSize: responsive.fontSize(3),
               fontWeight: FontWeight.w800,
             ),
@@ -94,6 +95,7 @@ class LeaderCard extends StatelessWidget {
                           title: content['title'],
                           image: content['thumbnail'],
                           shareLink: shareLink ,
+                           menuID:  menuID,
                         ),
                       ),
                     );
@@ -101,7 +103,7 @@ class LeaderCard extends StatelessWidget {
                   child: Text(
                     "((View Bio))",
                     style: TextStyle(
-                      color: Customcolor.pink_col,
+                      color: Customcolor.pinkColor,
                       fontSize: responsive.fontSize(3),
                       fontWeight: FontWeight.w800,
                     ),

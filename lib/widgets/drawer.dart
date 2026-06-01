@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:merckfoundation_252026/Provider/MediaProvider.dart';
-import 'package:merckfoundation_252026/Provider/NewsReleaseProvider.dart';
 import 'package:merckfoundation_252026/Provider/navbar_provider.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
-import 'package:merckfoundation_252026/Utils/common_images.dart';
-import 'package:merckfoundation_252026/Utils/common_strings.dart';
-import 'package:merckfoundation_252026/enum/commonEnum.dart';
-import 'package:merckfoundation_252026/screens/MainScreens/HomeNewScreen.dart';
-import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
-import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaScreen.dart';
-import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/NewsRelease.dart';
-import 'package:merckfoundation_252026/screens/OurPartnersScreen/OurPartnersScreen.dart';
+import 'package:merckfoundation_252026/routes/AppNavigation.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 
-import 'package:merckfoundation_252026/screens/WhoWeAreScreen.dart/CommonContentPage.dart';
-import 'package:merckfoundation_252026/screens/dashboard.dart';
-import 'package:merckfoundation_252026/Utils/customcolor.dart';
-import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
+import 'package:merckfoundation_252026/screens/MainScreens/HomeNewScreen.dart';
+
+import 'package:merckfoundation_252026/screens/MainScreens/dashboard.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 import 'package:provider/provider.dart';
 
@@ -27,29 +20,18 @@ class AppDrawer extends StatefulWidget {
 }
 
 class _AppDrawerState extends State<AppDrawer> {
-  final expansionList = [
-    CommonStrings.whoWeAre,
-    CommonStrings.whatWeDo,
-    CommonStrings.mediaStories,
-  ];
+
 
   double socialIconSize = 5.5;
 
   void closeOpenExpansionList(String expansionName) {
-    expansionList.forEach((name) {
-      if (name != expansionName) expansionState[name] = false;
-    });
-    setState(() {
-      expansionState[expansionName] = true;
-    });
+   
   }
 
   @override
   void initState() {
     super.initState();
-    expansionList.forEach((name) {
-      expansionState.putIfAbsent(name, () => false);
-    });
+  
   }
 
   @override
@@ -59,7 +41,7 @@ class _AppDrawerState extends State<AppDrawer> {
 
     return Drawer(
       child: Container(
-        color: Customcolor.baby_blue,
+        color: Customcolor.babyBlue,
         child: Column(
           children: [
             /// Scrollable drawer content
@@ -69,7 +51,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   : ListView(
                       padding: EdgeInsets.zero,
                       children: [
-                        _buildHeader(context, "1", "", ""),
+                        _buildHeader(context, "1", "", "",""),
                         16.0.heightBox,
 
                         ...navbarProvider.menuList.map((item) {
@@ -78,21 +60,20 @@ class _AppDrawerState extends State<AppDrawer> {
                           if (item.submenu.isEmpty) {
                             widget = DrawerWidget(
                               value: item.menuName,
+                              image: item.mobileLogo,
                               onTapfun: () {
-                                print("Main MENU");
-                                handleNavigation(
+                                AppNavigation.navigateByMenuId(
                                   context,
-                                  item.menuUrl,
-                                  item.id.toString(),
-                                  item.menuName,
-                                  item.menuUrl,
+                                  menuId: item.id.toString(),
+                                  title: item.menuName,
+                                  shareLink: item.menuUrl,
                                 );
                               },
                             );
                           } else {
                             widget = CustomExpansion(
                               title: item.menuName,
-                              leadingIcon: CommonImagePath.home,
+                              leadingIcon: item.mobileLogo,
                               expanded: expansionState[item.menuName] ?? false,
                               onTap: () {
                                 setState(() {
@@ -103,13 +84,13 @@ class _AppDrawerState extends State<AppDrawer> {
                               children: item.submenu.map((sub) {
                                 return DrawerWidget(
                                   value: sub.menuName,
+                                  // image: sub.mobileLogo,
                                   onTapfun: () {
-                                    handleNavigation(
+                                    AppNavigation.navigateByMenuId(
                                       context,
-                                      sub.menuUrl,
-                                      sub.id.toString(),
-                                      sub.menuName,
-                                      sub.menuUrl,
+                                      menuId: sub.id.toString(),
+                                      title: sub.menuName,
+                                      shareLink: sub.menuUrl,
                                     );
                                   },
                                 );
@@ -145,6 +126,7 @@ class _AppDrawerState extends State<AppDrawer> {
     String menuId,
     String title,
     String shareLink,
+    String mennuLogo
   ) {
     final responsive = ResponsiveFlutter.of(context);
 
@@ -176,6 +158,7 @@ class _AppDrawerState extends State<AppDrawer> {
                           index: 0,
                           menuID: menuId,
                           shareLink: shareLink,
+                          menuLogo: mennuLogo,
                         ),
                       ),
                     );
@@ -196,239 +179,6 @@ class _AppDrawerState extends State<AppDrawer> {
         ],
       ),
     );
-  }
-
-  void handleNavigation(
-    BuildContext context,
-    String url,
-    String menuId,
-    String title,
-    String shareLink,
-  ) {
-    switch (menuId) {
-      /// HOME
-      case '1':
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) =>
-                Dashboard(index: 0, menuID: menuId, shareLink: shareLink),
-          ),
-        );
-        break;
-
-      /// VISION
-      case '3':
-
-      /// LEADERSHIP
-      case '4':
-
-      /// MESSAGE
-      case '5':
-
-      /// OVERVIEW
-      case '6':
-
-      /// CONTACT US
-      case '7':
-
-      /// MISSION
-      case '9':
-
-      /// POLICIES
-      case '10':
-
-      /// PRIVACY
-      case '13':
-
-      /// POLITICAL
-      case '14':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => CommonContentPage(
-              title: title,
-              menuID: menuId,
-              shareLink: shareLink,
-            ),
-          ),
-        );
-        break;
-
-      /// OUR PARTNERS
-      case '15':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => OurPartnersScreen(
-              menuID: menuId,
-              title: title,
-              shareLink: shareLink,
-            ),
-          ),
-        );
-        break;
-
-      /// VIDEO LIBRARY
-      case '26':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => MediaListingScreen(
-              type: MediaType.videoLibrary,
-              categoryID: "",
-              albumID: "",
-              albumName: "",
-              menuID: menuId,
-              title: title,
-              shareLink: shareLink,
-            ),
-          ),
-        );
-        break;
-
-      /// STORIES
-      case '27':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) =>
-                Dashboard(index: 2, menuID: menuId, shareLink: shareLink),
-          ),
-        );
-        break;
-
-      /// TESTIMONIALS
-      case '28':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => MediaListingScreen(
-              type: MediaType.testimonial,
-              categoryID: "",
-              albumID: "",
-              albumName: "",
-              menuID: menuId,
-              title: title,
-              shareLink: shareLink,
-            ),
-          ),
-        );
-        break;
-
-      /// Activity
-      case '11':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => MediaListingScreen(
-              type: MediaType.activity,
-              categoryID: "",
-              albumID: "",
-              albumName: "",
-              menuID: menuId,
-              title: title,
-              shareLink: shareLink,
-            ),
-          ),
-        );
-        break;
-
-      /// NEWS ARTICLES
-      case '29':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) =>
-                Dashboard(index: 3, menuID: menuId, shareLink: shareLink),
-          ),
-        );
-        break;
-
-      /// UPCOMING PROGRAMS
-      case '30':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) =>
-                Dashboard(index: 4, menuID: menuId, shareLink: shareLink),
-          ),
-        );
-        break;
-
-      /// NEWS RELEASE
-      case '31':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ChangeNotifierProvider(
-              create: (_) => NewsReleaseProvider(),
-              child: NewsRelease(
-                menuID: menuId,
-                shareLink: shareLink,
-                title: title,
-              ),
-            ),
-          ),
-        );
-        break;
-
-      /// MEDIA
-      case '32':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ChangeNotifierProvider(
-              create: (_) => MediaProvider(),
-              child: MediaScreen(
-                menuID: menuId,
-                title: title,
-                shareLink: shareLink,
-              ),
-            ),
-          ),
-        );
-        break;
-
-      /// DIGITAL LIBRARY
-      case '33':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => MediaListingScreen(
-              type: MediaType.digitalLibrary,
-              categoryID: "",
-              albumID: "",
-              albumName: "",
-              menuID: menuId,
-              shareLink: shareLink,
-              title: title,
-            ),
-          ),
-        );
-        break;
-
-      /// PHOTO GALLERY
-      case '34':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => MediaListingScreen(
-              type: MediaType.photoGallery,
-              categoryID: "",
-              albumID: "",
-              albumName: "",
-              menuID: menuId,
-              shareLink: shareLink,
-              title: title,
-            ),
-          ),
-        );
-        break;
-
-      default:
-        debugPrint("⚠️ Unknown menuId: $menuId");
-    }
   }
 }
 
@@ -465,13 +215,18 @@ class CustomExpansion extends StatelessWidget {
             ),
             child: Row(
               children: [
-                //   Image.asset(leadingIcon,
-                //       width: responsive.width(5), height: responsive.width(5)),
-                //  16.0.widthBox,
+                if (leadingIcon.isNotEmpty) ...[
+              Image.network(
+                leadingIcon,
+                width: responsive.width(5),
+                height: responsive.width(5),
+              ),
+              16.0.widthBox,
+            ],
                 Expanded(
                   child: FormLabel(
                     text: title,
-                    labelColor: Customcolor.text_darkblue,
+                    labelColor: Customcolor.textDarkBlueColor,
                     fontSize: responsive.fontSize(2.2),
                     fontweight: FontWeight.w700,
                     fontheight: 1.2,
@@ -482,7 +237,7 @@ class CustomExpansion extends StatelessWidget {
                       ? Icons.keyboard_arrow_up
                       : Icons.keyboard_arrow_down,
                   size: responsive.width(5),
-                  color: Customcolor.text_darkblue,
+                  color: Customcolor.textDarkBlueColor,
                 ),
               ],
             ),
@@ -490,7 +245,7 @@ class CustomExpansion extends StatelessWidget {
         ),
         if (expanded)
           Padding(
-            padding: const EdgeInsets.only(left: 20),
+            padding: const EdgeInsets.only(left: 38),
             child: Column(
               children: children
                   .map(
@@ -533,7 +288,7 @@ class DrawerWidget extends StatelessWidget {
           children: [
             /// ✅ ONLY SHOW ICON IF EXISTS
             if (image != null && image!.isNotEmpty) ...[
-              Image.asset(
+              Image.network(
                 image!,
                 width: responsive.width(5),
                 height: responsive.width(5),
@@ -547,7 +302,7 @@ class DrawerWidget extends StatelessWidget {
                 text: value,
                 maxLines: 3,
                 textOverflow: TextOverflow.ellipsis,
-                labelColor: Customcolor.text_darkblue,
+                labelColor: Customcolor.textDarkBlueColor,
                 fontSize: responsive.fontSize(2),
                 fontheight: 1.1,
                 fontweight: FontWeight.w700,

@@ -1,75 +1,72 @@
+
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:merckfoundation_252026/Utility/showdailog.dart';
+import 'package:merckfoundation_252026/Utility/api_status.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_strings.dart';
 import 'package:merckfoundation_252026/service/PageService.dart';
 
-// class PageProvider extends ChangeNotifier {
-//   final PageService _service = PageService();
-
-//   bool isLoading = false;
-//   dynamic pageData;
-
-//   Future<void> fetchPage(BuildContext context,String menuId) async {
-//     isLoading = true;
-//     notifyListeners();
-
-//     try {
-//       final response = await _service.getPageStructure(context,menuId);
-
-//       // 🔥 CLEAN "=" ISSUE
-//       final cleanData = response;
-//       // cleanJson(response);
-
-//       pageData = cleanData;
-//     } catch (e) {
-//       showToast(e.toString());
-//        isLoading = false;
-//     }
-
-//     isLoading = false;
-//     notifyListeners();
-//   }
-
-//   /// 🔧 REMOVE "=" FROM RESPONSE
-//   // dynamic _cleanJson(dynamic data) {
-//   //   final jsonString = jsonEncode(data).replaceAll("=", "");
-//   //   return jsonDecode(jsonString);
-//   // }
-// }
 class PageProvider extends ChangeNotifier {
   final PageService _service = PageService();
 
+  ApiStatus status = ApiStatus.initial;
+
   bool isLoading = false;
-  bool hasError = false;
+
   String errorMessage = "";
 
   Map<String, dynamic>? pageData;
 
-  Future<void> fetchPage(BuildContext context, String menuId) async {
+  Future<void> fetchPage(
+    BuildContext context,
+    String menuId,
+  ) async {
     isLoading = true;
-    hasError = false;
+    status = ApiStatus.loading;
     errorMessage = "";
+
     notifyListeners();
 
     try {
-      final result = await _service.getPageStructure(context, menuId);
+      final result = await _service.getPageStructure(
+        context,
+        menuId,
+      );
 
-      /// ✅ HANDLE ApiResult WRAPPER
-      if (result is Map<String, dynamic>) {
-        pageData = result;
-      } else if (result is dynamic && result.data != null) {
-        pageData = result.data as Map<String, dynamic>;
+      /// ✅ API STATUS
+      status = result.status;
+
+      if (result.isSuccess) {
+        /// ✅ HANDLE RESPONSE
+        if (result.data is Map<String, dynamic>) {
+          pageData = result.data;
+        } else {
+          pageData = jsonDecode(
+            jsonEncode(result.data),
+          );
+        }
       } else {
-        pageData = jsonDecode(jsonEncode(result));
-      }
+        status = ApiStatus.error;
 
+        errorMessage =
+            result.message ?? "Something went wrong";
+      }
     } catch (e) {
-      hasError = true;
-      errorMessage = e.toString();
+      status = ApiStatus.noInternet;
+
+      errorMessage =  CommonStrings.noInternetConnection;
     }
 
     isLoading = false;
+
     notifyListeners();
+  }
+
+  Future<void> retryPage(
+    BuildContext context,
+    String menuId,
+  ) async {
+    await fetchPage(context, menuId);
   }
 }

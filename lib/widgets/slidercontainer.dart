@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utility/sizeConfig.dart';
-import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
 class Slidercard extends StatelessWidget {
@@ -41,7 +41,7 @@ class Slidercard extends StatelessWidget {
                   children: <Widget>[
                     FormLabel(
                         text: cardTitle!,
-                        labelColor: Customcolor.pink_col,
+                        labelColor: Customcolor.pinkColor,
                         fontSize: ResponsiveFlutter.of(context).fontSize(1.6),
                         maxLines: 2,
                         fontweight: FontWeight.bold,

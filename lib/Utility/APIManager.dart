@@ -3,10 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:merckfoundation_252026/Utility/api_result.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
-import 'package:merckfoundation_252026/Utility/showdailog.dart';
-import 'package:merckfoundation_252026/Utils/InternetConnection.dart';
-import 'package:merckfoundation_252026/Utils/common_strings.dart';
-import 'package:merckfoundation_252026/main.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_strings.dart';
 import 'package:merckfoundation_252026/model/NavBarResponse.dart';
 
 import 'package:flutter/material.dart';
@@ -58,6 +55,7 @@ enum API {
   //Our Award
   getawardlist,
   getnewsletterarticlebylanguage,
+  getceomessages
 }
 
 enum HTTPMethod { GET, POST, PUT, DELETE }
@@ -395,6 +393,10 @@ class APIManager {
 
       case API.getnewsletterarticlebylanguage:
         return "api/page_structure/get-newsletter-article-by-language";
+
+ case API.getceomessages:
+        return "api/page_structure/get-ceo-messages";
+        
     }
   }
 
@@ -418,6 +420,7 @@ class APIManager {
       case API.testimonialcategory:
       case API.homeseasonlist:
       case API.getawardlist:
+       case API.getceomessages:
       
         return HTTPMethod.GET;
 
@@ -439,88 +442,6 @@ class APIManager {
     }
   }
 
-//   Future<dynamic> apiRequest(
-//   BuildContext context,
-//   API api, {
-//   dynamic jsonval,
-//   Map<String, dynamic>? queryParams,
-// }) async {
-//   try {
-//     final url = apiEndPoint(api);
-
-//     final response = await dio.request(
-//       url,
-//       data: jsonval,
-//       queryParameters: queryParams,
-//       options: Options(method: apiHTTPMethod(api).name),
-//     );
-
-//     final data = response.data;
-
-//     if (data is String) {
-//       try {
-//         return parseResponse(api, jsonDecode(data));
-//       } catch (_) {
-//         return data;
-//       }
-//     }
-
-//     return parseResponse(api, data);
-
-//   } on DioException catch (e) {
-// final apiName = api.toString().split('.').last;
-//   final url = apiEndPoint(api);
-
-//   print('\n' + '❌' * 20);
-//   print("❌ API ERROR");
-//   print("🆔 API: $apiName");
-//   print("🔗 URL: $url");
-//   print("📡 STATUS CODE: ${e.response?.statusCode}");
-//   print("📦 RESPONSE: ${e.response?.data}");
-//   print("📨 MESSAGE: ${e.message}");
-//   print('❌' * 20 + '\n');
-
-//     /// 🔴 SERVER ERROR
-//     if (e.response?.statusCode == 500) {
-
-//       print("❌ SERVER ERROR 500");
-
-//       showToast("Server error. Please try again later.");
-
-//       return null;
-//     }
-
-//     /// 🔴 NO INTERNET
-//     if (e.type == DioExceptionType.connectionError) {
-
-//       showToast("No internet connection.");
-
-//       return null;
-//     }
-
-//     /// 🔴 TIMEOUT
-//     if (e.type == DioExceptionType.connectionTimeout ||
-//         e.type == DioExceptionType.receiveTimeout) {
-
-//       showToast("Request timeout. Please try again.");
-
-//       return null;
-//     }
-
-//     /// 🔴 OTHER ERROR
-//     showToast("Something went wrong.");
-
-//     return null;
-
-//   } catch (e) {
-
-//     print("❌ UNKNOWN ERROR: $e");
-
-//     showToast("Something went wrong.");
-
-//     return null;
-//   }
-// }
 
 Future<ApiResult<dynamic>> apiRequest(
   BuildContext context,
@@ -598,42 +519,102 @@ Future<ApiResult<dynamic>> apiRequest(
     print("📨 MESSAGE: ${e.message}");
 
     print('❌' * 20 + '\n');
+String responseMessage =
+    CommonStrings.somethingWentWrong;
 
-    /// NO INTERNET
-    if (e.type ==
-        DioExceptionType.connectionError) {
+/// NO INTERNET
+if (e.type ==
+    DioExceptionType.connectionError) {
 
-      return ApiResult(
-        status: ApiStatus.noInternet,
-        message: CommonStrings.noInternetConnection,
-      );
-    }
+  return ApiResult(
+    status: ApiStatus.noInternet,
+    message:
+        CommonStrings.noInternetConnection,
+  );
+}
 
-    /// TIMEOUT
-    if (e.type ==
-            DioExceptionType.connectionTimeout ||
-        e.type ==
-            DioExceptionType.receiveTimeout) {
+/// TIMEOUT
+if (e.type ==
+        DioExceptionType.connectionTimeout ||
+    e.type ==
+        DioExceptionType.receiveTimeout ||
+    e.type ==
+        DioExceptionType.sendTimeout) {
 
-      return ApiResult(
-        status: ApiStatus.timeout,
-        message: "Request timeout",
-      );
-    }
+  return ApiResult(
+    status: ApiStatus.timeout,
+    message:
+        CommonStrings.requestTimeout,
+  );
+}
 
-    /// SERVER ERROR
-    if (e.response?.statusCode == 500) {
+final statusCode =
+    e.response?.statusCode ?? 0;
 
-      return ApiResult(
-        status: ApiStatus.serverError,
-        message: "Server error",
-      );
-    }
+/// 400
+if (statusCode == 400) {
+  return ApiResult(
+    status: ApiStatus.badRequest,
+    message:
+        responseMessage.isNotEmpty
+            ? responseMessage
+            : CommonStrings.badRequest,
+  );
+}
 
-    return ApiResult(
-      status: ApiStatus.error,
-      message: "Something went wrong",
-    );
+/// 401
+if (statusCode == 401) {
+  return ApiResult(
+    status: ApiStatus.unauthorized,
+    message:
+        CommonStrings.unauthorized,
+  );
+}
+
+/// 403
+if (statusCode == 403) {
+  return ApiResult(
+    status: ApiStatus.forbidden,
+    message:
+        CommonStrings.forbidden,
+  );
+}
+
+/// 404
+if (statusCode == 404) {
+  return ApiResult(
+    status: ApiStatus.notFound,
+    message:
+        CommonStrings.notFound,
+  );
+}
+
+/// 422
+if (statusCode == 422) {
+  return ApiResult(
+    status: ApiStatus.validationError,
+    message:
+        responseMessage.isNotEmpty
+            ? responseMessage
+            : CommonStrings.validationError,
+  );
+}
+
+/// 500+
+if (statusCode >= 500) {
+  return ApiResult(
+    status: ApiStatus.serverError,
+    message:
+        CommonStrings.serverError,
+  );
+}
+
+/// FALLBACK
+return ApiResult(
+  status: ApiStatus.error,
+  message:
+      CommonStrings.somethingWentWrong,
+);
 
   } catch (e) {
 

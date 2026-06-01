@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/NewsReleaseProvider.dart';
 
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
-import 'package:merckfoundation_252026/Utils/common_strings.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 import 'package:merckfoundation_252026/model/CommonModel.dart';
 
 import 'package:merckfoundation_252026/model/MediaModel.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaEnquiryCard.dart';
-import 'package:merckfoundation_252026/widgets/mediaCard.dart';
 
 import 'package:provider/provider.dart';
 
@@ -27,13 +26,13 @@ class NewsRelease extends StatelessWidget {
       name: "Ms. Mehak Handa",
       phone: "+91 9319606669",
       email: "mehak.handa@external.merckgroup.com",
-      image: "assets/newImages/profile1.png",
+      image: "",
     ),
     MediaContactModel(
       name: "Mr. Harsh Sharma",
       phone: "+91 9540932090",
       email: "harsh.sharma@external.merckgroup.com",
-      image: "assets/newImages/profile2.png",
+      image: "",
     ),
   ];
   @override
@@ -69,9 +68,9 @@ getStatus: (provider) =>
       loadMore: (context) =>
           context.read<NewsReleaseProvider>().loadMore(context),
 
-      getImage: (item) => "assets/newImages/pdf.png",
+      getImage: (item) => CommonImagePath.pdfImage,
 
-      getTitle: (item) => item.title ?? "",
+      getTitle: (item) => item.title ,
  shareLink: shareLink,
       menuID: menuID,
       onTap: (context, item) {

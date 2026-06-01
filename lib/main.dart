@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/AwardProvider.dart';
+import 'package:merckfoundation_252026/Provider/CeoMessageProvider.dart';
 import 'package:merckfoundation_252026/Provider/EpisodeProvider.dart';
 import 'package:merckfoundation_252026/Provider/FilterProvider.dart';
 import 'package:merckfoundation_252026/Provider/MediaProvider.dart';
@@ -16,17 +17,15 @@ import 'package:merckfoundation_252026/Provider/TestimonialProvider.dart';
 import 'package:merckfoundation_252026/Provider/article_provider.dart';
 import 'package:merckfoundation_252026/Provider/navbar_provider.dart';
 import 'package:merckfoundation_252026/Utility/firebase_options_manual.dart';
-import 'package:merckfoundation_252026/Utils/UtilityFile.dart';
+import 'package:merckfoundation_252026/Utility/UtilityFile.dart';
 
-import 'package:merckfoundation_252026/providers/CovidProvider.dart';
+import 'package:merckfoundation_252026/Provider/CovidProvider.dart';
 import 'package:merckfoundation_252026/Provider/PageProvider.dart';
 import 'package:merckfoundation_252026/Provider/callforapplication_provider.dart';
 
-
-import 'package:merckfoundation_252026/providers/program_provider.dart';
-import 'package:merckfoundation_252026/providers/splash_provider.dart';
+import 'package:merckfoundation_252026/Provider/splash_provider.dart';
 import 'package:merckfoundation_252026/routes/routers.dart';
-import 'package:merckfoundation_252026/screens/splashScreen.dart';
+import 'package:merckfoundation_252026/screens/MainScreens/splashScreen.dart';
 import 'package:provider/provider.dart';
 
 final GlobalKey<NavigatorState> routeGlobalKey = GlobalKey();
@@ -85,16 +84,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ChangeNotifierProvider(create: (_) => TestimonialArticleProvider()),
 
         ChangeNotifierProvider(create: (_) => PhotoAlbumProvider()),
-ChangeNotifierProvider(create: (_) => EpisodeProvider()),
-      ChangeNotifierProvider(create: (_) => AwardProvider()),
-
-        //---------------------------------------------------------------------
-        ChangeNotifierProvider(create: (_) => PageProvider()),
-
-        ChangeNotifierProvider(create: (_) => ProgramProvider()),
+        ChangeNotifierProvider(create: (_) => EpisodeProvider()),
+        ChangeNotifierProvider(create: (_) => AwardProvider()),
+        ChangeNotifierProvider(create: (_) => CeoMessageProvider()),
+  
         ChangeNotifierProvider(create: (_) => CallApplicationProvider()),
+                ChangeNotifierProvider(create: (_) => PageProvider()),
+        //---------------------------------------------------------------------
 
-       
+
+      
 
         ChangeNotifierProvider(
           create: (_) => CovidProvider()..loadInitialData(),

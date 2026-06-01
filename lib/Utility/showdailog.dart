@@ -1,15 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:merckfoundation_252026/Utility/sizeConfig.dart';
-import 'package:merckfoundation_252026/Utils/common_strings.dart';
-import 'package:merckfoundation_252026/Utils/customcolor.dart';
-import 'package:merckfoundation_252026/widgets/formLabel.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_strings.dart';
 import 'package:url_launcher/url_launcher.dart';
-  void showToast(String message) {
-    Fluttertoast.showToast(
+
+void showToast(String message) {
+  Fluttertoast.showToast(
     msg: message,
     toastLength: Toast.LENGTH_LONG,
     gravity: ToastGravity.BOTTOM,
@@ -17,130 +14,12 @@ import 'package:url_launcher/url_launcher.dart';
     textColor: Colors.white,
     fontSize: 12.0,
   );
-  }
+}
+
 class ShowDialogs {
   ShowDialogs._();
 
-  /// Responsive confirm dialog
-  static Future<bool> showConfirmDialog(
-      BuildContext context, String dialogTitle, String dialogMessage) async {
-    SizeConfig().init(context);
 
-    final double titleFont =
-        SizeConfig.blockSizeVertical * 2.5; // responsive title
-    final double messageFont =
-        SizeConfig.blockSizeVertical * 2; // responsive message
-    final double buttonFont = SizeConfig.blockSizeVertical * 2;
-
-    bool yesNo = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(SizeConfig.blockSizeVertical * 2),
-          ),
-          contentPadding: EdgeInsets.zero,
-          titlePadding: EdgeInsets.zero,
-          title: Container(
-            padding: EdgeInsets.symmetric(
-                vertical: SizeConfig.blockSizeVertical,
-                horizontal: SizeConfig.blockSizeHorizontal * 2),
-            decoration: BoxDecoration(
-              color: Customcolor.colorBlue,
-              borderRadius:
-                  BorderRadius.circular(SizeConfig.blockSizeVertical * 2),
-            ),
-            child: Center(
-              child: FormLabel(
-                text: dialogTitle,
-                textAlignment: TextAlign.center,
-                labelColor: Colors.white,
-                fontweight: FontWeight.w600,
-                fontSize: titleFont,
-              ),
-            ),
-          ),
-          content: Container(
-            padding: EdgeInsets.symmetric(
-                vertical: SizeConfig.blockSizeVertical,
-                horizontal: SizeConfig.blockSizeHorizontal * 3),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius:
-                  BorderRadius.circular(SizeConfig.blockSizeVertical * 2),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                 FormLabel(
-                              text:  dialogMessage,
-                              textAlignment:  TextAlign.center,
-                              labelColor:  Customcolor.colorBlue,
-                              fontSize: messageFont,
-                              
-                            )
-                ,
-                SizedBox(height: SizeConfig.blockSizeVertical * 3),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: SizeConfig.blockSizeVertical * 5,
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    SizeConfig.blockSizeVertical),
-                                side: BorderSide(color: Customcolor.colorBlue),
-                              ),
-                            ),
-                            onPressed: () => Navigator.of(context).pop(false),
-                            child: FormLabel(
-                              text: 'Stay',
-                              labelColor: Customcolor.colorBlue,
-                              fontSize: buttonFont,
-                              fontweight: FontWeight.w500,
-                            )),
-                      ),
-                    ),
-                    SizedBox(width: SizeConfig.blockSizeHorizontal * 4),
-                    Expanded(
-                      child: SizedBox(
-                        height: SizeConfig.blockSizeVertical * 5,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Customcolor.colorBlue,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  SizeConfig.blockSizeVertical),
-                            ),
-                          ),
-                          onPressed: () => SystemNavigator.pop(),
-                          child:
-                          FormLabel(
-                              text:  'Yes, Quit',
-                              labelColor: Colors.white,
-                              fontSize: buttonFont,
-                              fontweight: FontWeight.w500,
-                            )
-                          
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-
-    return yesNo;
-  }
 
   static Future<void> launchFacebook(String url, String pageId) async {
     final Uri fbAppUri = Platform.isIOS
@@ -156,43 +35,30 @@ class ShowDialogs {
       );
 
       if (!launched) {
-        await launchUrl(
-          fbWebUri,
-          mode: LaunchMode.externalApplication,
-        );
+        await launchUrl(fbWebUri, mode: LaunchMode.externalApplication);
       }
     } catch (e) {
-      await launchUrl(
-        fbWebUri,
-        mode: LaunchMode.externalApplication,
-      );
+      await launchUrl(fbWebUri, mode: LaunchMode.externalApplication);
     }
   }
 
-static Future<void> shareToFacebook(String shareUrl) async {
-  final Uri url = Uri.parse(
-    "https://www.facebook.com/sharer/sharer.php?u=${Uri.encodeComponent(shareUrl)}",
-  );
-  print("FACEBOOK");
-print(url);
-  await launchUrl(
-    url,
-    mode: LaunchMode.externalApplication,
-  );
-}
-static Future<void> shareToTwitter(
-  String text,
-  String shareUrl,
-) async {
-  final Uri url = Uri.parse(
-    "https://twitter.com/intent/tweet?text=${Uri.encodeComponent(text)}&url=${Uri.encodeComponent(shareUrl)}",
-  );
+  static Future<void> shareToFacebook(String shareUrl) async {
+    final Uri url = Uri.parse(
+      "https://www.facebook.com/sharer/sharer.php?u=${Uri.encodeComponent(shareUrl)}",
+    );
+    print("FACEBOOK");
+    print(url);
+    await launchUrl(url, mode: LaunchMode.externalApplication);
+  }
 
-  await launchUrl(
-    url,
-    mode: LaunchMode.externalApplication,
-  );
-}
+  static Future<void> shareToTwitter(String text, String shareUrl) async {
+    final Uri url = Uri.parse(
+      "https://twitter.com/intent/tweet?text=${Uri.encodeComponent(text)}&url=${Uri.encodeComponent(shareUrl)}",
+    );
+
+    await launchUrl(url, mode: LaunchMode.externalApplication);
+  }
+
   static Future<void> followuslink(String url, String msg) async {
     final Uri uri = Uri.parse(url);
 
@@ -200,30 +66,28 @@ static Future<void> shareToTwitter(
       print('Could not launch $uri');
     }
   }
-static Future<void> launchLinkedin(String url) async {
-  final Uri linkedInUri = Uri.parse(
-    "https://www.linkedin.com/sharing/share-offsite/?url=${Uri.encodeComponent(url)}",
-  );
 
-  await launchUrl(
-    linkedInUri,
-    mode: LaunchMode.externalApplication,
-  );
-}
-static Future<void> launchWhatsappshare(String msg) async {
-  final Uri uri = Uri.parse(
-    "https://wa.me/?text=${Uri.encodeComponent(msg)}",
-  );
-  print("Whatsup");
-print(uri.toString());
-  await launchUrl(
-    uri,
-    mode: LaunchMode.externalApplication,
-  );
-}
+  static Future<void> launchLinkedin(String url) async {
+    final Uri linkedInUri = Uri.parse(
+      "https://www.linkedin.com/sharing/share-offsite/?url=${Uri.encodeComponent(url)}",
+    );
+
+    await launchUrl(linkedInUri, mode: LaunchMode.externalApplication);
+  }
+
+  static Future<void> launchWhatsappshare(String msg) async {
+    final Uri uri = Uri.parse(
+      "https://wa.me/?text=${Uri.encodeComponent(msg)}",
+    );
+    print("Whatsup");
+    print(uri.toString());
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
   static Future<void> launchTwitter(String url) async {
-    final Uri twitterAppUri =
-        Uri.parse('twitter://user?screen_name=merckfoundation');
+    final Uri twitterAppUri = Uri.parse(
+      'twitter://user?screen_name=merckfoundation',
+    );
 
     final Uri twitterWebUri = Uri.parse(url);
 
@@ -234,16 +98,10 @@ print(uri.toString());
       );
 
       if (!launched) {
-        await launchUrl(
-          twitterWebUri,
-          mode: LaunchMode.externalApplication,
-        );
+        await launchUrl(twitterWebUri, mode: LaunchMode.externalApplication);
       }
     } catch (e) {
-      await launchUrl(
-        twitterWebUri,
-        mode: LaunchMode.externalApplication,
-      );
+      await launchUrl(twitterWebUri, mode: LaunchMode.externalApplication);
     }
   }
 
@@ -268,17 +126,11 @@ print(uri.toString());
 
       if (!launched) {
         // Fallback → open store
-        await launchUrl(
-          storeUri,
-          mode: LaunchMode.externalApplication,
-        );
+        await launchUrl(storeUri, mode: LaunchMode.externalApplication);
       }
     } catch (e) {
       // Final fallback
-      await launchUrl(
-        storeUri,
-        mode: LaunchMode.externalApplication,
-      );
+      await launchUrl(storeUri, mode: LaunchMode.externalApplication);
     }
   }
 
@@ -295,35 +147,22 @@ print(uri.toString());
 
       if (!launched) {
         // Fallback → open browser
-        await launchUrl(
-          instaWebUri,
-          mode: LaunchMode.externalApplication,
-        );
+        await launchUrl(instaWebUri, mode: LaunchMode.externalApplication);
       }
     } catch (e) {
       // If error → open in browser anyway
-      await launchUrl(
-        instaWebUri,
-        mode: LaunchMode.externalApplication,
-      );
+      await launchUrl(instaWebUri, mode: LaunchMode.externalApplication);
     }
   }
 
- 
+  static Future<void> launchURL(String url) async {
+    try {
+      print("CLICKED: $url");
+      final uri = Uri.parse(url.startsWith('http') ? url : 'https://$url');
 
- static  Future<void> launchURL(String url) async {
-  try {
-     print("CLICKED: $url");
-    final uri = Uri.parse(
-      url.startsWith('http') ? url : 'https://$url',
-    );
-
-    await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
-    );
-  } catch (e) {
-    debugPrint("Launch error: $e");
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      debugPrint("Launch error: $e");
+    }
   }
-}
 }

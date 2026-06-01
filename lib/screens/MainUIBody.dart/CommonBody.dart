@@ -2,46 +2,56 @@ import 'dart:convert';
 
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:merckfoundation_252026/widgets/CommonApiStatusWidget.dart';
+import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
+import 'package:merckfoundation_252026/Utility/api_status.dart';
+import 'package:merckfoundation_252026/model/StoryModel.dart';
+import 'package:merckfoundation_252026/routes/AppNavigation.dart';
+import 'package:merckfoundation_252026/screens/CovidScreen/Covid/CovidFlipSection.dart';
+import 'package:merckfoundation_252026/widgets/CommonList/VerticalMediaSection.dart';
 
-import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
-import 'package:merckfoundation_252026/widgets/CommonMarqueeWidget.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonMarqueeWidget.dart';
+
 import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
+import 'package:merckfoundation_252026/widgets/FollowSocialSection.dart';
+import 'package:merckfoundation_252026/widgets/ProgramCard.dart';
 import 'package:provider/provider.dart';
 
 import 'package:merckfoundation_252026/Provider/PageProvider.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
-import 'package:merckfoundation_252026/Utils/common_strings.dart';
-import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_strings.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/model/CommonModel.dart';
 
 import 'package:merckfoundation_252026/screens/MainScreens/HomeNewScreen.dart';
-import 'package:merckfoundation_252026/screens/WhoWeAreScreen.dart/ContentCarouselWidget.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/ContentCarouselWidget.dart';
 
-import 'package:merckfoundation_252026/widgets/CommonCarouselSection.dart';
+import 'package:merckfoundation_252026/widgets/CommonList/CommonCarouselSection.dart';
 import 'package:merckfoundation_252026/widgets/CommonList/HorizontalMediaSection.dart';
-import 'package:merckfoundation_252026/widgets/CommonRichText.dart';
+
 import 'package:merckfoundation_252026/widgets/DynamicTabView.dart';
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
-import 'package:merckfoundation_252026/widgets/Homewidget.dart/CommonStaticGrid.dart';
+import 'package:merckfoundation_252026/widgets/CommonList/CommonStaticGrid.dart';
 import 'package:merckfoundation_252026/widgets/Homewidget.dart/homeSlider.dart';
 import 'package:merckfoundation_252026/widgets/LeaderCard.dart';
 import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
-import 'package:merckfoundation_252026/widgets/botttomlink.dart';
+import 'package:merckfoundation_252026/widgets/Bottomcardlink.dart';
 
 class CommonBody extends StatefulWidget {
   final String? menuID;
 
   final bool showFooter;
   final bool showBottomLinks;
+  final Function(bool isVisible, List<dynamic> menus)? onProgramMenuChanged;
 
   const CommonBody(
     this.menuID, {
     super.key,
     this.showFooter = true,
     this.showBottomLinks = true,
+    this.onProgramMenuChanged,
   });
 
   @override
@@ -61,219 +71,141 @@ class _CommonBodyState extends State<CommonBody> {
       loadPage();
     });
   }
+
   bool hasLoaded = false;
+  bool isProgramMenuVisible = false;
+  List<dynamic> programMenus = [];
   Future<void> loadPage() async {
-  final provider = Provider.of<PageProvider>(context, listen: false);
+    final provider = Provider.of<PageProvider>(context, listen: false);
 
-  setState(() {
-    hasLoaded = false; // reset before API
-  });
+    setState(() {
+      hasLoaded = false; // reset before API
+    });
 
-  await provider.fetchPage(context, widget.menuID ?? "");
+    await provider.fetchPage(context, widget.menuID ?? "");
 
-  final data = provider.pageData;
+    final data = provider.pageData;
 
-  if (!mounted) return;
+    if (!mounted) return;
 
-  if (data == null) {
-    setState(() => hasLoaded = true);
-    return;
-  }
-
-  final root = data['data'];
-  if (root is Map) {
-    final dataType = (root['data_type'] ?? "").toString().toLowerCase();
-
-    if (dataType == "layout") {
-      json = root['json_data'] ?? {};
+    if (data == null) {
+      setState(() => hasLoaded = true);
+      return;
     }
 
-    if (dataType == "pdf") {
-      isPdfPage = true;
+    final root = data['data'];
+
+    if (root is Map) {
+      setState(() {
+        isProgramMenuVisible = root['mobile_submenus_show'] == true;
+
+        programMenus = root['page_menu_list'] ?? [];
+       
+      });
+
+      widget.onProgramMenuChanged?.call(isProgramMenuVisible, programMenus);
+      final dataType = (root['data_type'] ?? "").toString().toLowerCase();
+
+      if (dataType == "layout") {
+        json = root['json_data'] ?? {};
+      }
+
+      // if (dataType == "pdf") {
+      //   isPdfPage = true;
+      // }
+      if (dataType == "pdf") {
+        isPdfPage = true;
+
+        final pdfUrl = root['pdf_data']?['pdf_url'] ?? "";
+
+        if (pdfUrl.toString().isNotEmpty) {
+          await ShowDialogs.launchURL(pdfUrl);
+
+          if (mounted && Navigator.canPop(context)) {
+            Navigator.pop(context);
+          }
+        }
+
+        setState(() {
+          hasLoaded = true;
+        });
+
+        return;
+      }
     }
+
+    setState(() {
+      hasLoaded = true; // ✅ IMPORTANT
+    });
   }
-
-  setState(() {
-    hasLoaded = true; // ✅ IMPORTANT
-  });
-}
-// Future<void> loadPage() async {
-//   final provider = Provider.of<PageProvider>(context, listen: false);
-
-//   await provider.fetchPage(context, widget.menuID ?? "");
-
-//   final data = provider.pageData;
-
-//   debugPrint("PAGE DATA => $data");
-
-//   if (data == null) return;
-
-//   final root = data['data'];
-
-//   if (root is! Map) return;
-
-//   final dataType = (root['data_type'] ?? "").toString().toLowerCase();
-
-//   /// PDF
-//   if (dataType == "pdf") {
-//     isPdfPage = true;
-
-//     final pdfUrl = root['pdf_data']?['pdf_url'] ?? "";
-
-//     if (pdfUrl.toString().isNotEmpty) {
-//       await ShowDialogs.launchURL(pdfUrl);
-//       if (mounted && Navigator.canPop(context)) {
-//         Navigator.pop(context);
-//       }
-//     }
-//     return;
-//   }
-
-//   /// LAYOUT
-//   if (dataType == "layout") {
-//     json = root['json_data'] ?? {};
-//   }
-
-//   setState(() {});
-// }
-  // Future<void> loadPage() async {
-  //   final provider = Provider.of<PageProvider>(context, listen: false);
-
-  //   await provider.fetchPage(context, widget.menuID ?? "");
-
-  //   final data = provider.pageData;
-
-  //   if (data is Map) {
-  //     final dataType =
-  //         data['data']?['data_type']?.toString().toLowerCase() ?? "";
-
-  //     /// PDF
-  //     if (dataType == "pdf") {
-  //       isPdfPage = true;
-
-  //       final pdfUrl = data['data']?['pdf_data']?['pdf_url'] ?? "";
-
-  //       if (pdfUrl.toString().isNotEmpty) {
-  //         await ShowDialogs.launchURL(pdfUrl);
-
-  //         if (mounted && Navigator.canPop(context)) {
-  //           Navigator.pop(context);
-  //         }
-  //       }
-
-  //       return;
-  //     }
-
-  //     /// LAYOUT
-  //     if (dataType == "layout") {
-  //       json = data['data']?['json_data'] ?? {};
-  //     }
-  //   } else if (data is String) {
-  //     json = jsonDecode(data);
-  //   }
-
-  //   if (mounted) {
-  //     setState(() {});
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<PageProvider>();
 
-    /// LOADING
+    // LOADING
     if (provider.isLoading) {
       return const Center(child: CommonLoader());
     }
-if (provider.hasError) {
-  return CommonApiStatusWidget(
-        icon: Icons.wifi_off,
 
-        title:
-          CommonStrings.noInternetConnection,
-
+    if (provider.status != ApiStatus.success &&
+        provider.status != ApiStatus.loading &&
+        provider.status != ApiStatus.initial) {
+      return ApiStatusHandler(
+        status: provider.status,
+        errorMessage: provider.errorMessage,
         onRetry: () {
-
           loadPage();
         },
       );
-}
+    }
+
     /// PDF SCREEN
     if (isPdfPage) {
       return const SizedBox();
     }
 
-    // List allLayouts = [];
+    List allLayouts = [];
 
-    // allLayouts.addAll(json['slider'] ?? []);
-    // allLayouts.addAll(json['top'] ?? []);
-    // allLayouts.addAll(json['middle_left'] ?? []);
-    // allLayouts.addAll(json['middle_right'] ?? []);
-    // allLayouts.addAll(json['bottom'] ?? []);
-List allLayouts = [];
+    if (json['slider'] is List) {
+      allLayouts.addAll(json['slider']);
+    }
 
-if (json['slider'] is List) {
-  allLayouts.addAll(json['slider']);
-}
+    if (json['top'] is List) {
+      allLayouts.addAll(json['top']);
+    }
 
-if (json['top'] is List) {
-  allLayouts.addAll(json['top']);
-}
+    if (json['middle_left'] is List) {
+      allLayouts.addAll(json['middle_left']);
+    }
 
-if (json['middle_left'] is List) {
-  allLayouts.addAll(json['middle_left']);
-}
+    if (json['middle_right'] is List) {
+      allLayouts.addAll(json['middle_right']);
+    }
 
-if (json['middle_right'] is List) {
-  allLayouts.addAll(json['middle_right']);
-}
+    if (json['bottom'] is List) {
+      allLayouts.addAll(json['bottom']);
+    }
 
-if (json['bottom'] is List) {
-  allLayouts.addAll(json['bottom']);
-}
-    /// NO DATA
-    // if (allLayouts.isEmpty) {
-    //   return CustomScrollView(
-    //     slivers: [
-    //       SliverFillRemaining(
-    //         hasScrollBody: false,
-    //         child: Column(
-    //           children: [
-    //             /// CENTER CONTENT
-    //             Expanded(child: EmptyStateWidget()),
-
-    //             /// FOOTER AT SCREEN BOTTOM
-    //             if (widget.showFooter) const FooterFlowerImage(),
-
-    //             if (widget.showBottomLinks) ...[
-    //               const SizedBox(height: 8),
-    //               const Bottomcardlink(),
-    //             ],
-    //           ],
-    //         ),
-    //       ),
-    //     ],
-    //   );
-    // }
     if (!provider.isLoading && hasLoaded && allLayouts.isEmpty) {
-  return CustomScrollView(
-    slivers: [
-      SliverFillRemaining(
-        hasScrollBody: false,
-        child: Column(
-          children: [
-            Expanded(child: EmptyStateWidget()),
-            if (widget.showFooter) const FooterFlowerImage(),
-            if (widget.showBottomLinks) ...[
-              const SizedBox(height: 8),
-              const Bottomcardlink(),
-            ],
-          ],
-        ),
-      ),
-    ],
-  );
-}
+      return CustomScrollView(
+        slivers: [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Column(
+              children: [
+                Expanded(child: EmptyStateWidget()),
+                if (widget.showFooter) const FooterFlowerImage(),
+                if (widget.showBottomLinks) ...[
+                  const SizedBox(height: 8),
+                  const Bottomcardlink(),
+                ],
+              ],
+            ),
+          ),
+        ],
+      );
+    }
 
     int extraCount = 0;
 
@@ -315,7 +247,7 @@ if (json['bottom'] is List) {
         .toHomeLayoutType();
 
     /// ✅ HANDLE TABS (GLOBAL)
-    if (tabTypes.contains(layout['layout_type'])) {
+    if (tabTypes.contains(layout['layout_type']) && layout['mobile_view'] == "horizontal") {
       /// ✅ only layouts having content
       final validTabLayouts = allLayouts.where((e) {
         final List content = e['content'] ?? [];
@@ -353,12 +285,14 @@ if (json['bottom'] is List) {
           key: tabLayout['layout_type'],
 
           title: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              tabLayout['title'] ?? "",
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            child: SmartHtmlWidget(
+              html: tabLayout['title'] ?? "",
+              textColor: Customcolor.textBlueColor,
+
+              ignoreHtmlStyles: true,
             ),
+           
           ),
 
           content: CommonCarouselSection(
@@ -372,7 +306,25 @@ if (json['bottom'] is List) {
                 ? (tabLayout['button_text'] ?? "")
                 : "",
 
-            onViewAll: () {},
+            onViewAll: () {
+              AppNavigation.navigateByMenuId(
+                context,
+                menuId: tabLayout['button_menu_id'].toString(),
+                albumId: "",
+                type:
+                    tabLayout['layout_type'] ==
+                        HomeLayoutType.CallForApplication.name
+                    ? HomeLayoutType.CallForApplication
+                    : tabLayout['layout_type'] ==
+                          HomeLayoutType.MerckMoreThanAmbasdar.name
+                    ? HomeLayoutType.MerckMoreThanAmbasdar
+                    : HomeLayoutType.DigitalLibrary,
+                albumName: "",
+                categoryId: "",
+                title: tabLayout['title'] ?? "",
+                shareLink: tabLayout['button_link'],
+              );
+            },
 
             items: items,
           ),
@@ -386,24 +338,42 @@ if (json['bottom'] is List) {
 
       return SizedBox(
         height: CommonStrings.tabheight,
-        child: DynamicTabView(tabs: tabs, indicatorColor: Customcolor.pinkbg),
+        child: DynamicTabView(
+          tabs: tabs,
+          indicatorColor: Customcolor.pinkBgColor,
+        ),
       );
     }
+
     switch (type) {
       case HomeLayoutType.slider:
         return HomeSlider(content: layout['content']);
-
+      case HomeLayoutType.award:
+        return CovidFlipSection(content: layout['content']);
       case HomeLayoutType.impact:
         final List content = layout['content'] ?? [];
 
         final items = content.map<StaticListItem>((e) {
           return StaticListItem(image: e['thumbnail'] ?? "", isNetwork: true);
         }).toList();
-
+        final screenWidth = MediaQuery.of(context).size.width;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CommonRichText(title: layout['title'] ?? "", subtitle: ""),
+            // CommonRichText(title:
+
+            // layout['title'] ?? "",
+            //  subtitle: ""),
+            Padding(
+              padding: const EdgeInsets.only(left: 15),
+              child: SmartHtmlWidget(
+                html: layout['title'] ?? "",
+                textColor: Customcolor.textBlueColor,
+                fontSize: screenWidth * 0.055,
+                fontWeight: FontWeight.w800,
+                ignoreHtmlStyles: true,
+              ),
+            ),
             CommonStaticGrid(items: items),
           ],
         );
@@ -414,18 +384,34 @@ if (json['bottom'] is List) {
       case HomeLayoutType.newsLettersAndArticles:
       case HomeLayoutType.merckFoundationInMedia:
       case HomeLayoutType.testimonials:
-        return HorizontalMediaSection(
-          content: layout['content'] ?? [],
-          shareLink:layout['button_link'] ?? '',
-          buttonText: showViewButton ? (layout['button_text'] ?? "") : "",
+      case HomeLayoutType.DigitalLibrary:
+        case HomeLayoutType.MerckMoreThanAmbasdar:
+        case HomeLayoutType.MerckMoreThanAmbasdarFormer:
+         case HomeLayoutType.CallForApplication:
+        return layout['mobile_view'] == "vertical"
+            ? VerticalMediaSection(
+                content: (layout['content'] as List? ?? [])
+                    .map((e) => StoryModel.fromJson(e))
+                    .toList(),
+                shareLink: layout['button_link'] ?? '',
 
-          buttonLink: layout['button_link'] ?? '',
-          type: type,
-          title: layout['title'] ?? "",
-          showDescription: type == HomeLayoutType.testimonials,
-          showMenu: type == HomeLayoutType.episodes,
-          menuID:  layout['current_menu_id'] ?? '',
-        );
+                type: type,
+                title: layout['title'] ?? "",
+
+                menuID: layout['button_menu_id'].toString(),
+              )
+            : HorizontalMediaSection(
+                content: layout['content'] ?? [],
+                shareLink: layout['button_link'] ?? '',
+                buttonText: showViewButton ? (layout['button_text'] ?? "") : "",
+
+                buttonLink: layout['button_link'] ?? '',
+                type: type,
+                title: layout['title'] ?? "",
+                showDescription: type == HomeLayoutType.testimonials,
+                showMenu: type == HomeLayoutType.episodes,
+                menuID: layout['button_menu_id'].toString(),
+              );
 
       case HomeLayoutType.content:
         final List<dynamic> contentList = layout['content'] ?? [];
@@ -463,7 +449,11 @@ if (json['bottom'] is List) {
 
         return ContentCarouselWidget(contentList: contentList);
       case HomeLayoutType.leadership:
-        return LeaderCard(content: layout['content'] ?? [],shareLink: layout['button_link'] ?? '',);
+        return LeaderCard(
+          content: layout['content'] ?? [],
+          shareLink: layout['button_link'] ?? '',
+          menuID: widget.menuID ?? "",
+        );
 
       case HomeLayoutType.marquee:
         return Column(
@@ -485,45 +475,53 @@ if (json['bottom'] is List) {
 
         return Column(
           children: content.map<Widget>((item) {
-            final String title = item['title'] is String ? item['title'] : "";
-            final int position = item['position'] is int ? item['position'] : 0;
-            List socialLinks = [];
+            final String title = item['title']?.toString() ?? "";
+
+            final int position = item['position'] is int
+                ? item['position']
+                : int.tryParse(item['position'].toString()) ?? 0;
+
+            List<dynamic> socialLinks = [];
 
             try {
-              final description = item['description'] is String
-                  ? item['description']
-                  : "[]";
+              final description = item['description']?.toString() ?? "[]";
 
               socialLinks = jsonDecode(description);
-
-              /// ✅ add placeholder image if missing
-              socialLinks = socialLinks.map((e) {
-                final map = Map<String, dynamic>.from(e);
-
-                map['social_media_image'] =
-                    (map['social_media_image'] is String &&
-                        map['social_media_image'].toString().isNotEmpty)
-                    ? map['social_media_image']
-                    : "https://via.placeholder.com/100";
-
-                return map;
-              }).toList();
             } catch (e) {
               debugPrint("Social parse error: $e");
             }
 
             return Padding(
               padding: const EdgeInsets.only(bottom: 20),
-              child: FollowSection(
+              child: FollowSocialSection(
                 title: title,
-
                 position: position,
-
-                /// ✅ pass parsed API data
-                //  socialLinks: socialLinks,
+                socialLinks: socialLinks,
               ),
             );
           }).toList(),
+        );
+
+      case HomeLayoutType.OurProgramsManagement:
+        return Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
+          child: Column(
+            children: List.generate((layout['content'] ?? []).length, (index) {
+              final item = layout['content'][index];
+              final Color color = Color(
+                int.tryParse(item['subdescription'] ?? '') ?? 0xff0e69af,
+              );
+              return ProgramCard(
+                program: ProgramModel(
+                  title: item['title'],
+                  shareLink: item['description'],
+                  menuID: item['id'].toString(),
+                  bgColor: color,
+                ),
+                fontSize: responsive.fontSize(1.9),
+              );
+            }),
+          ),
         );
 
       default:

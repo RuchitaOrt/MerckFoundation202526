@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/FilterProvider.dart';
 import 'package:merckfoundation_252026/Provider/MediaListingProvider.dart';
+import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
-import 'package:merckfoundation_252026/Utility/customappbar.dart';
+import 'package:merckfoundation_252026/model/StoryModel.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/customappbar.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
-import 'package:merckfoundation_252026/Utils/common_strings.dart';
-import 'package:merckfoundation_252026/Utils/customcolor.dart';
-import 'package:merckfoundation_252026/const/GlobalLists.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
-import 'package:merckfoundation_252026/screens/MainUIBody.dart/DetailScreen.dart';
+import 'package:merckfoundation_252026/screens/DetailsScreen/DetailScreen.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/PhotoAlumbScreen.dart';
-import 'package:merckfoundation_252026/widgets/CommonApiStatusWidget.dart';
-import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
 import 'package:merckfoundation_252026/widgets/YouTubePreview.dart';
-import 'package:merckfoundation_252026/widgets/botttomlink.dart';
-import 'package:merckfoundation_252026/widgets/filterdrawer.dart';
+import 'package:merckfoundation_252026/widgets/Bottomcardlink.dart';
+import 'package:merckfoundation_252026/widgets/AppDrawerfilter.dart';
 import 'package:merckfoundation_252026/widgets/mediaCard.dart';
 import 'package:provider/provider.dart';
 
@@ -25,11 +24,13 @@ class MediaListingScreen extends StatefulWidget {
   final String categoryID;
   final String albumName;
   final String albumID;
-    final String menuID;
+  final String menuID;
   final String title;
-  
 
   final String? shareLink;
+  final List<StoryModel>? initialList;
+final bool useLocalPagination;
+final isFilterApply;
 
 
   const MediaListingScreen({
@@ -37,7 +38,12 @@ class MediaListingScreen extends StatefulWidget {
     required this.type,
     required this.categoryID,
     required this.albumID,
-    required this.albumName, required this.menuID, required this.title, this.shareLink,
+    required this.albumName,
+    required this.menuID,
+    required this.title,
+    this.shareLink,
+      this.initialList,
+    this.useLocalPagination = false, this.isFilterApply=true,
   });
 
   @override
@@ -60,22 +66,34 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       filter.loadFilters(context, type: widget.type);
-      provider.loadInitial(
-        context: context,
-        type: widget.type,
-        countryId: "",
-        categoryId: widget.categoryID ?? "",
-        languageId: "",
-        albumID: widget.albumID,
-      );
+      if (widget.useLocalPagination &&
+      widget.initialList != null) {
+
+   provider.setLocalData(widget.initialList!);
+
+  } else {
+ WidgetsBinding.instance.addPostFrameCallback((_) {
+      /// ✅ API PAGINATION
+    provider.loadInitial(
+      context: context,
+      type: widget.type,
+      countryId: "",
+      categoryId: widget.categoryID,
+      languageId: "",
+      albumID: widget.albumID,
+    );
+ });
+
+  }
+      
     });
 
     if (filter.countries.isEmpty ||
         filter.categories.isEmpty ||
         filter.languages.isEmpty) {
-          if(widget.type!=MediaType.episodes){
-      filter.loadFilters(context, type: widget.type);
-          }
+      if (widget.type != MediaType.episodes) {
+        filter.loadFilters(context, type: widget.type);
+      }
     }
 
     if (widget.type == MediaType.photoAlbum) {
@@ -107,31 +125,29 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
   String getTitle() {
     switch (widget.type) {
       case MediaType.stories:
-        // return widget.title;
+      // return widget.title;
       case MediaType.videoLibrary:
-        // return "Video Library";
+      // return "Video Library";
       case MediaType.testimonial:
-        // return "Testimonials";
+      // return "Testimonials";
       case MediaType.photoGallery:
-        // return "Photo Gallery";
+      // return "Photo Gallery";
       case MediaType.activity:
-        // return "Our Activities";
+      // return "Our Activities";
       case MediaType.digitalLibrary:
-        // return "Digital Library";
+      // return "Digital Library";
       case MediaType.testimonialArticle:
         // return "Testimonials of Merck Foundation Alumni";
-            return widget.title;
+        return widget.title;
       case MediaType.photoAlbum:
         return widget.albumName;
       case MediaType.episodes:
         return widget.albumName;
-        
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       key: _scaffoldKey,
       endDrawer: AppDrawerfilter(type: widget.type),
@@ -144,226 +160,170 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
                 widget.type == MediaType.episodes ||
                 widget.type == MediaType.activity)
             ? null
-            : () => _scaffoldKey.currentState!.openEndDrawer(),
-onBack:(widget.type ==MediaType.stories)?null: ()
-{
-  Navigator.pop(context);
-},
+            :widget.isFilterApply? () => _scaffoldKey.currentState!.openEndDrawer():null,
+        onBack: (widget.type == MediaType.stories)
+            ? null
+            : () {
+                Navigator.pop(context);
+              },
         onSearch: () {},
-        shareLink: widget.shareLink,
-      
+        shareLink: widget.shareLink ?? "",
+        menuID: widget.menuID,
       ),
 
       backgroundColor: Customcolor.background,
 
       body: Consumer<MediaListingProvider>(
         builder: (context, provider, _) {
-         
           // if (provider.isLoading && provider.storyList.isEmpty) {
           //   return const Center(child:CommonLoader());
           // }
-/// LOADING
-if (provider.status ==
-        ApiStatus.loading &&
-    provider.storyList.isEmpty) {
+          /// LOADING
+          if (provider.status == ApiStatus.loading &&
+              provider.storyList.isEmpty) {
+            return const Center(child: CommonLoader());
+          }
+ if (provider.status != ApiStatus.success &&
+    provider.status != ApiStatus.loading &&
+    provider.status != ApiStatus.initial) {
 
-  return const Center(
-    child: CommonLoader(),
-  );
-}
-
-/// NO INTERNET
-if (provider.status ==
-    ApiStatus.noInternet) {
-
-  return CommonApiStatusWidget(
-    icon: Icons.wifi_off,
-
-    title:
-     CommonStrings.noInternetConnection,
-
+  return ApiStatusHandler(
+    status: provider.status,
+    errorMessage: provider.errorMessage,
     onRetry: () {
-
       provider.retry(context);
-    },
+      },
   );
 }
-
-/// TIMEOUT
-if (provider.status ==
-    ApiStatus.timeout) {
-
-  return CommonApiStatusWidget(
-    icon: Icons.access_time,
-
-    title: "Request Timeout",
-
-    onRetry: () {
-
-      provider.retry(context);
-    },
-  );
-}
-
-/// SERVER ERROR
-if (provider.status ==
-    ApiStatus.serverError) {
-
-  return CommonApiStatusWidget(
-    icon: Icons.cloud_off,
-
-    title: "Server Error",
-
-    onRetry: () {
-
-      provider.retry(context);
-    },
-  );
-}
-
-/// OTHER ERROR
-if (provider.status ==
-    ApiStatus.error) {
-
-  return CommonApiStatusWidget(
-    icon: Icons.error_outline,
-
-    title:
-        provider.errorMessage,
-
-    onRetry: () {
-
-      provider.retry(context);
-    },
-  );
-}
+        
           return CustomScrollView(
             controller: _controller,
             slivers: [
               /// 🔹 GRID
-                  (provider.storyList.isEmpty)?
-      SliverFillRemaining(
-        hasScrollBody: false,
-        child: Column(
-          children: [
-         Expanded(
-        child: EmptyStateWidget(),
-      ),
+              (provider.storyList.isEmpty)
+                  ? SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Column(
+                        children: [
+                          Expanded(child: EmptyStateWidget()),
 
-            const FooterFlowerImage(),
-            const SizedBox(height: 8),
-            const Bottomcardlink(),
-          ],
-        ),
-      )
-:
-              SliverPadding(
-                padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
-                sliver: SliverGrid(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      /// ✅ LOAD MORE LOADER
-                      if (widget.type != MediaType.photoAlbum &&
-                          index >= provider.storyList.length) {
-                        return provider.hasMore && provider.isLoading
-                            ? const Padding(
-                                padding: EdgeInsets.all(16),
-                                child: Center(
-                                  child: CommonLoader(),
-                                ),
-                              )
-                            : const SizedBox();
-                      }
-
-                      final item = provider.storyList[index];
-
-                      /// 🖼️ PHOTO GALLERY
-                      if (widget.type == MediaType.photoGallery ||
-                          widget.type == MediaType.digitalLibrary ||
-                          widget.type == MediaType.photoAlbum ||
-                          widget.type == MediaType.activity) {
-                        return MediaCard(
-                          menuID: widget.menuID,
-                          shareLink: widget.shareLink,
-                          id: item.id.toString(),
-                          image: widget.type == MediaType.photoAlbum
-                              ? item.photo ?? ""
-                              : widget.type == MediaType.digitalLibrary
-                              ? item.thumbnail_image ?? ""
-                              : item.image ?? "",
-                          title: widget.type == MediaType.photoAlbum
-                              ? item.photo_description ?? ""
-                              : widget.type == MediaType.photoGallery
-                              ? item.photo_category_name ?? ""
-                              : item.title ?? "",
-                          showPlayIcon: false,
-                          onTap: () {
-                            if (widget.type == MediaType.digitalLibrary) {
-                              ShowDialogs.launchURL(item.document!);
+                          const FooterFlowerImage(),
+                          const SizedBox(height: 8),
+                          const Bottomcardlink(),
+                        ],
+                      ),
+                    )
+                  : SliverPadding(
+                      padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
+                      sliver: SliverGrid(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            /// ✅ LOAD MORE LOADER
+                            if (widget.type != MediaType.photoAlbum &&
+                                index >= provider.storyList.length) {
+                              return provider.hasMore && provider.isLoading
+                                  ? const Padding(
+                                      padding: EdgeInsets.all(16),
+                                      child: Center(child: CommonLoader()),
+                                    )
+                                  : const SizedBox();
                             }
-                            if (widget.type == MediaType.photoGallery) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => PhotoAlumbScreen(
-                                    pageTile: getTitle(),
-                                    tile: item.photo_category_name,
-                                    categoryID: item.id.toString(),
-                                       menuID: widget.menuID,
-                          shareLink: widget.shareLink,
-                                  ),
-                                ),
-                              );
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => DetailScreen(
-                                    item.title,
-                                    item.details,
-                                    title: getTitle(),
-                                    shareLink: widget.shareLink,
-                                    isDetailApiCalled:true,
-                                    articleId: item.id.toString(),
-                                    languageId: item.languageid,
-                                  ),
-                                ),
+
+                            final item = provider.storyList[index];
+
+                            /// 🖼️ PHOTO GALLERY
+                            if (widget.type == MediaType.photoGallery ||
+                                widget.type == MediaType.digitalLibrary ||
+                                widget.type == MediaType.photoAlbum ||
+                                widget.type == MediaType.activity) {
+                              return MediaCard(
+                                menuID: widget.menuID,
+                                shareLink: widget.shareLink,
+                                id: item.id.toString(),
+                                image: widget.type == MediaType.photoAlbum
+                                    ? item.photo ?? ""
+                                    : widget.type == MediaType.digitalLibrary
+                                    ? item.thumbnail_image ?? ""
+                                    : item.image ?? "",
+                                title: widget.type == MediaType.photoAlbum
+                                    ? item.photo_description ?? ""
+                                    : widget.type == MediaType.photoGallery
+                                    ? item.photo_category_name ?? ""
+                                    : item.title ,
+                                showPlayIcon: false,
+                                onTap: () {
+                                  if (widget.type == MediaType.digitalLibrary) {
+                                    ShowDialogs.launchURL(item.document!);
+                                  }
+                                  if (widget.type == MediaType.photoGallery) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => PhotoAlumbScreen(
+                                          pageTile: getTitle(),
+                                          tile: item.photo_category_name,
+                                          categoryID: item.id.toString(),
+                                          menuID: widget.menuID,
+                                          shareLink: widget.shareLink,
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => DetailScreen(
+                                          item.title,
+                                          item.details,
+                                          title: getTitle(),
+                                          shareLink: widget.shareLink,
+                                          isDetailApiCalled: true,
+                                          articleId: item.id.toString(),
+                                          languageId: item.languageid,
+                                           menuID:  widget.menuID,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
                               );
                             }
+
+                            /// 🎥 VIDEO TYPES
+                            return MediaCard(
+                              menuID: widget.menuID,
+                              shareLink: widget.shareLink,
+                              id: item.id.toString(),
+                              image: getYoutubeThumbnail(item.videoLink),
+                              title: widget.type == MediaType.episodes
+                                  ? item.episode_name ?? ""
+                                  : item.videoDesc ,
+                              showmenu: widget.type == MediaType.episodes
+                                  ? true
+                                  : false,
+                              showPlayIcon: true,
+                              onTap: () {
+                                var key = item.videoLink.substring(
+                                  item.videoLink.length - 11,
+                                );
+
+                                ShowDialogs.youtubevideolink(
+                                  "https://www.youtube.com/watch?v=$key?autoplay=1",
+                                );
+                              },
+                            );
                           },
-                        );
-                      }
-
-                      /// 🎥 VIDEO TYPES
-                      return MediaCard(
-                           menuID: widget.menuID,
-                          shareLink: widget.shareLink,
-                         id: item.id.toString(),
-                        image: getYoutubeThumbnail(item.videoLink),
-                        title: widget.type==MediaType.episodes?item.episode_name ?? "" :item.videoDesc ?? "",
-                        showmenu: widget.type==MediaType.episodes? true:false,
-                        showPlayIcon: true,
-                        onTap: () {
-                          var key = item.videoLink.substring(
-                            item.videoLink.length - 11,
-                          );
-
-                          ShowDialogs.youtubevideolink(
-                            "https://www.youtube.com/watch?v=$key?autoplay=1",
-                          );
-                        },
-                      );
-                    },
-                    childCount: widget.type == MediaType.photoAlbum
-                        ? provider.storyList.length
-                        : provider.storyList.length + 1,
-                  ),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.80,
-                  ),
-                ),
-              ),
+                          childCount: widget.type == MediaType.photoAlbum
+                              ? provider.storyList.length
+                              : provider.storyList.length + 1,
+                        ),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.80,
+                            ),
+                      ),
+                    ),
 
               /// 🔹 FOOTER
               const SliverToBoxAdapter(child: FooterFlowerImage()),

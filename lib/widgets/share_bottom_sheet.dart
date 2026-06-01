@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
-import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/const/GlobalLists.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/HomeNewScreen.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
@@ -29,7 +30,7 @@ class ShareBottomSheet {
                 padding: const EdgeInsets.only(top: 10, bottom: 10),
                 child: FormLabel(
                   text: title,
-                  labelColor: Customcolor.pink_col,
+                  labelColor: Customcolor.pinkColor,
                   fontSize: ResponsiveFlutter.of(context).fontSize(2.5),
                   fontweight: FontWeight.w500,
                 ),
@@ -43,7 +44,7 @@ class ShareBottomSheet {
                   children: [
                     /// FACEBOOK
                     SocialIcon(
-                      "assets/newImages/FB.svg",
+                    CommonImagePath.facebook,
                       iconSize: imgHeight,
                       onTap: () {
                         ShowDialogs.shareToFacebook(
@@ -55,7 +56,7 @@ class ShareBottomSheet {
 
                     /// TWITTER
                     SocialIcon(
-                      "assets/newImages/twitt.svg",
+                    CommonImagePath.twitter,
                       iconSize: imgHeight,
                       onTap: () {
                         ShowDialogs.shareToTwitter(
@@ -69,7 +70,7 @@ class ShareBottomSheet {
 
                     /// LINKEDIN
                     SocialIcon(
-                      "assets/newImages/linkdin.svg",
+                      CommonImagePath.linkdin,
                       iconSize: imgHeight,
                       onTap: () {
                         ShowDialogs.launchLinkedin(
@@ -83,7 +84,7 @@ class ShareBottomSheet {
                     /// WHATSAPP
                     /// 
                     SocialIcon(
-                      "assets/newImages/whatsaup.svg",
+                     CommonImagePath.whatsup,
                       iconSize: imgHeight,
                       onTap: () {
                         ShowDialogs.launchWhatsappshare(

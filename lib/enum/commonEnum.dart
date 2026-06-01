@@ -1,4 +1,5 @@
 enum AppBarType { home, inner }
+
 enum ProgramType {
   mtm,
   strategy,
@@ -14,8 +15,9 @@ enum ProgramType {
   africa,
   educatingLinda,
   nationwide,
-  capacity
+  capacity,
 }
+
 enum MediaType {
   stories,
   videoLibrary,
@@ -24,28 +26,19 @@ enum MediaType {
   activity,
   digitalLibrary,
   testimonialArticle,
-  photoAlbum,episodes,
- 
+  photoAlbum,
+  episodes,
 }
-// const homelayoutOrder = {
-//   "Slider": 1,
-//   "Content": 2,
-//   "Marquee": 3,
-//   "SocialLinks": 4,
-//   "Impact": 5,
 
-//   "Video": 6,
-//   "NewsLettersAndArticles": 7,
-//   "Episodes": 8,
-//   "MerckFoundationInMedia": 9,
-//   "PhotoGallery": 10,
-//   "Testimonials": 11,
+enum HomeSectionType {
+  content,
+  videos,
+  ceoMessage,
+  gallery,
+  testimonial,
+  episodes,
+}
 
-//   // Tabs always last
-//   "CallForApplication": 100,
-//   "MerckMoreThanAmbasdar": 101,
-//   "DigitalLibrary": 102,
-// };
 const tabTypes = [
   "CallForApplication",
   "MerckMoreThanAmbasdar",
@@ -66,9 +59,15 @@ enum HomeLayoutType {
   marquee,
   socialLinks,
   CallForApplication,
+  DigitalLibrary,
+MerckMoreThanAmbasdar,
   episodesviewall,
   nocontent,
-  MenuManagement
+  MenuManagement,
+  OurProgramsManagement,
+  award,
+  season,
+  MerckMoreThanAmbasdarFormer
 }
 
 extension HomeLayoutTypeExtension on String {
@@ -80,11 +79,10 @@ extension HomeLayoutTypeExtension on String {
       case "Impact":
         return HomeLayoutType.impact;
 
-      case "PhotoGallery":
-        return HomeLayoutType.photoGallery;
-
       case "Episodes":
         return HomeLayoutType.episodes;
+      case "PhotoGallery":
+        return HomeLayoutType.photoGallery;
 
       case "Video":
         return HomeLayoutType.video;
@@ -109,14 +107,26 @@ extension HomeLayoutTypeExtension on String {
 
       case "SocialLinks":
         return HomeLayoutType.socialLinks;
-         case "CallForApplication":
+      
+      case "CallForApplication":
         return HomeLayoutType.CallForApplication;
-         case "Menu Management":
+        case "DigitalLibrary":
+        return HomeLayoutType.DigitalLibrary;
+         case "MerckMoreThanAmbasdar":
+        return HomeLayoutType.MerckMoreThanAmbasdar;
+      case "Menu Management":
         return HomeLayoutType.MenuManagement;
+      case "Our Programs Management":
+        return HomeLayoutType.OurProgramsManagement;
+      case "Awards":
+        return HomeLayoutType.award;
+      case "Season":
+        return HomeLayoutType.season;
+        case 'MerckMoreThanAmbasdarFormer':
+        return HomeLayoutType.MerckMoreThanAmbasdarFormer;
 
       default:
-        return HomeLayoutType.  nocontent
-;
+        return HomeLayoutType.nocontent;
     }
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
-import 'package:merckfoundation_252026/Utils/common_strings.dart';
-import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/model/CommonModel.dart';
 import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
@@ -32,7 +31,7 @@ class ContactTile extends StatelessWidget {
               FormLabel(
                 text: person.name,
                 fontSize: responsive.fontSize(2.3),
-                labelColor: Customcolor.text_darkgrey,
+                labelColor: Customcolor.textDarkGreyColor,
                 fontweight: FontWeight.w600,
               ),
              

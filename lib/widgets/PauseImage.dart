@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:merckfoundation_252026/Utils/common_images.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 
 class PauseImage extends StatelessWidget {
   final double size;

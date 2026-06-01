@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
-import 'package:merckfoundation_252026/Utility/customappbar.dart';
-import 'package:merckfoundation_252026/Utils/common_strings.dart';
-import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/customappbar.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_strings.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/Provider/callforapplication_provider.dart';
-import 'package:merckfoundation_252026/widgets/CommonApiStatusWidget.dart';
-import 'package:merckfoundation_252026/widgets/CommonLoader.dart';
-import 'package:merckfoundation_252026/widgets/CustomeSwiper.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CustomeSwiper.dart';
+
 import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
 
-import 'package:merckfoundation_252026/widgets/botttomlink.dart';
+import 'package:merckfoundation_252026/widgets/Bottomcardlink.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 import 'package:provider/provider.dart';
 
@@ -58,10 +59,11 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
       backgroundColor: Customcolor.background,
       appBar: CommonAppBar(
         type: AppBarType.inner,
-        title: CommonStrings.upcomingPastTitle,
+        title: widget.title,
 
         onSearch: () {},
-       shareLink: widget.shareLink,
+       shareLink: widget.shareLink ?? "",
+       menuID: widget.menuID,
       ),
       body: Consumer<CallApplicationProvider>(
   builder: (context, provider, child) {
@@ -75,29 +77,19 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
         child: CommonLoader(),
       );
     }
+ if (provider.status != ApiStatus.success &&
+    provider.status != ApiStatus.loading &&
+    provider.status != ApiStatus.initial) {
 
-    /// ERROR
-    if (provider.status ==
-            ApiStatus.error &&
-        provider.upcoming.isEmpty &&
-        provider.past.isEmpty) {
-
-      return
-       CommonApiStatusWidget(
-              icon: Icons.wifi_off,
-
-
-              title:
-                  provider.errorMessage,
-
-              onRetry: () {
-
-                provider.retry(
-                  context,
-                );
-              },);
-    }
-
+  return ApiStatusHandler(
+    status: provider.status,
+    errorMessage: provider.errorMessage,
+    onRetry: () {
+        provider.retry(context);
+      },
+  );
+}
+    
     /// SUCCESS UI
     return Column(
       children: [
@@ -125,22 +117,7 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
     );
   },
 ),
-      // body: Column(
-      //   children: [
-      //     16.0.heightBox,
-      //     _buildTabs(),
-      //     Expanded(
-      //       child: TabBarView(
-      //         controller: _tabController,
-      //         physics: const NeverScrollableScrollPhysics(),
-      //         children: const [
-      //           _EventTab(isUpcoming: true),
-      //           _EventTab(isUpcoming: false),
-      //         ],
-      //       ),
-      //     ),
-      //   ],
-      // ),
+     
     );
   }
 
@@ -153,7 +130,7 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
     builder: (context, _) {
       return TabBar(
         controller: _tabController,
-        indicatorColor: Customcolor.text_darkblue,
+        indicatorColor: Customcolor.textDarkBlueColor,
 
         tabs: [
           _buildTab(
@@ -182,8 +159,8 @@ Widget _buildTab({
       textAlignment: TextAlign.center,
       fontSize: responsive.fontSize(2.3),
       labelColor: isSelected
-          ? Customcolor.text_darkblue // ✅ selected = blue
-          : Customcolor.text_grey,    // ❌ unselected = grey
+          ? Customcolor.textDarkBlueColor // ✅ selected = blue
+          : Customcolor.textGreyColor,    // ❌ unselected = grey
       fontweight: FontWeight.w700,
     ),
   );

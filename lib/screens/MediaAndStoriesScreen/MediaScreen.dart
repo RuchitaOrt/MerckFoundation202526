@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/MediaProvider.dart';
 
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
-import 'package:merckfoundation_252026/Utils/common_strings.dart';
 
 import 'package:merckfoundation_252026/model/MediaModel.dart';
 
@@ -49,12 +48,12 @@ class MediaScreen extends StatelessWidget {
       loadMore: (context) =>
           context.read<MediaProvider>().loadMore(context),
 
-      getImage: (item) => item.image ?? "",
-      getTitle: (item) => item.title ?? "",
+      getImage: (item) => item.image ,
+      getTitle: (item) => item.title ,
  shareLink: shareLink,
       menuID: menuID,
       onTap: (context, item) {
-        ShowDialogs.launchURL(item.articleUrl ?? "");
+        ShowDialogs.launchURL(item.articleUrl );
       },
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:merckfoundation_252026/screens/WhoWeAreScreen.dart/CommonContentPage.dart';
-import 'package:merckfoundation_252026/screens/splashScreen.dart';
+import 'package:merckfoundation_252026/screens/MainUIBody.dart/CommonContentPage.dart';
+import 'package:merckfoundation_252026/screens/MainScreens/splashScreen.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
 class Routers {
@@ -21,25 +21,5 @@ class Routers {
     }
   }
 
-  // Define an error route for handling unknown routes
-  static Route<dynamic> _errorRoute() {
-    return MaterialPageRoute(
-      builder: (_) {
-        return Scaffold(
-          appBar: AppBar(
-            title: FormLabel(
-              text: "Error",
-              fontweight: FontWeight.w700,
-            ),
-          ),
-          body: Center(
-            child: FormLabel(
-              text: 'Error: Route not found!',
-              fontweight: FontWeight.w700,
-            ),
-          ),
-        );
-      },
-    );
-  }
+ 
 }

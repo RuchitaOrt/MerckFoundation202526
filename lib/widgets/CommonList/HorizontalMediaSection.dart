@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
-import 'package:merckfoundation_252026/Utils/common_strings.dart';
-import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/model/ArticleModel.dart';
+import 'package:merckfoundation_252026/model/StoryModel.dart';
+import 'package:merckfoundation_252026/model/TestimonialModel.dart';
+import 'package:merckfoundation_252026/routes/AppNavigation.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
-import 'package:merckfoundation_252026/screens/DetailsScreen/TestimonialArticlesScreen.dart';
-import 'package:merckfoundation_252026/screens/EpisodeScreen/EpisodeInformation.dart';
-import 'package:merckfoundation_252026/screens/EpisodeScreen/EpisodeListingScreen.dart';
-import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
-import 'package:merckfoundation_252026/widgets/CommonBorderButton.dart';
-import 'package:merckfoundation_252026/widgets/CommonFunctions.dart';
-import 'package:merckfoundation_252026/widgets/CommonPopupMenu.dart';
+import 'package:merckfoundation_252026/screens/MainScreens/EpisodeScreen/EpisodeInformation.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonBorderButton.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonPopupMenu.dart';
+import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 
 class HorizontalMediaSection extends StatelessWidget {
   final List content;
@@ -29,6 +31,7 @@ class HorizontalMediaSection extends StatelessWidget {
   final VoidCallback? onMenuTap;
   final String buttonText;
   final String buttonLink;
+ 
 
   const HorizontalMediaSection({
     super.key,
@@ -42,7 +45,7 @@ class HorizontalMediaSection extends StatelessWidget {
     required this.buttonText,
     required this.buttonLink,
     required this.menuID,
-    this.shareLink,
+    this.shareLink,  
   });
 
   @override
@@ -55,7 +58,7 @@ class HorizontalMediaSection extends StatelessWidget {
     final itemWidth = content.length == 1
         ? screenWidth - 32
         : screenWidth * 0.85;
-
+    print(title);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
       child: Column(
@@ -66,13 +69,12 @@ class HorizontalMediaSection extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Text(
-                    title!,
-                    style: TextStyle(
-                      fontSize: screenWidth * 0.055,
-                      fontWeight: FontWeight.w800,
-                      color: Customcolor.text_blue,
-                    ),
+                  child: SmartHtmlWidget(
+                    html: title!,
+                    textColor: Customcolor.textBlueColor,
+                    fontSize: screenWidth * 0.055,
+                    fontWeight: FontWeight.w800,
+                    ignoreHtmlStyles: true,
                   ),
                 ),
 
@@ -141,10 +143,12 @@ class HorizontalMediaSection extends StatelessWidget {
                                     );
                                   },
                                   errorBuilder: (_, __, ___) {
-                                    return Container(
-                                      color: Colors.grey.shade200,
-                                    );
-                                  },
+                        return Container(
+                         
+                          color: Colors.grey.shade200,
+                          child:  Image.asset(CommonImagePath.placeHolder),
+                        );
+                        }
                                 ),
                               ),
                             ),
@@ -168,9 +172,9 @@ class HorizontalMediaSection extends StatelessWidget {
                                           MaterialPageRoute(
                                             builder: (_) => EpisodeInformation(
                                               episodeid: episodeId,
-                                               menuID: menuID,
-                                  title: title ?? "",
-                                  shareLink: shareLink,
+                                              menuID: menuID,
+                                              title: title ?? "",
+                                              shareLink: shareLink,
                                             ),
                                           ),
                                         );
@@ -236,78 +240,54 @@ class HorizontalMediaSection extends StatelessWidget {
                   child: CommonBorderButton(
                     title: buttonText,
                     onTap: () {
-                      if ((buttonLink ?? '').isNotEmpty) {
-                        switch (buttonLink) {
-                          case '/videos':
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => MediaListingScreen(
-                                  type: MediaType.videoLibrary,
-                                  categoryID: "",
-                                  albumID: "",
-                                  albumName: "",
-                                  menuID: menuID,
-                                  title: title ?? "",
-                                  shareLink: shareLink,
-                                ),
-                              ),
-                            );
-                            return;
+                      print(menuID);
+                      AppNavigation.navigateByMenuId(
+                        context,
+                        menuId: menuID,
+                        albumId: "",
 
-                          case '/Photo-Gallery':
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => MediaListingScreen(
-                                  type: MediaType.photoGallery,
-                                  categoryID: "",
-                                  albumID: "",
-                                  albumName: "",
-                                  menuID: menuID,
-                                  title: title ?? "",
-                                  shareLink: shareLink,
-                                ),
-                              ),
-                            );
-                            return;
-                        }
-                      }
+                        albumName: "",
+                        categoryId: type == HomeLayoutType.episodesviewall
+                            ? seasonID ?? ""
+                            : "",
+                        title: title ?? "",
+                        shareLink: shareLink,
+                        seasonId: seasonID ?? "",
+                        type: type,
+                      
+                      
+  // myStoryList:type==HomeLayoutType.season?[]: content.map<StoryModel>((e) {
+  //   return StoryModel(
+  //     id: e['id'],
+  //     title: e['title'],
+  //     videoLink: e['thumbnail'],
+  //     videoDesc: e['description'],
+  //     year: 0,
+  //     country: 0,
+  //     categories: [],
+  //   );
+  // }).toList(),
+  // testimonialList: type==HomeLayoutType.season?[]:content.map<TestimonialModel>((e) {
+  //   return TestimonialModel(
+  //     image: e['thumbnail'],
+  //     title: e['title'], departmentName: "", shortDescription: '', details:  e['description'],
+      
+  //   );
+  // }).toList(),
 
-                      if (type == HomeLayoutType.testimonials) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>  TestimonialArticlesScreen(shareLink: shareLink ?? "",),
-                          ),
-                        );
-                      } else if (type == HomeLayoutType.episodes) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>  EpisodeListingScreen(
-                              menuID: menuID,
-                              title: title ?? "",
-                              shareLink: shareLink,
-                            ),
-                          ),
-                        );
-                      } else if (type == HomeLayoutType.episodesviewall) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => MediaListingScreen(
-                              type: MediaType.episodes,
-                              categoryID: seasonID ?? "",
-                              albumID: "",
-                              albumName: title ?? "",
-                              menuID: menuID,
-                              title: title ?? "",
-                              shareLink: shareLink,
-                            ),
-                          ),
-                        );
-                      }
+  // articleList:type==HomeLayoutType.season?[]: content.map<ArticleModel>((e) {
+  //   return ArticleModel(
+  //     image: e['thumbnail'],
+  //     title: e['title'], shortDescription: '', 
+  //     details:  e['description'], 
+  //     id: e['id'], detailsPageUrl: '',
+  //      createdAt: '',
+  //       articleTypeDisplay: '', 
+  //       language_id: '', availableLanguages: [],
+      
+  //   );
+  // }).toList(),
+                      );
                     },
                   ),
                 ),

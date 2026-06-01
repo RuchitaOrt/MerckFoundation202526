@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
-import 'package:merckfoundation_252026/Utility/customappbar.dart';
-import 'package:merckfoundation_252026/Utils/common_images.dart';
-import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/customappbar.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/main.dart';
+import 'package:merckfoundation_252026/routes/AppNavigation.dart';
 import 'package:merckfoundation_252026/screens/MainUIBody.dart/CommonBody.dart';
-import 'package:merckfoundation_252026/screens/SubScreens/OurAwardScreen.dart';
 import 'package:merckfoundation_252026/widgets/drawer.dart';
 
 class MerckHomeScreen extends StatelessWidget {
    final String menuID;
   final String title;
+  final String mennuLogo;
   
 
   final String? shareLink;
 
-  MerckHomeScreen({super.key, required this.menuID, required this.title, this.shareLink});
+  MerckHomeScreen({super.key, required this.menuID, required this.title, this.shareLink, required this.mennuLogo});
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
@@ -31,6 +32,8 @@ class MerckHomeScreen extends StatelessWidget {
         onDrawer: () => _scaffoldKey.currentState?.openDrawer(),
         onSearch: () {},
         height: responsive.height(9),
+        mennuLogo: mennuLogo,
+       
       ),
 
       drawer: Theme(
@@ -64,72 +67,33 @@ class CategorySection extends StatelessWidget {
         runSpacing: 10,
         children: content.map<Widget>((e) {
           final String title = e['title'] is String ? e['title'] : "";
+ final int menuID = e['id'] is int ? e['id'] : "";
 
           final String colorString =
               e['subdescription'] is String ? e['subdescription'] : "0xFF000000";
-
+final String menuurl =
+              e['description'] is String ? e['description'] : "";
           final Color color = Color(int.parse(colorString));
 
           return CategoryChip(
             title: title,
             color: color,
+            menuID: menuID.toString(),
+            menuurl:menuurl
           );
         }).toList(),
       ),
     );
   }
 }
-// class CategorySection extends StatelessWidget {
-//   final List content;
 
-//   const CategorySection({
-//     super.key,
-//     required this.content,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-
-//     /// ✅ hide if empty
-//     if (content.isEmpty) {
-//       return const SizedBox();
-//     }
-
-//     return Wrap(
-//       spacing: 10,
-//       runSpacing: 10,
-//       children: content.map<Widget>((e) {
-
-//         final String title =
-//             e['title'] is String ? e['title'] : "";
-
-//         final String description =
-//             e['description'] is String
-//                 ? e['description']
-//                 : "";
-//                  final String colorString =
-//             e['subdescription'] is String
-//                 ? e['subdescription']
-//                 : "";
-// final Color color =
-//     Color(int.parse(colorString));
-       
-//         return CategoryChip(
-//           title: title,
-//           color: color,
-        
-//         );
-//       }).toList(),
-//     );
-//   }
-
-
-// }
 class CategoryChip extends StatelessWidget {
   final String title;
   final Color color;
+  final String menuID;
+  final String menuurl;
 
-  const CategoryChip({super.key, required this.title, required this.color});
+  const CategoryChip({super.key, required this.title, required this.color, required this.menuID, required this.menuurl});
 
   @override
   Widget build(BuildContext context) {
@@ -137,13 +101,16 @@ class CategoryChip extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        /// ✅ OPEN OUR AWARD SCREEN
-        if (title == "Our Awards") {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const OurAwardScreen()),
-          );
-        }
+      print("menuID ${menuID}");
+
+           AppNavigation.navigateByMenuId(
+    context,
+    menuId: menuID,
+    title:  title,
+    shareLink: menuurl
+    
+  
+  );
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -182,20 +149,21 @@ class FollowSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: screenWidth * 0.055,
-
-                  // Platform.isAndroid? 22:20,
-                  fontWeight: FontWeight.w800,
-
-                  color: Customcolor.text_blue,
-                ),
-              ),
-            ),
+            Expanded(
+  child: Padding(
+    padding: const EdgeInsets.fromLTRB(16, 0, 10, 0),
+    child: Text(
+      title,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+        fontSize: screenWidth * 0.055,
+        fontWeight: FontWeight.w800,
+        color: Customcolor.textBlueColor,
+      ),
+    ),
+  ),
+),
             position == 0
                 ? Container()
                 : position == 1
@@ -209,24 +177,24 @@ class FollowSection extends StatelessWidget {
           child:  Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              SocialIcon("assets/newImages/ins.svg",iconSize:iconSize ,onTap: () {
+              SocialIcon(CommonImagePath.instagram,iconSize:iconSize ,onTap: () {
                 
               },),
 
-              SocialIcon("assets/newImages/FB.svg",iconSize:iconSize ,onTap: () {
+              SocialIcon(CommonImagePath.facebook,iconSize:iconSize ,onTap: () {
                 
               },),
-              SocialIcon("assets/newImages/twitt.svg",iconSize:iconSize,onTap: () {
+              SocialIcon(CommonImagePath.twitter,iconSize:iconSize,onTap: () {
                 
               }, ),
-              SocialIcon("assets/newImages/youtu.svg",iconSize:iconSize ,onTap: () {
+              SocialIcon(CommonImagePath.youtube,iconSize:iconSize ,onTap: () {
                 
               },),
-              SocialIcon("assets/newImages/flick.svg",iconSize:iconSize ,onTap: () {
+              SocialIcon(CommonImagePath.flicker,iconSize:iconSize ,onTap: () {
                 
               },),
 
-              SocialIcon("assets/newImages/threads.svg",iconSize:iconSize,onTap: () {
+              SocialIcon(CommonImagePath.thread,iconSize:iconSize,onTap: () {
                 
               },),
             ],

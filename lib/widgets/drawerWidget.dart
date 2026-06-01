@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
-import 'package:merckfoundation_252026/Utils/customcolor.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
 class DrawerWidget extends StatelessWidget {
@@ -43,7 +43,7 @@ class DrawerWidget extends StatelessWidget {
                 text: value,
                 maxLines: 3,
                 textOverflow: TextOverflow.ellipsis,
-                labelColor: Customcolor.text_darkblue,
+                labelColor: Customcolor.textDarkBlueColor,
                 fontSize: responsive.fontSize(2),
                 fontheight: 1.1,
                 fontweight: FontWeight.w700,
