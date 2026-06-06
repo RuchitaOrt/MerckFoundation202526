@@ -324,19 +324,7 @@ class _VisionCard extends StatelessWidget {
                      
                       ignoreHtmlStyles: true,
                     ),
-          // FormLabel(
-          //   text:
-          //       CommonStrings.visionDescription,
-
-          //   labelColor: Colors.white,
-
-          //   fontheight: 1.5,
-
-          //   fontSize: isTablet ? 17 : 13.5,
-
-          //   textAlignment:
-          //       TextAlign.center,
-          // ),
+          
         ),
       ),
     );
@@ -478,22 +466,7 @@ class _VisionSubtitle extends StatelessWidget {
                       fontSize: fontSize,
                       fontWeight: FontWeight.w900,
                       ignoreHtmlStyles: true,)
-      // FormLabel(
-      //   text: subTitle,
-
-      //   labelColor:
-      //       Customcolor.colorPink,
-
-      //   fontSize: fontSize,
-
-      //   fontweight: FontWeight.w600,
-
-      //   maxLines: 4,
-
-      //   textAlignment: TextAlign.center,
-
-      //   fontheight: 1.5,
-      // ),
+      
     );
   }
 }

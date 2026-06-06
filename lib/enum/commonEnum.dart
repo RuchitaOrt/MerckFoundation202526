@@ -67,7 +67,8 @@ MerckMoreThanAmbasdar,
   OurProgramsManagement,
   award,
   season,
-  MerckMoreThanAmbasdarFormer
+  MerckMoreThanAmbasdarFormer,
+  PhotoCategory
 }
 
 extension HomeLayoutTypeExtension on String {
@@ -124,6 +125,8 @@ extension HomeLayoutTypeExtension on String {
         return HomeLayoutType.season;
         case 'MerckMoreThanAmbasdarFormer':
         return HomeLayoutType.MerckMoreThanAmbasdarFormer;
+        case 'Photo Category':
+        return HomeLayoutType.PhotoCategory;
 
       default:
         return HomeLayoutType.nocontent;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
+import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
 
 import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
@@ -58,7 +59,21 @@ class _PhotoAlumbScreenPageState extends State<PhotoAlumbScreen> {
         menuID: widget.menuID,
         onBack: ()
         {
-          Navigator.pop(context);
+           Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MediaListingScreen(
+              type: MediaType.photoGallery,
+              categoryID: "",
+              albumID: "",
+              albumName: "",
+              menuID: widget.menuID,
+              shareLink: widget.shareLink,
+              title: MediaType.photoGallery.name ?? "",
+            ),
+          ),
+        );
+          // Navigator.pop(context);
         },
       ),
      body: provider.isLoading

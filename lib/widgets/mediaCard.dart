@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
+import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/EpisodeScreen/EpisodeInformation.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonBorderButton.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonPopupMenu.dart';
 
@@ -16,6 +20,8 @@ class MediaCard extends StatelessWidget {
   final Color fontColor;
   final bool showmenu;
   final String menuID;
+  final String subTitle;
+  final HomeLayoutType? type;
 
   final String? shareLink;
 
@@ -30,6 +36,8 @@ class MediaCard extends StatelessWidget {
     required this.id,
     required this.menuID,
     this.shareLink,
+    this.subTitle ="",
+    this.type
   });
 
   @override
@@ -46,10 +54,12 @@ class MediaCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             /// IMAGE
             Expanded(
-              flex: 2, // 🔥 give more space to image
+              flex:type==HomeLayoutType.MerckMoreThanAmbasdarFormer? 1:2, // 🔥 give more space to image
               child: Stack(
                 alignment: Alignment.center,
                 children: [
@@ -81,7 +91,7 @@ class MediaCard extends StatelessWidget {
                           return SizedBox.expand(
                             child: Image.asset(
                               CommonImagePath.placeHolder,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.contain,
                             ),
                           );
                         },
@@ -136,7 +146,7 @@ class MediaCard extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment:
                       MainAxisAlignment.center, // 🔥 vertical center
-                  crossAxisAlignment: CrossAxisAlignment.start, // optional
+                  crossAxisAlignment: CrossAxisAlignment.center, // optional
                   children: [
                     FormLabel(
                       text: title,
@@ -147,10 +157,34 @@ class MediaCard extends StatelessWidget {
                       fontweight: FontWeight.w500,
                       textOverflow: TextOverflow.ellipsis,
                     ),
+              (type==HomeLayoutType.MerckMoreThanAmbasdar || type==HomeLayoutType.MerckMoreThanAmbasdarFormer)?     Column(children: [
+                    
+                                  SizedBox(height: 10,),
+                      FormLabel(
+                      text: subTitle ?? "",
+                      maxLines: 1,
+                      textAlignment: TextAlign.center,
+                      fontSize: screenWidth * 0.030,
+                      labelColor: Customcolor.colorBlue,
+                      fontweight: FontWeight.w800,
+                      textOverflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 10,),
+                     Center(
+                                 child: CommonBorderButton(
+                                   title: "View More",
+                                   onTap: () {
+                                     
+                                   },
+                                 ),
+                               ),
+                              ],):Container()
                   ],
                 ),
               ),
             ),
+        
+          
           ],
         ),
       ),

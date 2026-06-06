@@ -1,25 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
-import 'package:merckfoundation_252026/Provider/NewsReleaseProvider.dart';
-import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
-import 'package:merckfoundation_252026/main.dart';
-import 'package:merckfoundation_252026/model/MediaModel.dart';
 import 'package:merckfoundation_252026/model/StoryModel.dart';
 import 'package:merckfoundation_252026/model/TestimonialModel.dart';
 import 'package:merckfoundation_252026/screens/DetailsScreen/DetailScreen.dart';
 import 'package:merckfoundation_252026/screens/DetailsScreen/TestimonialArticlesScreen.dart';
-import 'package:merckfoundation_252026/screens/MainScreens/CommonListingScreen.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/PhotoAlumbScreen.dart';
 import 'package:merckfoundation_252026/widgets/CommonList/CommonListCard.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 import 'package:merckfoundation_252026/widgets/YouTubePreview.dart';
 import 'package:merckfoundation_252026/widgets/mediaCard.dart';
-import 'package:provider/provider.dart';
 
 class VerticalMediaSection extends StatefulWidget {
   final List<StoryModel> content;
@@ -97,16 +89,20 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
 
     return Column(
       children: [
-         (widget.type==HomeLayoutType.MerckMoreThanAmbasdar || widget.type==HomeLayoutType.MerckMoreThanAmbasdarFormer || widget.type==HomeLayoutType.CallForApplication)?    Padding(
-           padding: const EdgeInsets.only(left: 20,right: 20,top: 10),
-           child:SmartHtmlWidget(
-                html: widget.title ?? "",
-                textColor: Customcolor.textBlueColor,
-                fontSize: screenWidth * 0.055,
-                fontWeight: FontWeight.w800,
-                ignoreHtmlStyles: true,
-              ),
-         ):Container(),
+        (widget.type == HomeLayoutType.MerckMoreThanAmbasdar ||
+                widget.type == HomeLayoutType.MerckMoreThanAmbasdarFormer ||
+                widget.type == HomeLayoutType.CallForApplication)
+            ? Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
+                child: SmartHtmlWidget(
+                  html: widget.title ?? "",
+                  textColor: Customcolor.textBlueColor,
+                  fontSize: screenWidth * 0.055,
+                  fontWeight: FontWeight.w800,
+                  ignoreHtmlStyles: true,
+                ),
+              )
+            : Container(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           child:
@@ -124,20 +120,21 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                           _loadMore();
                         });
                       }
-        
+
                       return const Padding(
                         padding: EdgeInsets.symmetric(vertical: 16),
                         child: Center(child: CommonLoader()),
                       );
                     }
-        
+
                     final item = widget.content[index];
-        
+
                     return CommonListCard(
                       imageUrl: item.thumbnail ?? "",
                       htmlTitle: item.title ?? "",
                       onTap: () {
-                        if (widget.type == HomeLayoutType.merckFoundationInMedia) {
+                        if (widget.type ==
+                            HomeLayoutType.merckFoundationInMedia) {
                           ShowDialogs.launchURL(item.pdfFile ?? "");
                         } else if (widget.type ==
                             HomeLayoutType.newsLettersAndArticles) {
@@ -149,7 +146,7 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                                 "",
                                 title: item.title,
                                 articleId: item.id.toString(),
-                                languageId: "",
+                                languageId: item.subtitle,
                                 isDetailApiCalled: true,
                                 shareLink: "",
                                 menuID: widget.menuID,
@@ -165,9 +162,13 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: visibleCount + (hasMore ? 1 : 0),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.80,
+                  gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount:widget.type ==
+                            HomeLayoutType.MerckMoreThanAmbasdar?1: 2,
+                    childAspectRatio:( widget.type == HomeLayoutType.MerckMoreThanAmbasdar )?0.80:
+                    widget.type ==
+                            HomeLayoutType.MerckMoreThanAmbasdarFormer?0.63
+                    : 0.80,
                     crossAxisSpacing: 8,
                     mainAxisSpacing: 8,
                   ),
@@ -179,29 +180,44 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                           _loadMore();
                         });
                       }
-        
+
                       return const Center(child: CommonLoader());
                     }
-        
+
                     final item = widget.content[index];
-        
+
                     /// PHOTO TYPES
                     if (widget.type == HomeLayoutType.photoGallery ||
                         widget.type == HomeLayoutType.DigitalLibrary ||
-                         widget.type==HomeLayoutType.MerckMoreThanAmbasdar ||
-                          widget.type==HomeLayoutType.MerckMoreThanAmbasdarFormer ||  widget.type==HomeLayoutType.CallForApplication ) {
+                        widget.type == HomeLayoutType.MerckMoreThanAmbasdar ||
+                        widget.type ==
+                            HomeLayoutType.MerckMoreThanAmbasdarFormer ||
+                        widget.type == HomeLayoutType.CallForApplication) {
                       return MediaCard(
+                        type: widget.type,
                         menuID: widget.menuID,
                         shareLink: widget.shareLink,
                         id: item.id.toString(),
-                        image: ( widget.type==HomeLayoutType.MerckMoreThanAmbasdar ||
-                          widget.type==HomeLayoutType.MerckMoreThanAmbasdarFormer ||  widget.type == HomeLayoutType.DigitalLibrary || widget.type==HomeLayoutType.CallForApplication)?item.thumbnail ?? "":item.image ?? "",
+                        image:
+                            (widget.type ==
+                                    HomeLayoutType.MerckMoreThanAmbasdar ||
+                                widget.type ==
+                                    HomeLayoutType
+                                        .MerckMoreThanAmbasdarFormer ||
+                                widget.type == HomeLayoutType.DigitalLibrary ||
+                                widget.type ==
+                                    HomeLayoutType.CallForApplication)
+                            ? item.thumbnail ?? ""
+                            : item.image ?? "",
                         title: widget.type == HomeLayoutType.photoGallery
                             ? item.photo_category_name ?? ""
                             : item.title ?? "",
+                            subTitle: item.subtitle ?? "",
                         showPlayIcon: false,
                         onTap: () {
-                          if (widget.type == HomeLayoutType.photoGallery) {
+                          if (widget.type == HomeLayoutType.photoGallery 
+                          
+                          ||widget.type == HomeLayoutType.PhotoCategory) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -214,9 +230,13 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                                 ),
                               ),
                             );
-                          } else if (widget.type == HomeLayoutType.DigitalLibrary ||  widget.type==HomeLayoutType.CallForApplication) {
+                          } else if (widget.type ==
+                                  HomeLayoutType.DigitalLibrary ||
+                              widget.type ==
+                                  HomeLayoutType.CallForApplication) {
                             ShowDialogs.launchURL(item.pdfFile ?? "");
                           } else {
+                            
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -236,7 +256,7 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                         },
                       );
                     }
-        
+
                     /// VIDEO TYPES
                     return MediaCard(
                       menuID: widget.menuID,
@@ -252,7 +272,7 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                         final key = item.videoLink.substring(
                           item.videoLink.length - 11,
                         );
-        
+
                         ShowDialogs.youtubevideolink(
                           "https://www.youtube.com/watch?v=$key?autoplay=1",
                         );

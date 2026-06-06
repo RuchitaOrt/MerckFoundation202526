@@ -352,6 +352,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class SmartHtmlWidget extends StatelessWidget {
   final String html;
@@ -421,6 +423,57 @@ class SmartHtmlWidget extends StatelessWidget {
         height: 1.4,
       ),
 
+      /// ✅ CUSTOM WIDGETS
+      customWidgetBuilder: (element) {
+        /// 🔹 HANDLE IFRAME (YouTube best way)
+        if (element.localName == 'iframe') {
+          final iframeSrc = element.attributes['src'];
+
+          if (iframeSrc != null && iframeSrc.contains("youtube.com")) {
+            final videoId = YoutubePlayer.convertUrlToId(iframeSrc);
+
+            if (videoId != null) {
+              return YoutubePlayer(
+                controller: YoutubePlayerController(
+                  initialVideoId: videoId,
+                  flags: const YoutubePlayerFlags(
+                    autoPlay: false,
+                    disableDragSeek: false,
+                    loop: false,
+                    enableCaption: true,
+                  ),
+                ),
+                showVideoProgressIndicator: true,
+              );
+            }
+          }
+        }
+
+        /// 🔹 HANDLE VIDEO TAG (fallback to WebView)
+        if (element.localName == 'video') {
+          final sourceElement = element.children
+              .where((e) => e.localName == 'source')
+              .toList();
+
+          if (sourceElement.isNotEmpty) {
+            final src = sourceElement.first.attributes['src'];
+
+            if (src != null && src.isNotEmpty) {
+              final controller = WebViewController()
+                ..setJavaScriptMode(JavaScriptMode.unrestricted)
+                ..loadRequest(Uri.parse(src));
+
+              return SizedBox(
+                height: 300,
+                width: double.infinity,
+                child: WebViewWidget(controller: controller),
+              );
+            }
+          }
+        }
+
+        return null;
+      },
       customStylesBuilder: (element) {
 
         /// ✅ REMOVE HTML STYLING

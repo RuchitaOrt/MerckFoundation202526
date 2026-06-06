@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
-import 'package:merckfoundation_252026/model/ArticleModel.dart';
-import 'package:merckfoundation_252026/model/StoryModel.dart';
 import 'package:merckfoundation_252026/model/TestimonialModel.dart';
 import 'package:merckfoundation_252026/routes/AppNavigation.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
+import 'package:merckfoundation_252026/screens/DetailsScreen/DetailScreen.dart';
+import 'package:merckfoundation_252026/screens/DetailsScreen/TestimonialArticlesScreen.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/EpisodeScreen/EpisodeInformation.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonBorderButton.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonPopupMenu.dart';
+import 'package:merckfoundation_252026/widgets/ImagePreviewScreen.dart';
 import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
+import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/PhotoAlumbScreen.dart';
 
 class HorizontalMediaSection extends StatelessWidget {
   final List content;
@@ -31,7 +33,6 @@ class HorizontalMediaSection extends StatelessWidget {
   final VoidCallback? onMenuTap;
   final String buttonText;
   final String buttonLink;
- 
 
   const HorizontalMediaSection({
     super.key,
@@ -45,7 +46,7 @@ class HorizontalMediaSection extends StatelessWidget {
     required this.buttonText,
     required this.buttonLink,
     required this.menuID,
-    this.shareLink,  
+    this.shareLink,
   });
 
   @override
@@ -110,8 +111,76 @@ class HorizontalMediaSection extends StatelessWidget {
 
                 return GestureDetector(
                   onTap: () {
+                    
                     if (isYoutube) {
                       ShowDialogs.launchURL(item['thumbnail']);
+                    } else if (type == HomeLayoutType.newsLettersAndArticles) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => DetailScreen(
+                            "",
+                            "",
+                            title: title,
+                            articleId: item['id'].toString(),
+                            languageId: item['subtitle'].toString(),
+                            isDetailApiCalled: true,
+                            shareLink: shareLink,
+                            menuID: menuID,
+                          ),
+                        ),
+                      );
+                    } else if (type == HomeLayoutType.merckFoundationInMedia) {
+                      ShowDialogs.launchURL(item['page_url']);
+                    } else if (type == HomeLayoutType.testimonials) {
+                      final item = content[index];
+
+                      final clickedTestimonial = TestimonialModel(
+                        image: item['thumbnail'] ?? "",
+                        title: item['title'] ?? "",
+                        departmentName: "",
+                        shortDescription: item['description'] ?? "",
+                        details: item['description'] ?? "",
+                      );
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => TestimonialArticlesScreen(
+                            title: title ?? "",
+                            shareLink: shareLink ?? "",
+                            initialList: [
+                              clickedTestimonial,
+                            ], // 👈 only one item
+                            useLocalPagination: true,
+                          ),
+                        ),
+                      );
+                    } else if (type == HomeLayoutType.PhotoCategory) {
+                      final item = content[index];
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PhotoAlumbScreen(
+                            pageTile: title ?? "",
+                            tile: item['photo_category_name'] ?? "",
+                            categoryID: item['id'].toString(),
+                            menuID: menuID,
+                            shareLink: shareLink,
+                          ),
+                        ),
+                      );
+                    } else if (type == HomeLayoutType.photoGallery) {
+                      final item = content[index];
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.black,
+                        builder: (_) => ImagePreviewDialog(
+                          imageUrl: item['thumbnail'] ?? "",
+                          title: item['title'] ?? "",
+                        ),
+                      );
                     }
                   },
                   child: Container(
@@ -143,12 +212,13 @@ class HorizontalMediaSection extends StatelessWidget {
                                     );
                                   },
                                   errorBuilder: (_, __, ___) {
-                        return Container(
-                         
-                          color: Colors.grey.shade200,
-                          child:  Image.asset(CommonImagePath.placeHolder),
-                        );
-                        }
+                                    return Container(
+                                      color: Colors.grey.shade200,
+                                      child: Image.asset(
+                                        CommonImagePath.placeHolder,
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
                             ),
@@ -240,7 +310,6 @@ class HorizontalMediaSection extends StatelessWidget {
                   child: CommonBorderButton(
                     title: buttonText,
                     onTap: () {
-                      print(menuID);
                       AppNavigation.navigateByMenuId(
                         context,
                         menuId: menuID,
@@ -254,39 +323,6 @@ class HorizontalMediaSection extends StatelessWidget {
                         shareLink: shareLink,
                         seasonId: seasonID ?? "",
                         type: type,
-                      
-                      
-  // myStoryList:type==HomeLayoutType.season?[]: content.map<StoryModel>((e) {
-  //   return StoryModel(
-  //     id: e['id'],
-  //     title: e['title'],
-  //     videoLink: e['thumbnail'],
-  //     videoDesc: e['description'],
-  //     year: 0,
-  //     country: 0,
-  //     categories: [],
-  //   );
-  // }).toList(),
-  // testimonialList: type==HomeLayoutType.season?[]:content.map<TestimonialModel>((e) {
-  //   return TestimonialModel(
-  //     image: e['thumbnail'],
-  //     title: e['title'], departmentName: "", shortDescription: '', details:  e['description'],
-      
-  //   );
-  // }).toList(),
-
-  // articleList:type==HomeLayoutType.season?[]: content.map<ArticleModel>((e) {
-  //   return ArticleModel(
-  //     image: e['thumbnail'],
-  //     title: e['title'], shortDescription: '', 
-  //     details:  e['description'], 
-  //     id: e['id'], detailsPageUrl: '',
-  //      createdAt: '',
-  //       articleTypeDisplay: '', 
-  //       language_id: '', availableLanguages: [],
-      
-  //   );
-  // }).toList(),
                       );
                     },
                   ),

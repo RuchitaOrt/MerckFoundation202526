@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/APIManager.dart';
 
@@ -10,9 +12,10 @@ class PageService {
       API.pageStructure,
       queryParams: {
         "menu_id": menuId,
-        "channel": "android",
+        "channel": Platform.isAndroid?"android":"ios",
         "json_type": "preview_json",
       },
     );
   }
 }
+

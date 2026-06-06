@@ -123,6 +123,7 @@ class _DetailScreenState extends State<DetailScreen> {
           /// SUCCESS
           return ListView(
             children: [
+              
               if (image.isNotEmpty)
                 Image.network(image, fit: BoxFit.cover),
 

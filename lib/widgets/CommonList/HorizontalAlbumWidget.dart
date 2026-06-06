@@ -6,6 +6,7 @@ import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonBorderButton.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
+import 'package:merckfoundation_252026/widgets/ImagePreviewScreen.dart';
 
 class HorizontalAlbumWidget<T> extends StatelessWidget {
   final String title;
@@ -55,34 +56,48 @@ class HorizontalAlbumWidget<T> extends StatelessWidget {
               itemBuilder: (context, index) {
                 final item = images[index];
 
-                return Container(
-                  width: 280,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 10,
-                        color: Colors.black.withOpacity(.08),
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(18),
-                    child: CachedNetworkImage(
-                      imageUrl: imageUrl(item),
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) =>
-                          const Center(child: CommonLoader()),
-                      errorWidget: (_, __, ___) => Container(
-                        color: Colors.grey.shade200,
-                        alignment: Alignment.center,
-                        child: Image.asset(
-                          CommonImagePath.placeHolder,
-                          width: double.infinity,
-                          height: double.infinity,
-                          fit: BoxFit.contain,
+                return GestureDetector(
+                  onTap: ()
+                  {
+                     showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.black,
+                        builder: (_) => ImagePreviewDialog(
+                          imageUrl: imageUrl(item) ?? "",
+                          title: title.trim(),
+                        ),
+                      );
+                  },
+                  child: Container(
+                    width: 280,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(18),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 10,
+                          color: Colors.black.withOpacity(.08),
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(18),
+                      child: CachedNetworkImage(
+                        imageUrl: imageUrl(item),
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            const Center(child: CommonLoader()),
+                        errorWidget: (_, __, ___) => Container(
+                          color: Colors.grey.shade200,
+                          alignment: Alignment.center,
+                          child: Image.asset(
+                            CommonImagePath.placeHolder,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       ),
                     ),

@@ -13,6 +13,7 @@ import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/PhotoAlumbS
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
+import 'package:merckfoundation_252026/widgets/ImagePreviewScreen.dart';
 import 'package:merckfoundation_252026/widgets/YouTubePreview.dart';
 import 'package:merckfoundation_252026/widgets/Bottomcardlink.dart';
 import 'package:merckfoundation_252026/widgets/AppDrawerfilter.dart';
@@ -148,6 +149,7 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.type);
     return Scaffold(
       key: _scaffoldKey,
       endDrawer: AppDrawerfilter(type: widget.type),
@@ -156,12 +158,12 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
         type: AppBarType.inner,
         title: getTitle(),
         onFilter:
-            (widget.type == MediaType.photoGallery ||
+            (widget.type == MediaType.photoGallery ||widget.type == MediaType.photoAlbum ||
                 widget.type == MediaType.episodes ||
                 widget.type == MediaType.activity)
             ? null
             :widget.isFilterApply? () => _scaffoldKey.currentState!.openEndDrawer():null,
-        onBack: (widget.type == MediaType.stories)
+        onBack: (widget.type == MediaType.stories ||widget.type == MediaType.photoGallery)
             ? null
             : () {
                 Navigator.pop(context);
@@ -255,7 +257,7 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
                                   if (widget.type == MediaType.digitalLibrary) {
                                     ShowDialogs.launchURL(item.document!);
                                   }
-                                  if (widget.type == MediaType.photoGallery) {
+                                  if (widget.type == MediaType.photoGallery  ) {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -268,7 +270,18 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
                                         ),
                                       ),
                                     );
+                                  }else if(widget.type == MediaType.photoAlbum){
+                                    showModalBottomSheet(
+  context: context,
+  isScrollControlled: true,
+  backgroundColor: Colors.black,
+  builder: (_) => ImagePreviewDialog(
+    imageUrl: item.photo ?? "",
+    title: item.photo_description ?? "",
+  ),
+);
                                   } else {
+                                    print("COm ${widget.type}");
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(

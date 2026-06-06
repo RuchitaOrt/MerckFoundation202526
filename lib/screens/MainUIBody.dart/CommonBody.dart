@@ -274,11 +274,14 @@ class _CommonBodyState extends State<CommonBody> {
         final items = content.map<CarouselItem>((e) {
           final image = e['thumbnail'];
           final title = e['title'];
+          final pageUrl=e['page_url'];
 
           return CarouselItem(
             image: image is String ? image : "",
             title: title is String ? title : "",
-            onTap: () {},
+            onTap: () {
+              ShowDialogs.launchURL(pageUrl);
+            },
           );
         }).toList();
         return DynamicTabItem(
@@ -379,6 +382,7 @@ class _CommonBodyState extends State<CommonBody> {
         );
 
       case HomeLayoutType.photoGallery:
+      case HomeLayoutType.PhotoCategory:
       case HomeLayoutType.episodes:
       case HomeLayoutType.video:
       case HomeLayoutType.newsLettersAndArticles:
@@ -441,7 +445,7 @@ class _CommonBodyState extends State<CommonBody> {
 
                 const SizedBox(height: 10),
 
-                SmartHtmlWidget(html: item['subdescription'] ?? ""),
+              //  SmartHtmlWidget(html: item['subdescription'] ?? ""),
               ],
             ),
           );

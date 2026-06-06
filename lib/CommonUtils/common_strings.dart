@@ -12,8 +12,6 @@ class CommonStrings {
   static const String continueText = "Continue";
   static const String reTry = "Retry";
 
-  
-
   static const String upcomingPrograms =
       "Upcoming Programs & \nCall For Applications";
 
@@ -22,8 +20,6 @@ class CommonStrings {
 
   static const String exitText = "Exit";
   static const String exitQuestion = "Are you sure you want to exit?";
-
-  static const String covidResponse = 'Covid Response';
 
   static String threadsUrlScheme = 'threads://';
 
@@ -46,48 +42,6 @@ class CommonStrings {
   static const viewMore = "View More";
   static const watchMore = "Watch More";
   static String viewAll = "View All";
-  static const covidTitle = 'MERCK FOUNDATION RESPONSE TO COVID-19 PANDEMIC';
-  static const covidIntro =
-      "Merck Foundation has raced to respond to the Coronavirus pandemic "
-      "in partnership with 18 African First Ladies...";
-  static const communitySupport = 'Merck Foundation Community Support';
-
-  static const healthCare = 'Merck Foundation Health Care Capacity Building';
-
-  static const communityTitle =
-      "Merck Foundation Community Awareness Through Media Awards ";
-  static const communityYouth =
-      "Merck Foundation Community Awareness for Children and Youth ";
-  static const stayHomeDesc =
-      "Merck Foundation announced the winners of “Stay at Home” Media Recognition Awards 2020 for Africa, Latin America and Asia.";
-
-  static const watchVideoText =
-      "Watch Video Merck Foundation Stay at Home Africa Media Recognition Awards Ceremony - VC 2020";
-
-  static const winnersText = "Here is the list of winners:";
-
-  static const healthCareText = "Merck Foundation Healthcare Capacity Building";
-  static const String healthCareIntro1 =
-      "Merck Foundation believes that building professional healthcare capacity is the right strategy to improve access to quality and equitable healthcare specially during this vicious pandemic.";
-
-  static const String healthCareIntro2 =
-      "Therefore, Merck Foundation will strongly continue their current capacity advancement programs...";
-
-  static const String healthCareIntro3 =
-      "Merck Foundation will be providing online scholarships for one-year diploma and two-year Master degree...";
-
-  static const String healthCareIntro4 =
-      "To apply for these scholarships, please email us on: submit@merck-foundation.com";
-
-  static const String callForApplication = "CALL FOR APPLICATION";
-
-  static const String eligibilityAcute =
-      "ELIGIBILITY CRITERIA & OVERVIEW OF ONE- YEAR ONLINE DIPLOMA IN ACUTE MEDICINE";
-
-  static const String eligibilityRespiratory =
-      "ELIGIBILITY CRITERIA & OVERVIEW OF ONE- YEAR ONLINE DIPLOMA IN RESPIRATORY MEDICINE";
-
-  static const String downloadHere = "Download here";
 
   /// INTERNET
   static const String noInternetConnection =
