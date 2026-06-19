@@ -19,7 +19,7 @@ class AwardModel {
     required this.image,
     this.altText,
     required this.status,
-    this.colorCode, required this.menuId,
+    this.colorCode, required this.menuId, 
   });
 
   factory AwardModel.fromJson(Map<String, dynamic> json) {

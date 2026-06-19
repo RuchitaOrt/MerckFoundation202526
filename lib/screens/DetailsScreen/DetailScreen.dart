@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
+import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:provider/provider.dart';
 import 'package:merckfoundation_252026/Provider/article_provider.dart';
@@ -59,13 +60,18 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+     final responsive = ResponsiveFlutter.of(context);
     return Scaffold(
       backgroundColor: Customcolor.background,
       appBar: CommonAppBar(
         type: AppBarType.inner,
-        title: widget.title,
+        height: 70,
+        // title: widget.title,
         onSearch: () {},
         shareLink: widget.shareLink ,
+        onBack: (){
+          Navigator.pop(context);
+        },
         menuID: widget.menuID,
       ),
       body: Consumer<ArticleProvider>(
@@ -124,15 +130,18 @@ class _DetailScreenState extends State<DetailScreen> {
           return ListView(
             children: [
               
-              if (image.isNotEmpty)
-                Image.network(image, fit: BoxFit.cover),
+              // if (image.isNotEmpty)
+              //   Image.network(image, fit: BoxFit.cover),
 
-              const SizedBox(height: 12),
+              // const SizedBox(height: 12),
 
               if (title.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.all(12),
-                  child: SmartHtmlWidget(html: title),
+                  child: SmartHtmlWidget(html: title,  textColor: Customcolor.colorVoilet,
+                  fontSize: responsive.fontSize(3.0),
+                  
+                  fontWeight: FontWeight.w800,),
                 ),
 
               if (description.isNotEmpty)

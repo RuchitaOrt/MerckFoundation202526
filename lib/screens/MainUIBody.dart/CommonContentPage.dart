@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/Utility/showdailog.dart';
 
 import 'package:merckfoundation_252026/widgets/CommonWidget/customappbar.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
@@ -113,8 +114,11 @@ class _CommonContentPageState extends State<CommonContentPage> {
                             onExpansionChanged: (expanded) {
                               if (!expanded) return;
                               if (!hasSubmenus) {
-                                 
-                                AppNavigation.navigateByMenuId(
+                                 if( item['menu_type']=="static")
+                                 {
+ShowDialogs.launchURL(item['full_url']?? "");
+                                 }else{
+AppNavigation.navigateByMenuId(
     context,
     menuId:item['id'].toString(),
     title:  item['menu_name'],
@@ -122,6 +126,8 @@ class _CommonContentPageState extends State<CommonContentPage> {
     
   
   );
+                                 }
+                                
                               }
                                
                             },
@@ -148,6 +154,10 @@ class _CommonContentPageState extends State<CommonContentPage> {
                                     size: 12,
                                   ),
                                   onTap: () {
+                                     if( item['menu_type']=="static")
+                                 {
+ShowDialogs.launchURL(item['full_url']?? "");
+                                 }else{
                                      AppNavigation.navigateByMenuId(
     context,
     menuId:submenu['id'].toString(),
@@ -155,7 +165,7 @@ class _CommonContentPageState extends State<CommonContentPage> {
     shareLink:submenu['menu_url']);
     
   
-                                   
+                                 }
                                   },
                                 ),
                               );
@@ -187,12 +197,16 @@ final Color color = Color(
                           ),
                         ),
                         onTap: () {
+                           if( item['menu_type']=="static")
+                                 {
+ShowDialogs.launchURL(item['full_url']?? "");
+                                 }else{
                              AppNavigation.navigateByMenuId(
     context,
     menuId:item['id'].toString(),
     title:  item['menu_name'],
     shareLink:item['menu_url']);
-                         
+                                 }
                         },
                       ),
                     );

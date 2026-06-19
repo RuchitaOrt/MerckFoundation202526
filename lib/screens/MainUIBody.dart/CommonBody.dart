@@ -4,9 +4,12 @@ import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
+import 'package:merckfoundation_252026/model/AwardResponse.dart';
 import 'package:merckfoundation_252026/model/StoryModel.dart';
 import 'package:merckfoundation_252026/routes/AppNavigation.dart';
 import 'package:merckfoundation_252026/screens/CovidScreen/Covid/CovidFlipSection.dart';
+import 'package:merckfoundation_252026/screens/DetailsScreen/OurAwardScreen.dart';
+import 'package:merckfoundation_252026/widgets/CommonList/TestimonialVerticalSection.dart';
 import 'package:merckfoundation_252026/widgets/CommonList/VerticalMediaSection.dart';
 
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
@@ -67,9 +70,11 @@ class _CommonBodyState extends State<CommonBody> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      loadPage();
-    });
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+  if (!mounted) return;
+
+  loadPage();
+});
   }
 
   bool hasLoaded = false;
@@ -215,7 +220,8 @@ class _CommonBodyState extends State<CommonBody> {
 
     return ListView.builder(
       shrinkWrap: true,
-      physics: const BouncingScrollPhysics(),
+      //physics: BouncingScrollPhysics(),
+       physics: const ScrollPhysics(),
       itemCount: allLayouts.length + extraCount,
       itemBuilder: (context, index) {
         int currentIndex = allLayouts.length;
@@ -349,10 +355,133 @@ class _CommonBodyState extends State<CommonBody> {
     }
 
     switch (type) {
+      
       case HomeLayoutType.slider:
         return HomeSlider(content: layout['content']);
       case HomeLayoutType.award:
-        return CovidFlipSection(content: layout['content']);
+
+        final List content = layout['content'] ?? [];
+
+        final items = content.map<AwardModel>((e) {
+          return AwardModel(image: e['thumbnail'] ?? "", id:  e['id'], isActive: false, title: e['title'], pageUrl: '', status: false, menuId: 0);
+        }).toList();
+        return 
+        widget.menuID=="98"?
+        CovidFlipSection(content: layout['content']):SizedBox(
+  height: 120, // give a fixed height
+  child: ListView.separated(
+    scrollDirection: Axis.horizontal,
+    itemCount: layout['content'].length,
+    separatorBuilder: (_, __) => const SizedBox(width: 12),
+    itemBuilder: (context, index) {
+      final award = items[index];
+
+      // final Color color = Color(
+      //   int.tryParse(award.colorCode ?? '') ?? 0xff0e69af,
+      // );
+
+      return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+
+      decoration: BoxDecoration(
+        color: Color(0xff0e69af),
+        borderRadius: BorderRadius.circular(22),
+
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// CONTENT
+          Padding(
+            padding: const EdgeInsets.all(16),
+
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// TITLE
+                Text(
+                  award.title,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: responsive.fontSize(2.15),
+                    fontWeight: FontWeight.w700,
+                    height: 1.4,
+                    color: Colors.white,
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                /// BUTTON
+                InkWell(
+                  borderRadius: BorderRadius.circular(30),
+
+                  onTap: () {
+                    print(award.pageUrl);
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (_) => CommonContentPage(
+                    //       title: award.title,
+                    //       menuID: award.menuId.toString(),
+                    //       shareLink: award.pageUrl,
+                    //     ),
+                    //   ),
+                    // );
+                  },
+
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 10,
+                    ),
+
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          CommonStrings.readMore,
+                          style: TextStyle(
+                            color: Color(0xff0e69af),
+                            fontWeight: FontWeight.w700,
+                            fontSize: responsive.fontSize(1.7),
+                          ),
+                        ),
+
+                        const SizedBox(width: 8),
+
+                        Icon(
+                          Icons.arrow_forward_rounded,
+                          color: Color(0xff0e69af),
+                          size: 20,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+    },
+  ),
+);
       case HomeLayoutType.impact:
         final List content = layout['content'] ?? [];
 
@@ -392,7 +521,18 @@ class _CommonBodyState extends State<CommonBody> {
         case HomeLayoutType.MerckMoreThanAmbasdar:
         case HomeLayoutType.MerckMoreThanAmbasdarFormer:
          case HomeLayoutType.CallForApplication:
-        return layout['mobile_view'] == "vertical"
+        return 
+        (type == HomeLayoutType.testimonials &&  layout['mobile_view'] == "vertical")
+        ? 
+        TestimonialVerticalSection(
+            content: (layout['content'] as List? ?? [])
+                .map((e) => StoryModel.fromJson(e))
+                .toList(),
+            shareLink: layout['button_link'] ?? '',
+            title: layout['title'] ?? '',
+          )
+        : 
+         layout['mobile_view'] == "vertical"
             ? VerticalMediaSection(
                 content: (layout['content'] as List? ?? [])
                     .map((e) => StoryModel.fromJson(e))
@@ -403,6 +543,7 @@ class _CommonBodyState extends State<CommonBody> {
                 title: layout['title'] ?? "",
 
                 menuID: layout['button_menu_id'].toString(),
+                content_button: layout['content_button'] ,
               )
             : HorizontalMediaSection(
                 content: layout['content'] ?? [],
@@ -449,9 +590,9 @@ class _CommonBodyState extends State<CommonBody> {
               ],
             ),
           );
-        }
+         }
 
-        return ContentCarouselWidget(contentList: contentList);
+         return ContentCarouselWidget(contentList: contentList);
       case HomeLayoutType.leadership:
         return LeaderCard(
           content: layout['content'] ?? [],

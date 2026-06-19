@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/Provider/SocialProvider.dart';
 import 'package:merckfoundation_252026/Provider/navbar_provider.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/routes/AppNavigation.dart';
@@ -9,6 +12,7 @@ import 'package:merckfoundation_252026/screens/MainScreens/HomeNewScreen.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/dashboard.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
+import 'package:merckfoundation_252026/widgets/FollowSocialSection.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 import 'package:provider/provider.dart';
 
@@ -20,18 +24,13 @@ class AppDrawer extends StatefulWidget {
 }
 
 class _AppDrawerState extends State<AppDrawer> {
-
-
   double socialIconSize = 5.5;
 
-  void closeOpenExpansionList(String expansionName) {
-   
-  }
+  void closeOpenExpansionList(String expansionName) {}
 
   @override
   void initState() {
     super.initState();
-  
   }
 
   @override
@@ -51,7 +50,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   : ListView(
                       padding: EdgeInsets.zero,
                       children: [
-                        _buildHeader(context, "1", "", "",""),
+                        _buildHeader(context, "1", "", "", ""),
                         16.0.heightBox,
 
                         ...navbarProvider.menuList.map((item) {
@@ -113,7 +112,22 @@ class _AppDrawerState extends State<AppDrawer> {
                       ],
                     ),
             ),
-            FollowSection(title: "", iconSize: 15),
+
+            Consumer<SocialProvider>(
+              builder: (context, provider, child) {
+                if (provider.isLoading) {
+                  return const CircularProgressIndicator();
+                }
+
+                return FollowSocialDrawer(
+                  title: "",
+                  iconSize: 14,
+                  // position: int.tryParse(item['position'].toString()) ?? 0,
+                  socialLinks: provider.socialMediaList,
+                );
+              },
+            ),
+            // FollowSection(title: "", iconSize: 15),
             SizedBox(height: 10),
           ],
         ),
@@ -126,7 +140,7 @@ class _AppDrawerState extends State<AppDrawer> {
     String menuId,
     String title,
     String shareLink,
-    String mennuLogo
+    String mennuLogo,
   ) {
     final responsive = ResponsiveFlutter.of(context);
 
@@ -216,13 +230,13 @@ class CustomExpansion extends StatelessWidget {
             child: Row(
               children: [
                 if (leadingIcon.isNotEmpty) ...[
-              Image.network(
-                leadingIcon,
-                width: responsive.width(5),
-                height: responsive.width(5),
-              ),
-              16.0.widthBox,
-            ],
+                  Image.network(
+                    leadingIcon,
+                    width: responsive.width(5),
+                    height: responsive.width(5),
+                  ),
+                  16.0.widthBox,
+                ],
                 Expanded(
                   child: FormLabel(
                     text: title,

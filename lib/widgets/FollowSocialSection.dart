@@ -118,7 +118,55 @@ class FollowSocialSection extends StatelessWidget {
     );
   }
 }
+class FollowSocialDrawer extends StatelessWidget {
+  final String title;
+  final double? iconSize;
+  final int position;
+  final List<dynamic> socialLinks;
 
+  const FollowSocialDrawer({
+    super.key,
+    required this.title,
+    required this.socialLinks,
+    this.iconSize,
+    this.position = 0,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 2,
+      ),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        spacing: 14,
+        runSpacing: 14,
+        children: socialLinks.map<Widget>((social) {
+          final image =
+              social['social_media_image']
+                      ?.toString() ??
+                  '';
+
+          final link =
+              social['social_media_link']
+                      ?.toString() ??
+                  '';
+
+          return SocialIcon(
+            image,
+            iconSize: iconSize,
+            onTap: () async {
+              if (link.isNotEmpty) {
+                await ShowDialogs.launchURL(link);
+              }
+            },
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
 class SocialIcon extends StatelessWidget {
   final String icon;
   final double? iconSize;

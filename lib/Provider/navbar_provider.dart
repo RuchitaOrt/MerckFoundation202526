@@ -90,5 +90,6 @@ class NavbarProvider extends ChangeNotifier {
     BuildContext context,
   ) async {
     await getNavbar(context);
+  
   }
 }

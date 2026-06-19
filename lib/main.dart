@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/AwardProvider.dart';
@@ -12,11 +14,14 @@ import 'package:merckfoundation_252026/Provider/MediaProvider.dart';
 import 'package:merckfoundation_252026/Provider/MediaListingProvider.dart';
 import 'package:merckfoundation_252026/Provider/OurPartnersProvider.dart';
 import 'package:merckfoundation_252026/Provider/PhotoAlbumProvider.dart';
+import 'package:merckfoundation_252026/Provider/SocialProvider.dart';
 
 import 'package:merckfoundation_252026/Provider/TestimonialProvider.dart';
 import 'package:merckfoundation_252026/Provider/article_provider.dart';
 import 'package:merckfoundation_252026/Provider/navbar_provider.dart';
-import 'package:merckfoundation_252026/Utility/firebase_options_manual.dart';
+import 'package:merckfoundation_252026/Utility/DefaultFirebaseOptions.dart';
+import 'package:merckfoundation_252026/Utility/PushNotification.dart';
+
 import 'package:merckfoundation_252026/Utility/UtilityFile.dart';
 
 import 'package:merckfoundation_252026/Provider/CovidProvider.dart';
@@ -26,24 +31,30 @@ import 'package:merckfoundation_252026/Provider/callforapplication_provider.dart
 import 'package:merckfoundation_252026/Provider/splash_provider.dart';
 import 'package:merckfoundation_252026/routes/routers.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/splashScreen.dart';
+import 'package:merckfoundation_252026/service/SocialMediaService.dart';
 import 'package:provider/provider.dart';
 
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Background message: ${message.notification?.title}");
+}
 final GlobalKey<NavigatorState> routeGlobalKey = GlobalKey();
 
-Future main() async {
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (Firebase.apps.isEmpty) {
-    await Firebase.initializeApp(
-      options: Platform.isAndroid ? DefaultFirebaseOptionsManual.android : null,
-    );
-  }
 
-  FlutterError.onError = (FlutterErrorDetails details) {
-    FlutterError.presentError(details);
-  };
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
-  await Utility().loadAPIConfig();
+  FirebaseMessaging.onBackgroundMessage(
+    firebaseMessagingBackgroundHandler,
+  );
 
+  await PushNotifications.localNotiInit();
+  await PushNotifications.init();
+await Utility().loadAPIConfig();
   runApp(MyApp());
 }
 
@@ -55,16 +66,14 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool isroomfound = false;
   String? roomid;
-  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  static FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(
-    analytics: analytics,
-  );
-
+  
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+ 
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -74,9 +83,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
         /// ✅ ALSO KEEP THIS
         ChangeNotifierProvider(create: (_) => NavbarProvider()),
+        ChangeNotifierProvider(create: (_) => SocialProvider(SocialMediaService(),)),
 
         ChangeNotifierProvider(create: (_) => ArticleProvider()),
-        ChangeNotifierProvider(create: (_) => NavbarProvider()),
+        
         ChangeNotifierProvider(create: (_) => MediaProvider()),
         ChangeNotifierProvider(create: (_) => MediaListingProvider()),
         ChangeNotifierProvider(create: (_) => FilterProvider()),
@@ -119,7 +129,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        navigatorObservers: <NavigatorObserver>[observer],
+        // navigatorObservers: <NavigatorObserver>[observer],
 
         navigatorKey: routeGlobalKey,
 
@@ -129,3 +139,4 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     );
   }
 }
+

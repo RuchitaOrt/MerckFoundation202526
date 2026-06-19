@@ -30,9 +30,8 @@ class MediaListingScreen extends StatefulWidget {
 
   final String? shareLink;
   final List<StoryModel>? initialList;
-final bool useLocalPagination;
-final isFilterApply;
-
+  final bool useLocalPagination;
+  final isFilterApply;
 
   const MediaListingScreen({
     super.key,
@@ -43,8 +42,9 @@ final isFilterApply;
     required this.menuID,
     required this.title,
     this.shareLink,
-      this.initialList,
-    this.useLocalPagination = false, this.isFilterApply=true,
+    this.initialList,
+    this.useLocalPagination = false,
+    this.isFilterApply = true,
   });
 
   @override
@@ -59,43 +59,47 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
   void initState() {
     super.initState();
 
-    final filter = context.read<FilterProvider>();
+        final filter = context.read<FilterProvider>();
     final provider = context.read<MediaListingProvider>();
 
+
+
+
     /// 🔥 RESET FILTER (prevent carry-over)
-    filter.clearFilters();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      filter.loadFilters(context, type: widget.type);
-      if (widget.useLocalPagination &&
-      widget.initialList != null) {
-
-   provider.setLocalData(widget.initialList!);
-
-  } else {
- WidgetsBinding.instance.addPostFrameCallback((_) {
-      /// ✅ API PAGINATION
-    provider.loadInitial(
-      context: context,
-      type: widget.type,
-      countryId: "",
-      categoryId: widget.categoryID,
-      languageId: "",
-      albumID: widget.albumID,
-    );
- });
-
-  }
-      
-    });
-
-    if (filter.countries.isEmpty ||
-        filter.categories.isEmpty ||
-        filter.languages.isEmpty) {
-      if (widget.type != MediaType.episodes) {
-        filter.loadFilters(context, type: widget.type);
+      if (!mounted) return;
+      context.read<FilterProvider>().clearFilters();
+      if(widget.type!=MediaType.ambassadorAlbum)
+      {
+filter.loadFilters(context, type: widget.type);
       }
-    }
+      
+      if (widget.useLocalPagination && widget.initialList != null) {
+        provider.setLocalData(widget.initialList!);
+      } else {
+        provider.loadInitial(
+          context: context,
+          type: widget.type,
+          countryId: "",
+          categoryId: widget.categoryID,
+          languageId: "",
+          albumID: widget.albumID,
+        );
+      }
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+     
+
+      if (filter.countries.isEmpty ||
+          filter.categories.isEmpty ||
+          filter.languages.isEmpty) {
+        if (widget.type != MediaType.episodes &&
+    widget.type != MediaType.ambassadorAlbum) {
+          filter.loadFilters(context, type: widget.type);
+        }
+      }
+    });
 
     if (widget.type == MediaType.photoAlbum) {
       return;
@@ -111,6 +115,7 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
         provider.loadMore(context);
       }
     });
+
   }
 
   String getCountryId() {
@@ -144,12 +149,13 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
         return widget.albumName;
       case MediaType.episodes:
         return widget.albumName;
+      case MediaType.ambassadorAlbum:
+        return widget.title;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    print(widget.type);
     return Scaffold(
       key: _scaffoldKey,
       endDrawer: AppDrawerfilter(type: widget.type),
@@ -158,12 +164,17 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
         type: AppBarType.inner,
         title: getTitle(),
         onFilter:
-            (widget.type == MediaType.photoGallery ||widget.type == MediaType.photoAlbum ||
+            (widget.type == MediaType.photoGallery ||
+                widget.type == MediaType.photoAlbum ||
                 widget.type == MediaType.episodes ||
-                widget.type == MediaType.activity)
+                widget.type == MediaType.activity ||widget.type == MediaType.ambassadorAlbum )
             ? null
-            :widget.isFilterApply? () => _scaffoldKey.currentState!.openEndDrawer():null,
-        onBack: (widget.type == MediaType.stories ||widget.type == MediaType.photoGallery)
+            : widget.isFilterApply
+            ? () => _scaffoldKey.currentState!.openEndDrawer()
+            : null,
+        onBack:
+            (widget.type == MediaType.stories ||
+                widget.type == MediaType.photoGallery)
             ? null
             : () {
                 Navigator.pop(context);
@@ -185,19 +196,18 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
               provider.storyList.isEmpty) {
             return const Center(child: CommonLoader());
           }
- if (provider.status != ApiStatus.success &&
-    provider.status != ApiStatus.loading &&
-    provider.status != ApiStatus.initial) {
+          if (provider.status != ApiStatus.success &&
+              provider.status != ApiStatus.loading &&
+              provider.status != ApiStatus.initial) {
+            return ApiStatusHandler(
+              status: provider.status,
+              errorMessage: provider.errorMessage,
+              onRetry: () {
+                provider.retry(context);
+              },
+            );
+          }
 
-  return ApiStatusHandler(
-    status: provider.status,
-    errorMessage: provider.errorMessage,
-    onRetry: () {
-      provider.retry(context);
-      },
-  );
-}
-        
           return CustomScrollView(
             controller: _controller,
             slivers: [
@@ -234,7 +244,7 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
                             final item = provider.storyList[index];
 
                             /// 🖼️ PHOTO GALLERY
-                            if (widget.type == MediaType.photoGallery ||
+                            if (widget.type == MediaType.photoGallery || widget.type == MediaType.ambassadorAlbum ||
                                 widget.type == MediaType.digitalLibrary ||
                                 widget.type == MediaType.photoAlbum ||
                                 widget.type == MediaType.activity) {
@@ -242,22 +252,22 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
                                 menuID: widget.menuID,
                                 shareLink: widget.shareLink,
                                 id: item.id.toString(),
-                                image: widget.type == MediaType.photoAlbum
+                                image: (widget.type == MediaType.photoAlbum|| widget.type == MediaType.ambassadorAlbum)
                                     ? item.photo ?? ""
                                     : widget.type == MediaType.digitalLibrary
                                     ? item.thumbnail_image ?? ""
                                     : item.image ?? "",
-                                title: widget.type == MediaType.photoAlbum
+                                title:  (widget.type == MediaType.photoAlbum|| widget.type == MediaType.ambassadorAlbum)
                                     ? item.photo_description ?? ""
                                     : widget.type == MediaType.photoGallery
                                     ? item.photo_category_name ?? ""
-                                    : item.title ,
+                                    : item.title,
                                 showPlayIcon: false,
                                 onTap: () {
                                   if (widget.type == MediaType.digitalLibrary) {
                                     ShowDialogs.launchURL(item.document!);
                                   }
-                                  if (widget.type == MediaType.photoGallery  ) {
+                                  if (widget.type == MediaType.photoGallery) {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -270,16 +280,18 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
                                         ),
                                       ),
                                     );
-                                  }else if(widget.type == MediaType.photoAlbum){
+                                  } else if (widget.type ==
+                                      MediaType.photoAlbum || widget.type ==
+                                      MediaType.ambassadorAlbum) {
                                     showModalBottomSheet(
-  context: context,
-  isScrollControlled: true,
-  backgroundColor: Colors.black,
-  builder: (_) => ImagePreviewDialog(
-    imageUrl: item.photo ?? "",
-    title: item.photo_description ?? "",
-  ),
-);
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.black,
+                                      builder: (_) => ImagePreviewDialog(
+                                        imageUrl: item.photo ?? "",
+                                        title: item.photo_description ?? "",
+                                      ),
+                                    );
                                   } else {
                                     print("COm ${widget.type}");
                                     Navigator.push(
@@ -293,7 +305,7 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
                                           isDetailApiCalled: true,
                                           articleId: item.id.toString(),
                                           languageId: item.languageid,
-                                           menuID:  widget.menuID,
+                                          menuID: widget.menuID,
                                         ),
                                       ),
                                     );
@@ -310,7 +322,7 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
                               image: getYoutubeThumbnail(item.videoLink),
                               title: widget.type == MediaType.episodes
                                   ? item.episode_name ?? ""
-                                  : item.videoDesc ,
+                                  : item.videoDesc,
                               showmenu: widget.type == MediaType.episodes
                                   ? true
                                   : false,

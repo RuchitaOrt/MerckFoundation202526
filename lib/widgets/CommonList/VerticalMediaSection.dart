@@ -5,10 +5,13 @@ import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/model/StoryModel.dart';
 import 'package:merckfoundation_252026/model/TestimonialModel.dart';
 import 'package:merckfoundation_252026/screens/DetailsScreen/DetailScreen.dart';
-import 'package:merckfoundation_252026/screens/DetailsScreen/TestimonialArticlesScreen.dart';
+import 'package:merckfoundation_252026/screens/DetailsScreen/TestimonialArticlesScreen.dart' hide TestimonialCarouselWidget;
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/PhotoAlumbScreen.dart';
 import 'package:merckfoundation_252026/widgets/CommonList/CommonListCard.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
+
+import 'package:merckfoundation_252026/widgets/ImagePreviewScreen.dart';
 import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 import 'package:merckfoundation_252026/widgets/YouTubePreview.dart';
 import 'package:merckfoundation_252026/widgets/mediaCard.dart';
@@ -19,6 +22,7 @@ class VerticalMediaSection extends StatefulWidget {
   final String menuID;
   final String? shareLink;
   final String title;
+  final bool content_button;
 
   const VerticalMediaSection({
     super.key,
@@ -26,7 +30,7 @@ class VerticalMediaSection extends StatefulWidget {
     required this.type,
     required this.menuID,
     required this.shareLink,
-    required this.title,
+    required this.title, required this.content_button,
   });
 
   @override
@@ -70,22 +74,22 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final hasMore = visibleCount < widget.content.length;
-    final testimonialItems = widget.content.map((story) {
-      return TestimonialModel(
-        title: story.title,
+    // final testimonialItems = widget.content.map((story) {
+    //   return TestimonialModel(
+    //     title: story.title,
 
-        image: story.thumbnail ?? "",
-        departmentName: '',
-        shortDescription: story.description ?? "",
-        details: story.details ?? "",
-      );
-    }).toList();
-    if (widget.type == HomeLayoutType.testimonials) {
-      return TestimonialCarouselWidget(
-        items: testimonialItems,
-        scrollController: ScrollController(),
-      );
-    }
+    //     image: story.thumbnail ?? "",
+    //     departmentName: '',
+    //     shortDescription: story.description ?? "",
+    //     details: story.details ?? "",
+    //   );
+    // }).toList();
+//     if (widget.type == HomeLayoutType.testimonials) {
+//   return TestimonialCarouselWidget(
+//     items: testimonialItems,
+//   );
+// }
+
 
     return Column(
       children: [
@@ -136,7 +140,7 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                         if (widget.type ==
                             HomeLayoutType.merckFoundationInMedia) {
                           ShowDialogs.launchURL(item.pdfFile ?? "");
-                        } else if (widget.type ==
+                        }else if (widget.type ==
                             HomeLayoutType.newsLettersAndArticles) {
                           Navigator.push(
                             context,
@@ -165,9 +169,10 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                   gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount:widget.type ==
                             HomeLayoutType.MerckMoreThanAmbasdar?1: 2,
-                    childAspectRatio:( widget.type == HomeLayoutType.MerckMoreThanAmbasdar )?0.80:
-                    widget.type ==
-                            HomeLayoutType.MerckMoreThanAmbasdarFormer?0.63
+                    childAspectRatio:( widget.type == HomeLayoutType.MerckMoreThanAmbasdar && widget.content_button)?0.80:
+                    ( widget.type == HomeLayoutType.MerckMoreThanAmbasdar && widget.content_button==false)?1:
+                    (widget.type ==
+                            HomeLayoutType.MerckMoreThanAmbasdarFormer && widget.content_button)?0.63
                     : 0.80,
                     crossAxisSpacing: 8,
                     mainAxisSpacing: 8,
@@ -193,7 +198,9 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                         widget.type ==
                             HomeLayoutType.MerckMoreThanAmbasdarFormer ||
                         widget.type == HomeLayoutType.CallForApplication) {
-                      return MediaCard(
+                      return 
+                      MediaCard(
+                        content_button: widget.content_button,
                         type: widget.type,
                         menuID: widget.menuID,
                         shareLink: widget.shareLink,
@@ -206,12 +213,14 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                                         .MerckMoreThanAmbasdarFormer ||
                                 widget.type == HomeLayoutType.DigitalLibrary ||
                                 widget.type ==
-                                    HomeLayoutType.CallForApplication)
+                                    HomeLayoutType.CallForApplication || widget.type==HomeLayoutType.photoGallery)
                             ? item.thumbnail ?? ""
                             : item.image ?? "",
-                        title: widget.type == HomeLayoutType.photoGallery
-                            ? item.photo_category_name ?? ""
-                            : item.title ?? "",
+                        title: 
+                        widget.type == HomeLayoutType.photoGallery
+                            ? item.description ?? ""
+                            :
+                             item.title ?? "",
                             subTitle: item.subtitle ?? "",
                         showPlayIcon: false,
                         onTap: () {
@@ -230,12 +239,23 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                                 ),
                               ),
                             );
-                          } else if (widget.type ==
+                          }else if(widget.type==HomeLayoutType.MerckMoreThanAmbasdar ||widget.type==HomeLayoutType.MerckMoreThanAmbasdarFormer){
+                           showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.black,
+                                      builder: (_) => ImagePreviewDialog(
+                                        imageUrl:item.thumbnail  ?? "",
+                                        title:  item.title ?? "",
+                                      ),
+                                    );
+                        } else if (widget.type ==
                                   HomeLayoutType.DigitalLibrary ||
                               widget.type ==
                                   HomeLayoutType.CallForApplication) {
                             ShowDialogs.launchURL(item.pdfFile ?? "");
-                          } else {
+                          } else if (widget.type ==
+                            HomeLayoutType.newsLettersAndArticles){
                             
                             Navigator.push(
                               context,
@@ -256,13 +276,27 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                         },
                       );
                     }
+ final thumb = item.thumbnail ?? "";
+
+                final isYoutube =
+                    thumb.contains("youtube.com") || thumb.contains("youtu.be");
+
+                String imageUrl = thumb;
+
+                if (isYoutube) {
+                  final videoId = getYoutubeId(thumb);
+
+                  imageUrl =
+                      "https://img.youtube.com/vi/$videoId/hqdefault.jpg";
+                }
 
                     /// VIDEO TYPES
                     return MediaCard(
+                        content_button: widget.content_button,
                       menuID: widget.menuID,
                       shareLink: widget.shareLink,
                       id: item.id.toString(),
-                      image: getYoutubeThumbnail(item.videoLink),
+                      image: imageUrl,
                       title: widget.type == HomeLayoutType.episodes
                           ? item.episode_name ?? ""
                           : item.description ?? "",

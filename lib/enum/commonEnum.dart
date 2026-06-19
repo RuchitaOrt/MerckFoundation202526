@@ -28,6 +28,7 @@ enum MediaType {
   testimonialArticle,
   photoAlbum,
   episodes,
+  ambassadorAlbum
 }
 
 enum HomeSectionType {

@@ -260,8 +260,10 @@ class _TestimonialPage extends StatelessWidget {
 
     return ListView(
       controller: scrollController,
-      physics: const BouncingScrollPhysics(),
-
+      shrinkWrap: true,
+      //12june
+       physics: const ScrollPhysics(),
+//physics: const ClampingScrollPhysics(),
       children: [
         Padding(
           padding: const EdgeInsets.all(16),

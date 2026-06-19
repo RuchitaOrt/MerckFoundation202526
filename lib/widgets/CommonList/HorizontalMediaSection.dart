@@ -310,6 +310,10 @@ class HorizontalMediaSection extends StatelessWidget {
                   child: CommonBorderButton(
                     title: buttonText,
                     onTap: () {
+
+
+                      print("navigateByMenuId");
+                      print("navigateByMenuId ${menuID}");
                       AppNavigation.navigateByMenuId(
                         context,
                         menuId: menuID,

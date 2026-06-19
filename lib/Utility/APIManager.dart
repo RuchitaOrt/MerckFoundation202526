@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:merckfoundation_252026/Utility/api_result.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_strings.dart';
+
 import 'package:merckfoundation_252026/model/NavBarResponse.dart';
 
 import 'package:flutter/material.dart';
@@ -55,7 +56,9 @@ enum API {
   //Our Award
   getawardlist,
   getnewsletterarticlebylanguage,
-  getceomessages
+  getceomessages,
+  getambassadorimages,
+  mobiledrawermedia,
 }
 
 enum HTTPMethod { GET, POST, PUT, DELETE }
@@ -91,8 +94,6 @@ class APIManager {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-        
-
           _logRequest(options);
           handler.next(options);
         },
@@ -394,9 +395,12 @@ class APIManager {
       case API.getnewsletterarticlebylanguage:
         return "api/page_structure/get-newsletter-article-by-language";
 
- case API.getceomessages:
+      case API.getceomessages:
         return "api/page_structure/get-ceo-messages";
-        
+      case API.getambassadorimages:
+        return "api/page_structure/get-ambassador-images";
+      case API.mobiledrawermedia:
+        return "api/masters/mobile-drawer-media";
     }
   }
 
@@ -420,8 +424,8 @@ class APIManager {
       case API.testimonialcategory:
       case API.homeseasonlist:
       case API.getawardlist:
-       case API.getceomessages:
-      
+      case API.getceomessages:
+      case API.mobiledrawermedia:
         return HTTPMethod.GET;
 
       default:
@@ -437,193 +441,146 @@ class APIManager {
         return json;
       case API.ourPartners:
         return OurPartnersResponse.fromJson(json);
+
       default:
         return json;
     }
   }
 
+  Future<ApiResult<dynamic>> apiRequest(
+    BuildContext context,
+    API api, {
+    dynamic jsonval,
+    Map<String, dynamic>? queryParams,
+  }) async {
+    try {
+      final url = apiEndPoint(api);
 
-Future<ApiResult<dynamic>> apiRequest(
-  BuildContext context,
-  API api, {
-  dynamic jsonval,
-  Map<String, dynamic>? queryParams,
-}) async {
+      final response = await dio.request(
+        url,
+        data: jsonval,
+        queryParameters: queryParams,
+        options: Options(method: apiHTTPMethod(api).name),
+      );
 
-  try {
+      final data = response.data;
 
-    final url = apiEndPoint(api);
+      dynamic parsedData;
 
-    final response = await dio.request(
-      url,
-      data: jsonval,
-      queryParameters: queryParams,
-      options: Options(
-        method: apiHTTPMethod(api).name,
-      ),
-    );
-
-    final data = response.data;
-
-    dynamic parsedData;
-
-    if (data is String) {
-
-      try {
-
-        parsedData =
-            parseResponse(
-              api,
-              jsonDecode(data),
-            );
-
-      } catch (_) {
-
-        parsedData = data;
+      if (data is String) {
+        try {
+          parsedData = parseResponse(api, jsonDecode(data));
+        } catch (_) {
+          parsedData = data;
+        }
+      } else {
+        parsedData = parseResponse(api, data);
       }
 
-    } else {
+      return ApiResult(status: ApiStatus.success, data: parsedData);
+    } on DioException catch (e) {
+      final apiName = api.toString().split('.').last;
 
-      parsedData =
-          parseResponse(api, data);
+      final url = apiEndPoint(api);
+
+      print('\n' + '❌' * 20);
+
+      print("❌ API ERROR");
+
+      print("🆔 API: $apiName");
+
+      print("🔗 URL: $url");
+
+      print("📡 STATUS CODE: ${e.response?.statusCode}");
+
+      print("📦 RESPONSE: ${e.response?.data}");
+
+      print("📨 MESSAGE: ${e.message}");
+
+      print('❌' * 20 + '\n');
+      String responseMessage = CommonStrings.somethingWentWrong;
+
+      /// NO INTERNET
+      if (e.type == DioExceptionType.connectionError) {
+        return ApiResult(
+          status: ApiStatus.noInternet,
+          message: CommonStrings.noInternetConnection,
+        );
+      }
+
+      /// TIMEOUT
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.sendTimeout) {
+        return ApiResult(
+          status: ApiStatus.timeout,
+          message: CommonStrings.requestTimeout,
+        );
+      }
+
+      final statusCode = e.response?.statusCode ?? 0;
+
+      /// 400
+      if (statusCode == 400) {
+        return ApiResult(
+          status: ApiStatus.badRequest,
+          message: responseMessage.isNotEmpty
+              ? responseMessage
+              : CommonStrings.badRequest,
+        );
+      }
+
+      /// 401
+      if (statusCode == 401) {
+        return ApiResult(
+          status: ApiStatus.unauthorized,
+          message: CommonStrings.unauthorized,
+        );
+      }
+
+      /// 403
+      if (statusCode == 403) {
+        return ApiResult(
+          status: ApiStatus.forbidden,
+          message: CommonStrings.forbidden,
+        );
+      }
+
+      /// 404
+      if (statusCode == 404) {
+        return ApiResult(
+          status: ApiStatus.notFound,
+          message: CommonStrings.notFound,
+        );
+      }
+
+      /// 422
+      if (statusCode == 422) {
+        return ApiResult(
+          status: ApiStatus.validationError,
+          message: responseMessage.isNotEmpty
+              ? responseMessage
+              : CommonStrings.validationError,
+        );
+      }
+
+      /// 500+
+      if (statusCode >= 500) {
+        return ApiResult(
+          status: ApiStatus.serverError,
+          message: CommonStrings.serverError,
+        );
+      }
+
+      /// FALLBACK
+      return ApiResult(
+        status: ApiStatus.error,
+        message: CommonStrings.somethingWentWrong,
+      );
+    } catch (e) {
+      print("❌ UNKNOWN ERROR: $e");
+
+      return ApiResult(status: ApiStatus.error, message: e.toString());
     }
-
-    return ApiResult(
-      status: ApiStatus.success,
-      data: parsedData,
-    );
-
-  } on DioException catch (e) {
-
-    final apiName =
-        api.toString().split('.').last;
-
-    final url = apiEndPoint(api);
-
-    print('\n' + '❌' * 20);
-
-    print("❌ API ERROR");
-
-    print("🆔 API: $apiName");
-
-    print("🔗 URL: $url");
-
-    print(
-      "📡 STATUS CODE: ${e.response?.statusCode}",
-    );
-
-    print(
-      "📦 RESPONSE: ${e.response?.data}",
-    );
-
-    print("📨 MESSAGE: ${e.message}");
-
-    print('❌' * 20 + '\n');
-String responseMessage =
-    CommonStrings.somethingWentWrong;
-
-/// NO INTERNET
-if (e.type ==
-    DioExceptionType.connectionError) {
-
-  return ApiResult(
-    status: ApiStatus.noInternet,
-    message:
-        CommonStrings.noInternetConnection,
-  );
-}
-
-/// TIMEOUT
-if (e.type ==
-        DioExceptionType.connectionTimeout ||
-    e.type ==
-        DioExceptionType.receiveTimeout ||
-    e.type ==
-        DioExceptionType.sendTimeout) {
-
-  return ApiResult(
-    status: ApiStatus.timeout,
-    message:
-        CommonStrings.requestTimeout,
-  );
-}
-
-final statusCode =
-    e.response?.statusCode ?? 0;
-
-/// 400
-if (statusCode == 400) {
-  return ApiResult(
-    status: ApiStatus.badRequest,
-    message:
-        responseMessage.isNotEmpty
-            ? responseMessage
-            : CommonStrings.badRequest,
-  );
-}
-
-/// 401
-if (statusCode == 401) {
-  return ApiResult(
-    status: ApiStatus.unauthorized,
-    message:
-        CommonStrings.unauthorized,
-  );
-}
-
-/// 403
-if (statusCode == 403) {
-  return ApiResult(
-    status: ApiStatus.forbidden,
-    message:
-        CommonStrings.forbidden,
-  );
-}
-
-/// 404
-if (statusCode == 404) {
-  return ApiResult(
-    status: ApiStatus.notFound,
-    message:
-        CommonStrings.notFound,
-  );
-}
-
-/// 422
-if (statusCode == 422) {
-  return ApiResult(
-    status: ApiStatus.validationError,
-    message:
-        responseMessage.isNotEmpty
-            ? responseMessage
-            : CommonStrings.validationError,
-  );
-}
-
-/// 500+
-if (statusCode >= 500) {
-  return ApiResult(
-    status: ApiStatus.serverError,
-    message:
-        CommonStrings.serverError,
-  );
-}
-
-/// FALLBACK
-return ApiResult(
-  status: ApiStatus.error,
-  message:
-      CommonStrings.somethingWentWrong,
-);
-
-  } catch (e) {
-
-    print("❌ UNKNOWN ERROR: $e");
-
-    return ApiResult(
-      status: ApiStatus.error,
-      message: e.toString(),
-    );
   }
-}
 }

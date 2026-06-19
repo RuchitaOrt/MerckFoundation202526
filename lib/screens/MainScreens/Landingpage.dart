@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/PageProvider.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
@@ -14,7 +13,12 @@ class Landingpage extends StatefulWidget {
   final String menuId;
   final String shareLink;
   final String mennuLogo;
-  const Landingpage({super.key, required this.menuId, required this.shareLink, required this.mennuLogo});
+  const Landingpage({
+    super.key,
+    required this.menuId,
+    required this.shareLink,
+    required this.mennuLogo,
+  });
 
   @override
   State<Landingpage> createState() => _LandingpageState();
@@ -27,25 +31,24 @@ class _LandingpageState extends State<Landingpage>
   @override
   void initState() {
     super.initState();
- WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
       loadPage();
     });
-    Future.delayed(
-      const Duration(milliseconds: 200),
-      () {
-        if (mounted) {
-          setState(() {
-            opacity = 1;
-          });
-        }
-      },
-    );
+    Future.delayed(const Duration(milliseconds: 200), () {
+      if (mounted) {
+        setState(() {
+          opacity = 1;
+        });
+      }
+    });
   }
 
   bool hasLoaded = false;
   bool isProgramMenuVisible = false;
   List<dynamic> programMenus = [];
-    dynamic json = {};
+  dynamic json = {};
   Future<void> loadPage() async {
     final provider = Provider.of<PageProvider>(context, listen: false);
 
@@ -53,7 +56,7 @@ class _LandingpageState extends State<Landingpage>
       hasLoaded = false; // reset before API
     });
 
-    await provider.fetchPage(context,"3" );
+    await provider.fetchPage(context, "3");
 
     final data = provider.pageData;
 
@@ -75,15 +78,11 @@ class _LandingpageState extends State<Landingpage>
         print(programMenus);
       });
 
-  
       final dataType = (root['data_type'] ?? "").toString().toLowerCase();
 
       if (dataType == "layout") {
         json = root['json_data'] ?? {};
       }
-
-     
-      
     }
 
     setState(() {
@@ -101,17 +100,16 @@ class _LandingpageState extends State<Landingpage>
 
     final isTablet = width >= 600;
     final isSmallPhone = height < 700;
-final contentItem =
-    json['top'] != null &&
+    final contentItem =
+        json['top'] != null &&
             json['top'] is List &&
             (json['top'] as List).isNotEmpty
         ? json['top'][0]['content'][0]
         : null;
 
-final visionTitle = contentItem?['title'] ?? "";
-final visionSubtitle = contentItem?['subtitle'] ?? "";
-final visionDescription =
-    contentItem?['subdescription'] ?? "";
+    final visionTitle = contentItem?['title'] ?? "";
+    final visionSubtitle = contentItem?['subtitle'] ?? "";
+    final visionDescription = contentItem?['subdescription'] ?? "";
     return Scaffold(
       backgroundColor: Colors.white,
 
@@ -123,106 +121,94 @@ final visionDescription =
           child: LayoutBuilder(
             builder: (context, constraints) {
               return SingleChildScrollView(
-                physics:
-                    const BouncingScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
 
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight:
-                        constraints.maxHeight,
-                  ),
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
 
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: isTablet
-                          ? width * 0.08
-                          : width * 0.06,
+                      horizontal: isTablet ? width * 0.08 : width * 0.06,
                       vertical: height * 0.025,
                     ),
 
                     child: Column(
                       children: [
-
                         /// LOGO
-                        _Logo(
-                          isTablet: isTablet,
-                        ),
+                        _Logo(isTablet: isTablet),
 
-                        SizedBox(
-                          height: height * 0.025,
-                        ),
+                        SizedBox(height: height * 0.025),
 
                         /// TITLE
                         _VisionTitle(
                           visionTitle: "Our Vision",
                           fontSize: isTablet
-                              ? responsive.fontSize(
-                                  3,
-                                )
+                              ? responsive.fontSize(3)
                               : isSmallPhone
-                                  ? responsive
-                                      .fontSize(
-                                      2.2,
-                                    )
-                                  : responsive
-                                      .fontSize(
-                                      2.6,
-                                    ),
+                              ? responsive.fontSize(2.2)
+                              : responsive.fontSize(2.6),
                         ),
 
-                        SizedBox(
-                          height: height * 0.012,
-                        ),
+                        SizedBox(height: height * 0.012),
 
                         /// SUBTITLE
                         _VisionSubtitle(
-                           subTitle: visionTitle,
+                          subTitle: visionTitle,
                           fontSize: isTablet
-                              ? responsive.fontSize(
-                                  2,
-                                )
+                              ? responsive.fontSize(2)
                               : isSmallPhone
-                                  ? responsive
-                                      .fontSize(
-                                      1.5,
-                                    )
-                                  : responsive
-                                      .fontSize(
-                                      1.8,
-                                    ),
+                              ? responsive.fontSize(1.5)
+                              : responsive.fontSize(1.8),
                         ),
 
-                        SizedBox(
-                          height: height * 0.035,
-                        ),
+                        SizedBox(height: height * 0.035),
 
                         /// CARD
-                        _VisionCard(
-                          textDescription: visionDescription,
-                          height: isTablet
-                              ? height * 0.32
-                              : isSmallPhone
-                                  ? height * 0.28
-                                  : height * 0.30,
-                        ),
-
-                        SizedBox(
-                          height: height * 0.05,
-                        ),
+                        // _VisionCard(
+                        //   textDescription: visionDescription,
+                        //   height: isTablet
+                        //       ? height * 0.32
+                        //       : isSmallPhone
+                        //           ? height * 0.28
+                        //           : height * 0.30,
+                        // ),
+                        hasLoaded
+                            ? _VisionCard(
+                                textDescription: visionDescription,
+                                height: isTablet
+                                    ? height * 0.32
+                                    : isSmallPhone
+                                    ? height * 0.28
+                                    : height * 0.30,
+                              )
+                            : Container(
+                                width: double.infinity,
+                                height: isTablet
+                                    ? height * 0.32
+                                    : isSmallPhone
+                                    ? height * 0.28
+                                    : height * 0.30,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(24),
+                                  color: const Color(0xff532F8F),
+                                ),
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                        SizedBox(height: height * 0.05),
 
                         /// BUTTON
                         _ContinueButton(
                           menuId: widget.menuId,
                           shareLink: widget.shareLink,
                           mennuLogo: widget.mennuLogo,
-                          width: isTablet
-                              ? width * 0.35
-                              : width * 0.55,
+                          width: isTablet ? width * 0.35 : width * 0.55,
                         ),
 
-                        SizedBox(
-                          height: height * 0.03,
-                        ),
+                        SizedBox(height: height * 0.03),
                       ],
                     ),
                   ),
@@ -239,14 +225,11 @@ final visionDescription =
 class _Logo extends StatelessWidget {
   final bool isTablet;
 
-  const _Logo({
-    required this.isTablet,
-  });
+  const _Logo({required this.isTablet});
 
   @override
   Widget build(BuildContext context) {
-    final width =
-        MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
 
     return Center(
       child: Hero(
@@ -255,9 +238,7 @@ class _Logo extends StatelessWidget {
         child: Image.asset(
           CommonImagePath.logoMenu,
 
-          width: isTablet
-              ? width * 0.28
-              : width * 0.42,
+          width: isTablet ? width * 0.28 : width * 0.42,
 
           fit: BoxFit.contain,
         ),
@@ -270,39 +251,28 @@ class _VisionCard extends StatelessWidget {
   final double height;
   final String textDescription;
 
-  const _VisionCard({
-    required this.height, required this.textDescription,
-  });
+  const _VisionCard({required this.height, required this.textDescription});
 
   @override
   Widget build(BuildContext context) {
-    final width =
-        MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
 
     final isTablet = width >= 600;
 
     return Container(
       width: double.infinity,
-      constraints: BoxConstraints(
-        minHeight: height,
-      ),
+      constraints: BoxConstraints(minHeight: height),
 
       decoration: BoxDecoration(
-        borderRadius:
-            BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24),
 
         gradient: const LinearGradient(
-          colors: [
-            Color(0xff532F8F),
-            Color(0xff532F8F),
-          ],
+          colors: [Color(0xff532F8F), Color(0xff532F8F)],
         ),
 
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(
-              0.08,
-            ),
+            color: Colors.black.withOpacity(0.08),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -316,15 +286,13 @@ class _VisionCard extends StatelessWidget {
         ),
 
         child: Center(
-          child: 
-             SmartHtmlWidget(
-                      html: textDescription ?? "",
-                      textColor: Customcolor.white,
-                      fontSize: isTablet ? 17 : 13.5,
-                     
-                      ignoreHtmlStyles: true,
-                    ),
-          
+          child: SmartHtmlWidget(
+            html: textDescription ?? "",
+            textColor: Customcolor.white,
+            fontSize: isTablet ? 17 : 13.5,
+
+            ignoreHtmlStyles: true,
+          ),
         ),
       ),
     );
@@ -335,16 +303,18 @@ class _ContinueButton extends StatelessWidget {
   final double width;
   final String menuId;
   final String shareLink;
-   final String mennuLogo;
+  final String mennuLogo;
 
   const _ContinueButton({
-    required this.width, required this.menuId, required this.shareLink, required this.mennuLogo,
+    required this.width,
+    required this.menuId,
+    required this.shareLink,
+    required this.mennuLogo,
   });
 
   @override
   Widget build(BuildContext context) {
-    final widthScreen =
-        MediaQuery.of(context).size.width;
+    final widthScreen = MediaQuery.of(context).size.width;
 
     final isTablet = widthScreen >= 600;
 
@@ -357,12 +327,10 @@ class _ContinueButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           elevation: 0,
 
-          backgroundColor:
-              Customcolor.violetcolor,
+          backgroundColor: Customcolor.violetcolor,
 
           shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(40),
+            borderRadius: BorderRadius.circular(40),
           ),
         ),
 
@@ -370,46 +338,39 @@ class _ContinueButton extends StatelessWidget {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (_) =>
-                  Dashboard(index: 0,  
-        menuID: menuId,shareLink: shareLink,menuLogo: mennuLogo,),
+              builder: (_) => Dashboard(
+                index: 0,
+                menuID: menuId,
+                shareLink: shareLink,
+                menuLogo: mennuLogo,
+              ),
             ),
           );
         },
 
         child: Row(
-          mainAxisAlignment:
-              MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
             Flexible(
               child: FormLabel(
-                text:
-                    CommonStrings.continueText,
+                text: CommonStrings.continueText,
 
                 labelColor: Colors.white,
 
-                fontSize:
-                    isTablet ? 18 : 15,
+                fontSize: isTablet ? 18 : 15,
 
-                fontweight:
-                    FontWeight.w700,
+                fontweight: FontWeight.w700,
 
                 maxLines: 1,
 
-                textOverflow:
-                    TextOverflow.ellipsis,
+                textOverflow: TextOverflow.ellipsis,
               ),
             ),
 
-            SizedBox(
-              width: widthScreen * 0.02,
-            ),
+            SizedBox(width: widthScreen * 0.02),
 
-            const Icon(
-              Icons.arrow_forward,
-              color: Colors.white,
-            ),
+            const Icon(Icons.arrow_forward, color: Colors.white),
           ],
         ),
       ),
@@ -421,52 +382,42 @@ class _VisionTitle extends StatelessWidget {
   final double fontSize;
   final String visionTitle;
 
-  const _VisionTitle({
-    required this.fontSize, required this.visionTitle,
-  });
+  const _VisionTitle({required this.fontSize, required this.visionTitle});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-          const EdgeInsets.symmetric(
-        horizontal: 12,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
 
-      child: 
-      SmartHtmlWidget(
-                      html: visionTitle ?? "",
-                      textColor: Customcolor.colorVoilet,
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.w900,
-                      ignoreHtmlStyles: true,
-                    ),
-     
+      child: SmartHtmlWidget(
+        html: visionTitle ?? "",
+        textColor: Customcolor.colorVoilet,
+        fontSize: fontSize,
+        fontWeight: FontWeight.w900,
+        ignoreHtmlStyles: true,
+      ),
     );
   }
 }
 
 class _VisionSubtitle extends StatelessWidget {
   final double fontSize;
-    final String subTitle;
+  final String subTitle;
 
-  const _VisionSubtitle({
-    required this.fontSize, required this.subTitle,
-  });
+  const _VisionSubtitle({required this.fontSize, required this.subTitle});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-          const EdgeInsets.symmetric(
-        horizontal: 18,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 18),
 
-      child: SmartHtmlWidget(html: subTitle,  textColor: Customcolor.colorPink,
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.w900,
-                      ignoreHtmlStyles: true,)
-      
+      child: SmartHtmlWidget(
+        html: subTitle,
+        textColor: Customcolor.colorPink,
+        fontSize: fontSize,
+        fontWeight: FontWeight.w900,
+        ignoreHtmlStyles: true,
+      ),
     );
   }
 }

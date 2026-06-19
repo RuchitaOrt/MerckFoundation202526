@@ -1,5 +1,6 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/Provider/SocialProvider.dart';
 import 'package:merckfoundation_252026/Provider/navbar_provider.dart';
 import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
@@ -144,6 +145,8 @@ Widget build(BuildContext context) {
   final navbarProvider = Provider.of<NavbarProvider>(context);
   final navMenus = navbarProvider.mobileBottomMenus;
  
+
+  
   return Scaffold(
     backgroundColor: Customcolor.background,
 

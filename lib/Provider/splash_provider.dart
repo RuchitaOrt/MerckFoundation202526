@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/Provider/SocialProvider.dart';
 import 'package:merckfoundation_252026/Provider/navbar_provider.dart';
 import 'package:merckfoundation_252026/const/GlobalLists.dart';
 
@@ -32,6 +33,10 @@ Future<void> init(
     context,
     listen: false,
   ).getNavbar(context);
+ await Provider.of<SocialProvider>(
+    context,
+    listen: false,
+  ).getSocialMediaDrawer(context);
 
   final navbarProvider =
       Provider.of<NavbarProvider>(

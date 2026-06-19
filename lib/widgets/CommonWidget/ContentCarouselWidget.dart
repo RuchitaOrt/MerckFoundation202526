@@ -112,7 +112,9 @@ class _ContentPage extends StatelessWidget {
     final image = item['thumbnail'] ?? "";
 
     return ListView(
-      physics: const BouncingScrollPhysics(),
+      // shrinkWrap: true,
+      //12june
+      physics: const ScrollPhysics(),
       children: [
         Padding(
           padding: const EdgeInsets.all(16),
