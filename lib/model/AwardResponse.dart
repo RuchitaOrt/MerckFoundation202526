@@ -3,6 +3,7 @@ class AwardModel {
   final bool isActive;
   final String title;
   final String? subtitle;
+  final String? subdescription;
   final String pageUrl;
   final String image;
   final String? altText;
@@ -14,6 +15,7 @@ class AwardModel {
     required this.id,
     required this.isActive,
     required this.title,
+    this.subdescription,
     this.subtitle,
     required this.pageUrl,
     required this.image,
@@ -33,7 +35,8 @@ class AwardModel {
       altText: json['alt_text'],
       status: json['status'] ?? false,
       colorCode: json['color_code'],
-      menuId: json['menu_id'] 
+      menuId: json['menu_id'] ,
+      subdescription:json['subdescription']
     );
   }
 }

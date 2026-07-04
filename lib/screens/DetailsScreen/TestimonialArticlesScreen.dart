@@ -79,14 +79,18 @@ class _TestimonialArticlesScreenState extends State<TestimonialArticlesScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<TestimonialArticleProvider>();
-
+final filter = context.read<FilterProvider>();
     return Scaffold(
       key: _scaffoldKey,
       endDrawer: AppDrawerfilter(type: MediaType.testimonialArticle),
 
       appBar: CommonAppBar(
         type: AppBarType.inner,
-        title: widget.title,
+        title: 
+         filter.selectedCategory?.name == "All"
+          ? widget.title
+          : filter.selectedCategory?.name==""?"Merck Foundation Alumini Testimonials":  widget.title,
+        // widget.title,
         onFilter: () => _scaffoldKey.currentState!.openEndDrawer(),
 
         onSearch: () {},
@@ -263,7 +267,7 @@ class _TestimonialPage extends StatelessWidget {
       shrinkWrap: true,
       //12june
        physics: const ScrollPhysics(),
-//physics: const ClampingScrollPhysics(),
+
       children: [
         Padding(
           padding: const EdgeInsets.all(16),

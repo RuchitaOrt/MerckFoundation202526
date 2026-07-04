@@ -5,6 +5,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
+import 'package:merckfoundation_252026/const/GlobalLists.dart';
+import 'package:merckfoundation_252026/main.dart';
+import 'package:merckfoundation_252026/service/SpashService.dart';
 
 class PushNotifications {
   static final FirebaseMessaging _messaging =
@@ -19,13 +22,26 @@ class PushNotifications {
       alert: true,
       badge: true,
       sound: true,
-    );
+    ); 
 
    // final token = await _messaging.getToken();
     try {
     final token = await _messaging.getToken();
+    GlobalLists.fcmtokenvalue=token!;
     print("FCM TOKEN: $token");
-    // showToast("FCM: $token");
+  //  showToast("FCM: $token");
+    if (token != null && token.isNotEmpty) {
+
+        GlobalLists.fcmtokenvalue = token;
+
+        print("FCM TOKEN : $token");
+
+        await SplashService().saveDeviceToken(
+          routeGlobalKey.currentContext!,
+          deviceId: GlobalLists.deviceid,
+          fcmToken: token,
+        );
+      }
   } catch (e) {
     print("TOKEN ERROR: $e");
     // showToast("ERROR: $e");

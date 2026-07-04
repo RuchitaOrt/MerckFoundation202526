@@ -100,7 +100,7 @@ class MediaListingService {
           "album_id":
               albumID,
         };
-
+print(body);
         break;
 
       case MediaType.episodes:

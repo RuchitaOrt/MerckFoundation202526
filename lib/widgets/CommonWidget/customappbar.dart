@@ -4,6 +4,7 @@ import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
+import 'package:merckfoundation_252026/screens/MainScreens/SearchScreen.dart';
 
 import 'package:merckfoundation_252026/screens/MainScreens/dashboard.dart';
 import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
@@ -129,8 +130,23 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           // if (onShare != null) _icon(CommonImagePath.share, onShare,true),
           // // ACTION ICONS
           8.0.heightBox,
-          if (onSearch != null) _icon(CommonImagePath.search, onSearch, false),
-
+          // if (onSearch != null)
+          // _icon(CommonImagePath.search, onSearch, false),
+          _icon(
+            CommonImagePath.search,
+            () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => SearchScreen(
+                    
+                  ),
+                ),
+              );
+            },
+            // onSearch,
+            false,
+          ),
           10.0.heightBox,
         ],
       ),
@@ -146,29 +162,28 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: Row(
         children: [
           Expanded(
-            child:
-            SmartHtmlWidget(
-  html: title ?? "",
-  textColor: Customcolor.white,
-  fontSize: 14,
-  fontWeight: FontWeight.bold,
-  ignoreHtmlStyles: true,
-  applyMaxLines: true,
-  maxLines: 1,
-  softWrap: true,
-  textOverflow: TextOverflow.ellipsis,
-),
-  //           SmartHtmlWidget(
-  //             html: title ?? "",
-  //             textColor: Customcolor.white,
-  //             fontSize: 14,
-  //             fontWeight: FontWeight.bold,
-  //             ignoreHtmlStyles: true,
-  //             applyMaxLines: true,
-  // maxLines: 1,
-  // softWrap: true,
-  // textOverflow: TextOverflow.ellipsis,
-  //           ),
+            child: SmartHtmlWidget(
+              html: title ?? "",
+              textColor: Customcolor.white,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              ignoreHtmlStyles: true,
+              applyMaxLines: true,
+              maxLines: 1,
+              softWrap: true,
+              textOverflow: TextOverflow.ellipsis,
+            ),
+            //           SmartHtmlWidget(
+            //             html: title ?? "",
+            //             textColor: Customcolor.white,
+            //             fontSize: 14,
+            //             fontWeight: FontWeight.bold,
+            //             ignoreHtmlStyles: true,
+            //             applyMaxLines: true,
+            // maxLines: 1,
+            // softWrap: true,
+            // textOverflow: TextOverflow.ellipsis,
+            //           ),
             // FormLabel(
             //   text: title ?? "",
             //   maxLines: 1,

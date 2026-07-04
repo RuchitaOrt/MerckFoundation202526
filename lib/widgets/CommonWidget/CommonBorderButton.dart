@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 
 class CommonBorderButton extends StatelessWidget {
   final String title;
@@ -39,7 +40,8 @@ class CommonBorderButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(borderRadius),
         ),
         child: Text(
-          title,
+           stripHtml(title),
+          // title,
           style:
               textStyle ??
               TextStyle(

@@ -12,8 +12,10 @@ class PageService {
       API.pageStructure,
       queryParams: {
         "menu_id": menuId,
-        "channel": Platform.isAndroid?"android":"ios",
-        "json_type": "preview_json",
+        "channel":
+        //  "android",
+         Platform.isAndroid?"android":"ios",
+        "json_type":"final_json" //"preview_json",
       },
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/customappbar.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
@@ -120,7 +121,8 @@ class CategoryChip extends StatelessWidget {
           border: Border.all(color: color, width: 2),
         ),
         child: Text(
-          title,
+           stripHtml(title),
+          // title,
           textAlign: TextAlign.center,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
@@ -153,7 +155,8 @@ class FollowSection extends StatelessWidget {
   child: Padding(
     padding: const EdgeInsets.fromLTRB(16, 0, 10, 0),
     child: Text(
-      title,
+      stripHtml(title),
+      // title,
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
       style: TextStyle(

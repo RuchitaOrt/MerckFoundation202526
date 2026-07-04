@@ -193,7 +193,8 @@ class _AppDrawerfilterState extends State<AppDrawerfilter> {
       child: Column(
         children: [
           ListTile(
-            title: Text(title),
+            title:
+             Text(title),
             subtitle: Text(value),
             trailing: Icon(
               expanded

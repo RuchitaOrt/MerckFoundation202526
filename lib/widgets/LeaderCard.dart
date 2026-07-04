@@ -3,6 +3,7 @@ import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/screens/DetailsScreen/DetailScreen.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
 
 import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
@@ -36,7 +37,8 @@ class LeaderCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
-            content['subtitle'],
+              stripHtml(content['subtitle']),
+            // content['subtitle'],
             style: TextStyle(
               color: Customcolor.pinkColor,
               fontSize: responsive.fontSize(3),

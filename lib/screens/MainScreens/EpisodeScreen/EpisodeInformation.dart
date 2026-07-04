@@ -7,6 +7,7 @@ import 'package:merckfoundation_252026/Utility/api_status.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonBorderButton.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
@@ -156,7 +157,8 @@ class _EpisodeInformationState extends State<EpisodeInformation> {
     return Padding(
       padding:  EdgeInsets.all(8.0),
       child: Text(
-        title,
+         stripHtml(title),
+        // title,
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w700,

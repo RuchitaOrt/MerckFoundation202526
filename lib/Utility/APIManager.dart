@@ -4,11 +4,14 @@ import 'package:dio/dio.dart';
 import 'package:merckfoundation_252026/Utility/api_result.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_strings.dart';
+import 'package:merckfoundation_252026/model/AppVersionResponse.dart';
 
 import 'package:merckfoundation_252026/model/NavBarResponse.dart';
 
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/model/OurPartnerResponse.dart';
+import 'package:merckfoundation_252026/model/SaveDeviceTokenResponse.dart';
+import 'package:merckfoundation_252026/model/SearchModel.dart';
 
 enum API {
   navbarmenulist,
@@ -59,6 +62,9 @@ enum API {
   getceomessages,
   getambassadorimages,
   mobiledrawermedia,
+  search,
+  SaveUserDeviceTokenAPI,
+  getappversion,
 }
 
 enum HTTPMethod { GET, POST, PUT, DELETE }
@@ -401,6 +407,14 @@ class APIManager {
         return "api/page_structure/get-ambassador-images";
       case API.mobiledrawermedia:
         return "api/masters/mobile-drawer-media";
+      case API.search:
+        return "api/page_structure/search";
+
+      case API.SaveUserDeviceTokenAPI:
+        return "api/newsletters_articles/SaveUserDeviceTokenAPI";
+
+      case API.getappversion:
+        return "api/newsletters_articles/get-app-version";
     }
   }
 
@@ -426,6 +440,7 @@ class APIManager {
       case API.getawardlist:
       case API.getceomessages:
       case API.mobiledrawermedia:
+      case API.getappversion:
         return HTTPMethod.GET;
 
       default:
@@ -441,6 +456,16 @@ class APIManager {
         return json;
       case API.ourPartners:
         return OurPartnersResponse.fromJson(json);
+
+      case API.search:
+        return SearchModel.fromJson(json);
+
+
+      case API.SaveUserDeviceTokenAPI:
+      return SaveDeviceTokenResponse.fromJson(json);
+
+       case API.getappversion:
+      return AppVersionResponse.fromJson(json);
 
       default:
         return json;

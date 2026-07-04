@@ -224,9 +224,21 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                             subTitle: item.subtitle ?? "",
                         showPlayIcon: false,
                         onTap: () {
-                          if (widget.type == HomeLayoutType.photoGallery 
+                          if (widget.type == HomeLayoutType.photoGallery ){
+                            showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.black,
+                                      builder: (_) => ImagePreviewDialog(
+                                        imageUrl: item.thumbnail ?? "",
+                                        title: item.description  ?? "",
+                                      ),
+                                    );
+                          }
                           
-                          ||widget.type == HomeLayoutType.PhotoCategory) {
+                          else 
+                          if
+                          (widget.type == HomeLayoutType.PhotoCategory) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(

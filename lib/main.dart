@@ -14,6 +14,7 @@ import 'package:merckfoundation_252026/Provider/MediaProvider.dart';
 import 'package:merckfoundation_252026/Provider/MediaListingProvider.dart';
 import 'package:merckfoundation_252026/Provider/OurPartnersProvider.dart';
 import 'package:merckfoundation_252026/Provider/PhotoAlbumProvider.dart';
+import 'package:merckfoundation_252026/Provider/SearchProvider.dart';
 import 'package:merckfoundation_252026/Provider/SocialProvider.dart';
 
 import 'package:merckfoundation_252026/Provider/TestimonialProvider.dart';
@@ -38,23 +39,20 @@ import 'package:provider/provider.dart';
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Background message: ${message.notification?.title}");
 }
+
 final GlobalKey<NavigatorState> routeGlobalKey = GlobalKey();
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  FirebaseMessaging.onBackgroundMessage(
-    firebaseMessagingBackgroundHandler,
-  );
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
   await PushNotifications.localNotiInit();
   await PushNotifications.init();
-await Utility().loadAPIConfig();
+  await Utility().loadAPIConfig();
   runApp(MyApp());
 }
 
@@ -66,27 +64,28 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool isroomfound = false;
   String? roomid;
-  
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
- 
   }
-
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => SplashProvider()),
+        ChangeNotifierProvider(create: (_) => SearchProvider()),
 
         /// ✅ ALSO KEEP THIS
         ChangeNotifierProvider(create: (_) => NavbarProvider()),
-        ChangeNotifierProvider(create: (_) => SocialProvider(SocialMediaService(),)),
+        ChangeNotifierProvider(
+          create: (_) => SocialProvider(SocialMediaService()),
+        ),
 
         ChangeNotifierProvider(create: (_) => ArticleProvider()),
-        
+
         ChangeNotifierProvider(create: (_) => MediaProvider()),
         ChangeNotifierProvider(create: (_) => MediaListingProvider()),
         ChangeNotifierProvider(create: (_) => FilterProvider()),
@@ -97,14 +96,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ChangeNotifierProvider(create: (_) => EpisodeProvider()),
         ChangeNotifierProvider(create: (_) => AwardProvider()),
         ChangeNotifierProvider(create: (_) => CeoMessageProvider()),
-  
+
         ChangeNotifierProvider(create: (_) => CallApplicationProvider()),
-                ChangeNotifierProvider(create: (_) => PageProvider()),
+        ChangeNotifierProvider(create: (_) => PageProvider()),
+
         //---------------------------------------------------------------------
-
-
-      
-
         ChangeNotifierProvider(
           create: (_) => CovidProvider()..loadInitialData(),
         ),
@@ -129,8 +125,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        // navigatorObservers: <NavigatorObserver>[observer],
 
+        // navigatorObservers: <NavigatorObserver>[observer],
         navigatorKey: routeGlobalKey,
 
         initialRoute: SplashScreen.route,
@@ -139,4 +135,3 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     );
   }
 }
-

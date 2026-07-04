@@ -6,6 +6,7 @@ import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/EpisodeScreen/EpisodeInformation.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonBorderButton.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonPopupMenu.dart';
 
@@ -156,7 +157,9 @@ class MediaCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center, // optional
                   children: [
                     FormLabel(
-                      text: title,
+                      text:
+                        
+                       title,
                       maxLines: 3,
                       textAlignment: TextAlign.center,
                       fontSize: screenWidth * 0.030,

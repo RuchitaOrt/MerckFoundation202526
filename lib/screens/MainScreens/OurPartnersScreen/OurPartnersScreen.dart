@@ -3,6 +3,7 @@ import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 import 'package:merckfoundation_252026/Provider/OurPartnersProvider.dart';
 import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/customappbar.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
@@ -176,7 +177,8 @@ class _OurPartnersScreenState extends State<OurPartnersScreen> {
                     const SizedBox(height: 8),
 
                     Text(
-                      item.title ?? "",
+                       stripHtml(item.title),
+                      // item.title ?? "",
                       textAlign: TextAlign.center,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,

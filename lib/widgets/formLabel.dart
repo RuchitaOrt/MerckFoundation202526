@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 
 
 // ignore: must_be_immutable
@@ -35,7 +36,8 @@ class FormLabel extends StatelessWidget {
 
     return Text(
       softWrap: softWrap,
-      text,
+    //  text,
+    stripHtml(text),
       maxLines: maxLines,
       
       textAlign: textAlignment,

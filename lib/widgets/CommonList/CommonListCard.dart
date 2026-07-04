@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 
 class CommonListCard extends StatelessWidget {
   final String imageUrl;
@@ -84,7 +85,8 @@ class CommonListCard extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(top: 2),
                 child: Text(
-                  htmlTitle,
+                   stripHtml(htmlTitle),
+                  // htmlTitle,
                   maxLines: 4,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(

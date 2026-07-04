@@ -5,6 +5,7 @@ import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonBorderButton.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/ImagePreviewScreen.dart';
 
@@ -37,7 +38,8 @@ class HorizontalAlbumWidget<T> extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title.trim(),
+            stripHtml(title.trim()),
+            // ,
             style: TextStyle(
               fontSize: screenWidth * 0.038,
               fontWeight: FontWeight.w800,

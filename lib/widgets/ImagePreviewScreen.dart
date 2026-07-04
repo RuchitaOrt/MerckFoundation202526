@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 
 class ImagePreviewDialog extends StatelessWidget {
   final String imageUrl;
@@ -68,7 +69,8 @@ class ImagePreviewDialog extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             color: Colors.white,
             child: Text(
-              title,
+                stripHtml(title),
+              // title,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 16,

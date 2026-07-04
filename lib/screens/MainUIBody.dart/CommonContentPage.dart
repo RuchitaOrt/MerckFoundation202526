@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 
 import 'package:merckfoundation_252026/widgets/CommonWidget/customappbar.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
@@ -97,7 +98,8 @@ class _CommonContentPageState extends State<CommonContentPage> {
                             ),
 
                             title: Text(
-                              item['menu_name'] ?? "",
+                               stripHtml(item['menu_name'] ?? ""),
+                              // item['menu_name'] ?? "",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Customcolor.white,
@@ -144,7 +146,7 @@ AppNavigation.navigateByMenuId(
                                   title: Text(
                                     submenu['menu_name'] ?? "",
                                     style: const TextStyle(
-                                       color: Customcolor.white,
+                                       color: Customcolor.textBlueColor,
                             fontWeight: FontWeight.w600,
                                      
                                     ),
@@ -154,9 +156,11 @@ AppNavigation.navigateByMenuId(
                                     size: 12,
                                   ),
                                   onTap: () {
-                                     if( item['menu_type']=="static")
+                                    print("HIT");
+                                    print(submenu['menu_type']);
+                                     if( submenu['menu_type']=="static")
                                  {
-ShowDialogs.launchURL(item['full_url']?? "");
+ShowDialogs.launchURL(submenu['full_url']?? "");
                                  }else{
                                      AppNavigation.navigateByMenuId(
     context,
@@ -197,6 +201,7 @@ final Color color = Color(
                           ),
                         ),
                         onTap: () {
+                          print("HIT1");
                            if( item['menu_type']=="static")
                                  {
 ShowDialogs.launchURL(item['full_url']?? "");

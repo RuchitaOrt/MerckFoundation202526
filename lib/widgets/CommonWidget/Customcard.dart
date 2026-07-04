@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonActionButton.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonRichText.dart';
 
 import 'package:merckfoundation_252026/widgets/PauseImage.dart';
@@ -148,7 +149,8 @@ class CustomCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    subtitle ?? '',
+                     stripHtml(subtitle ?? ''),
+                    // subtitle ?? '',
                     maxLines: 2,
                     style: TextStyle(fontSize: responsive.fontSize(2.5)),
                     overflow: TextOverflow.ellipsis,
@@ -179,7 +181,8 @@ class CustomCard extends StatelessWidget {
           if (htmlSubtitle != null)
             Expanded(
               child: Text(
-                htmlSubtitle ?? '',
+                  stripHtml(htmlSubtitle ?? ''),
+                // htmlSubtitle ?? '',
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
                 softWrap: true,

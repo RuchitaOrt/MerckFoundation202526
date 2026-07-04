@@ -3,6 +3,7 @@ import 'package:merckfoundation_252026/Provider/AwardProvider.dart';
 import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/customappbar.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_strings.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
@@ -153,7 +154,8 @@ class AwardCard extends StatelessWidget {
               children: [
                 /// TITLE
                 Text(
-                  award.title,
+                  stripHtml(award.title ?? ""),
+                  
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(

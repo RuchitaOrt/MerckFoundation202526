@@ -54,19 +54,6 @@ String decodeHtmlEntities(String text) {
         : cleanHtml(html),
   ).trim(),
 
-//        Text(
-//         decodeHtmlEntities(
-//   removeAllHtmlTags(
-//     ignoreHtmlStyles
-//         ? removeHtmlStyles(html)
-//         : cleanHtml(html),
-//   ),
-// ).trim(),
-        // removeAllHtmlTags(
-        //   ignoreHtmlStyles
-        //       ? removeHtmlStyles(html)
-        //       : cleanHtml(html),
-        // ).trim(),
 
         maxLines: maxLines,
         softWrap: softWrap,
@@ -141,6 +128,7 @@ if (element.localName == 'iframe') {
         }
        if (element.localName == 'table') {
   return AutoResizeWebView(
+    key: PageStorageKey(element.outerHtml.hashCode),
     htmlContent: element.outerHtml,
   );
 }
@@ -193,47 +181,6 @@ if (element.localName == 'iframe') {
     );
   }
 
-  /// ✅ CLEAN HTML
-  // String cleanHtml(String html) {
-  //   return html
-  //       .replaceAll(
-  //         RegExp(r'margin:[^;"]*;?'),
-  //         '',
-  //       )
-  //       .replaceAll(
-  //         RegExp(r'line-height:[^;"]*;?'),
-  //         '',
-  //       )
-  //       .replaceAll(
-  //         'text-align:justify;',
-  //         'text-align:left;',
-  //       );
-  // }
-
-  // /// ✅ REMOVE INLINE STYLES
-  // String removeHtmlStyles(String html) {
-  //   return html
-
-  //       /// remove style=""
-  //       .replaceAll(
-  //         RegExp(r'style\s*=\s*"[^"]*"'),
-  //         '',
-  //       )
-
-  //       /// remove class=""
-  //       .replaceAll(
-  //         RegExp(r'class\s*=\s*"[^"]*"'),
-  //         '',
-  //       );
-  // }
-
-  // /// ✅ REMOVE ALL HTML TAGS
-  // String removeAllHtmlTags(String htmlText) {
-  //   return htmlText.replaceAll(
-  //     RegExp(r'<[^>]*>'),
-  //     '',
-  //   );
-  // }
 String cleanHtml(String html) {
   html = decodeHtmlEntities(html);
 

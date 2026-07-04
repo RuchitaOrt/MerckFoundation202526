@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 
 class CustomSwiper extends StatefulWidget {
   final List items;
@@ -182,7 +183,8 @@ class _SwiperCard extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Text(
-            item.title ?? "",
+             stripHtml(item.title ?? ""),
+            // item.title ?? "",
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
