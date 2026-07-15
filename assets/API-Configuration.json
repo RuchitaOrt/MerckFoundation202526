@@ -1,5 +1,5 @@
 {
-    "environment": "sanity",
+    "environment": "development",
     "version": "1",
     "development": {
         "hostUrl":  "https://mfv1-uat.ortdemo.com/",

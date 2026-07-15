@@ -202,7 +202,7 @@ class HorizontalMediaSection extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(20),
                                 child: Image.network(
                                   imageUrl,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.fill,
                                   width: double.infinity,
                                   loadingBuilder: (context, child, progress) {
                                     if (progress == null) return child;

@@ -173,27 +173,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
               softWrap: true,
               textOverflow: TextOverflow.ellipsis,
             ),
-            //           SmartHtmlWidget(
-            //             html: title ?? "",
-            //             textColor: Customcolor.white,
-            //             fontSize: 14,
-            //             fontWeight: FontWeight.bold,
-            //             ignoreHtmlStyles: true,
-            //             applyMaxLines: true,
-            // maxLines: 1,
-            // softWrap: true,
-            // textOverflow: TextOverflow.ellipsis,
-            //           ),
-            // FormLabel(
-            //   text: title ?? "",
-            //   maxLines: 1,
-            //   fontSize: 14,
-            //   softWrap: true,
-            //   textOverflow: TextOverflow.ellipsis,
-            //   labelColor: Colors.white,
-            //   fontweight: FontWeight.bold,
-            //   textAlignment: TextAlign.start,
-            // ),
+    
           ),
 
           if (onFilter != null) _icon(CommonImagePath.filter, onFilter, false),

@@ -33,15 +33,16 @@ class SplashService {
       "fcm_token": fcmToken,
       "platform": Platform.isAndroid ? "android" : "ios",
     };
-
+print(body);
     final ApiResult result = await APIManager().apiRequest(
       context,
       API.SaveUserDeviceTokenAPI,
       jsonval: body,
     );
-
+    print("SaveFMREQUEST");
+print(result);
     if (result.status == ApiStatus.success) {
-        showToast("FCM: ${result.status}");
+        // showToast("FCM: ${result.status}");
       return result.data as SaveDeviceTokenResponse;
     }
 

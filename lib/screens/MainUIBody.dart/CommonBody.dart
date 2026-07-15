@@ -249,7 +249,7 @@ final controller = ScrollController();
       },
     );
   }
-
+  bool tabShowViewButton =false;
   Widget renderLayout(Map layout, List allLayouts) {
    
     final responsive = ResponsiveFlutter.of(context);
@@ -260,7 +260,7 @@ final controller = ScrollController();
 
     /// ✅ HANDLE TABS (GLOBAL)
     if (tabTypes.contains(layout['layout_type']) &&
-        layout['mobile_view'] == "horizontal") {
+       ( layout['mobile_view'] == "horizontal" || layout['mobile_view'] == "Horizontal")) {
       /// ✅ only layouts having content
       final validTabLayouts = allLayouts.where((e) {
         final List content = e['content'] ?? [];
@@ -282,7 +282,7 @@ final controller = ScrollController();
       final tabs = validTabLayouts.map<DynamicTabItem>((tabLayout) {
         final List content = tabLayout['content'] ?? [];
 
-        final bool tabShowViewButton = tabLayout['view_button'] == true;
+         tabShowViewButton = tabLayout['view_button'] == true;
 
         final items = content.map<CarouselItem>((e) {
           final image = e['thumbnail'];
@@ -352,7 +352,7 @@ final controller = ScrollController();
       }
 
       return SizedBox(
-        height: CommonStrings.tabheight,
+        height:tabShowViewButton?CommonStrings.tabheightwithview: CommonStrings.tabheight,
         child: DynamicTabView(
           tabs: tabs,
           indicatorColor: Customcolor.pinkBgColor,
@@ -567,7 +567,7 @@ final controller = ScrollController();
       case HomeLayoutType.MerckMoreThanAmbasdarFormer:
       case HomeLayoutType.CallForApplication:
         return (type == HomeLayoutType.testimonials &&
-                layout['mobile_view'] == "vertical")
+                layout['mobile_view'] == "vertical" || layout['mobile_view'] == "Vertical")
             ? TestimonialVerticalSection(
                 content: (layout['content'] as List? ?? [])
                     .map((e) => StoryModel.fromJson(e))
@@ -575,7 +575,7 @@ final controller = ScrollController();
                 shareLink: layout['button_link'] ?? '',
                 title: layout['title'] ?? '',
               )
-            : layout['mobile_view'] == "vertical"
+            : (layout['mobile_view'] == "vertical" || layout['mobile_view'] == "Vertical")
             ? VerticalMediaSection(
                 content: (layout['content'] as List? ?? [])
                     .map((e) => StoryModel.fromJson(e))
@@ -612,20 +612,33 @@ final controller = ScrollController();
           final item = contentList.first;
 
           return Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+            padding: const EdgeInsets.only(left: 16, right: 16, top: 16,bottom: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+              layout['title'] !=""?   SmartHtmlWidget(
+                  html:
+
+                 layout['title'] ?? "",
+                  textColor: Customcolor.colorVoilet,
+                  fontSize: responsive.fontSize(3.0),
+                  fontWeight: FontWeight.w800,
+                ):
+                 
                 SmartHtmlWidget(
-                  html: item['title'] ?? "",
+                  html:
+
+                   item['title'] ?? "",
                   textColor: Customcolor.colorVoilet,
                   fontSize: responsive.fontSize(3.0),
                   fontWeight: FontWeight.w800,
                 ),
+ const SizedBox(height: 10),
 
+                 SmartHtmlWidget(html: """${item['subdescription']}""" ?? ""),
                 const SizedBox(height: 10),
 
-                SmartHtmlWidget(html: item['description'] ?? ""),
+                 SmartHtmlWidget(html: """${item['description']}""" ?? ""),
 
                
               ],
@@ -643,7 +656,7 @@ final controller = ScrollController();
 
       case HomeLayoutType.marquee:
         return Column(
-          children: [CommonMarqueeWidget(title: layout['title'] ?? "")],
+          children: [CommonMarqueeWidget(contents: layout['content'] ?? [])],
         );
       case HomeLayoutType.MenuManagement:
         return Column(

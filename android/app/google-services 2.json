@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "400096468842",
-    "project_id": "merck-foundation-revamp",
-    "storage_bucket": "merck-foundation-revamp.firebasestorage.app"
+    "project_number": "664350243322",
+    "project_id": "merckfoundation-revamp",
+    "storage_bucket": "merckfoundation-revamp.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:400096468842:android:d44ffd811692f371a34f13",
+        "mobilesdk_app_id": "1:664350243322:android:b7497e4344fb9b6c078c43",
         "android_client_info": {
           "package_name": "de.merck.foundation"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC4iSTBcQgwVZclAs-Gc89ML5kEb_RSV9s"
+          "current_key": "AIzaSyAtjNNBAA8ZsMsIuNGF1hZC2aN8fOhQkbc"
         }
       ],
       "services": {

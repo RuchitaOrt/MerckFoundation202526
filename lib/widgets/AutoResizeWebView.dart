@@ -33,7 +33,6 @@ class _AutoResizeWebViewState extends State<AutoResizeWebView>
 
   @override
   void dispose() {
-    
     super.dispose();
   }
 
@@ -147,23 +146,44 @@ height:auto !important;
 }
 
 .table-wrapper{
-
-overflow-x:auto;
-
--webkit-overflow-scrolling:touch;
-
+    width:100%;
+    overflow-x:auto;
+    overflow-y:hidden;
+    white-space:nowrap;
+    -webkit-overflow-scrolling:touch;
+     margin:0;
+    padding:0;
 }
 
 table{
-
-border-collapse:collapse;
-
-width:auto;
-
-min-width:max-content;
-
+    border-collapse:collapse;
+    margin:0 !important;
+    padding:0 !important;
+    width:max-content !important;
+    min-width:max-content !important;
 }
-
+.table-responsive{
+    width:100%;
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+}
+figure.table{
+    display:block !important;
+    width:100% !important;
+    max-width:100% !important;
+    margin:0 !important;
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+}
+ 
+figure.table table{
+    width:max-content !important;
+    min-width:100% !important;
+    margin:0 !important;
+    border-collapse:collapse;
+}
 th,td{
 
 padding:12px 16px;

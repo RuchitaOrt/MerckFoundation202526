@@ -52,6 +52,7 @@ Future<void> main() async {
 
   await PushNotifications.localNotiInit();
   await PushNotifications.init();
+  
   await Utility().loadAPIConfig();
   runApp(MyApp());
 }

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/SocialProvider.dart';
 import 'package:merckfoundation_252026/Provider/navbar_provider.dart';
 import 'package:merckfoundation_252026/const/GlobalLists.dart';
+import 'package:merckfoundation_252026/main.dart';
 
 import 'package:merckfoundation_252026/screens/MainScreens/Landingpage.dart';
 import 'package:merckfoundation_252026/service/SpashService.dart';
@@ -133,7 +134,7 @@ Future<void> init(
 
   notifyListeners();
 
-
+print("_getDeviceId init");
   await _getDeviceId();
 await getCurrentVersion();
 await getAppVersion(context);
@@ -214,6 +215,7 @@ Future<void> getCurrentVersion() async {
   debugPrint("Installed Version : $appVersion");
 }
   Future<void> _getDeviceId() async {
+    print("_getDeviceId");
     final deviceInfo = DeviceInfoPlugin();
 
     if (Platform.isAndroid) {
@@ -225,6 +227,13 @@ Future<void> getCurrentVersion() async {
     }
 
     GlobalLists.deviceid = deviceId ?? "";
+      print("_getDeviceId ${GlobalLists.deviceid }");
+
+       await SplashService().saveDeviceToken(
+          routeGlobalKey.currentContext!,
+          deviceId: GlobalLists.deviceid,
+          fcmToken: GlobalLists.fcmtokenvalue,
+        );
   }
 
 void _handleNavigation(

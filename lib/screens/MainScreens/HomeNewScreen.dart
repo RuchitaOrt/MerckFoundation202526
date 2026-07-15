@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
@@ -12,14 +14,19 @@ import 'package:merckfoundation_252026/screens/MainUIBody.dart/CommonBody.dart';
 import 'package:merckfoundation_252026/widgets/drawer.dart';
 
 class MerckHomeScreen extends StatelessWidget {
-   final String menuID;
+  final String menuID;
   final String title;
   final String mennuLogo;
-  
 
   final String? shareLink;
 
-  MerckHomeScreen({super.key, required this.menuID, required this.title, this.shareLink, required this.mennuLogo});
+  MerckHomeScreen({
+    super.key,
+    required this.menuID,
+    required this.title,
+    this.shareLink,
+    required this.mennuLogo,
+  });
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
@@ -32,9 +39,8 @@ class MerckHomeScreen extends StatelessWidget {
         type: AppBarType.home,
         onDrawer: () => _scaffoldKey.currentState?.openDrawer(),
         onSearch: () {},
-        height: responsive.height(9),
+        height: Platform.isAndroid? responsive.height(8):  responsive.height(9),
         mennuLogo: mennuLogo,
-       
       ),
 
       drawer: Theme(
@@ -45,13 +51,11 @@ class MerckHomeScreen extends StatelessWidget {
     );
   }
 }
+
 class CategorySection extends StatelessWidget {
   final List content;
 
-  const CategorySection({
-    super.key,
-    required this.content,
-  });
+  const CategorySection({super.key, required this.content});
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +63,10 @@ class CategorySection extends StatelessWidget {
 
     return Container(
       width: double.infinity, // ⭐ IMPORTANT: forces full width alignment
-      padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 5), // match other sections
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 5,
+      ), // match other sections
       child: Wrap(
         alignment: WrapAlignment.start, // ⭐ key fix
         runAlignment: WrapAlignment.start,
@@ -68,19 +75,21 @@ class CategorySection extends StatelessWidget {
         runSpacing: 10,
         children: content.map<Widget>((e) {
           final String title = e['title'] is String ? e['title'] : "";
- final int menuID = e['id'] is int ? e['id'] : "";
+          final int menuID = e['id'] is int ? e['id'] : "";
 
-          final String colorString =
-              e['subdescription'] is String ? e['subdescription'] : "0xFF000000";
-final String menuurl =
-              e['description'] is String ? e['description'] : "";
+          final String colorString = e['subdescription'] is String
+              ? e['subdescription']
+              : "0xFF000000";
+          final String menuurl = e['description'] is String
+              ? e['description']
+              : "";
           final Color color = Color(int.parse(colorString));
 
           return CategoryChip(
             title: title,
             color: color,
             menuID: menuID.toString(),
-            menuurl:menuurl
+            menuurl: menuurl,
           );
         }).toList(),
       ),
@@ -94,7 +103,13 @@ class CategoryChip extends StatelessWidget {
   final String menuID;
   final String menuurl;
 
-  const CategoryChip({super.key, required this.title, required this.color, required this.menuID, required this.menuurl});
+  const CategoryChip({
+    super.key,
+    required this.title,
+    required this.color,
+    required this.menuID,
+    required this.menuurl,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -102,16 +117,14 @@ class CategoryChip extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-      print("menuID ${menuID}");
+        print("menuID ${menuID}");
 
-           AppNavigation.navigateByMenuId(
-    context,
-    menuId: menuID,
-    title:  title,
-    shareLink: menuurl
-    
-  
-  );
+        AppNavigation.navigateByMenuId(
+          context,
+          menuId: menuID,
+          title: title,
+          shareLink: menuurl,
+        );
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -121,7 +134,7 @@ class CategoryChip extends StatelessWidget {
           border: Border.all(color: color, width: 2),
         ),
         child: Text(
-           stripHtml(title),
+          stripHtml(title),
           // title,
           textAlign: TextAlign.center,
           maxLines: 2,
@@ -140,7 +153,12 @@ class FollowSection extends StatelessWidget {
   final String title;
   final double? iconSize;
   final int position;
-  const FollowSection({super.key, required this.title,  this.iconSize,  this.position=0});
+  const FollowSection({
+    super.key,
+    required this.title,
+    this.iconSize,
+    this.position = 0,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -152,21 +170,21 @@ class FollowSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-  child: Padding(
-    padding: const EdgeInsets.fromLTRB(16, 0, 10, 0),
-    child: Text(
-      stripHtml(title),
-      // title,
-      maxLines: 2,
-      overflow: TextOverflow.ellipsis,
-      style: TextStyle(
-        fontSize: screenWidth * 0.055,
-        fontWeight: FontWeight.w800,
-        color: Customcolor.textBlueColor,
-      ),
-    ),
-  ),
-),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 10, 0),
+                child: Text(
+                  stripHtml(title),
+                  // title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.055,
+                    fontWeight: FontWeight.w800,
+                    color: Customcolor.textBlueColor,
+                  ),
+                ),
+              ),
+            ),
             position == 0
                 ? Container()
                 : position == 1
@@ -177,29 +195,41 @@ class FollowSection extends StatelessWidget {
         const SizedBox(height: 12),
         Padding(
           padding: const EdgeInsets.only(left: 10, right: 10),
-          child:  Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              SocialIcon(CommonImagePath.instagram,iconSize:iconSize ,onTap: () {
-                
-              },),
+              SocialIcon(
+                CommonImagePath.instagram,
+                iconSize: iconSize,
+                onTap: () {},
+              ),
 
-              SocialIcon(CommonImagePath.facebook,iconSize:iconSize ,onTap: () {
-                
-              },),
-              SocialIcon(CommonImagePath.twitter,iconSize:iconSize,onTap: () {
-                
-              }, ),
-              SocialIcon(CommonImagePath.youtube,iconSize:iconSize ,onTap: () {
-                
-              },),
-              SocialIcon(CommonImagePath.flicker,iconSize:iconSize ,onTap: () {
-                
-              },),
+              SocialIcon(
+                CommonImagePath.facebook,
+                iconSize: iconSize,
+                onTap: () {},
+              ),
+              SocialIcon(
+                CommonImagePath.twitter,
+                iconSize: iconSize,
+                onTap: () {},
+              ),
+              SocialIcon(
+                CommonImagePath.youtube,
+                iconSize: iconSize,
+                onTap: () {},
+              ),
+              SocialIcon(
+                CommonImagePath.flicker,
+                iconSize: iconSize,
+                onTap: () {},
+              ),
 
-              SocialIcon(CommonImagePath.thread,iconSize:iconSize,onTap: () {
-                
-              },),
+              SocialIcon(
+                CommonImagePath.thread,
+                iconSize: iconSize,
+                onTap: () {},
+              ),
             ],
           ),
         ),
@@ -221,19 +251,12 @@ class SocialIcon extends StatelessWidget {
   final double? iconSize;
   final VoidCallback onTap;
 
-  const SocialIcon(
-    this.icon, {
-    super.key,
-    this.iconSize, required this.onTap,
-  });
+  const SocialIcon(this.icon, {super.key, this.iconSize, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final size =
-        MediaQuery.of(routeGlobalKey.currentContext!)
-                .size
-                .width *
-            0.12;
+        MediaQuery.of(routeGlobalKey.currentContext!).size.width * 0.12;
 
     return GestureDetector(
       onTap: onTap,
@@ -241,7 +264,7 @@ class SocialIcon extends StatelessWidget {
         padding: EdgeInsets.all(size * 0.25),
         decoration: const BoxDecoration(
           shape: BoxShape.circle,
-         color: Colors.white,
+          color: Colors.white,
         ),
         child: SvgPicture.asset(
           icon,
@@ -251,5 +274,4 @@ class SocialIcon extends StatelessWidget {
       ),
     );
   }
-
 }

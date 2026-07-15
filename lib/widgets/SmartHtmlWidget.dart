@@ -24,7 +24,7 @@ class SmartHtmlWidget extends StatelessWidget {
   final bool softWrap;
   final TextOverflow textOverflow;
 
-   SmartHtmlWidget({
+  SmartHtmlWidget({
     super.key,
     required this.html,
     this.textColor,
@@ -36,24 +36,22 @@ class SmartHtmlWidget extends StatelessWidget {
     this.softWrap = true,
     this.textOverflow = TextOverflow.ellipsis,
   });
-final HtmlUnescape _htmlUnescape = HtmlUnescape();
+  final HtmlUnescape _htmlUnescape = HtmlUnescape();
 
-String decodeHtmlEntities(String text) {
-  return _htmlUnescape.convert(text);
-}
+  String decodeHtmlEntities(String text) {
+    return _htmlUnescape.convert(text);
+  }
+
   @override
   Widget build(BuildContext context) {
-
     /// ✅ FOR TITLES / SINGLE LINE TEXT
     if (applyMaxLines) {
-      return
-      Text(
-  removeAllHtmlTags(
-    ignoreHtmlStyles
-        ? removeHtmlStyles(html)
-        : cleanHtml(html),
-  ).trim(),
-
+      print("TAABLE");
+      print(html);
+      return Text(
+        removeAllHtmlTags(
+          ignoreHtmlStyles ? removeHtmlStyles(html) : cleanHtml(html),
+        ).trim(),
 
         maxLines: maxLines,
         softWrap: softWrap,
@@ -70,17 +68,15 @@ String decodeHtmlEntities(String text) {
 
     /// ✅ FOR FULL HTML CONTENT
     return HtmlWidget(
-       ignoreHtmlStyles
-      ? removeHtmlStyles(html)
-      : cleanHtml(html),
+      ignoreHtmlStyles ? removeHtmlStyles(html) : cleanHtml(html),
       // ignoreHtmlStyles
       //     ? removeHtmlStyles(html)
       //     : cleanHtml(html),
-//  decodeHtmlEntities(
-//     ignoreHtmlStyles
-//         ? removeHtmlStyles(html)
-//         : cleanHtml(html),
-//   ),
+      //  decodeHtmlEntities(
+      //     ignoreHtmlStyles
+      //         ? removeHtmlStyles(html)
+      //         : cleanHtml(html),
+      //   ),
       renderMode: RenderMode.column,
 
       textStyle: TextStyle(
@@ -92,18 +88,18 @@ String decodeHtmlEntities(String text) {
 
       /// ✅ CUSTOM WIDGETS
       customWidgetBuilder: (element) {
+        if (element.localName == 'iframe') {
+          final src = element.attributes['src'] ?? "";
 
-if (element.localName == 'iframe') {
-  final src = element.attributes['src'] ?? "";
+          final videoId = YoutubePlayer.convertUrlToId(src);
 
-  final videoId = YoutubePlayer.convertUrlToId(src);
+          if (videoId != null) {
+            return YouTubeInAppPlayer(
+              videoUrl: "https://www.youtube.com/watch?v=$videoId",
+            );
+          }
+        }
 
-  if (videoId != null) {
-    return YouTubeInAppPlayer(
-      videoUrl: "https://www.youtube.com/watch?v=$videoId",
-    );
-  }
-}
         /// 🔹 HANDLE VIDEO TAG (fallback to WebView)
         if (element.localName == 'video') {
           final sourceElement = element.children
@@ -126,17 +122,26 @@ if (element.localName == 'iframe') {
             }
           }
         }
-       if (element.localName == 'table') {
-  return AutoResizeWebView(
-    key: PageStorageKey(element.outerHtml.hashCode),
-    htmlContent: element.outerHtml,
-  );
-}
+        if (element.localName == 'figure' &&
+            (element.attributes['class'] ?? '').contains('table')) {
+          return AutoResizeWebView(
+            key: PageStorageKey(element.outerHtml.hashCode),
+
+            htmlContent: element.outerHtml);
+        } else 
+        if (element.localName == 'table') {
+          print("TAABLE");
+          print(element.outerHtml);
+          return AutoResizeWebView(
+            key: PageStorageKey(element.outerHtml.hashCode),
+
+            htmlContent: element.outerHtml,
+          );
+        }
 
         return null;
       },
       customStylesBuilder: (element) {
-
         /// ✅ REMOVE HTML STYLING
         if (ignoreHtmlStyles) {
           return {
@@ -150,25 +155,21 @@ if (element.localName == 'iframe') {
 
             'font-size': '${fontSize ?? 14}px',
 
-            'font-weight':
-                fontWeight == FontWeight.w800
-                    ? '800'
-                    : fontWeight == FontWeight.w700
-                        ? '700'
-                        : fontWeight == FontWeight.w600
-                            ? '600'
-                            : fontWeight == FontWeight.bold
-                                ? 'bold'
-                                : 'normal',
+            'font-weight': fontWeight == FontWeight.w800
+                ? '800'
+                : fontWeight == FontWeight.w700
+                ? '700'
+                : fontWeight == FontWeight.w600
+                ? '600'
+                : fontWeight == FontWeight.bold
+                ? 'bold'
+                : 'normal',
           };
         }
 
         /// ✅ LINK STYLE
         if (element.localName == 'a') {
-          return {
-            'color': '#1a0dab',
-            'text-decoration': 'underline',
-          };
+          return {'color': '#1a0dab', 'text-decoration': 'underline'};
         }
 
         return null;
@@ -181,59 +182,57 @@ if (element.localName == 'iframe') {
     );
   }
 
-String cleanHtml(String html) {
-  html = decodeHtmlEntities(html);
+  String sanitizeTable(String html) {
+    return html
+        .replaceAll(RegExp(r'margin-left\s*:\s*[^;"]+;?'), '')
+        .replaceAll(RegExp(r'margin-right\s*:\s*[^;"]+;?'), '')
+        .replaceAll(RegExp(r'margin\s*:\s*[^;"]+;?'), '')
+        .replaceAll(RegExp(r'padding-left\s*:\s*[^;"]+;?'), '')
+        .replaceAll(RegExp(r'text-indent\s*:\s*[^;"]+;?'), '');
+  }
 
-  return html
-      .replaceAll(
-        RegExp(r'margin:[^;"]*;?'),
-        '',
-      )
-      .replaceAll(
-        RegExp(r'line-height:[^;"]*;?'),
-        '',
-      )
-      .replaceAll(
-        'text-align:justify;',
-        'text-align:left;',
-      );
-}
+  String cleanHtml(String html) {
+    html = decodeHtmlEntities(html);
 
-String removeHtmlStyles(String html) {
-  html = decodeHtmlEntities(html);
+    return html
+        .replaceAll(RegExp(r'margin:[^;"]*;?'), '')
+        .replaceAll(RegExp(r'line-height:[^;"]*;?'), '')
+        .replaceAll('text-align:justify;', 'text-align:left;');
+  }
 
-  return html
-      .replaceAll(
-        RegExp(r'style\s*=\s*"[^"]*"'),
-        '',
-      )
-      .replaceAll(
-        RegExp(r'class\s*=\s*"[^"]*"'),
-        '',
-      );
-}
+  String removeHtmlStyles(String html) {
+    html = decodeHtmlEntities(html);
 
-String removeAllHtmlTags(String htmlText) {
-  htmlText = decodeHtmlEntities(htmlText);
+    return html
+        .replaceAll(RegExp(r'style\s*=\s*"[^"]*"'), '')
+        .replaceAll(RegExp(r'class\s*=\s*"[^"]*"'), '');
+  }
 
-  return htmlText.replaceAll(
-    RegExp(r'<[^>]*>'),
-    '',
-  );
-}
+  String removeFigureWrapper(String html) {
+    return html
+        .replaceAll(RegExp(r'<figure[^>]*class="[^"]*table[^"]*"[^>]*>'), '')
+        .replaceAll('</figure>', '');
+  }
+
+  String removeAllHtmlTags(String htmlText) {
+    htmlText = decodeHtmlEntities(htmlText);
+
+    return htmlText.replaceAll(RegExp(r'<[^>]*>'), '');
+  }
+
   String extractYoutubeId(String url) {
-  final uri = Uri.parse(url);
+    final uri = Uri.parse(url);
 
-  if (url.contains("youtu.be")) {
-    return uri.pathSegments.last;
+    if (url.contains("youtu.be")) {
+      return uri.pathSegments.last;
+    }
+
+    if (url.contains("embed/")) {
+      return uri.pathSegments.last;
+    }
+
+    return uri.queryParameters['v'] ?? "";
   }
-
-  if (url.contains("embed/")) {
-    return uri.pathSegments.last;
-  }
-
-  return uri.queryParameters['v'] ?? "";
-}
 }
 
 class YouTubeInAppPlayer extends StatefulWidget {

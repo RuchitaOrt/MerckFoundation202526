@@ -19,19 +19,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC4iSTBcQgwVZclAs-Gc89ML5kEb_RSV9s',
-    appId: '1:400096468842:android:d44ffd811692f371a34f13',
-    messagingSenderId: '400096468842',
-    projectId: 'merck-foundation-revamp',
-    storageBucket: 'merck-foundation-revamp.firebasestorage.app',
+    apiKey: 'AIzaSyAtjNNBAA8ZsMsIuNGF1hZC2aN8fOhQkbc',
+    appId: '1:664350243322:android:b7497e4344fb9b6c078c43',
+    messagingSenderId: '664350243322',
+    projectId: 'merckfoundation-revamp',
+    storageBucket: 'merckfoundation-revamp.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCcB6qAqqEhi1v6-K3z9mBX_vwIBHB_vAg',
-    appId: '1:400096468842:ios:1dab0f91aeea5e90a34f13',
-    messagingSenderId: '400096468842',
-    projectId: 'merck-foundation-revamp',
-    storageBucket: 'merck-foundation-revamp.firebasestorage.app',
+    apiKey: 'AIzaSyDi3tYh3pPrbv1jQ4Ha1TSiXZ9Uy927Jgs',
+    appId: '1:664350243322:ios:e45e7b9bd30814ab078c43',
+    messagingSenderId: '664350243322',
+    projectId: 'merckfoundation-revamp',
+    storageBucket: 'merckfoundation-revamp.firebasestorage.app',
     iosBundleId: 'com.merck.foundation',
   );
 }

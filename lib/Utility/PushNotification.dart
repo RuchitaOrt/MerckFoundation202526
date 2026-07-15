@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -12,10 +13,24 @@ import 'package:merckfoundation_252026/service/SpashService.dart';
 class PushNotifications {
   static final FirebaseMessaging _messaging =
       FirebaseMessaging.instance;
+       String? deviceId;
 
   static final FlutterLocalNotificationsPlugin _fln =
       FlutterLocalNotificationsPlugin();
+ _getDeviceId() async {
+    print("_getDeviceId");
+    final deviceInfo = DeviceInfoPlugin();
 
+    if (Platform.isAndroid) {
+      final android = await deviceInfo.androidInfo;
+      deviceId = android.id;
+    } else if (Platform.isIOS) {
+      final ios = await deviceInfo.iosInfo;
+      deviceId = ios.identifierForVendor;
+    }
+
+    GlobalLists.deviceid = deviceId ?? "";
+  }
   static Future<void> init() async {
 
     await _messaging.requestPermission(
@@ -26,7 +41,23 @@ class PushNotifications {
 
    // final token = await _messaging.getToken();
     try {
+      if (Platform.isIOS) {
+  String? apnsToken;
+
+  while (apnsToken == null) {
+    await Future.delayed(
+      const Duration(seconds: 1),
+    );
+
+    apnsToken =
+        await _messaging.getAPNSToken();
+
+    print("APNS = $apnsToken");
+  }
+}
+
     final token = await _messaging.getToken();
+    
     GlobalLists.fcmtokenvalue=token!;
     print("FCM TOKEN: $token");
   //  showToast("FCM: $token");
@@ -35,15 +66,15 @@ class PushNotifications {
         GlobalLists.fcmtokenvalue = token;
 
         print("FCM TOKEN : $token");
-
-        await SplashService().saveDeviceToken(
-          routeGlobalKey.currentContext!,
-          deviceId: GlobalLists.deviceid,
-          fcmToken: token,
-        );
+ print("deviceid : ${GlobalLists.deviceid},");
+        // await SplashService().saveDeviceToken(
+        //   routeGlobalKey.currentContext!,
+        //   deviceId: GlobalLists.deviceid,
+        //   fcmToken: token,
+        // );
       }
   } catch (e) {
-    print("TOKEN ERROR: $e");
+    print("TOKEN ERROR: ${e.toString()}");
     // showToast("ERROR: $e");
   }
     // print("🔥 FCM TOKEN: $token");

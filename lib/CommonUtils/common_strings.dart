@@ -23,7 +23,8 @@ class CommonStrings {
 
   static String threadsUrlScheme = 'threads://';
 
-  static double tabheight = 480;
+  static double tabheight = 330;//480
+   static double tabheightwithview = 380;
   static double callimageheight = 200;
   static double callimagewidth = 290;
   static double callcoursaheight = 300;

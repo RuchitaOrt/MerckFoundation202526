@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyCcB6qAqqEhi1v6-K3z9mBX_vwIBHB_vAg</string>
+	<string>AIzaSyDi3tYh3pPrbv1jQ4Ha1TSiXZ9Uy927Jgs</string>
 	<key>GCM_SENDER_ID</key>
-	<string>400096468842</string>
+	<string>664350243322</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.merck.foundation</string>
 	<key>PROJECT_ID</key>
-	<string>merck-foundation-revamp</string>
+	<string>merckfoundation-revamp</string>
 	<key>STORAGE_BUCKET</key>
-	<string>merck-foundation-revamp.firebasestorage.app</string>
+	<string>merckfoundation-revamp.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:400096468842:ios:1dab0f91aeea5e90a34f13</string>
+	<string>1:664350243322:ios:e45e7b9bd30814ab078c43</string>
 </dict>
 </plist>

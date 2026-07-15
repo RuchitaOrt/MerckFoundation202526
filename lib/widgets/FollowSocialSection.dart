@@ -19,104 +19,255 @@ class FollowSocialSection extends StatelessWidget {
     this.iconSize,
     this.position = 0,
   });
+@override
+Widget build(BuildContext context) {
+  final screenWidth = MediaQuery.of(context).size.width;
 
-  @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+  // Alternate flower position
+  final bool showFlowerRight = position % 2 != 0;
+  final bool showFlowerBottom = position % 2== 0;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        /// TITLE
-        Row(
-          mainAxisAlignment:
-              MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Padding(
-                padding:
-                    const EdgeInsets.fromLTRB(
-                  16,
-                  0,
-                  10,
-                  0,
-                ),
-                child: Text(
-                  title,
-                  maxLines: 2,
-                  overflow:
-                      TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize:
-                        screenWidth * 0.055,
-                    fontWeight:
-                        FontWeight.w800,
-                    color:
-                        Customcolor.textBlueColor,
-                  ),
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 10, 0),
+              child: Text(
+                title,
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: screenWidth * 0.055,
+                  fontWeight: FontWeight.w800,
+                  color: Customcolor.textBlueColor,
                 ),
               ),
             ),
+          ),
 
-            /// TOP FLOWER
-            if (position == 1)
-              Image.asset(
+          if (showFlowerRight)
+            Transform.translate(
+              offset: const Offset(0, -5),
+              child: Image.asset(
                 CommonImagePath.homeFlowerNew,
                 height: 70,
               ),
-          ],
-        ),
-
-        const SizedBox(height: 12),
-
-        /// SOCIAL ICONS
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 10,
-          ),
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 14,
-            runSpacing: 14,
-            children:
-                socialLinks.map<Widget>((social) {
-              final image =
-                  social['social_media_image']
-                          ?.toString() ??
-                      "";
-
-              final link =
-                  social['social_media_link']
-                          ?.toString() ??
-                      "";
-
-              return SocialIcon(
-                image,
-                iconSize: iconSize,
-                onTap: () async {
-                  if (link.isNotEmpty) {
-                    await ShowDialogs
-                        .launchURL(link);
-                  }
-                },
-              );
-            }).toList(),
-          ),
-        ),
-
-        /// BOTTOM FLOWER
-        if (position == 2)
-          Padding(
-            padding:
-                const EdgeInsets.only(top: 10),
-            child: Image.asset(
-              CommonImagePath.homeFlowerNew,
-              height: 70,
             ),
+        ],
+      ),
+
+      const SizedBox(height: 12),
+
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Wrap(
+          alignment: WrapAlignment.start,
+          spacing: 14,
+          runSpacing: 14,
+          children: socialLinks.map<Widget>((social) {
+            return SocialIcon(
+              social['social_media_image'] ?? '',
+              iconSize: iconSize,
+              onTap: () async {
+                final link = social['social_media_link'] ?? '';
+                if (link.isNotEmpty) {
+                  await ShowDialogs.launchURL(link);
+                }
+              },
+            );
+          }).toList(),
+        ),
+      ),
+
+      if (showFlowerBottom)
+        Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: Image.asset(
+            CommonImagePath.homeFlowerNew,
+            height: 70,
           ),
-      ],
-    );
-  }
+        ),
+    ],
+  );
+}
+// @override
+// Widget build(BuildContext context) {
+//   final screenWidth = MediaQuery.of(context).size.width;
+
+//   final bool showFlowerRight = title.length <= 25;
+//   final bool showFlowerBottom = title.length > 25;
+
+//   return Column(
+//     crossAxisAlignment: CrossAxisAlignment.start,
+//     mainAxisAlignment: MainAxisAlignment.start,
+//     children: [
+//       Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Expanded(
+//             child: Padding(
+//               padding: const EdgeInsets.fromLTRB(16, 0, 10, 0),
+//               child: Text(
+//                 title,
+//                 maxLines: 3,
+//                 overflow: TextOverflow.ellipsis,
+//                 style: TextStyle(
+//                   fontSize: screenWidth * 0.055,
+//                   fontWeight: FontWeight.w800,
+//                   color: Customcolor.textBlueColor,
+//                 ),
+//               ),
+//             ),
+//           ),
+
+//           if (showFlowerRight)
+//             Transform.translate(
+//     offset: const Offset(0, -30), // Move 12 pixels up
+//     child: Image.asset(
+//       CommonImagePath.homeFlowerNew,
+//       height: 70,
+     
+//     ),
+//   ),
+//         ],
+//       ),
+
+//       const SizedBox(height: 12),
+
+//       Padding(
+//         padding: const EdgeInsets.symmetric(horizontal: 10),
+//         child: Wrap(
+//           alignment: WrapAlignment.start,
+//           spacing: 14,
+//           runSpacing: 14,
+//           children: socialLinks.map<Widget>((social) {
+//             return SocialIcon(
+//               social['social_media_image'] ?? '',
+//               iconSize: iconSize,
+//               onTap: () async {
+//                 final link = social['social_media_link'] ?? '';
+//                 if (link.isNotEmpty) {
+//                   await ShowDialogs.launchURL(link);
+//                 }
+//               },
+//             );
+//           }).toList(),
+//         ),
+//       ),
+
+//       if (showFlowerBottom)
+//         Padding(
+//           padding: const EdgeInsets.only(top: 10),
+//           child: Image.asset(
+//             CommonImagePath.homeFlowerNew,
+//             height: 70,
+//           ),
+//         ),
+//     ],
+//   );
+// }
+  // @override
+  // Widget build(BuildContext context) {
+  //   final screenWidth = MediaQuery.of(context).size.width;
+
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       /// TITLE
+  //       Row(
+  //         mainAxisAlignment:
+  //             MainAxisAlignment.spaceBetween,
+  //         children: [
+  //           Expanded(
+  //             child: Padding(
+  //               padding:
+  //                   const EdgeInsets.fromLTRB(
+  //                 16,
+  //                 0,
+  //                 10,
+  //                 0,
+  //               ),
+  //               child: Text(
+  //                 title,
+  //                 maxLines: 2,
+  //                 overflow:
+  //                     TextOverflow.ellipsis,
+  //                 style: TextStyle(
+  //                   fontSize:
+  //                       screenWidth * 0.055,
+  //                   fontWeight:
+  //                       FontWeight.w800,
+  //                   color:
+  //                       Customcolor.textBlueColor,
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+
+  //           /// TOP FLOWER
+  //           if (position == 1)
+  //             Image.asset(
+  //               CommonImagePath.homeFlowerNew,
+  //               height: 70,
+  //             ),
+  //         ],
+  //       ),
+
+  //       const SizedBox(height: 12),
+
+  //       /// SOCIAL ICONS
+  //       Padding(
+  //         padding: const EdgeInsets.symmetric(
+  //           horizontal: 10,
+  //         ),
+  //         child: Wrap(
+  //           alignment: WrapAlignment.center,
+  //           spacing: 14,
+  //           runSpacing: 14,
+  //           children:
+  //               socialLinks.map<Widget>((social) {
+  //             final image =
+  //                 social['social_media_image']
+  //                         ?.toString() ??
+  //                     "";
+
+  //             final link =
+  //                 social['social_media_link']
+  //                         ?.toString() ??
+  //                     "";
+
+  //             return SocialIcon(
+  //               image,
+  //               iconSize: iconSize,
+  //               onTap: () async {
+  //                 if (link.isNotEmpty) {
+  //                   await ShowDialogs
+  //                       .launchURL(link);
+  //                 }
+  //               },
+  //             );
+  //           }).toList(),
+  //         ),
+  //       ),
+
+  //       /// BOTTOM FLOWER
+  //       if (position == 2)
+  //         Padding(
+  //           padding:
+  //               const EdgeInsets.only(top: 10),
+  //           child: Image.asset(
+  //             CommonImagePath.homeFlowerNew,
+  //             height: 70,
+  //           ),
+  //         ),
+  //     ],
+  //   );
+  // }
 }
 class FollowSocialDrawer extends StatelessWidget {
   final String title;
