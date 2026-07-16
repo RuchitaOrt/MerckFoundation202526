@@ -7,6 +7,7 @@ import 'package:merckfoundation_252026/Provider/SocialProvider.dart';
 import 'package:merckfoundation_252026/Provider/navbar_provider.dart';
 import 'package:merckfoundation_252026/const/GlobalLists.dart';
 import 'package:merckfoundation_252026/main.dart';
+import 'package:merckfoundation_252026/screens/DetailsScreen/DetailScreen.dart';
 
 import 'package:merckfoundation_252026/screens/MainScreens/Landingpage.dart';
 import 'package:merckfoundation_252026/service/SpashService.dart';
@@ -133,7 +134,7 @@ Future<void> init(
   isLoading = true;
 
   notifyListeners();
-
+print("Notification flag = ${GlobalLists.launchedFromNotification}");
 print("_getDeviceId init");
   await _getDeviceId();
 await getCurrentVersion();
@@ -206,6 +207,7 @@ if (isUpdateRequired(appVersion!, latestVersion)) {
     menuLogo
 
   );
+
 }
 Future<void> getCurrentVersion() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -236,33 +238,100 @@ Future<void> getCurrentVersion() async {
         );
   }
 
-void _handleNavigation(
+Future<void> _handleNavigation(
   BuildContext context,
   String menuId,
   String shareLink,
   String mennuLogo
 
-) {
-  Timer(const Duration(seconds: 2), () {
+) async {
+  // Timer(const Duration(seconds: 2), () {
+  //   onDoneLoading(context, menuId,shareLink,mennuLogo);
+  // });
+  await Future.delayed(const Duration(seconds: 2));
+
+print("Notification flag = ${GlobalLists.launchedFromNotification}");
+print("Notification data = ${GlobalLists.notificationData}");
     onDoneLoading(context, menuId,shareLink,mennuLogo);
-  });
+
 }
 Future<void> onDoneLoading(
   BuildContext context,
   String menuId,
   String shareLink,
-   String mennuLogo
+  String menuLogo,
 ) async {
+
+  if (GlobalLists.launchedFromNotification &&
+      GlobalLists.notificationData != null) {
+
+    GlobalLists.launchedFromNotification = false;
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => DetailScreen(
+          "",
+          "",
+          title: GlobalLists.notificationData!["title"] ?? "",
+          articleId: GlobalLists.notificationData!["article_id"] ?? "",
+          languageId: GlobalLists.notificationData!["language_id"] ?? "",
+          isDetailApiCalled: true,
+          isComingFromNotication: true,
+        ),
+      ),
+    );
+
+    return;
+  }
+
   Navigator.pushReplacement(
     context,
     MaterialPageRoute(
       builder: (_) => Landingpage(
         menuId: menuId,
         shareLink: shareLink,
-        mennuLogo: mennuLogo,
+        mennuLogo: menuLogo,
       ),
     ),
   );
 }
+// Future<void> onDoneLoading(
+//   BuildContext context,
+//   String menuId,
+//   String shareLink,
+//    String mennuLogo
+// ) async {
+//   if (GlobalLists.launchedFromNotification &&
+//     GlobalLists.notificationData != null) {
+
+//   Navigator.pushReplacement(
+//     context,
+//     MaterialPageRoute(
+//       builder: (_) => DetailScreen(
+//         "",
+//         "",
+//         title: GlobalLists.notificationData!["title"] ?? "",
+//         articleId: GlobalLists.notificationData!["article_id"] ?? "",
+//         languageId: GlobalLists.notificationData!["language_id"] ?? "",
+//         isDetailApiCalled: true,
+//       ),
+//     ),
+//   );
+
+//   return;
+// }else{
+//   Navigator.pushReplacement(
+//     context,
+//     MaterialPageRoute(
+//       builder: (_) => Landingpage(
+//         menuId: menuId,
+//         shareLink: shareLink,
+//         mennuLogo: mennuLogo,
+//       ),
+//     ),
+//   );
+// }
+// }
   
 }

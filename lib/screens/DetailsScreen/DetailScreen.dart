@@ -2,7 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
+import 'package:merckfoundation_252026/const/GlobalLists.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
+import 'package:merckfoundation_252026/screens/MainScreens/dashboard.dart';
 import 'package:provider/provider.dart';
 import 'package:merckfoundation_252026/Provider/article_provider.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
@@ -25,6 +27,7 @@ class DetailScreen extends StatefulWidget {
   final bool isDetailApiCalled;
   final String? shareLink;
   final String? menuID;
+  final bool? isComingFromNotication;
 
   const DetailScreen(
     this.titleContent,
@@ -35,7 +38,7 @@ class DetailScreen extends StatefulWidget {
     this.articleId = "",
     this.languageId = "",
     this.isDetailApiCalled = false,
-    this.shareLink, this.menuID,
+    this.shareLink, this.menuID,this.isComingFromNotication=false
   });
 
   @override
@@ -46,7 +49,7 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   void initState() {
     super.initState();
-
+GlobalLists.launchedFromNotification = false;
     if (widget.isDetailApiCalled) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context.read<ArticleProvider>().loadArticleDetail(
@@ -70,7 +73,23 @@ class _DetailScreenState extends State<DetailScreen> {
         onSearch: () {},
         shareLink: widget.shareLink ,
         onBack: (){
-          Navigator.pop(context);
+          if(widget.isComingFromNotication==true)
+          {
+Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => Dashboard(
+                        index: 0,
+                        menuID: "1",
+                        shareLink: "",
+                        menuLogo:   "",
+                      ),
+                    ),
+                  );
+          }else{
+  Navigator.pop(context);
+          }
+        
         },
         menuID: widget.menuID,
       ),
