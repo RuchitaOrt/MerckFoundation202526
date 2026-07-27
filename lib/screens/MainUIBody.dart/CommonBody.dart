@@ -68,11 +68,15 @@ class _CommonBodyState extends State<CommonBody> {
 
   dynamic json = {};
 final controller = ScrollController();
+late CarouselSliderController controllerCarousel;
+
+
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      controllerCarousel=CarouselSliderController();
       if (!mounted) return;
 
       loadPage();
@@ -150,8 +154,11 @@ final controller = ScrollController();
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<PageProvider>();
-
+    // final provider = context.watch<PageProvider>();
+final provider = Provider.of<PageProvider>(
+  context,
+  listen: false,
+);
     // LOADING
     if (provider.isLoading) {
       return const Center(child: CommonLoader());
@@ -174,28 +181,28 @@ final controller = ScrollController();
       return const SizedBox();
     }
 
-    List allLayouts = [];
+    // List allLayouts = [];
 
-    if (json['slider'] is List) {
-      allLayouts.addAll(json['slider']);
-    }
+    // if (json['slider'] is List) {
+    //   allLayouts.addAll(json['slider']);
+    // }
 
-    if (json['top'] is List) {
-      allLayouts.addAll(json['top']);
-    }
+    // if (json['top'] is List) {
+    //   allLayouts.addAll(json['top']);
+    // }
 
-    if (json['middle_left'] is List) {
-      allLayouts.addAll(json['middle_left']);
-    }
+    // if (json['middle_left'] is List) {
+    //   allLayouts.addAll(json['middle_left']);
+    // }
 
-    if (json['middle_right'] is List) {
-      allLayouts.addAll(json['middle_right']);
-    }
+    // if (json['middle_right'] is List) {
+    //   allLayouts.addAll(json['middle_right']);
+    // }
 
-    if (json['bottom'] is List) {
-      allLayouts.addAll(json['bottom']);
-    }
-
+    // if (json['bottom'] is List) {
+    //   allLayouts.addAll(json['bottom']);
+    // }
+final allLayouts = context.read<PageProvider>().layouts;
     if (!provider.isLoading && hasLoaded && allLayouts.isEmpty) {
       return CustomScrollView(
         slivers: [
@@ -226,7 +233,7 @@ final controller = ScrollController();
       controller: controller,
       shrinkWrap: true,
       //physics: BouncingScrollPhysics(),
-      physics: const ScrollPhysics(),
+      // physics: const ScrollPhysics(),
       itemCount: allLayouts.length + extraCount,
       itemBuilder: (context, index) {
         int currentIndex = allLayouts.length;
@@ -311,7 +318,7 @@ final controller = ScrollController();
           ),
 
           content: CommonCarouselSection(
-            controller: CarouselSliderController(),
+            controller: controllerCarousel,
             carouselHeight: CommonStrings.callcoursaheight,
             imageWidth: CommonStrings.callimagewidth,
             imageHeight: CommonStrings.callimageheight,
@@ -364,21 +371,23 @@ final controller = ScrollController();
       case HomeLayoutType.slider:
         return HomeSlider(content: layout['content']);
       case HomeLayoutType.award:
-        final List content = layout['content'] ?? [];
+        // final List content = layout['content'] ?? [];
         final screenWidth = MediaQuery.of(context).size.width;
-        final items = content.map<AwardModel>((e) {
-          return AwardModel(
-            image: e['thumbnail'] ?? "",
-            id: e['id'],
-            isActive: false,
-            title: e['title'],
-            subdescription: e['subdescription'],
-            subtitle: e['subtitle'],
-            pageUrl: '',
-            status: false,
-            menuId: 0,
-          );
-        }).toList();
+        // final items = content.map<AwardModel>((e) {
+        //   return AwardModel(
+        //     image: e['thumbnail'] ?? "",
+        //     id: e['id'],
+        //     isActive: false,
+        //     title: e['title'],
+        //     subdescription: e['subdescription'],
+        //     subtitle: e['subtitle'],
+        //     pageUrl: '',
+        //     status: false,
+        //     menuId: 0,
+        //   );
+        // }).toList();
+        final items = context.read<PageProvider>().awards;
+        print("Awards display");
         return widget.menuID == "98"
             ? CovidFlipSection(content: layout['content'])
             : Padding(
@@ -402,11 +411,12 @@ final controller = ScrollController();
                       height: 120, // give a fixed height
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
-                        itemCount: layout['content'].length,
+                        itemCount: items.length,
                         separatorBuilder: (_, __) => const SizedBox(width: 12),
                         itemBuilder: (context, index) {
+                           print("Award seen");
                           final award = items[index];
-                          print("Award");
+                          print("Award seen");
                           print(award.subdescription);
                           final Color color = Color(
                             int.tryParse(award.subdescription ?? '') ??

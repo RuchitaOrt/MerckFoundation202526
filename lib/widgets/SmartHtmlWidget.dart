@@ -3,13 +3,11 @@ import 'package:merckfoundation_252026/widgets/AutoResizeWebView.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-class SmartHtmlWidget extends StatelessWidget {
+class SmartHtmlWidget extends StatefulWidget {
   final String html;
   final Color? textColor;
   final double? fontSize;
@@ -24,7 +22,7 @@ class SmartHtmlWidget extends StatelessWidget {
   final bool softWrap;
   final TextOverflow textOverflow;
 
-  SmartHtmlWidget({
+  const SmartHtmlWidget({
     super.key,
     required this.html,
     this.textColor,
@@ -36,31 +34,61 @@ class SmartHtmlWidget extends StatelessWidget {
     this.softWrap = true,
     this.textOverflow = TextOverflow.ellipsis,
   });
+
+  @override
+  State<SmartHtmlWidget> createState() => _SmartHtmlWidgetState();
+}
+
+class _SmartHtmlWidgetState extends State<SmartHtmlWidget> with AutomaticKeepAliveClientMixin{
+    @override
+  bool get wantKeepAlive => true;
   final HtmlUnescape _htmlUnescape = HtmlUnescape();
 
   String decodeHtmlEntities(String text) {
     return _htmlUnescape.convert(text);
   }
+late String processedHtml;
+
+@override
+void initState() {
+  super.initState();
+   processedHtml = widget.ignoreHtmlStyles
+      ? removeHtmlStyles(widget.html)
+      : cleanHtml(widget.html);
+ 
+}
+@override
+void didUpdateWidget(covariant SmartHtmlWidget oldWidget) {
+  super.didUpdateWidget(oldWidget);
+
+  if (oldWidget.html != widget.html ||
+      oldWidget.ignoreHtmlStyles != widget.ignoreHtmlStyles) {
+
+    processedHtml = widget.ignoreHtmlStyles
+        ? removeHtmlStyles(widget.html)
+        : cleanHtml(widget.html);
+  }
+}
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     /// ✅ FOR TITLES / SINGLE LINE TEXT
-    if (applyMaxLines) {
-      print("TAABLE");
-      print(html);
+    if (widget.applyMaxLines) {
+     
       return Text(
-        removeAllHtmlTags(
-          ignoreHtmlStyles ? removeHtmlStyles(html) : cleanHtml(html),
-        ).trim(),
-
-        maxLines: maxLines,
-        softWrap: softWrap,
-        overflow: textOverflow,
+        // removeAllHtmlTags(
+        //   widget.ignoreHtmlStyles ? removeHtmlStyles(widget.html) : cleanHtml(widget.html),
+        // ).trim(),
+removeAllHtmlTags(processedHtml).trim(),
+        maxLines: widget.maxLines,
+        softWrap: widget.softWrap,
+        overflow: widget.textOverflow,
 
         style: TextStyle(
-          color: textColor,
-          fontSize: fontSize,
-          fontWeight: fontWeight,
+          color: widget.textColor,
+          fontSize: widget.fontSize,
+          fontWeight: widget.fontWeight,
           height: 1.4,
         ),
       );
@@ -68,7 +96,8 @@ class SmartHtmlWidget extends StatelessWidget {
 
     /// ✅ FOR FULL HTML CONTENT
     return HtmlWidget(
-      ignoreHtmlStyles ? removeHtmlStyles(html) : cleanHtml(html),
+      processedHtml,
+      // ignoreHtmlStyles ? removeHtmlStyles(html) : cleanHtml(html),
       // ignoreHtmlStyles
       //     ? removeHtmlStyles(html)
       //     : cleanHtml(html),
@@ -80,9 +109,9 @@ class SmartHtmlWidget extends StatelessWidget {
       renderMode: RenderMode.column,
 
       textStyle: TextStyle(
-        color: textColor,
-        fontSize: fontSize,
-        fontWeight: fontWeight,
+        color: widget.textColor,
+        fontSize: widget.fontSize,
+        fontWeight: widget.fontWeight,
         height: 1.4,
       ),
 
@@ -90,15 +119,15 @@ class SmartHtmlWidget extends StatelessWidget {
       customWidgetBuilder: (element) {
         if (element.localName == 'iframe') {
           final src = element.attributes['src'] ?? "";
+ return YoutubePlayerWidget(src: src);
+        //   final videoId = YoutubePlayer.convertUrlToId(src);
 
-          final videoId = YoutubePlayer.convertUrlToId(src);
-
-          if (videoId != null) {
-            return YouTubeInAppPlayer(
-              videoUrl: "https://www.youtube.com/watch?v=$videoId",
-            );
-          }
-        }
+        //   if (videoId != null) {
+        //     return YouTubeInAppPlayer(
+        //       videoUrl: "https://www.youtube.com/watch?v=$videoId",
+        //     );
+        //   }
+         }
 
         /// 🔹 HANDLE VIDEO TAG (fallback to WebView)
         if (element.localName == 'video') {
@@ -110,14 +139,15 @@ class SmartHtmlWidget extends StatelessWidget {
             final src = sourceElement.first.attributes['src'];
 
             if (src != null && src.isNotEmpty) {
-              final controller = WebViewController()
-                ..setJavaScriptMode(JavaScriptMode.unrestricted)
-                ..loadRequest(Uri.parse(src));
+              // final controller = WebViewController()
+              //   ..setJavaScriptMode(JavaScriptMode.unrestricted)
+              //   ..loadRequest(Uri.parse(src));
 
-              return SizedBox(
+              return  SizedBox(
                 height: 300,
                 width: double.infinity,
-                child: WebViewWidget(controller: controller),
+                child: VideoWebView(url: src),
+                //  WebViewWidget(controller: controller),
               );
             }
           }
@@ -130,8 +160,7 @@ class SmartHtmlWidget extends StatelessWidget {
             htmlContent: element.outerHtml);
         } else 
         if (element.localName == 'table') {
-          print("TAABLE");
-          print(element.outerHtml);
+        
           return AutoResizeWebView(
             key: PageStorageKey(element.outerHtml.hashCode),
 
@@ -143,25 +172,25 @@ class SmartHtmlWidget extends StatelessWidget {
       },
       customStylesBuilder: (element) {
         /// ✅ REMOVE HTML STYLING
-        if (ignoreHtmlStyles) {
+        if (widget.ignoreHtmlStyles) {
           return {
             'margin': '0',
             'padding': '0',
             'line-height': '1.4',
 
-            'color': textColor != null
-                ? '#${textColor!.value.toRadixString(16).substring(2)}'
+            'color': widget.textColor != null
+                ? '#${widget.textColor!.value.toRadixString(16).substring(2)}'
                 : '#000000',
 
-            'font-size': '${fontSize ?? 14}px',
+            'font-size': '${widget.fontSize ?? 14}px',
 
-            'font-weight': fontWeight == FontWeight.w800
+            'font-weight': widget.fontWeight == FontWeight.w800
                 ? '800'
-                : fontWeight == FontWeight.w700
+                : widget.fontWeight == FontWeight.w700
                 ? '700'
-                : fontWeight == FontWeight.w600
+                : widget.fontWeight == FontWeight.w600
                 ? '600'
-                : fontWeight == FontWeight.bold
+                : widget.fontWeight == FontWeight.bold
                 ? 'bold'
                 : 'normal',
           };
@@ -276,6 +305,81 @@ class _YouTubeInAppPlayerState extends State<YouTubeInAppPlayer> {
   @override
   void dispose() {
     controller.dispose();
+    super.dispose();
+  }
+}
+class VideoWebView extends StatefulWidget {
+  final String url;
+
+  const VideoWebView({
+    super.key,
+    required this.url,
+  });
+
+  @override
+  State<VideoWebView> createState() => _VideoWebViewState();
+}
+
+class _VideoWebViewState extends State<VideoWebView> {
+  late final WebViewController controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..loadRequest(Uri.parse(widget.url));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WebViewWidget(controller: controller);
+  }
+}
+class YoutubePlayerWidget extends StatefulWidget {
+  final String src;
+
+  const YoutubePlayerWidget({
+    super.key,
+    required this.src,
+  });
+
+  @override
+  State<YoutubePlayerWidget> createState() =>
+      _YoutubePlayerWidgetState();
+}
+
+class _YoutubePlayerWidgetState
+    extends State<YoutubePlayerWidget> {
+
+  late final YoutubePlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final id =
+        YoutubePlayer.convertUrlToId(widget.src) ?? "";
+
+    _controller = YoutubePlayerController(
+      initialVideoId: id,
+      flags: const YoutubePlayerFlags(
+        autoPlay: false,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return YoutubePlayer(
+      controller: _controller,
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
     super.dispose();
   }
 }
