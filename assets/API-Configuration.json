@@ -1,6 +1,14 @@
 {
-    "environment": "development",
+    "environment": "sanityLive",
     "version": "1",
+
+
+    "UAT": {
+        "hostUrl":  "https://mfv1-uat.ortdemo.com/",
+     
+        "timeout": 120,
+        "retry": 3
+    },
     "development": {
         "hostUrl":  "https://mfv1-uat.ortdemo.com/",
      
@@ -13,7 +21,12 @@
         "retry": 3
     },
     "sanity": {
-        "hostUrl": "R",
+        "hostUrl": "https://sanity-merckadmin.ortdemo.com/",
+        "timeout": 120,
+        "retry": 3
+    },
+    "sanityLive": {
+        "hostUrl": "https://sanityapi.merck-foundation.com/",
         "timeout": 120,
         "retry": 3
     }

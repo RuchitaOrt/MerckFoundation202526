@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
+import 'package:merckfoundation_252026/Provider/PageProvider.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/model/StoryModel.dart';
 import 'package:merckfoundation_252026/model/TestimonialModel.dart';
+import 'package:merckfoundation_252026/routes/AppNavigation.dart';
 import 'package:merckfoundation_252026/screens/DetailsScreen/DetailScreen.dart';
 import 'package:merckfoundation_252026/screens/DetailsScreen/TestimonialArticlesScreen.dart' hide TestimonialCarouselWidget;
+import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/PhotoAlumbScreen.dart';
 import 'package:merckfoundation_252026/widgets/CommonList/CommonListCard.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonBorderButton.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
 
@@ -15,6 +19,7 @@ import 'package:merckfoundation_252026/widgets/ImagePreviewScreen.dart';
 import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 import 'package:merckfoundation_252026/widgets/YouTubePreview.dart';
 import 'package:merckfoundation_252026/widgets/mediaCard.dart';
+import 'package:provider/provider.dart';
 
 class VerticalMediaSection extends StatefulWidget {
   final List<StoryModel> content;
@@ -23,6 +28,7 @@ class VerticalMediaSection extends StatefulWidget {
   final String? shareLink;
   final String title;
   final bool content_button;
+  final String buttonText;
 
   const VerticalMediaSection({
     super.key,
@@ -30,7 +36,7 @@ class VerticalMediaSection extends StatefulWidget {
     required this.type,
     required this.menuID,
     required this.shareLink,
-    required this.title, required this.content_button,
+    required this.title, required this.content_button,this.buttonText=""
   });
 
   @override
@@ -51,7 +57,176 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
         ? pageSize
         : widget.content.length;
   }
+Future<void> _onViewAllPressed() async {
+  debugPrint("=================================");
+  debugPrint("WATCH MORE CLICKED");
+  debugPrint("MENU ID = ${widget.menuID}");
+  debugPrint("TYPE = ${widget.type}");
+  debugPrint("TITLE = ${widget.title}");
+  debugPrint("=================================");
 
+  if (widget.menuID.isEmpty) {
+    debugPrint("ERROR: menuID is EMPTY");
+    return;
+  }
+
+  final provider = Provider.of<PageProvider>(
+    context,
+    listen: false,
+  );
+
+  final data = await provider.fetchWatchMorePage(
+    context,
+    widget.menuID,
+  );
+
+  if (!mounted) return;
+
+  debugPrint("WATCH MORE DATA = $data");
+
+  if (data == null) {
+    debugPrint("WATCH MORE: DATA IS NULL");
+    return;
+  }
+
+  final root = data['data'];
+
+  if (root == null || root is! Map) {
+    debugPrint("WATCH MORE: INVALID ROOT");
+    debugPrint("ROOT = $root");
+    return;
+  }
+
+  debugPrint("========== ROOT ==========");
+  debugPrint("ROOT = $root");
+  debugPrint("is_newsletter = ${root['is_newsletter']}");
+  debugPrint("is_awards = ${root['is_awards']}");
+  debugPrint("is_video = ${root['is_video']}");
+  debugPrint("is_dglibrary = ${root['is_dglibrary']}");
+  debugPrint("is_photo = ${root['is_photo']}");
+  debugPrint("==========================");
+
+  if (root['is_newsletter'] == true) {
+    debugPrint("NAVIGATING -> NEWSLETTER");
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => DetailScreen(
+          "",
+          "",
+          title: root['menu_name']?.toString() ?? "",
+          articleId: root['newsletter_id']?.toString() ?? "",
+          languageId: "",
+          isDetailApiCalled: true,
+          shareLink: "",
+          menuID: widget.menuID,
+        ),
+      ),
+    );
+
+    return;
+  }
+else
+  if (root['is_awards'] == true) {
+    debugPrint("NAVIGATING -> AWARDS");
+
+    AppNavigation.navigateByMenuId(
+      context,
+      menuId: root['award_id']?.toString() ?? "",
+      title: root['menu_name']?.toString() ?? "",
+    );
+
+    return;
+  }
+else
+  if (root['is_video'] == true) {
+    debugPrint("NAVIGATING -> VIDEO");
+
+    final videoCategories = root['video_category_array'];
+
+    
+
+    debugPrint("VIDEO CATEGORY = $videoCategories");
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MediaListingScreen(
+          type: MediaType.all,
+          categoryID: videoCategories.join(','),
+          albumID: "",
+          albumName: "",
+          menuID: "",
+          title: root['menu_name']?.toString() ?? "",
+          shareLink: root['share_link']?.toString() ?? "",
+        ),
+      ),
+    );
+
+    return;
+  }
+else
+  if (root['is_dglibrary'] == true) {
+    debugPrint("NAVIGATING -> DIGITAL LIBRARY");
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MediaListingScreen(
+          type: MediaType.digitalLibraryall,
+          categoryID: root['digital_library_id']?.toString() ?? "",
+          albumID: "",
+          albumName: "",
+          menuID: "",
+          shareLink: "",
+          title: "Digital Library",
+          digitalLibraryCategoryName: "",
+        ),
+      ),
+    );
+
+    return;
+  }
+else
+  if (root['is_photo'] == true) {
+    debugPrint("NAVIGATING -> PHOTO");
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MediaListingScreen(
+          type: MediaType.photoAlbum,
+          categoryID: root['photo_category_id']?.toString() ?? "",
+          albumID: root['photo_album_id']?.toString() ?? "",
+          albumName: "",
+          menuID: "",
+          shareLink: "",
+          title: root['menu_name']?.toString() ?? "",
+        ),
+      ),
+    );
+
+    return;
+  }
+else{
+  debugPrint("NO SPECIAL TYPE FOUND");
+  debugPrint("NAVIGATING -> DEFAULT");
+
+   AppNavigation.navigateByMenuId(
+                          context,
+                          menuId: widget.menuID,
+                          albumId: "",
+                    
+                          albumName: "",
+                          categoryId: "",
+                          title: widget.title ?? "",
+                          shareLink: widget.shareLink,
+                          seasonId:  "",
+                          type: widget.type,
+                        );
+}
+}
   Future<void> _loadMore() async {
     if (isLoadingMore) return;
 
@@ -98,12 +273,14 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                 widget.type == HomeLayoutType.CallForApplication)
             ? Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
-                child: SmartHtmlWidget(
+                child: 
+                SmartHtmlWidget(
                   html: widget.title ?? "",
-                  textColor: Customcolor.textBlueColor,
+                   textColor: Customcolor.textwebBlueColor,
                   fontSize: screenWidth * 0.055,
-                  fontWeight: FontWeight.w800,
-                  ignoreHtmlStyles: true,
+                  fontWeight: FontWeight.w600,
+                  // ignoreHtmlStyles: true,
+                   ignorefontStyles: true,
                 ),
               )
             : Container(),
@@ -142,6 +319,7 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                           ShowDialogs.launchURL(item.pdfFile ?? "");
                         }else if (widget.type ==
                             HomeLayoutType.newsLettersAndArticles) {
+                              print("RUCHIobject");
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -162,7 +340,11 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                     );
                   },
                 )
-              : GridView.builder(
+              :
+              Column(
+  children: [
+             
+               GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: visibleCount + (hasMore ? 1 : 0),
@@ -205,6 +387,7 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                         menuID: widget.menuID,
                         shareLink: widget.shareLink,
                         id: item.id.toString(),
+                       
                         image:
                             (widget.type ==
                                     HomeLayoutType.MerckMoreThanAmbasdar ||
@@ -224,6 +407,7 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                             subTitle: item.subtitle ?? "",
                         showPlayIcon: false,
                         onTap: () {
+                          print("MEDIA WATCH MORE");
                           if (widget.type == HomeLayoutType.photoGallery ){
                             showModalBottomSheet(
                                       context: context,
@@ -268,7 +452,7 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                             ShowDialogs.launchURL(item.pdfFile ?? "");
                           } else if (widget.type ==
                             HomeLayoutType.newsLettersAndArticles){
-                            
+                             print("RUCHIobject 2");
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -315,8 +499,8 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                       showmenu: widget.type == HomeLayoutType.episodes,
                       showPlayIcon: true,
                       onTap: () {
-                        final key = item.videoLink.substring(
-                          item.videoLink.length - 11,
+                        final key = imageUrl.substring(
+                          imageUrl.length - 11,
                         );
 
                         ShowDialogs.youtubevideolink(
@@ -326,6 +510,36 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                     );
                   },
                 ),
+    const SizedBox(height: 16),
+
+    if (widget.buttonText!="")
+    Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: CommonBorderButton(
+                      title: widget.buttonText,
+                      onTap: _onViewAllPressed
+                      // () {
+                    
+                      //   AppNavigation.navigateByMenuId(
+                      //     context,
+                      //     menuId: widget.menuID,
+                      //     albumId: "",
+                    
+                      //     albumName: "",
+                      //     categoryId: "",
+                      //     title: widget.title ?? "",
+                      //     shareLink: widget.shareLink,
+                      //     seasonId:  "",
+                      //     type: widget.type,
+                      //   );
+                      // },
+                    ),
+                  ),
+                ),
+  ],
+)
+    
         ),
       ],
     );

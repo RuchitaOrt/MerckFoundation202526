@@ -69,17 +69,17 @@ class ShareBottomSheet {
                     const SizedBox(width: 10),
 
                     /// LINKEDIN
-                    SocialIcon(
-                      CommonImagePath.linkdin,
-                      iconSize: imgHeight,
-                      onTap: () {
-                        ShowDialogs.launchLinkedin(
-                          "${GlobalLists.liveWebsiteUrl}${shareLink}",
-                        );
-                      },
-                    ),
+                    // SocialIcon(
+                    //   CommonImagePath.linkdin,
+                    //   iconSize: imgHeight,
+                    //   onTap: () {
+                    //     ShowDialogs.launchLinkedin(
+                    //       "${GlobalLists.liveWebsiteUrl}${shareLink}",
+                    //     );
+                    //   },
+                    // ),
 
-                    const SizedBox(width: 10),
+                    // const SizedBox(width: 10),
 
                     /// WHATSAPP
                     /// 

@@ -53,7 +53,7 @@ class _PhotoAlumbScreenPageState extends State<PhotoAlumbScreen> {
       backgroundColor: Customcolor.background,
       appBar: CommonAppBar(
         type: AppBarType.inner,
-        title: "${widget.tile} ${widget.pageTile}" ,
+        title: "${widget.tile} Photo Gallery" ,
         onSearch: () {},
         shareLink: widget.shareLink ?? "",
         menuID: widget.menuID,

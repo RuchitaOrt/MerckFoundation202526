@@ -11,7 +11,7 @@ class HomeSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(content.length);
+  
     if (content.isEmpty) return const SizedBox();
 
     return Padding(

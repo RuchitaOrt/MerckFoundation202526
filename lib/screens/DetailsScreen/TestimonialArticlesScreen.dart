@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/FilterProvider.dart';
@@ -5,6 +6,7 @@ import 'package:merckfoundation_252026/Provider/FilterProvider.dart';
 import 'package:merckfoundation_252026/Provider/TestimonialProvider.dart';
 import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/ImageShimmer.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/customappbar.dart';
 
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
@@ -79,19 +81,20 @@ class _TestimonialArticlesScreenState extends State<TestimonialArticlesScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<TestimonialArticleProvider>();
-final filter = context.read<FilterProvider>();
+    final filter = context.read<FilterProvider>();
     return Scaffold(
       key: _scaffoldKey,
-      endDrawer: AppDrawerfilter(type: MediaType.testimonialArticle),
+      // endDrawer: AppDrawerfilter(type: MediaType.testimonialArticle),
 
       appBar: CommonAppBar(
         type: AppBarType.inner,
-        title: 
-         filter.selectedCategory?.name == "All"
-          ? widget.title
-          : filter.selectedCategory?.name==""?"Merck Foundation Alumini Testimonials":  widget.title,
+        title: filter.selectedCategory?.name == "All"
+            ? widget.title
+            : filter.selectedCategory?.name == ""
+            ? "Merck Foundation Alumini Testimonials"
+            : widget.title,
         // widget.title,
-        onFilter: () => _scaffoldKey.currentState!.openEndDrawer(),
+        // onFilter: () => _scaffoldKey.currentState!.openEndDrawer(),
 
         onSearch: () {},
 
@@ -266,7 +269,7 @@ class _TestimonialPage extends StatelessWidget {
       controller: scrollController,
       shrinkWrap: true,
       //12june
-       physics: const ScrollPhysics(),
+      physics: const ScrollPhysics(),
 
       children: [
         Padding(
@@ -281,35 +284,47 @@ class _TestimonialPage extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(24),
 
-                  child: AspectRatio(
-                    aspectRatio: 4 / 4,
+                  // child:
+                  // AspectRatio(
+                  //   aspectRatio: 4 / 4,
+                  child: CachedNetworkImage(
+                    memCacheHeight: 1000,
+                    imageUrl: item.image,
+                    fit: BoxFit.contain,
+                    placeholder: (context, url) => const ImageShimmer(),
 
-                    child: FadeInImage.assetNetwork(
-                      placeholder: CommonImagePath.placeHolder,
-
-                      image: item.image,
-
-                      fit: BoxFit.cover,
-
-                      placeholderFit: BoxFit.cover,
-
-                      fadeInDuration: const Duration(milliseconds: 200),
-
-                      imageErrorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey.shade200,
-
-                          child: const Icon(
-                            Icons.broken_image,
-
-                            size: 40,
-
-                            color: Colors.grey,
-                          ),
-                        );
-                      },
+                    errorWidget: (_, __, ___) => Image.asset(
+                      CommonImagePath.placeHolder,
+                      fit: BoxFit.contain,
                     ),
                   ),
+                  // FadeInImage.assetNetwork(
+                  //   placeholder: CommonImagePath.placeHolder,
+
+                  //   image: item.image,
+
+                  //   fit: BoxFit.contain,
+
+                  //   placeholderFit: BoxFit.cover,
+
+                  //   fadeInDuration: const Duration(milliseconds: 200),
+
+                  //   imageErrorBuilder: (context, error, stackTrace) {
+                  //     return
+                  // Container(
+                  //       color: Colors.grey.shade200,
+
+                  //       child: const Icon(
+                  //         Icons.broken_image,
+
+                  //         size: 40,
+
+                  //         color: Colors.grey,
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
+                  // ),
                 ),
 
               const SizedBox(height: 18),
@@ -327,17 +342,17 @@ class _TestimonialPage extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              /// DEPARTMENT
+              // DEPARTMENT
               if (item.departmentName.isNotEmpty)
                 SmartHtmlWidget(html: item.departmentName),
 
               const SizedBox(height: 12),
 
               /// SHORT DESCRIPTION
-              if (item.shortDescription.isNotEmpty)
-                SmartHtmlWidget(html: item.shortDescription),
+              // if (item.shortDescription.isNotEmpty)
+              //   SmartHtmlWidget(html: item.shortDescription),
 
-              const SizedBox(height: 12),
+              // const SizedBox(height: 12),
 
               /// DETAILS
               if (item.details.isNotEmpty) SmartHtmlWidget(html: item.details),

@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_strings.dart';
+import 'package:merckfoundation_252026/main.dart';
+import 'package:merckfoundation_252026/widgets/DigitalLibraryViewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 void showToast(String message) {
@@ -18,8 +20,6 @@ void showToast(String message) {
 
 class ShowDialogs {
   ShowDialogs._();
-
-
 
   static Future<void> launchFacebook(String url, String pageId) async {
     final Uri fbAppUri = Platform.isIOS
@@ -159,8 +159,14 @@ class ShowDialogs {
     try {
       print("CLICKED: $url");
       final uri = Uri.parse(url.startsWith('http') ? url : 'https://$url');
-
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (url.contains("pdf")) {
+        await Navigator.push(
+          routeGlobalKey.currentContext!,
+          MaterialPageRoute(builder: (_) => DigitalLibraryViewer(pdfUrl: url)),
+        );
+      } else {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
     } catch (e) {
       debugPrint("Launch error: $e");
     }

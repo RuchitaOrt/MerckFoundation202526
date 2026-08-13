@@ -1,8 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/ImageShimmer.dart';
 
 class CustomSwiper extends StatefulWidget {
   final List items;
@@ -21,7 +24,19 @@ class CustomSwiper extends StatefulWidget {
 class _CustomSwiperState extends State<CustomSwiper> {
   final PageController _controller = PageController();
   int currentIndex = 0;
+@override
+void didChangeDependencies() {
+  super.didChangeDependencies();
 
+  for (final item in widget.items.take(4)) {
+    if (item.image != null && item.image.toString().isNotEmpty) {
+      precacheImage(
+        CachedNetworkImageProvider(item.image),
+        context,
+      );
+    }
+  }
+}
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
@@ -31,10 +46,22 @@ class _CustomSwiperState extends State<CustomSwiper> {
           /// 🔥 PAGE VIEW
           PageView.builder(
             controller: _controller,
+             allowImplicitScrolling: true,
             itemCount: widget.items.length,
             onPageChanged: (index) {
               currentIndex = index;
+ // Pre-cache next image
+  if (index + 1 < widget.items.length) {
+    final nextItem = widget.items[index + 1];
 
+    if (nextItem.image != null &&
+        nextItem.image.toString().isNotEmpty) {
+      precacheImage(
+        CachedNetworkImageProvider(nextItem.image),
+        context,
+      );
+    }
+  }
               /// 🔥 trigger pagination
               widget.onIndexChanged?.call(index);
 
@@ -149,29 +176,32 @@ class _SwiperCard extends StatelessWidget {
               duration: const Duration(milliseconds: 300),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(14),
-                boxShadow: const [
-                  BoxShadow(color: Colors.black26, blurRadius: 6),
-                ],
+                // boxShadow: const [
+                //   BoxShadow(color: Colors.black26, blurRadius: 6),
+                // ],
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(14),
-                child: (item.image != null &&
-                        item.image.toString().isNotEmpty)
-                    ? FadeInImage.assetNetwork(
-                        placeholder: CommonImagePath.placeHolder,
-                        image: item.image,
-                        fit: BoxFit.cover,
-            
-                        /// 🔥 ERROR HANDLING
-                        imageErrorBuilder: (_, __, ___) => Image.asset(
-                          CommonImagePath.placeHolder,
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                    : Image.asset(
-                        CommonImagePath.placeHolder,
-                        fit: BoxFit.cover,
-                      ),
+                child:
+                //  (item.image != null &&
+                //         item.image.toString().isNotEmpty)
+                //     ? 
+                  
+                    CachedNetworkImage(
+                      // memCacheWidth: 500,
+  imageUrl: item.image,
+  fit: BoxFit.contain,
+   placeholder: (context, url) => const ImageShimmer(),
+  
+  errorWidget: (_, __, ___) => Image.asset(
+    CommonImagePath.placeHolder,
+    fit: BoxFit.contain,
+  ),
+)
+                    // : Image.asset(
+                    //     CommonImagePath.placeHolder,
+                    //     fit: BoxFit.contain,
+                    //   ),
               ),
             ),
           ),
@@ -189,9 +219,9 @@ class _SwiperCard extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: width * 0.035, // 🔥 responsive text
+              fontSize: width * 0.040, // 🔥 responsive text
               fontWeight: FontWeight.w700,
-              color: Customcolor.pinkColor,
+              color: Customcolor.blackSubTitle,
             ),
           ),
         ),

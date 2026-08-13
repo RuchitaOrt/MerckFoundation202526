@@ -1,4 +1,5 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/SocialProvider.dart';
 import 'package:merckfoundation_252026/Provider/navbar_provider.dart';
@@ -56,15 +57,38 @@ class _DashboardState extends State<Dashboard> {
   final responsive = ResponsiveFlutter.of(context);
 
   return BottomNavyBarItem(
-    icon: Image.network(
-      menuLogo,
-      color: currentIndex == index?null:Customcolor.textGreyColor.withOpacity(0.5),
-      height: responsive.height(3),
-      errorBuilder: (_, __, ___) {
-        return  Icon(Icons.image,color: Customcolor.textGreyColor.withOpacity(0.5),);
-      },
+    // icon: 
+    
+    // Image.network(
+    //   menuLogo,
+    //   color: currentIndex == index?null:Customcolor.textGreyColor.withOpacity(0.5),
+    //   height: responsive.height(3),
+    //   errorBuilder: (_, __, ___) {
+    //     return  Icon(Icons.image,color: Customcolor.textGreyColor.withOpacity(0.5),);
+    //   },
+    // ),
+icon: CachedNetworkImage(
+  imageUrl: menuLogo,
+  height: responsive.height(3),
+  color: currentIndex == index
+      ? null
+      : Customcolor.textGreyColor.withOpacity(0.5),
+  placeholder: (context, url) => SizedBox(
+    height: responsive.height(3),
+    width: responsive.height(3),
+    child: const Center(
+      child: SizedBox(
+        width: 16,
+        height: 16,
+        child: CircularProgressIndicator(strokeWidth: 2),
+      ),
     ),
-
+  ),
+  errorWidget: (context, url, error) => Icon(
+    Icons.image,
+    color: Customcolor.textGreyColor.withOpacity(0.5),
+  ),
+),
     title: FormLabel(
       text: title,
       maxLines: 1,

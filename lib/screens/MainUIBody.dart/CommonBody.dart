@@ -3,13 +3,16 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
+import 'package:merckfoundation_252026/Utility/AppSizes.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
 import 'package:merckfoundation_252026/model/AwardResponse.dart';
+import 'package:merckfoundation_252026/model/LayoutModel.dart';
 import 'package:merckfoundation_252026/model/StoryModel.dart';
 import 'package:merckfoundation_252026/routes/AppNavigation.dart';
 import 'package:merckfoundation_252026/screens/CovidScreen/Covid/CovidFlipSection.dart';
 import 'package:merckfoundation_252026/screens/DetailsScreen/OurAwardScreen.dart';
 import 'package:merckfoundation_252026/screens/MainUIBody.dart/CommonContentPage.dart';
+import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
 import 'package:merckfoundation_252026/widgets/CommonList/TestimonialVerticalSection.dart';
 import 'package:merckfoundation_252026/widgets/CommonList/VerticalMediaSection.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
@@ -49,6 +52,8 @@ class CommonBody extends StatefulWidget {
 
   final bool showFooter;
   final bool showBottomLinks;
+  final Function(String title)? onPageTitleLoaded;
+  final Function(bool title)? onPageshareLoaded;
   final Function(bool isVisible, List<dynamic> menus)? onProgramMenuChanged;
 
   const CommonBody(
@@ -57,6 +62,8 @@ class CommonBody extends StatefulWidget {
     this.showFooter = true,
     this.showBottomLinks = true,
     this.onProgramMenuChanged,
+    this.onPageTitleLoaded,
+    this.onPageshareLoaded,
   });
 
   @override
@@ -65,25 +72,22 @@ class CommonBody extends StatefulWidget {
 
 class _CommonBodyState extends State<CommonBody> {
   bool isPdfPage = false;
-
+  bool _isNavigating = false;
   dynamic json = {};
-final controller = ScrollController();
-late CarouselSliderController controllerCarousel;
-
-
+  final controller = ScrollController();
+  late CarouselSliderController controllerCarousel;
+  dynamic root = {};
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controllerCarousel=CarouselSliderController();
+      controllerCarousel = CarouselSliderController();
       if (!mounted) return;
 
       loadPage();
     });
-    controller.addListener(() {
-   
-  });
+    controller.addListener(() {});
   }
 
   bool hasLoaded = false;
@@ -98,8 +102,8 @@ late CarouselSliderController controllerCarousel;
 
     await provider.fetchPage(context, widget.menuID ?? "");
 
-    final data = provider.pageData;
-
+    // final data = provider.pageData;
+    final data = provider.pageDataFor(widget.menuID ?? "");
     if (!mounted) return;
 
     if (data == null) {
@@ -107,7 +111,7 @@ late CarouselSliderController controllerCarousel;
       return;
     }
 
-    final root = data['data'];
+    root = data['data'];
 
     if (root is Map) {
       setState(() {
@@ -122,11 +126,15 @@ late CarouselSliderController controllerCarousel;
       if (dataType == "layout") {
         json = root['json_data'] ?? {};
       }
+      final pageTitle = root['menu_title'] ?? "";
+      widget.onPageTitleLoaded?.call(pageTitle);
 
+      final shareLink = root['share_link'] ?? "";
+      widget.onPageshareLoaded?.call(shareLink);
       // if (dataType == "pdf") {
       //   isPdfPage = true;
       // }
-      if (dataType == "pdf") {
+      if (dataType == "pdf" || dataType == "redirectionlink") {
         isPdfPage = true;
 
         final pdfUrl = root['pdf_data']?['pdf_url'] ?? "";
@@ -155,10 +163,9 @@ late CarouselSliderController controllerCarousel;
   @override
   Widget build(BuildContext context) {
     // final provider = context.watch<PageProvider>();
-final provider = Provider.of<PageProvider>(
-  context,
-  listen: false,
-);
+    final provider = Provider.of<PageProvider>(context);
+
+    final allLayouts = provider.layoutsFor(widget.menuID ?? "");
     // LOADING
     if (provider.isLoading) {
       return const Center(child: CommonLoader());
@@ -202,7 +209,7 @@ final provider = Provider.of<PageProvider>(
     // if (json['bottom'] is List) {
     //   allLayouts.addAll(json['bottom']);
     // }
-final allLayouts = context.read<PageProvider>().layouts;
+
     if (!provider.isLoading && hasLoaded && allLayouts.isEmpty) {
       return CustomScrollView(
         slivers: [
@@ -228,9 +235,25 @@ final allLayouts = context.read<PageProvider>().layouts;
     if (widget.showFooter) extraCount++;
 
     if (widget.showBottomLinks) extraCount++;
-
+    // return ListView.builder(
+    //   itemCount: allLayouts.length,
+    //   itemBuilder: (context, index) {
+    //     return Container(
+    //       height: 100,
+    //       margin: const EdgeInsets.all(8),
+    //       color: Colors.red,
+    //       child: Center(
+    //         child: Text(
+    //           allLayouts[index].type.toString(),
+    //           style: const TextStyle(color: Colors.white),
+    //         ),
+    //       ),
+    //     );
+    //   },
+    // );
     return ListView.builder(
       controller: controller,
+      cacheExtent: 300,
       shrinkWrap: true,
       //physics: BouncingScrollPhysics(),
       // physics: const ScrollPhysics(),
@@ -256,23 +279,28 @@ final allLayouts = context.read<PageProvider>().layouts;
       },
     );
   }
-  bool tabShowViewButton =false;
-  Widget renderLayout(Map layout, List allLayouts) {
-   
+
+  bool tabShowViewButton = false;
+
+  // Widget renderLayout(Map layout, List allLayouts) {
+  Widget renderLayout(LayoutModel layout, List<LayoutModel> allLayouts) {
     final responsive = ResponsiveFlutter.of(context);
-    final bool showViewButton = layout['view_button'] == true;
-    final HomeLayoutType type = (layout['layout_type'] ?? "")
-        .toString()
-        .toHomeLayoutType();
+    final bool showViewButton = layout.viewButton == true;
+    // final HomeLayoutType type = (layout.type ?? "")
+    //     .toString()
+    //     .toHomeLayoutType();
+
+    final HomeLayoutType type = layout.type;
 
     /// ✅ HANDLE TABS (GLOBAL)
-    if (tabTypes.contains(layout['layout_type']) &&
-       ( layout['mobile_view'] == "horizontal" || layout['mobile_view'] == "Horizontal")) {
+    if (tabTypes.contains(layout.type) &&
+        (layout.mobileView == "horizontal" ||
+            layout.mobileView == "Horizontal")) {
       /// ✅ only layouts having content
       final validTabLayouts = allLayouts.where((e) {
-        final List content = e['content'] ?? [];
+        final List content = e.content ?? [];
 
-        return tabTypes.contains(e['layout_type']) && content.isNotEmpty;
+        return tabTypes.contains(e.type) && content.isNotEmpty;
       }).toList();
 
       /// ✅ if no valid tabs -> hide whole section
@@ -287,9 +315,9 @@ final allLayouts = context.read<PageProvider>().layouts;
 
       /// ✅ build only valid tabs
       final tabs = validTabLayouts.map<DynamicTabItem>((tabLayout) {
-        final List content = tabLayout['content'] ?? [];
+        final List content = tabLayout.content ?? [];
 
-         tabShowViewButton = tabLayout['view_button'] == true;
+        tabShowViewButton = tabLayout.viewButton == true;
 
         final items = content.map<CarouselItem>((e) {
           final image = e['thumbnail'];
@@ -299,21 +327,27 @@ final allLayouts = context.read<PageProvider>().layouts;
           return CarouselItem(
             image: image is String ? image : "",
             title: title is String ? title : "",
-            onTap:tabLayout['layout_type']==HomeLayoutType.MerckMoreThanAmbasdar.name?null: () {
-              ShowDialogs.launchURL(pageUrl);
-            },
+            onTap: tabLayout.type == HomeLayoutType.MerckMoreThanAmbasdar
+                ? null
+                : () {
+                    ShowDialogs.launchURL(pageUrl);
+                  },
           );
         }).toList();
         return DynamicTabItem(
-          key: tabLayout['layout_type'],
+          key: tabLayout.type.name,
 
           title: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 2),
-            child: SmartHtmlWidget(
-              html: tabLayout['title'] ?? "",
-              textColor: Customcolor.textBlueColor,
+            child: 
+            SmartHtmlWidget(
+              html: tabLayout.title ?? "",
+              fontSize: AppSizes.body(context),
+             
+              ignorefontStyles: true,
+              // textColor: Customcolor.textBlueColor,
 
-              ignoreHtmlStyles: true,
+              //  ignoreHtmlStyles: true,
             ),
           ),
 
@@ -324,27 +358,25 @@ final allLayouts = context.read<PageProvider>().layouts;
             imageHeight: CommonStrings.callimageheight,
 
             /// ✅ hide button if false
-            buttonText: tabShowViewButton
-                ? (tabLayout['button_text'] ?? "")
-                : "",
+            buttonText: tabShowViewButton ? (tabLayout.buttonText ?? "") : "",
 
             onViewAll: () {
               AppNavigation.navigateByMenuId(
                 context,
-                menuId: tabLayout['button_menu_id'].toString(),
+                menuId: tabLayout.buttonMenuId.toString(),
                 albumId: "",
                 type:
-                    tabLayout['layout_type'] ==
+                    tabLayout.type.name ==
                         HomeLayoutType.CallForApplication.name
                     ? HomeLayoutType.CallForApplication
-                    : tabLayout['layout_type'] ==
+                    : tabLayout.type.name ==
                           HomeLayoutType.MerckMoreThanAmbasdar.name
                     ? HomeLayoutType.MerckMoreThanAmbasdar
                     : HomeLayoutType.DigitalLibrary,
                 albumName: "",
                 categoryId: "",
-                title: tabLayout['title'] ?? "",
-                shareLink: tabLayout['button_link'],
+                title: tabLayout.title ?? "",
+                shareLink: tabLayout.buttonLink,
               );
             },
 
@@ -359,37 +391,33 @@ final allLayouts = context.read<PageProvider>().layouts;
       }
 
       return SizedBox(
-        height:tabShowViewButton?CommonStrings.tabheightwithview: CommonStrings.tabheight,
+        height: tabShowViewButton
+            ? CommonStrings.tabheightwithview
+            : CommonStrings.tabheight,
         child: DynamicTabView(
           tabs: tabs,
           indicatorColor: Customcolor.pinkBgColor,
         ),
       );
     }
-
+    final isFirstContentLayout =
+        type == HomeLayoutType.content &&
+        allLayouts.where((e) => e.type == HomeLayoutType.content).first ==
+            layout;
     switch (type) {
       case HomeLayoutType.slider:
-        return HomeSlider(content: layout['content']);
+        return HomeSlider(content: layout.content);
       case HomeLayoutType.award:
-        // final List content = layout['content'] ?? [];
+        // final List content = layout.content ?? [];
         final screenWidth = MediaQuery.of(context).size.width;
-        // final items = content.map<AwardModel>((e) {
-        //   return AwardModel(
-        //     image: e['thumbnail'] ?? "",
-        //     id: e['id'],
-        //     isActive: false,
-        //     title: e['title'],
-        //     subdescription: e['subdescription'],
-        //     subtitle: e['subtitle'],
-        //     pageUrl: '',
-        //     status: false,
-        //     menuId: 0,
-        //   );
-        // }).toList();
-        final items = context.read<PageProvider>().awards;
-        print("Awards display");
+
+        final items = layout.awards;
+        // context.read<PageProvider>().awardsFor(
+        //   widget.menuID ?? "",
+        // );
+
         return widget.menuID == "98"
-            ? CovidFlipSection(content: layout['content'])
+            ? CovidFlipSection(content: layout.content)
             : Padding(
                 padding: const EdgeInsets.only(bottom: 10),
                 child: Column(
@@ -414,10 +442,8 @@ final allLayouts = context.read<PageProvider>().layouts;
                         itemCount: items.length,
                         separatorBuilder: (_, __) => const SizedBox(width: 12),
                         itemBuilder: (context, index) {
-                           print("Award seen");
                           final award = items[index];
-                          print("Award seen");
-                          print(award.subdescription);
+
                           final Color color = Color(
                             int.tryParse(award.subdescription ?? '') ??
                                 0xff0e69af,
@@ -538,27 +564,24 @@ final allLayouts = context.read<PageProvider>().layouts;
                 ),
               );
       case HomeLayoutType.impact:
-        final List content = layout['content'] ?? [];
+        final List content = layout.content ?? [];
 
         final items = content.map<StaticListItem>((e) {
           return StaticListItem(image: e['thumbnail'] ?? "", isNetwork: true);
         }).toList();
-        final screenWidth = MediaQuery.of(context).size.width;
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // CommonRichText(title:
-
-            // layout['title'] ?? "",
-            //  subtitle: ""),
             Padding(
-              padding: const EdgeInsets.only(left: 15),
+              padding: const EdgeInsets.only(left: 15,right: 15),
               child: SmartHtmlWidget(
-                html: layout['title'] ?? "",
-                textColor: Customcolor.textBlueColor,
-                fontSize: screenWidth * 0.055,
-                fontWeight: FontWeight.w800,
-                ignoreHtmlStyles: true,
+                html: layout.title ?? "",
+                // textColor: Customcolor.textBlueColor,
+                fontSize: AppSizes.heading(context),
+                ignorefontStyles: true,
+                // fontWeight: FontWeight.w800,
+                // ignoreHtmlStyles: true,
               ),
             ),
             CommonStaticGrid(items: items),
@@ -577,146 +600,156 @@ final allLayouts = context.read<PageProvider>().layouts;
       case HomeLayoutType.MerckMoreThanAmbasdarFormer:
       case HomeLayoutType.CallForApplication:
         return (type == HomeLayoutType.testimonials &&
-                layout['mobile_view'] == "vertical" || layout['mobile_view'] == "Vertical")
+                    layout.mobileView == "vertical" ||
+                layout.mobileView == "Vertical")
             ? TestimonialVerticalSection(
-                content: (layout['content'] as List? ?? [])
-                    .map((e) => StoryModel.fromJson(e))
-                    .toList(),
-                shareLink: layout['button_link'] ?? '',
-                title: layout['title'] ?? '',
+                // content: (layout.content as List? ?? [])
+                //     .map((e) => StoryModel.fromJson(e))
+                //     .toList(),
+                content: layout.stories,
+                shareLink: layout.buttonLink ?? '',
+                title: layout.title ?? '',
               )
-            : (layout['mobile_view'] == "vertical" || layout['mobile_view'] == "Vertical")
+            : (layout.mobileView == "vertical" ||
+                  layout.mobileView == "Vertical")
             ? VerticalMediaSection(
-                content: (layout['content'] as List? ?? [])
-                    .map((e) => StoryModel.fromJson(e))
-                    .toList(),
-                shareLink: layout['button_link'] ?? '',
+                // content: (layout.content as List? ?? [])
+                //     .map((e) => StoryModel.fromJson(e))
+                //     .toList(),
+                content: layout.stories,
+                shareLink: layout.buttonLink ?? '',
 
                 type: type,
-                title: layout['title'] ?? "",
-
-                menuID: layout['button_menu_id'].toString(),
-                content_button: layout['content_button'],
+                title: layout.title ?? "",
+                buttonText: showViewButton ? (layout.buttonText ?? "") : "",
+                menuID: layout.buttonMenuId.toString(),
+                content_button: layout.contentButton,
               )
             : HorizontalMediaSection(
-                content: layout['content'] ?? [],
-                shareLink: layout['button_link'] ?? '',
-                buttonText: showViewButton ? (layout['button_text'] ?? "") : "",
+                content: layout.content ?? [],
+                shareLink: layout.buttonLink ?? '',
+                buttonText: showViewButton ? (layout.buttonText ?? "") : "",
 
-                buttonLink: layout['button_link'] ?? '',
+                buttonLink: layout.buttonLink ?? '',
                 type: type,
-                title: layout['title'] ?? "",
+                title: layout.title ?? "",
                 showDescription: type == HomeLayoutType.testimonials,
                 showMenu: type == HomeLayoutType.episodes,
-                menuID: layout['button_menu_id'].toString(),
+                menuID: layout.buttonMenuId.toString(),
               );
 
       case HomeLayoutType.content:
-        final List<dynamic> contentList = layout['content'] ?? [];
+        final List<dynamic> contentList = layout.content ?? [];
 
         if (contentList.isEmpty) {
           return const SizedBox();
         }
 
-         if (contentList.length == 1) {
+        if (contentList.length == 1) {
           final item = contentList.first;
 
           return Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, top: 16,bottom: 16),
+            padding: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom: 2,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-              layout['title'] !=""?   SmartHtmlWidget(
-                  html:
-
-                 layout['title'] ?? "",
-                  textColor: Customcolor.colorVoilet,
-                  fontSize: responsive.fontSize(3.0),
-                  fontWeight: FontWeight.w800,
-                ):
-                 
-                SmartHtmlWidget(
-                  html:
-
-                   item['title'] ?? "",
-                  textColor: Customcolor.colorVoilet,
-                  fontSize: responsive.fontSize(3.0),
-                  fontWeight: FontWeight.w800,
-                ),
- const SizedBox(height: 10),
-
-                 SmartHtmlWidget(html: """${item['subdescription']}""" ?? ""),
-                const SizedBox(height: 10),
-
-                 SmartHtmlWidget(html: """${item['description']}""" ?? ""),
-
+                // if (!isFirstContentLayout)
+                //   layout.title.isNotEmpty
+                //       ? SmartHtmlWidget(
+                //           html: layout.title ?? "",
+                //           textColor: Customcolor.colorVoilet,
+                //           fontSize: responsive.fontSize(3.0),
+                //           fontWeight: FontWeight.w800,
+                //         )
+                //       : SmartHtmlWidget(
+                //           html: item['title'] ?? "",
+                //           // textColor: Customcolor.colorVoilet,
+                //           // fontSize: responsive.fontSize(3.0),
+                //           // fontWeight: FontWeight.w800,
+                //         ),
+ SmartHtmlWidget(
+                          html: layout.title ?? "",
+                          textColor: Customcolor.colorVoilet,
+                          fontSize: responsive.fontSize(3.0),
+                          fontWeight: FontWeight.w800,
+                        ),
                
+                SmartHtmlWidget(html: """${item['description']}""" ?? ""),
+                //  const SizedBox(height: 10),
               ],
             ),
           );
-         }
+        }
 
-          return ContentCarouselWidget(contentList: contentList);
+        return ContentCarouselWidget(contentList: contentList);
       case HomeLayoutType.leadership:
         return LeaderCard(
-          content: layout['content'] ?? [],
-          shareLink: layout['button_link'] ?? '',
+          content: layout.content ?? [],
+          shareLink: layout.buttonLink ?? '',
           menuID: widget.menuID ?? "",
         );
 
       case HomeLayoutType.marquee:
         return Column(
-          children: [CommonMarqueeWidget(contents: layout['content'] ?? [])],
+          children: [CommonMarqueeWidget(contents: layout.content ?? [])],
         );
       case HomeLayoutType.MenuManagement:
         return Column(
           children: [
             SizedBox(height: 10),
-            CategorySection(content: layout['content'] ?? []),
+            CategorySection(content: layout.content ?? []),
           ],
         );
       case HomeLayoutType.socialLinks:
-        final List content = layout['content'] ?? [];
+        final List content = layout.content ?? [];
 
         if (content.isEmpty) {
           return const SizedBox();
         }
 
-        return Column(
-          children: content.map<Widget>((item) {
-            final String title = item['title']?.toString() ?? "";
+        return Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: Column(
+            children: content.map<Widget>((item) {
+              final String title = item['title']?.toString() ?? "";
 
-            final int position = item['position'] is int
-                ? item['position']
-                : int.tryParse(item['position'].toString()) ?? 0;
+              final int position = item['position'] is int
+                  ? item['position']
+                  : int.tryParse(item['position'].toString()) ?? 0;
 
-            List<dynamic> socialLinks = [];
+              List<dynamic> socialLinks = [];
 
-            try {
-              final description = item['description']?.toString() ?? "[]";
+              try {
+                final description = item['description']?.toString() ?? "[]";
 
-              socialLinks = jsonDecode(description);
-            } catch (e) {
-              debugPrint("Social parse error: $e");
-            }
+                socialLinks = jsonDecode(description);
+              } catch (e) {
+                debugPrint("Social parse error: $e");
+              }
 
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: FollowSocialSection(
-                title: title,
-                position: position,
-                socialLinks: socialLinks,
-              ),
-            );
-          }).toList(),
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: FollowSocialSection(
+                  title: title,
+                  position: position,
+                  socialLinks: socialLinks,
+                ),
+              );
+            }).toList(),
+          ),
         );
 
       case HomeLayoutType.OurProgramsManagement:
         return Padding(
           padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
           child: Column(
-            children: List.generate((layout['content'] ?? []).length, (index) {
-              final item = layout['content'][index];
+            children: List.generate((layout.content ?? []).length, (index) {
+              final item = layout.content[index];
               final Color color = Color(
                 int.tryParse(item['subdescription'] ?? '') ?? 0xff0e69af,
               );

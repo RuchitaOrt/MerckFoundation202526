@@ -20,6 +20,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onSearch;
   final VoidCallback? onShare;
   final String? shareLink;
+  
   final String? menuID;
   final double height;
   final String? mennuLogo;
@@ -34,6 +35,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onSearch,
     this.onShare,
     this.shareLink,
+    
     this.height = 110,
     this.menuID,
     this.mennuLogo,
@@ -60,6 +62,9 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget _topRow(BuildContext context, ResponsiveFlutter responsive) {
+    print("SHareLink Value");
+    print(shareLink);
+    
     return SizedBox(
       height: 60,
       child: Row(
@@ -101,25 +106,13 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           const Spacer(),
 
           // LOGO
-          Image.asset(CommonImagePath.drawerImg, height: 45),
+          Image.asset(CommonImagePath.drawerImg, height:
+           type == AppBarType.home?80: 45),
 
           const Spacer(),
-          if (onShare != null || shareLink != null)
-            //   _icon(
-            //     CommonImagePath.share,
-            //     () {
-            //       if (shareLink != null &&
-            //           shareLink!.isNotEmpty) {
-            //         ShareBottomSheet.show(
-            //           context,
-            //           shareLink:
-            //               "$shareLink",
-            //         );
-            //       } else {
-            //         onShare?.call();
-            //       }
-            //     },true
-            //   ),
+          if (shareLink != "" 
+          )
+          
             _icon(CommonImagePath.share, () {
               print("CLICKED");
               if (shareLink != null && shareLink!.isNotEmpty) {
@@ -169,6 +162,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
               fontWeight: FontWeight.bold,
               ignoreHtmlStyles: true,
               applyMaxLines: true,
+              fontFamily: "Times New Roman",
               maxLines: 1,
               softWrap: true,
               textOverflow: TextOverflow.ellipsis,

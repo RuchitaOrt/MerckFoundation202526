@@ -212,8 +212,8 @@ class FilterProvider extends ChangeNotifier {
         ];
 
       } else if (type ==
-          MediaType.digitalLibrary) {
-
+          MediaType.digitalLibrary || type==MediaType.digitalLibraryall) {
+        
         final result =
             await _service
                 .fetchListDigitalCategories(
@@ -280,7 +280,7 @@ class FilterProvider extends ChangeNotifier {
       /// =========================
 
       if (type ==
-          MediaType.digitalLibrary) {
+          MediaType.digitalLibrary || type==MediaType.digitalLibraryall) {
 
         final result =
             await _service

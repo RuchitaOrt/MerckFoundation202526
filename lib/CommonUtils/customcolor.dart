@@ -6,13 +6,16 @@ class Customcolor {
   static const tablebordercolor =  Color(0xff000000);
   static const textsubtitlecolor =  Color(0xFF4b4e53);
 
-  static const colorPink =  Color(0xffE43799);
-
+  // static const colorPink =  Color(0xffE43799);
+  static const colorPink =  Color(0xffFF0099);
   static const white =  Color(0xffffffff);
+   static const blackSubTitle =  Color(0xff272727);
+  
 
   static const colorBlue =  Color(0xff2467B6);
 
-  static const colorVoilet =  Color(0xff532E92);
+   static const colorVoilet =  Color(0xff532E92);
+    // static const colorVoilet =  Color(0xff7030a0);
   static const babyBlue =  Color(0xff89cff0);
   static const background =  Color(0xffEBF9FF);
 
@@ -29,6 +32,7 @@ class Customcolor {
 
   static const textGreyColor =  Color(0xff888888);
   static const textDarkBlueColor =  Color(0xff115CAB);
+  static const textwebBlueColor =  Color(0xff0070c0);
   static const textDarkGreyColor =  Color(0xff333333);
 
  

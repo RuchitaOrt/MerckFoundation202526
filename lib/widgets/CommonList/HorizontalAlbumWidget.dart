@@ -7,6 +7,7 @@ import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListin
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonBorderButton.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/ImageShimmer.dart';
 import 'package:merckfoundation_252026/widgets/ImagePreviewScreen.dart';
 
 class HorizontalAlbumWidget<T> extends StatelessWidget {
@@ -87,10 +88,10 @@ class HorizontalAlbumWidget<T> extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(18),
                       child: CachedNetworkImage(
+                        // memCacheWidth: 1000,
                         imageUrl: imageUrl(item),
                         fit: BoxFit.cover,
-                        placeholder: (context, url) =>
-                            const Center(child: CommonLoader()),
+                       placeholder: (context, url) => const ImageShimmer(),
                         errorWidget: (_, __, ___) => Container(
                           color: Colors.grey.shade200,
                           alignment: Alignment.center,

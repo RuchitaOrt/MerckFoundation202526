@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
@@ -6,6 +7,7 @@ import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/model/StoryModel.dart';
 import 'package:merckfoundation_252026/model/TestimonialModel.dart';
 import 'package:merckfoundation_252026/widgets/Bottomcardlink.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/ImageShimmer.dart';
 import 'package:merckfoundation_252026/widgets/FooterFlowerImage.dart';
 import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 
@@ -79,7 +81,7 @@ class _TestimonialVerticalSectionState
 
           if (testimonials.length > 1)
             Positioned(
-              top: screenHeight * 0.22,
+              top: screenHeight * 0.12,
               left: 12,
               right: 12,
               child: Row(
@@ -146,14 +148,27 @@ class _TestimonialItem extends StatelessWidget {
                 if (item.image.isNotEmpty)
                   ClipRRect(
                     borderRadius: BorderRadius.circular(24),
-                    child: AspectRatio(
-                      aspectRatio: 4 / 4,
-                      child: FadeInImage.assetNetwork(
-                        placeholder: CommonImagePath.placeHolder,
-                        image: item.image,
-                        fit: BoxFit.cover,
-                      ),
+                    // child: 
+                    // AspectRatio(
+                    //   aspectRatio: 4 / 4,
+
+                     child:    CachedNetworkImage(
+                      memCacheHeight: 1000,
+                    imageUrl: item.image,
+                    fit: BoxFit.contain,
+                    placeholder: (context, url) => const ImageShimmer(),
+
+                    errorWidget: (_, __, ___) => Image.asset(
+                      CommonImagePath.placeHolder,
+                      fit: BoxFit.contain,
                     ),
+                  ),
+                    // FadeInImage.assetNetwork(
+                    //     placeholder: CommonImagePath.placeHolder,
+                    //     image: item.image,
+                    //     fit: BoxFit.contain,
+                    //   ),
+                    // ),
                   ),
             
                 const SizedBox(height: 18),

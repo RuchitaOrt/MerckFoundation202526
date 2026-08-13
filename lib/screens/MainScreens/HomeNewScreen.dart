@@ -36,10 +36,11 @@ class MerckHomeScreen extends StatelessWidget {
       key: _scaffoldKey,
       backgroundColor: Customcolor.background,
       appBar: CommonAppBar(
+        shareLink: "",
         type: AppBarType.home,
         onDrawer: () => _scaffoldKey.currentState?.openDrawer(),
         onSearch: () {},
-        height: Platform.isAndroid? responsive.height(8):  responsive.height(9),
+        height: Platform.isAndroid? responsive.height(8):  responsive.height(8),
         mennuLogo: mennuLogo,
       ),
 
@@ -117,7 +118,7 @@ class CategoryChip extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        print("menuID ${menuID}");
+     
 
         AppNavigation.navigateByMenuId(
           context,

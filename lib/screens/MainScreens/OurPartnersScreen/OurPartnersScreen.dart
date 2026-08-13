@@ -42,21 +42,7 @@ class _OurPartnersScreenState extends State<OurPartnersScreen> {
       context.read<OurPartnersProvider>().loadInitial(context);
     });
 
-    // _scrollController.addListener(() async {
-    //   final provider = context.read<OurPartnersProvider>();
-
-    //   if (_scrollController.position.pixels >=
-    //           _scrollController.position.maxScrollExtent - 200 &&
-    //       !_isLoadMoreRunning &&
-    //       !provider.isLoading &&
-    //       provider.hasMore) {
-    //     _isLoadMoreRunning = true; // 🔥 LOCK UI
-
-    //     await provider.loadMore(context);
-
-    //     _isLoadMoreRunning = false; // 🔥 UNLOCK after API completes
-    //   }
-    // });
+   
     _scrollController.addListener(() async {
   final provider = context.read<OurPartnersProvider>();
 
@@ -144,7 +130,7 @@ class _OurPartnersScreenState extends State<OurPartnersScreen> {
       ),
 
       SliverPadding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.only(left: 12,right: 12,bottom: 12),
         sliver: SliverGrid(
           delegate: SliverChildBuilderDelegate((context, index) {
             final item = provider.partners[index];
@@ -161,6 +147,8 @@ class _OurPartnersScreenState extends State<OurPartnersScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     if ((item.image ?? "").isNotEmpty)
+
+                    
                       Image.network(
                         item.image!,
                         height: 60,

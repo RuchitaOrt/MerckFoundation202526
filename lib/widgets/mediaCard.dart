@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' hide MediaType;
 import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
@@ -9,6 +10,7 @@ import 'package:merckfoundation_252026/widgets/CommonWidget/CommonBorderButton.d
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonPopupMenu.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/ImageShimmer.dart';
 
 import 'package:merckfoundation_252026/widgets/PauseImage.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
@@ -79,31 +81,46 @@ class MediaCard extends StatelessWidget {
                     ), // 🔥 equal padding
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        image,
-                        width: double.infinity,
-                        height: double.infinity,
-                        fit: BoxFit.cover,
+                      child:
+                      CachedNetworkImage(
+                      
+  imageUrl: image,
+  width: double.infinity,
+  height: double.infinity,
+  fit: BoxFit.contain,
+  placeholder: (context, url) =>ImageShimmer(),
+  errorWidget: (context, url, error) => SizedBox.expand(
+    child: Image.asset(
+      CommonImagePath.placeHolder,
+      fit: BoxFit.contain,
+    ),
+  ),
+),
+                      //  Image.network(
+                      //   image,
+                      //   width: double.infinity,
+                      //   height: double.infinity,
+                      //   fit: BoxFit.contain,
 
-                        loadingBuilder: (context, child, progress) {
-                          if (progress == null) return child;
+                      //   loadingBuilder: (context, child, progress) {
+                      //     if (progress == null) return child;
 
-                          return Container(
-                            color: Colors.grey.shade200,
-                            alignment: Alignment.center,
-                            child: const CommonLoader(),
-                          );
-                        },
+                      //     return Container(
+                      //       color: Colors.grey.shade200,
+                      //       alignment: Alignment.center,
+                      //       child: const CommonLoader(),
+                      //     );
+                      //   },
 
-                        errorBuilder: (context, error, stackTrace) {
-                          return SizedBox.expand(
-                            child: Image.asset(
-                              CommonImagePath.placeHolder,
-                              fit: BoxFit.contain,
-                            ),
-                          );
-                        },
-                      ),
+                      //   errorBuilder: (context, error, stackTrace) {
+                      //     return SizedBox.expand(
+                      //       child: Image.asset(
+                      //         CommonImagePath.placeHolder,
+                      //         fit: BoxFit.contain,
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
                     ),
                   ),
                   if (showmenu)
@@ -167,13 +184,8 @@ class MediaCard extends StatelessWidget {
                       fontweight: FontWeight.w500,
                       textOverflow: TextOverflow.ellipsis,
                     ),
-                    // (type==HomeLayoutType.MerckMoreThanAmbasdar || type==HomeLayoutType.MerckMoreThanAmbasdarFormer)?
-                    content_button
-                        ? 
-                        Column(
-                            children: [
-                              SizedBox(height: 10),
-                              FormLabel(
+                     SizedBox(height: 10),
+                    (type== HomeLayoutType.MerckMoreThanAmbasdar ||type==HomeLayoutType.MerckMoreThanAmbasdarFormer)?          FormLabel(
                                 text: subTitle ?? "",
                                 maxLines: 1,
                                 textAlignment: TextAlign.center,
@@ -181,7 +193,13 @@ class MediaCard extends StatelessWidget {
                                 labelColor: Customcolor.colorBlue,
                                 fontweight: FontWeight.w800,
                                 textOverflow: TextOverflow.ellipsis,
-                              ),
+                              ):Container(),
+                    // (type==HomeLayoutType.MerckMoreThanAmbasdar || type==HomeLayoutType.MerckMoreThanAmbasdarFormer)?
+                    content_button
+                        ? 
+                        Column(
+                            children: [
+                             
                               SizedBox(height: 10),
                               Center(
                                 child: CommonBorderButton(

@@ -42,6 +42,7 @@
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 
 class CommonMarqueeWidget extends StatelessWidget {
   final List<dynamic> contents;
@@ -71,10 +72,10 @@ class CommonMarqueeWidget extends StatelessWidget {
         child: SizedBox(
           height: 20,
           child: Marquee(
-            text: marqueeText,
+            text: stripHtml(marqueeText),
             style: const TextStyle(
               color: Customcolor.textBlueColor,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),

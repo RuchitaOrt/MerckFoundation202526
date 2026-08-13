@@ -120,28 +120,32 @@ void loadMoreLocal() {
     isDetailLoading = true;
     detailStatus = ApiStatus.loading;
     notifyListeners();
-
+ print("loadArticleDetail 2");
     try {
       final result = await _service.fetchArticleDetail(
         context,
         articleId: articleId,
         languageId: languageId,
       );
-
+ print("loadArticleDetail 3");
       detailStatus = result.status;
-
+ print("loadArticleDetail ${detailStatus}");
       if (result.isSuccess) {
         final response = result.data;
 
         articleDetail = ArticleModel.fromJson(response['data']);
         selectedLanguageId = articleDetail?.language_id ?? "";
+         print("availabe labguage");
+      print(articleDetail!.availableLanguages!.length);
       } else {
         detailStatus = ApiStatus.error;
         errorMessage = result.message ?? "";
+         print("loadArticleDetail 4");
       }
     } catch (e) {
       detailStatus = ApiStatus.noInternet;
       errorMessage =  CommonStrings.noInternetConnection;
+       print("loadArticleDetail 5 ${e.toString()}");
     }
 
     isDetailLoading = false;
@@ -190,7 +194,7 @@ void loadMoreLocal() {
       final newList = (response['data'] as List)
           .map((e) => ArticleModel.fromJson(e))
           .toList();
-
+         
       articleList.addAll(newList);
 
       currentPage = nextPage;

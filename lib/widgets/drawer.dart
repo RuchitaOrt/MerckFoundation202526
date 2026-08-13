@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/SocialProvider.dart';
 import 'package:merckfoundation_252026/Provider/navbar_provider.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
+import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/routes/AppNavigation.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 
@@ -11,6 +12,7 @@ import 'package:merckfoundation_252026/screens/MainScreens/HomeNewScreen.dart';
 
 import 'package:merckfoundation_252026/screens/MainScreens/dashboard.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
+import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/FollowSocialSection.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
@@ -58,42 +60,80 @@ class _AppDrawerState extends State<AppDrawer> {
 
                           if (item.submenu.isEmpty) {
                             widget = DrawerWidget(
-                              value: item.menuName,
+                              value: item.menuName!,
                               image: item.mobileLogo,
                               onTapfun: () {
                                 AppNavigation.navigateByMenuId(
                                   context,
                                   menuId: item.id.toString(),
-                                  title: item.menuName,
+                                  title: item.menuName!,
                                   shareLink: item.menuUrl,
                                 );
                               },
                             );
                           } else {
                             widget = CustomExpansion(
-                              title: item.menuName,
-                              leadingIcon: item.mobileLogo,
+                              title: item.menuName!,
+                              id: item.id.toString(),
+                              leadingIcon: item.mobileLogo!,
                               expanded: expansionState[item.menuName] ?? false,
                               onTap: () {
                                 setState(() {
-                                  expansionState[item.menuName] =
+                                  if (item.id == 16) {
+                                    AppNavigation.navigateByMenuId(
+                                      context,
+                                      menuId: item.id.toString(),
+                                      title: item.menuName!,
+                                      shareLink: item.menuUrl,
+                                    );
+                                  }
+                                  expansionState[item.menuName!] =
                                       !(expansionState[item.menuName] ?? false);
                                 });
                               },
-                              children: item.submenu.map((sub) {
-                                return DrawerWidget(
-                                  value: sub.menuName,
-                                  // image: sub.mobileLogo,
-                                  onTapfun: () {
-                                    AppNavigation.navigateByMenuId(
-                                      context,
-                                      menuId: sub.id.toString(),
-                                      title: sub.menuName,
-                                      shareLink: sub.menuUrl,
-                                    );
-                                  },
-                                );
-                              }).toList(),
+                              children: item.id == 16
+                                  ? <Widget>[Container()]
+                                  : item.submenu.map((sub) {
+                                      return DrawerWidget(
+                                        value: sub.menuName!,
+                                        // image: sub.mobileLogo,
+                                        onTapfun: () {
+                                          print("VIDEO ${sub.isVideo}");
+                                          if (sub.isVideo == true) {
+                                            print(
+                                              "VIDEO  Navigate${sub.isVideo} ${sub.menuTitle!}",
+                                            );
+                                            print(
+                                              "VIDEO  ${sub.videoCategoryArray.toString()}",
+                                            );
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (_) =>
+                                                    MediaListingScreen(
+                                                      type: MediaType.all,
+                                                      categoryID: sub
+                                                          .videoCategoryArray
+                                                          .join(','),
+                                                      albumID: "",
+                                                      albumName: "",
+                                                      menuID: sub.id.toString(),
+                                                      title: sub.menuTitle!,
+                                                      shareLink: "",
+                                                    ),
+                                              ),
+                                            );
+                                          } else {
+                                            AppNavigation.navigateByMenuId(
+                                              context,
+                                              menuId: sub.id.toString(),
+                                              title: sub.menuName!,
+                                              shareLink: sub.menuUrl,
+                                            );
+                                          }
+                                        },
+                                      );
+                                    }).toList(),
                             );
                           }
 
@@ -121,7 +161,7 @@ class _AppDrawerState extends State<AppDrawer> {
 
                 return FollowSocialDrawer(
                   title: "",
-                  iconSize: 14,
+                  iconSize: 12,
                   // position: int.tryParse(item['position'].toString()) ?? 0,
                   socialLinks: provider.socialMediaList,
                 );
@@ -199,6 +239,7 @@ class _AppDrawerState extends State<AppDrawer> {
 /// Custom Expansion widget (replacement for ExpansionTile)
 class CustomExpansion extends StatelessWidget {
   final String title;
+  final String id;
   final String leadingIcon;
   final bool expanded;
   final VoidCallback onTap;
@@ -206,6 +247,7 @@ class CustomExpansion extends StatelessWidget {
 
   const CustomExpansion({
     Key? key,
+    required this.id,
     required this.title,
     required this.leadingIcon,
     required this.expanded,
@@ -246,13 +288,15 @@ class CustomExpansion extends StatelessWidget {
                     fontheight: 1.2,
                   ),
                 ),
-                Icon(
-                  expanded
-                      ? Icons.keyboard_arrow_up
-                      : Icons.keyboard_arrow_down,
-                  size: responsive.width(5),
-                  color: Customcolor.textDarkBlueColor,
-                ),
+                id == "16"
+                    ? Container()
+                    : Icon(
+                        expanded
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
+                        size: responsive.width(5),
+                        color: Customcolor.textDarkBlueColor,
+                      ),
               ],
             ),
           ),

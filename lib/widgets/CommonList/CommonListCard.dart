@@ -1,7 +1,9 @@
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/ImageShimmer.dart';
 
 class CommonListCard extends StatelessWidget {
   final String imageUrl;
@@ -23,10 +25,7 @@ class CommonListCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(14),
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 6,
-        ),
+        margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -46,36 +45,53 @@ class CommonListCard extends StatelessWidget {
             /// IMAGE
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: isNetwork
-                  ? Image.network(
-                      imageUrl,
+              child:
+                  isNetwork
+                      ?
+                  CachedNetworkImage(
+                    imageUrl: imageUrl,
+                    // memCacheHeight: 1000,
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => ImageShimmer(),
+                    errorWidget: (context, url, error) => Container(
                       width: 80,
                       height: 80,
-                      fit: BoxFit.cover,
-
-                      errorBuilder: (_, __, ___) {
-                        return Container(
-                          width: 80,
-                          height: 80,
-                          color: Colors.grey.shade200,
-                          child: const Icon(Icons.image),
-                        );
-                      },
-                    )
-                  : Image.asset(
-                      imageUrl,
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) {
-                        return Container(
-                          width: 80,
-                          height: 80,
-                          color: Colors.grey.shade200,
-                          child:  Image.asset(CommonImagePath.placeHolder),
-                        );
-                      },
+                      color: Colors.grey.shade200,
+                      child: const Icon(Icons.image),
                     ),
+                  )
+              // Image.network(
+              //     imageUrl,
+              //     width: 80,
+              //     height: 80,
+              //     fit: BoxFit.cover,
+
+              //     errorBuilder: (_, __, ___) {
+              //       return Container(
+              //         width: 80,
+              //         height: 80,
+              //         color: Colors.grey.shade200,
+              //         child: const Icon(Icons.image),
+              //       );
+              //     },
+              //   )
+              :
+               Image.asset(
+                  imageUrl,
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) {
+                    return Container(
+                      width: 80,
+                      height: 80,
+                      color: Colors.grey.shade200,
+                      child:  Image.asset(CommonImagePath.placeHolder),
+                    );
+                  },
+                ),
             ),
 
             const SizedBox(width: 12),
@@ -85,7 +101,7 @@ class CommonListCard extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(top: 2),
                 child: Text(
-                   stripHtml(htmlTitle),
+                  stripHtml(htmlTitle),
                   // htmlTitle,
                   maxLines: 4,
                   overflow: TextOverflow.ellipsis,

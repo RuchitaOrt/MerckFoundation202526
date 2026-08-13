@@ -20,6 +20,7 @@ class ArticleService {
     required String articleId,
     required String languageId,
   }) async {
+    print("articleId ${articleId} ${languageId}");
     return await APIManager().apiRequest(
       context,
       API.getnewsletterarticlebylanguage,
@@ -27,6 +28,7 @@ class ArticleService {
         "article_id": articleId,
         "language_id": languageId,
       },
+      
     );
   }
 }

@@ -197,7 +197,7 @@ if (isUpdateRequired(appVersion!, latestVersion)) {
         .menuList.first.mobileLogo
         .toString();
     menuUrl = navbarProvider
-        .menuList.first.menuUrl;
+        .menuList.first.menuUrl!;
   }
 
   _handleNavigation(

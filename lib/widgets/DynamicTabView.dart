@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/model/CommonModel.dart';
+import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 
 
 class DynamicTabView extends StatefulWidget {
@@ -47,7 +48,7 @@ class _DynamicTabViewState extends State<DynamicTabView> {
     widget.tabs.length,
     (index) {
       final isSelected = selectedIndex == index;
-
+ 
       return GestureDetector(
         onTap: () {
           setState(() => selectedIndex = index);
@@ -57,7 +58,7 @@ class _DynamicTabViewState extends State<DynamicTabView> {
           margin: const EdgeInsets.symmetric(
               horizontal: 10, vertical: 6),
           padding: const EdgeInsets.symmetric(
-              vertical: 14, horizontal: 10),
+              vertical: 10, horizontal: 10),
           decoration: BoxDecoration(
             color: isSelected
                 ? widget.indicatorColor.withOpacity(0.12)
@@ -67,7 +68,9 @@ class _DynamicTabViewState extends State<DynamicTabView> {
           child: Row(
             children: [
               Expanded(
-                child: DefaultTextStyle(
+                child:
+                
+                DefaultTextStyle(
                   style: TextStyle(
                     fontSize: 13,
                     color: isSelected

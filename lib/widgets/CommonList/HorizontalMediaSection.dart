@@ -1,5 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
+import 'package:merckfoundation_252026/Provider/PageProvider.dart';
+import 'package:merckfoundation_252026/Utility/AppSizes.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
 import 'package:merckfoundation_252026/model/TestimonialModel.dart';
 import 'package:merckfoundation_252026/routes/AppNavigation.dart';
@@ -8,14 +11,18 @@ import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/screens/DetailsScreen/DetailScreen.dart';
 import 'package:merckfoundation_252026/screens/DetailsScreen/TestimonialArticlesScreen.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/EpisodeScreen/EpisodeInformation.dart';
+import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonBorderButton.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonPopupMenu.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/ImageShimmer.dart';
 import 'package:merckfoundation_252026/widgets/ImagePreviewScreen.dart';
+import 'package:merckfoundation_252026/widgets/PauseImage.dart';
 import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/PhotoAlumbScreen.dart';
+import 'package:provider/provider.dart';
 
-class HorizontalMediaSection extends StatelessWidget {
+class HorizontalMediaSection extends StatefulWidget {
   final List content;
   final String? seasonID;
 
@@ -33,6 +40,7 @@ class HorizontalMediaSection extends StatelessWidget {
   final VoidCallback? onMenuTap;
   final String buttonText;
   final String buttonLink;
+ 
 
   const HorizontalMediaSection({
     super.key,
@@ -47,35 +55,237 @@ class HorizontalMediaSection extends StatelessWidget {
     required this.buttonLink,
     required this.menuID,
     this.shareLink,
+   
   });
 
   @override
+  State<HorizontalMediaSection> createState() => _HorizontalMediaSectionState();
+}
+
+class _HorizontalMediaSectionState extends State<HorizontalMediaSection> {
+Future<void> _onViewAllPressed() async {
+ if(widget.type == HomeLayoutType.season){
+
+  AppNavigation.navigateByMenuId(
+    context,
+    menuId: widget.menuID,
+    albumId: "",
+    albumName: "",
+    categoryId: widget.type == HomeLayoutType.episodesviewall
+        ? widget.seasonID ?? ""
+        : "",
+    title: widget.title ?? "",
+    shareLink: widget.shareLink,
+    seasonId: widget.seasonID ?? "",
+    type: widget.type,
+  );
+ }else{
+  debugPrint("=================================");
+  debugPrint("WATCH MORE CLICKED");
+  debugPrint("MENU ID = ${widget.menuID}");
+  debugPrint("TYPE = ${widget.type}");
+  debugPrint("TITLE = ${widget.title}");
+  debugPrint("=================================");
+
+  if (widget.menuID.isEmpty) {
+    debugPrint("ERROR: menuID is EMPTY");
+    return;
+  }
+
+  final provider = Provider.of<PageProvider>(
+    context,
+    listen: false,
+  );
+
+  final data = await provider.fetchWatchMorePage(
+    context,
+    widget.menuID,
+  );
+
+  if (!mounted) return;
+
+  debugPrint("WATCH MORE DATA = $data");
+
+  if (data == null) {
+    debugPrint("WATCH MORE: DATA IS NULL");
+    return;
+  }
+
+  final root = data['data'];
+
+  if (root == null || root is! Map) {
+    debugPrint("WATCH MORE: INVALID ROOT");
+    debugPrint("ROOT = $root");
+    return;
+  }
+
+  debugPrint("========== ROOT ==========");
+  debugPrint("ROOT = $root");
+  debugPrint("is_newsletter = ${root['is_newsletter']}");
+  debugPrint("is_awards = ${root['is_awards']}");
+  debugPrint("is_video = ${root['is_video']}");
+  debugPrint("is_dglibrary = ${root['is_dglibrary']}");
+  debugPrint("is_photo = ${root['is_photo']}");
+  debugPrint("==========================");
+  
+  if (root['is_newsletter'] == true) {
+    debugPrint("NAVIGATING -> NEWSLETTER");
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => DetailScreen(
+          "",
+          "",
+          title: root['menu_name']?.toString() ?? "",
+          articleId: root['newsletter_id']?.toString() ?? "",
+          languageId: "",
+          isDetailApiCalled: true,
+          shareLink: "",
+          menuID: widget.menuID,
+        ),
+      ),
+    );
+
+    return;
+  }
+else
+  if (root['is_awards'] == true) {
+    debugPrint("NAVIGATING -> AWARDS");
+
+    AppNavigation.navigateByMenuId(
+      context,
+      menuId: root['award_id']?.toString() ?? "",
+      title: root['menu_name']?.toString() ?? "",
+    );
+
+    return;
+  }
+else
+  if (root['is_video'] == true) {
+    debugPrint("NAVIGATING -> VIDEO");
+
+    final videoCategories = root['video_category_array'];
+
+    
+
+    debugPrint("VIDEO CATEGORY = $videoCategories");
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MediaListingScreen(
+          type: MediaType.all,
+          categoryID: videoCategories.join(','),
+          albumID: "",
+          albumName: "",
+          menuID: "",
+          title: root['menu_name']?.toString() ?? "",
+          shareLink: root['share_link']?.toString() ?? "",
+        ),
+      ),
+    );
+
+    return;
+  }
+else
+  if (root['is_dglibrary'] == true) {
+    debugPrint("NAVIGATING -> DIGITAL LIBRARY");
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MediaListingScreen(
+          type: MediaType.digitalLibraryall,
+          categoryID: root['digital_library_id']?.toString() ?? "",
+          albumID: "",
+          albumName: "",
+          menuID: "",
+          shareLink: "",
+          title: "Digital Library",
+          digitalLibraryCategoryName: "",
+        ),
+      ),
+    );
+
+    return;
+  }
+else
+  if (root['is_photo'] == true) {
+    debugPrint("NAVIGATING -> PHOTO");
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MediaListingScreen(
+          type: MediaType.photoAlbum,
+          categoryID: root['photo_category_id']?.toString() ?? "",
+          albumID: root['photo_album_id']?.toString() ?? "",
+          albumName: "",
+          menuID: "",
+          shareLink: "",
+          title: root['menu_name']?.toString() ?? "",
+        ),
+      ),
+    );
+
+    return;
+  }
+else
+{
+
+  AppNavigation.navigateByMenuId(
+    context,
+    menuId: widget.menuID,
+    albumId: "",
+    albumName: "",
+    categoryId: widget.type == HomeLayoutType.episodesviewall
+        ? widget.seasonID ?? ""
+        : "",
+    title: widget.title ?? "",
+    shareLink: widget.shareLink,
+    seasonId: widget.seasonID ?? "",
+    type: widget.type,
+  );
+}
+ }
+}
+  @override
   Widget build(BuildContext context) {
-    if (content.isEmpty) return const SizedBox();
+    if (widget.content.isEmpty) return const SizedBox();
 
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     /// ✅ FULL WIDTH IF ONLY 1 ITEM
-    final itemWidth = content.length == 1
+    final itemWidth = widget.content.length == 1
         ? screenWidth - 32
         : screenWidth * 0.85;
-    print(title);
+    final itemHeight = widget.type == HomeLayoutType.testimonials
+        ? screenHeight * 0.39
+        : screenHeight * 0.35;
+    final imageHeight = screenHeight * 0.28;
+    // : screenWidth * 0.85;
+   
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           /// 🔹 TITLE ROW
-          if ((title ?? "").isNotEmpty)
+          if ((widget.title ?? "").isNotEmpty)
             Row(
               children: [
                 Expanded(
                   child: SmartHtmlWidget(
-                    html: title!,
-                    textColor: Customcolor.textBlueColor,
-                    fontSize: screenWidth * 0.055,
-                    fontWeight: FontWeight.w800,
-                    ignoreHtmlStyles: true,
+                    html: widget.title!,
+                     textColor: Customcolor.violetcolor,
+                    // textColor: Customcolor.textBlueColor,
+                    fontSize: AppSizes.heading(context),
+                    ignorefontStyles: true,
+                    // fontWeight: FontWeight.w800,
+                    // ignoreHtmlStyles: true,
                   ),
                 ),
 
@@ -84,13 +294,16 @@ class HorizontalMediaSection extends StatelessWidget {
             ),
 
           const SizedBox(height: 12),
+          SizedBox(
+            height: itemHeight,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: widget.content.length,
+              cacheExtent: 1000,
 
-          /// 🔹 HORIZONTAL LIST
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: List.generate(content.length, (index) {
-                final item = content[index];
+              itemBuilder: (context, index) {
+                final item = widget.content[index];
+
                 final episodeId =
                     item['id']?.toString() ??
                     item['season_id']?.toString() ??
@@ -111,29 +324,29 @@ class HorizontalMediaSection extends StatelessWidget {
 
                 return GestureDetector(
                   onTap: () {
-                    
+                    // your existing tap logic
                     if (isYoutube) {
                       ShowDialogs.launchURL(item['thumbnail']);
-                    } else if (type == HomeLayoutType.newsLettersAndArticles) {
+                    } else if (widget.type == HomeLayoutType.newsLettersAndArticles) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) => DetailScreen(
                             "",
                             "",
-                            title: title,
+                            title: widget.title,
                             articleId: item['id'].toString(),
                             languageId: item['subtitle'].toString(),
                             isDetailApiCalled: true,
-                            shareLink: shareLink,
-                            menuID: menuID,
+                            shareLink: widget.shareLink,
+                            menuID: widget.menuID,
                           ),
                         ),
                       );
-                    } else if (type == HomeLayoutType.merckFoundationInMedia) {
+                    } else if (widget.type == HomeLayoutType.merckFoundationInMedia) {
                       ShowDialogs.launchURL(item['page_url']);
-                    } else if (type == HomeLayoutType.testimonials) {
-                      final item = content[index];
+                    } else if (widget.type == HomeLayoutType.testimonials) {
+                      final item = widget.content[index];
 
                       final clickedTestimonial = TestimonialModel(
                         image: item['thumbnail'] ?? "",
@@ -147,8 +360,8 @@ class HorizontalMediaSection extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (_) => TestimonialArticlesScreen(
-                            title: title ?? "",
-                            shareLink: shareLink ?? "",
+                            title: widget.title ?? "",
+                            shareLink: widget.shareLink ?? "",
                             initialList: [
                               clickedTestimonial,
                             ], // 👈 only one item
@@ -156,22 +369,22 @@ class HorizontalMediaSection extends StatelessWidget {
                           ),
                         ),
                       );
-                    } else if (type == HomeLayoutType.PhotoCategory) {
-                      final item = content[index];
+                    } else if (widget.type == HomeLayoutType.PhotoCategory) {
+                      final item = widget.content[index];
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) => PhotoAlumbScreen(
-                            pageTile: title ?? "",
+                            pageTile: widget.title ?? "",
                             tile: item['photo_category_name'] ?? "",
                             categoryID: item['id'].toString(),
-                            menuID: menuID,
-                            shareLink: shareLink,
+                            menuID: widget.menuID,
+                            shareLink: widget.shareLink,
                           ),
                         ),
                       );
-                    } else if (type == HomeLayoutType.photoGallery) {
-                      final item = content[index];
+                    } else if (widget.type == HomeLayoutType.photoGallery) {
+                      final item = widget.content[index];
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
@@ -185,44 +398,70 @@ class HorizontalMediaSection extends StatelessWidget {
                   },
                   child: Container(
                     width: itemWidth,
+                    height: itemHeight,
                     margin: EdgeInsets.only(
-                      right: content.length == 1 ? 0 : 12,
+                      right: widget.content.length == 1 ? 0 : 12,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        /// 🔹 IMAGE
                         Stack(
                           alignment: Alignment.center,
                           children: [
-                            AspectRatio(
-                              aspectRatio: 16 / 9,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Image.network(
-                                  imageUrl,
-                                  fit: BoxFit.contain,
-                                  width: double.infinity,
-                                  loadingBuilder: (context, child, progress) {
-                                    if (progress == null) return child;
-
-                                    return Container(
-                                      color: Colors.grey.shade200,
-                                    );
-                                  },
-                                  errorBuilder: (_, __, ___) {
-                                    return Container(
-                                      color: Colors.grey.shade200,
-                                      child: Image.asset(
-                                        CommonImagePath.placeHolder,
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                            if (showMenu)
+                            ClipRRect(
+  borderRadius: BorderRadius.circular(8),
+  clipBehavior: Clip.antiAlias,
+      child: CachedNetworkImage(
+        imageUrl: imageUrl,
+         height: imageHeight,
+        //  width: double.infinity,
+        fit: BoxFit.contain,
+        alignment: Alignment.center,
+        placeholder: (context, url) => const ImageShimmer(),
+        errorWidget: (context, url, error) =>
+            const Icon(Icons.error),
+      ),
+    ),
+//                             ClipRRect(
+//   borderRadius: BorderRadius.circular(8),
+//   clipBehavior: Clip.antiAlias,
+//   child: Container(
+//     width: double.infinity,
+//     height: imageHeight,
+//     //  color: Colors.black,
+//     child:  ClipRRect(
+//   borderRadius: BorderRadius.circular(8),
+//   clipBehavior: Clip.antiAlias,
+//       child: CachedNetworkImage(
+//         imageUrl: imageUrl,
+//         fit: BoxFit.contain,
+//         alignment: Alignment.center,
+//         placeholder: (context, url) => const ImageShimmer(),
+//         errorWidget: (context, url, error) =>
+//             const Icon(Icons.error),
+//       ),
+//     ),
+//   ),
+// ),
+                            // Container(
+                            //   height: imageHeight,
+                            //   width: double.infinity,
+                            //   child: ClipRRect(
+                            //     borderRadius: BorderRadius.circular(20),
+                            //     child: CachedNetworkImage(
+                                 
+                            //       placeholder: (context, url) =>
+                            //           const ImageShimmer(),
+                            //       imageUrl: imageUrl,
+                            //       //  height: imageHeight,
+                            //       width: double.infinity,
+                            //       fit: BoxFit.contain,
+                                   
+                            //     ),
+                             // ),
+                            //),
+                            if (widget.showMenu)
                               Positioned(
                                 top: 16,
                                 right: 12,
@@ -242,9 +481,9 @@ class HorizontalMediaSection extends StatelessWidget {
                                           MaterialPageRoute(
                                             builder: (_) => EpisodeInformation(
                                               episodeid: episodeId,
-                                              menuID: menuID,
-                                              title: title ?? "",
-                                              shareLink: shareLink,
+                                              menuID: widget.menuID,
+                                              title: widget.title ?? "",
+                                              shareLink: widget.shareLink,
                                             ),
                                           ),
                                         );
@@ -274,61 +513,52 @@ class HorizontalMediaSection extends StatelessWidget {
 
                         Text(
                           stripHtml(item['title'] ?? ""),
+                        style: TextStyle(color: Customcolor.textsubtitlecolor,fontWeight: FontWeight.w700,fontFamily: "Verdana"),
+
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
                         ),
 
                         /// 🔹 DESCRIPTION
-                        if (showDescription)
+                        if (widget.showDescription)
                           Padding(
                             padding: const EdgeInsets.only(top: 4),
-                            child: Text(
-                              stripHtml(item['description'] ?? ""),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontSize: 12),
-                            ),
+                            child:
+                                // SmartHtmlWidget(html: item['description'],maxLines: 1,textOverflow: TextOverflow.ellipsis,)
+                                Text(
+                                  stripHtml(item['subtitle'] ?? ""),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Customcolor.colorPink,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: "Verdana"
+                                    
+                                  ),
+                                ),
                           ),
                       ],
                     ),
                   ),
                 );
-              }),
+              },
             ),
           ),
 
           const SizedBox(height: 10),
 
           /// 🔹 BUTTON
-          buttonText == ""
+          widget.buttonText == ""
               ? SizedBox()
               : Center(
-                  child: CommonBorderButton(
-                    title: buttonText,
-                    onTap: () {
-
-
-                      print("navigateByMenuId");
-                      print("navigateByMenuId ${menuID}");
-                      AppNavigation.navigateByMenuId(
-                        context,
-                        menuId: menuID,
-                        albumId: "",
-
-                        albumName: "",
-                        categoryId: type == HomeLayoutType.episodesviewall
-                            ? seasonID ?? ""
-                            : "",
-                        title: title ?? "",
-                        shareLink: shareLink,
-                        seasonId: seasonID ?? "",
-                        type: type,
-                      );
-                    },
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: CommonBorderButton(
+                      title: widget.buttonText.toUpperCase(),
+                      onTap:  _onViewAllPressed,
+                    ),
                   ),
                 ),
         ],

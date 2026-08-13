@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
@@ -5,6 +6,7 @@ import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/screens/DetailsScreen/DetailScreen.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/ImageShimmer.dart';
 
 import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 
@@ -37,39 +39,85 @@ class LeaderCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
-              stripHtml(content['subtitle']),
-            // content['subtitle'],
-            style: TextStyle(
-              color: Customcolor.pinkColor,
-              fontSize: responsive.fontSize(3),
-              fontWeight: FontWeight.w800,
-            ),
-          ),
+  stripHtml(content['subtitle']),
+  style: TextStyle(
+    color: Customcolor.pinkColor,
+    fontSize: responsive.fontSize(2.9),
+    fontWeight: FontWeight.w600,
+    decoration: TextDecoration.underline,
+    decorationColor: Customcolor.pinkColor,
+    fontFamily: "Verdana",
+    decorationThickness: 0.7,
+  ),
+),
+          // Text(
+          //     stripHtml(content['subtitle']),
+          //   // content['subtitle'],
+          //   style: TextStyle(
+          //     color: Customcolor.pinkColor,
+          //     fontSize: responsive.fontSize(3),
+              
+          //     fontWeight: FontWeight.w800,
+          //   ),
+          // ),
           16.0.heightBox,
-          AspectRatio(
-            aspectRatio: 4 / 4,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                content['thumbnail'],
-                fit: BoxFit.contain,
-                loadingBuilder: (c, w, l) => l == null
-                    ? w
-                    : const Center(child: CommonLoader()),
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey.shade300,
-                    alignment: Alignment.center,
-                    child: Image.asset(
-                      CommonImagePath.placeHolder,
-                      width: double.infinity,
-                      height: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                },
+          // AspectRatio(
+          //   aspectRatio: 4 / 4,
+          //   child:
+            ClipRRect(
+  borderRadius: BorderRadius.circular(8),
+  child: content['thumbnail'] != null &&
+          content['thumbnail'].toString().isNotEmpty
+      ? CachedNetworkImage(
+          imageUrl: content['thumbnail'].toString(),
+          fit: BoxFit.contain,
+          memCacheHeight: 1000,
+          memCacheWidth: 800,
+          fadeInDuration: Duration.zero,
+          fadeOutDuration: Duration.zero,
+          filterQuality: FilterQuality.low,
+  
+          placeholder: (context, url) {
+            return const ImageShimmer();
+          },
+  
+          errorWidget: (context, url, error) {
+            return Container(
+              color: Colors.grey.shade300,
+              alignment: Alignment.center,
+              child: Image.asset(
+                CommonImagePath.placeHolder,
+                width: double.infinity,
+                height: double.infinity,
+                fit: BoxFit.cover,
               ),
-            ),
+            );
+          },
+        )
+      : Container(
+         
+        ),
+
+              //  Image.network(
+              //   content['thumbnail'],
+              //   fit: BoxFit.contain,
+              //   loadingBuilder: (c, w, l) => l == null
+              //       ? w
+              //       : const Center(child: CommonLoader()),
+              //   errorBuilder: (context, error, stackTrace) {
+              //     return Container(
+              //       color: Colors.grey.shade300,
+              //       alignment: Alignment.center,
+              //       child: Image.asset(
+              //         CommonImagePath.placeHolder,
+              //         width: double.infinity,
+              //         height: double.infinity,
+              //         fit: BoxFit.cover,
+              //       ),
+              //     );
+              //   },
+              // ),
+            // ),
           ),
           8.0.heightBox,
 
@@ -84,7 +132,7 @@ class LeaderCard extends StatelessWidget {
 
           SmartHtmlWidget(html: content['subdescription'] ?? ""),
           8.0.heightBox,
-          content['description'] == ""
+          (content['substack_url'] == "false" || content['substack_url'] == "")
               ? Container()
               : GestureDetector(
                   onTap: () {
@@ -98,6 +146,8 @@ class LeaderCard extends StatelessWidget {
                           image: content['thumbnail'],
                           shareLink: shareLink ,
                            menuID:  menuID,
+                           isLeader: true,
+                           isDetailApiCalled: false,
                         ),
                       ),
                     );

@@ -24,10 +24,10 @@ class CommonStrings {
   static String threadsUrlScheme = 'threads://';
 
   static double tabheight = 330;//480
-   static double tabheightwithview = 380;
+   static double tabheightwithview = 420;
   static double callimageheight = 200;
   static double callimagewidth = 290;
-  static double callcoursaheight = 300;
+  static double callcoursaheight = 330;
 
   //call ambassdar width as per client
   static double callAmbassadarimagewidth = 240;
@@ -79,4 +79,8 @@ class CommonStrings {
   /// UNKNOWN ERROR
   static const String somethingWentWrong =
       "Something went wrong. Please try again.";
+
+
+
+      static const String digitalLibraryCategory="Children Storybooks";
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_strings.dart';
 import 'package:merckfoundation_252026/Provider/MediaProvider.dart';
 import 'package:merckfoundation_252026/Provider/NewsReleaseProvider.dart';
+import 'package:merckfoundation_252026/Provider/PageProvider.dart';
+import 'package:merckfoundation_252026/Utility/showdailog.dart';
 
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/model/ArticleModel.dart';
@@ -22,7 +25,7 @@ import 'package:merckfoundation_252026/screens/MainScreens/dashboard.dart';
 import 'package:provider/provider.dart';
 
 class AppNavigation {
-  static void navigateByMenuId(
+  static Future<void> navigateByMenuId(
     BuildContext context, {
     required String menuId,
     required String title,
@@ -37,7 +40,7 @@ class AppNavigation {
     List<TestimonialModel>? testimonialList,
     List<ArticleModel>? articleList,
     
-  }) {
+  }) async {
     switch (menuId) {
       case '1':
         Navigator.pushReplacement(
@@ -254,6 +257,7 @@ class AppNavigation {
 
       /// DIGITAL LIBRARY
       case '33':
+      // case '161':
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -269,7 +273,22 @@ class AppNavigation {
           ),
         );
         break;
-
+      // case '243':
+      //  Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //       builder: (_) => MediaListingScreen(
+      //         type: MediaType.digitalLibrary,
+      //         categoryID: "",
+      //         albumID: "",
+      //         albumName: "",
+      //         menuID: menuId,
+      //         shareLink: shareLink,
+      //         title: "Digital Library",
+      //         digitalLibraryCategoryName:CommonStrings.digitalLibraryCategory
+      //       ),
+      //     ),
+      //   );
       /// PHOTO GALLERY
       case '34':
         Navigator.push(
@@ -340,12 +359,12 @@ class AppNavigation {
         );
         break;
 
-      case '35':
-        Navigator.push(context, MaterialPageRoute(builder: (_) => ContactUs()));
-        break;
-      case '7':
-        Navigator.push(context, MaterialPageRoute(builder: (_) => ContactUs()));
-        break;
+      // case '35':
+      //   Navigator.push(context, MaterialPageRoute(builder: (_) => ContactUs()));
+      //   break;
+      // case '7':
+      //   Navigator.push(context, MaterialPageRoute(builder: (_) => ContactUs()));
+      //   break;
       case '97':
         Navigator.push(
           context,
@@ -412,11 +431,13 @@ class AppNavigation {
         );
          break;
         }else{
+
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (_) => CommonContentPage(
                 title: title,
+                
                 menuID: menuId,
                 shareLink: shareLink,
               ),

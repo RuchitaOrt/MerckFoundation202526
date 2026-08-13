@@ -1,5 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:html_unescape/html_unescape.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/widgets/AutoResizeWebView.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/ImageShimmer.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:flutter/material.dart';
 
@@ -15,12 +18,15 @@ class SmartHtmlWidget extends StatefulWidget {
 
   /// ✅ ignore html inline styles
   final bool ignoreHtmlStyles;
+  final bool ignorefontStyles;
 
   /// ✅ max line support
   final bool applyMaxLines;
   final int maxLines;
   final bool softWrap;
   final TextOverflow textOverflow;
+  final TextAlign textalign;
+  final String? fontFamily;
 
   const SmartHtmlWidget({
     super.key,
@@ -33,79 +39,138 @@ class SmartHtmlWidget extends StatefulWidget {
     this.maxLines = 1,
     this.softWrap = true,
     this.textOverflow = TextOverflow.ellipsis,
+    this.textalign = TextAlign.start,
+    this.ignorefontStyles = false,  this.fontFamily,
   });
 
   @override
   State<SmartHtmlWidget> createState() => _SmartHtmlWidgetState();
 }
 
-class _SmartHtmlWidgetState extends State<SmartHtmlWidget> with AutomaticKeepAliveClientMixin{
-    @override
+class _SmartHtmlWidgetState extends State<SmartHtmlWidget>
+    with AutomaticKeepAliveClientMixin {
+  @override
   bool get wantKeepAlive => true;
   final HtmlUnescape _htmlUnescape = HtmlUnescape();
 
   String decodeHtmlEntities(String text) {
     return _htmlUnescape.convert(text);
   }
-late String processedHtml;
 
-@override
-void initState() {
-  super.initState();
-   processedHtml = widget.ignoreHtmlStyles
-      ? removeHtmlStyles(widget.html)
-      : cleanHtml(widget.html);
- 
-}
-@override
-void didUpdateWidget(covariant SmartHtmlWidget oldWidget) {
-  super.didUpdateWidget(oldWidget);
+  // late String processedHtml;
+  static final Map<String, String> _processedHtmlCache = {};
 
-  if (oldWidget.html != widget.html ||
-      oldWidget.ignoreHtmlStyles != widget.ignoreHtmlStyles) {
+  late String processedHtml;
 
-    processedHtml = widget.ignoreHtmlStyles
-        ? removeHtmlStyles(widget.html)
-        : cleanHtml(widget.html);
+  String _getProcessedHtml() {
+    final key =
+        "${widget.html}_${widget.ignoreHtmlStyles}_${widget.ignorefontStyles}";
+
+    return _processedHtmlCache.putIfAbsent(key, () {
+      if (widget.ignorefontStyles) {
+        return removeFontSize(widget.html);
+      }
+
+      if (widget.ignoreHtmlStyles) {
+        return removeHtmlStyles(widget.html);
+      }
+
+      return cleanHtml(widget.html);
+    });
   }
-}
+
+  @override
+  void initState() {
+    super.initState();
+
+    // processedHtml = widget.ignoreHtmlStyles
+    //     ? removeHtmlStyles(widget.html)
+    //     : cleanHtml(widget.html);
+    // processedHtml = widget.ignorefontStyles
+    //     ? removeFontSize(widget.html)
+    //     : widget.ignoreHtmlStyles
+    //     ? removeHtmlStyles(widget.html)
+    //     : cleanHtml(widget.html);
+    processedHtml = _getProcessedHtml();
+  }
+
+  @override
+  void didUpdateWidget(covariant SmartHtmlWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.html != widget.html ||
+        oldWidget.ignoreHtmlStyles != widget.ignoreHtmlStyles ||
+        oldWidget.ignorefontStyles != widget.ignorefontStyles) {
+      processedHtml = _getProcessedHtml();
+      // processedHtml = widget.ignorefontStyles
+      //     ? removeFontSize(widget.html)
+      //     : widget.ignoreHtmlStyles
+      //     ? removeHtmlStyles(widget.html)
+      //     : cleanHtml(widget.html);
+    }
+    // if (oldWidget.html != widget.html ||
+    //     oldWidget.ignoreHtmlStyles != widget.ignoreHtmlStyles) {
+    //   processedHtml = widget.ignoreHtmlStyles
+    //       ? removeHtmlStyles(widget.html)
+    //       : cleanHtml(widget.html);
+    // }
+  }
+
+  String normalizeApiFonts(String html) {
+    return html.replaceAllMapped(
+      RegExp(r'font-family\s*:\s*times-new-roman', caseSensitive: false),
+      (match) => 'font-family:Times New Roman',
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
     /// ✅ FOR TITLES / SINGLE LINE TEXT
     if (widget.applyMaxLines) {
-     
       return Text(
         // removeAllHtmlTags(
         //   widget.ignoreHtmlStyles ? removeHtmlStyles(widget.html) : cleanHtml(widget.html),
         // ).trim(),
-removeAllHtmlTags(processedHtml).trim(),
+        removeAllHtmlTags(processedHtml).trim(),
         maxLines: widget.maxLines,
         softWrap: widget.softWrap,
         overflow: widget.textOverflow,
-
+        textAlign: widget.textalign,
         style: TextStyle(
-          color: widget.textColor,
+          color: widget.textColor ?? Customcolor.colorVoilet,
+          fontFamily: widget.fontFamily ?? "Times New Roman",
           fontSize: widget.fontSize,
-          fontWeight: widget.fontWeight,
+          fontWeight: widget.fontWeight ?? FontWeight.w600,
           height: 1.4,
+        
         ),
       );
     }
 
+    String? htmlFontFamily;
+
+    final fontMatch = RegExp(
+      r'font-family\s*:\s*([^;]+)',
+      caseSensitive: false,
+    ).firstMatch(processedHtml);
+
+    if (fontMatch != null) {
+      final rawFont = fontMatch.group(1)?.trim();
+      htmlFontFamily = mapHtmlFontFamily(rawFont);
+    }
+
     /// ✅ FOR FULL HTML CONTENT
     return HtmlWidget(
-      processedHtml,
-      // ignoreHtmlStyles ? removeHtmlStyles(html) : cleanHtml(html),
-      // ignoreHtmlStyles
-      //     ? removeHtmlStyles(html)
-      //     : cleanHtml(html),
-      //  decodeHtmlEntities(
-      //     ignoreHtmlStyles
-      //         ? removeHtmlStyles(html)
-      //         : cleanHtml(html),
-      //   ),
+      normalizeApiFonts(processedHtml),
+      //       '''<div style="font-family: Times New Roman;">
+      //     <h2>Impact of Merck Foundation Programs</h2>
+      // </div>''',
+      //  processedHtml,
+      // '''<div style="font-family: times-new-roman;">
+      //   <h2>Impact of Merck Foundation Programs</h2>
+      // </div>''',
+      // '''<h2 class=\"section-title tv-show-div\" style=\"-webkit-text-stroke-width:0px;border-left:2px solid rgb(75, 78, 83);box-sizing:border-box;color:rgb(75, 78, 83);font-family:times-new-roman;font-size:26px;font-style:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-weight:300;letter-spacing:normal;line-height:36px;margin:0px;orphans:2;padding:0px 20px;position:relative;text-align:start;text-decoration-color:initial;text-decoration-style:initial;text-decoration-thickness:initial;text-indent:0px;text-transform:none;white-space:normal;widows:2;word-spacing:0px;\">Impact of Merck Foundation Programs<span style=\"color:rgb(239,57,151);\"><span class=\"pink-text\" style=\"border-width:0px;box-sizing:border-box;font-weight:600 !important;margin:0px;outline:0px;padding:0px;\"> (as of April 2026)</span></span></h2>''',
       renderMode: RenderMode.column,
 
       textStyle: TextStyle(
@@ -113,21 +178,61 @@ removeAllHtmlTags(processedHtml).trim(),
         fontSize: widget.fontSize,
         fontWeight: widget.fontWeight,
         height: 1.4,
+         fontFamily: htmlFontFamily ?? widget.fontFamily,
       ),
 
       /// ✅ CUSTOM WIDGETS
       customWidgetBuilder: (element) {
-        if (element.localName == 'iframe') {
-          final src = element.attributes['src'] ?? "";
- return YoutubePlayerWidget(src: src);
-        //   final videoId = YoutubePlayer.convertUrlToId(src);
+        //         if (element.localName == 'img') {
+        //   final src = element.attributes['src'];
 
-        //   if (videoId != null) {
-        //     return YouTubeInAppPlayer(
-        //       videoUrl: "https://www.youtube.com/watch?v=$videoId",
+        if (element.localName == 'img') {
+          final src = element.attributes['src'] ?? "";
+
+          // if (src.contains("facebook") ||
+          //     src.contains("youtube") ||
+          //     src.contains("instagram") ||
+          //     src.contains("flicker") ||
+          //     src.contains("twitter") ||
+          //     src.contains("linkedin") ||
+          //     src.contains("Threads") ||
+          //     src.contains("icon")) {
+          //   return null;
+          // }
+        //   final width = double.tryParse(element.attributes['width'] ?? '');
+
+        //   final height = double.tryParse(element.attributes['height'] ?? '');
+
+        //   //   print("width ${width}  height  ${height}");
+        //   if (src != null && src.isNotEmpty && width != null) {
+        //     return CachedNetworkImage(
+        //       imageUrl: src,
+        //       fit: BoxFit.contain,
+        //        width: width,
+        //       //  height: height,
+        //       // memCacheHeight: 1000,
+        //       // memCacheWidth: 700,
+        //       // fadeInDuration: Duration.zero,
+        //       // fadeOutDuration: Duration.zero,
+
+        //       // filterQuality: FilterQuality.low,
+        //       placeholder: (_, __) => SizedBox(
+        //         height: 220,
+        //         width: double.infinity,
+        //         //   width: width,
+        //         // height: height,
+        //         child: const ImageShimmer(),
+        //       ),
+
+        //       // errorWidget: (_, __, ___) =>
+        //       //     Icon(Icons.broken_image, color: Customcolor.babyBlue),
         //     );
         //   }
          }
+        if (element.localName == 'iframe') {
+          final src = element.attributes['src'] ?? "";
+          return YoutubePlayerWidget(src: src);
+        }
 
         /// 🔹 HANDLE VIDEO TAG (fallback to WebView)
         if (element.localName == 'video') {
@@ -143,7 +248,7 @@ removeAllHtmlTags(processedHtml).trim(),
               //   ..setJavaScriptMode(JavaScriptMode.unrestricted)
               //   ..loadRequest(Uri.parse(src));
 
-              return  SizedBox(
+              return SizedBox(
                 height: 300,
                 width: double.infinity,
                 child: VideoWebView(url: src),
@@ -157,10 +262,9 @@ removeAllHtmlTags(processedHtml).trim(),
           return AutoResizeWebView(
             key: PageStorageKey(element.outerHtml.hashCode),
 
-            htmlContent: element.outerHtml);
-        } else 
-        if (element.localName == 'table') {
-        
+            htmlContent: element.outerHtml,
+          );
+        } else if (element.localName == 'table') {
           return AutoResizeWebView(
             key: PageStorageKey(element.outerHtml.hashCode),
 
@@ -171,34 +275,128 @@ removeAllHtmlTags(processedHtml).trim(),
         return null;
       },
       customStylesBuilder: (element) {
-        /// ✅ REMOVE HTML STYLING
         if (widget.ignoreHtmlStyles) {
           return {
             'margin': '0',
             'padding': '0',
             'line-height': '1.4',
-
             'color': widget.textColor != null
                 ? '#${widget.textColor!.value.toRadixString(16).substring(2)}'
                 : '#000000',
-
             'font-size': '${widget.fontSize ?? 14}px',
-
             'font-weight': widget.fontWeight == FontWeight.w800
                 ? '800'
                 : widget.fontWeight == FontWeight.w700
                 ? '700'
                 : widget.fontWeight == FontWeight.w600
                 ? '600'
+                : widget.fontWeight == FontWeight.w100
+                ? '100'
                 : widget.fontWeight == FontWeight.bold
                 ? 'bold'
                 : 'normal',
+            'text-align': widget.textalign == TextAlign.center
+                ? 'center'
+                : widget.textalign == TextAlign.right
+                ? 'right'
+                : widget.textalign == TextAlign.justify
+                ? 'justify'
+                : 'left',
           };
         }
 
-        /// ✅ LINK STYLE
+        // ============================================================
+        // IGNORE FONT SIZE ONLY
+        // PRESERVE API FONT FAMILY + FONT WEIGHT
+        // ============================================================
+
+        if (widget.ignorefontStyles) {
+          final style = element.attributes['style'] ?? '';
+
+          // ============================
+          // ELEMENT FONT FAMILY
+          // ============================
+          final fontFamilyMatch = RegExp(
+            r'font-family\s*:\s*([^;]+)',
+            caseSensitive: false,
+          ).firstMatch(style);
+
+          final rawFontFamily = fontFamilyMatch?.group(1)?.trim();
+
+          final elementFontFamily = mapHtmlFontFamily(rawFontFamily);
+
+          // If this element does not have font-family,
+          // use the font found from the complete HTML.
+          final finalFontFamily = elementFontFamily ?? htmlFontFamily;
+
+          // ============================
+          // FONT WEIGHT
+          // ============================
+          final fontWeightMatch = RegExp(
+            r'font-weight\s*:\s*([^;]+)',
+            caseSensitive: false,
+          ).firstMatch(style);
+
+          final rawFontWeight = fontWeightMatch
+              ?.group(1)
+              ?.replaceAll(RegExp(r'\s*!important', caseSensitive: false), '')
+              .trim();
+
+          final mappedFontWeight = mapHtmlFontWeight(rawFontWeight);
+
+          return {
+            if (finalFontFamily != null) 'font-family': finalFontFamily,
+
+            // Ignore API font-size
+            'font-size': '${widget.fontSize ?? 14}px',
+
+            // Preserve API font-weight
+            if (mappedFontWeight != null) 'font-weight': mappedFontWeight,
+
+          
+
+
+            'background': 'transparent',
+            'background-color': 'transparent',
+              // ⭐ Preserve HTML <strong>/<b>
+            if (element.localName == 'strong' ||
+                element.localName == 'b')
+              'font-weight': '600',
+          };
+        }
+
+        // LINK STYLE
         if (element.localName == 'a') {
-          return {'color': '#1a0dab', 'text-decoration': 'underline'};
+  final hasImage = element.querySelector('img') != null;
+
+  print('A TAG: ${element.outerHtml}');
+  print('hasImage: $hasImage');
+
+  if (hasImage) {
+    return {
+      'text-decoration': 'none',
+      'color': 'transparent',
+    };
+  }
+
+  return {
+    'color': '#1a0dab',
+    'text-decoration': 'underline',
+    'text-decoration-color': '#2980b9',
+  };
+}
+        // if (element.localName == 'a') {
+   
+        //   return {
+        //     'color': '#1a0dab',
+        //     'text-decoration': 'underline',
+        //     'text-decoration-color': '#2980b9',
+        //   };
+        // }
+
+        // Override <strong> and <b> if API should not make them bold
+        if ((element.localName == 'strong' || element.localName == 'b')) {
+          return {'font-weight': '600'};
         }
 
         return null;
@@ -210,14 +408,105 @@ removeAllHtmlTags(processedHtml).trim(),
       },
     );
   }
+String? mapHtmlFontWeight(String? weight) {
+  if (weight == null || weight.isEmpty) {
+    return null;
+  }
 
-  String sanitizeTable(String html) {
-    return html
-        .replaceAll(RegExp(r'margin-left\s*:\s*[^;"]+;?'), '')
-        .replaceAll(RegExp(r'margin-right\s*:\s*[^;"]+;?'), '')
-        .replaceAll(RegExp(r'margin\s*:\s*[^;"]+;?'), '')
-        .replaceAll(RegExp(r'padding-left\s*:\s*[^;"]+;?'), '')
-        .replaceAll(RegExp(r'text-indent\s*:\s*[^;"]+;?'), '');
+  final value = weight
+      .toLowerCase()
+      .replaceAll(RegExp(r'\s*!important'), '')
+      .trim();
+
+  switch (value) {
+    case '100':
+      return '100';
+
+    case '200':
+      return '200';
+
+    case '300':
+      return '300';
+
+    case '400':
+    case 'normal':
+      return '400';
+
+    case '500':
+      return '500';
+
+    case '600':
+      return '600';
+
+    case '700':
+    case 'bold':
+      return '700';
+
+    case '800':
+      return '800';
+
+    case '900':
+      return '900';
+
+    default:
+      return null;
+  }
+}
+  String? mapHtmlFontFamily(String? fontFamily) {
+    if (fontFamily == null || fontFamily.trim().isEmpty) {
+      return null;
+    }
+
+    final normalized = fontFamily
+        .replaceAll('"', '')
+        .replaceAll("'", '')
+        .trim()
+        .toLowerCase();
+
+    if (normalized == 'times-new-roman' ||
+        normalized == 'times new roman' ||
+        normalized == 'times') {
+      return 'Times New Roman';
+    }
+
+    if (normalized == 'verdana') {
+      return 'Verdana';
+    }
+
+    return null;
+  }
+
+  String removeFontSize(String html) {
+    html = decodeHtmlEntities(html);
+
+    final result = html
+        .replaceAll(
+          RegExp(r'font-size\s*:\s*[^;"]+;?', caseSensitive: false),
+          '',
+        )
+        .replaceAll(
+          RegExp(r'line-height\s*:\s*[^;"]+;?', caseSensitive: false),
+          'line-height:24px;',
+        )
+        .replaceAll(
+          RegExp(r'border-left\s*:\s*[^;"]+;?', caseSensitive: false),
+          '',
+        )
+        .replaceAll(
+          RegExp(r'padding-left\s*:\s*[^;"]+;?', caseSensitive: false),
+          '',
+        )
+        .replaceAll(RegExp(r'padding\s*:\s*[^;"]+;?', caseSensitive: false), '')
+        .replaceAll(
+          RegExp(
+            r'background(?:-color)?\s*:\s*(?:white|#fff(?:fff)?|rgb\s*\(\s*255\s*,\s*255\s*,\s*255\s*\))\s*;?',
+            caseSensitive: false,
+          ),
+          '',
+        )
+        .replaceAll(RegExp(r'(&nbsp;\s*)+', caseSensitive: false), '');
+
+    return result;
   }
 
   String cleanHtml(String html) {
@@ -226,7 +515,26 @@ removeAllHtmlTags(processedHtml).trim(),
     return html
         .replaceAll(RegExp(r'margin:[^;"]*;?'), '')
         .replaceAll(RegExp(r'line-height:[^;"]*;?'), '')
-        .replaceAll('text-align:justify;', 'text-align:left;');
+        .replaceAll(
+          RegExp(
+            r'background(?:-color)?\s*:\s*(?:white|#fff(?:fff)?|rgb\s*\(\s*255\s*,\s*255\s*,\s*255\s*\))\s*;?',
+            caseSensitive: false,
+          ),
+          '',
+        )
+        //    .replaceAll(
+        //   RegExp(r'background(?:-color)?\s*:\s*[^;"]+;?', caseSensitive: false),
+        //   '',
+        // )
+        .replaceAll('text-align:justify;', 'text-align:left;')
+        .replaceAll(
+          RegExp(
+            r'<p(?:\s[^>]*)?>\s*(?:&nbsp;|\u00A0|\s)*</p>',
+            caseSensitive: false,
+          ),
+          '',
+        )
+        ;
   }
 
   String removeHtmlStyles(String html) {
@@ -308,13 +616,11 @@ class _YouTubeInAppPlayerState extends State<YouTubeInAppPlayer> {
     super.dispose();
   }
 }
+
 class VideoWebView extends StatefulWidget {
   final String url;
 
-  const VideoWebView({
-    super.key,
-    required this.url,
-  });
+  const VideoWebView({super.key, required this.url});
 
   @override
   State<VideoWebView> createState() => _VideoWebViewState();
@@ -337,44 +643,34 @@ class _VideoWebViewState extends State<VideoWebView> {
     return WebViewWidget(controller: controller);
   }
 }
+
 class YoutubePlayerWidget extends StatefulWidget {
   final String src;
 
-  const YoutubePlayerWidget({
-    super.key,
-    required this.src,
-  });
+  const YoutubePlayerWidget({super.key, required this.src});
 
   @override
-  State<YoutubePlayerWidget> createState() =>
-      _YoutubePlayerWidgetState();
+  State<YoutubePlayerWidget> createState() => _YoutubePlayerWidgetState();
 }
 
-class _YoutubePlayerWidgetState
-    extends State<YoutubePlayerWidget> {
-
+class _YoutubePlayerWidgetState extends State<YoutubePlayerWidget> {
   late final YoutubePlayerController _controller;
 
   @override
   void initState() {
     super.initState();
 
-    final id =
-        YoutubePlayer.convertUrlToId(widget.src) ?? "";
+    final id = YoutubePlayer.convertUrlToId(widget.src) ?? "";
 
     _controller = YoutubePlayerController(
       initialVideoId: id,
-      flags: const YoutubePlayerFlags(
-        autoPlay: false,
-      ),
+      flags: const YoutubePlayerFlags(autoPlay: false),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return YoutubePlayer(
-      controller: _controller,
-    );
+    return YoutubePlayer(controller: _controller);
   }
 
   @override

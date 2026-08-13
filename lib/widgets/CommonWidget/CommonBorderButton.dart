@@ -46,6 +46,7 @@ class CommonBorderButton extends StatelessWidget {
               textStyle ??
               TextStyle(
                 fontWeight: FontWeight.bold,
+                fontFamily: "Verdana",
                 color: textColor,
               ),
         ),

@@ -88,7 +88,11 @@ controller.clear()
                 decoration: InputDecoration(
                   hintText: "Search",
                   prefixIcon: const Icon(Icons.search),
-
+isDense: true,
+      contentPadding: const EdgeInsets.symmetric(
+        vertical: 12,
+        horizontal: 12,
+      ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

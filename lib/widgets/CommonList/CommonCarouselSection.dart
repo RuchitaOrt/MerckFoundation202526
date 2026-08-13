@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
@@ -5,6 +6,7 @@ import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 import 'package:merckfoundation_252026/model/CommonModel.dart';
 import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonBorderButton.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/ImageShimmer.dart';
 import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
@@ -33,6 +35,7 @@ class CommonCarouselSection extends StatefulWidget {
 }
 
 class _CommonCarouselSectionState extends State<CommonCarouselSection> {
+  final CarouselSliderController controller = CarouselSliderController();
   int currentIndex = 0;
 
   @override
@@ -44,11 +47,11 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
     return Stack(
       children: [
         Padding(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(4),
           child: Column(
             children: [
               CarouselSlider(
-                carouselController: widget.controller,
+               carouselController: controller,
                 options: CarouselOptions(
                   height: widget.carouselHeight,
                   viewportFraction: 1,
@@ -90,15 +93,28 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(top: 20),
-                child: FadeInImage.assetNetwork(
-                  placeholder: CommonImagePath.placeHolder,
-                  image: item.image,
-                  fit: BoxFit.contain,
-                  imageErrorBuilder: (_, __, ___) => Image.asset(
-                    CommonImagePath.placeHolder,
+                child: 
+                CachedNetworkImage(
+                   memCacheHeight: 1000,
+                    imageUrl: item.image,
                     fit: BoxFit.contain,
+                    placeholder: (context, url) => const ImageShimmer(),
+
+                    errorWidget: (_, __, ___) => Image.asset(
+                      CommonImagePath.placeHolder,
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ),
+                
+                // FadeInImage.assetNetwork(
+                //   placeholder: CommonImagePath.placeHolder,
+                //   image: item.image,
+                //   fit: BoxFit.contain,
+                //   imageErrorBuilder: (_, __, ___) => Image.asset(
+                //     CommonImagePath.placeHolder,
+                //     fit: BoxFit.contain,
+                //   ),
+                // ),
               ),
             ),
 
@@ -110,6 +126,7 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
                 child: FormLabel(
                   text: item.title!,
                   maxLines: 2,
+                  textOverflow: TextOverflow.ellipsis,
                   textAlignment: TextAlign.center,
                   labelColor: Colors.black,
                   fontweight: FontWeight.w500,
@@ -136,11 +153,11 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
           children: [
             _arrowButton(
               icon: Icons.arrow_back_ios,
-              onTap: () => widget.controller.previousPage(),
+              onTap: () => controller.previousPage(),
             ),
             _arrowButton(
               icon: Icons.arrow_forward_ios,
-              onTap: () => widget.controller.nextPage(),
+              onTap: () => controller.nextPage(),
             ),
           ],
         ),

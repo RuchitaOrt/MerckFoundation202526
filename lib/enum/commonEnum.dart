@@ -25,10 +25,12 @@ enum MediaType {
   photoGallery,
   activity,
   digitalLibrary,
+  digitalLibraryall,
   testimonialArticle,
   photoAlbum,
   episodes,
-  ambassadorAlbum
+  ambassadorAlbum,
+  all
 }
 
 enum HomeSectionType {
@@ -41,9 +43,9 @@ enum HomeSectionType {
 }
 
 const tabTypes = [
-  "CallForApplication",
-  "MerckMoreThanAmbasdar",
-  "DigitalLibrary",
+  HomeLayoutType.CallForApplication,
+  HomeLayoutType.MerckMoreThanAmbasdar,
+  HomeLayoutType.DigitalLibrary,
 ];
 
 enum HomeLayoutType {

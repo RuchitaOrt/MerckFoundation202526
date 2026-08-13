@@ -58,7 +58,7 @@ class _LandingpageState extends State<Landingpage>
 
     await provider.fetchPage(context, "3");
 
-    final data = provider.pageData;
+    final data = provider.pageDataFor("3");
 
     if (!mounted) return;
 
@@ -101,15 +101,16 @@ class _LandingpageState extends State<Landingpage>
     final isTablet = width >= 600;
     final isSmallPhone = height < 700;
     final contentItem =
-        json['top'] != null &&
-            json['top'] is List &&
-            (json['top'] as List).isNotEmpty
-        ? json['top'][0]['content'][0]
+        json['middle_left'] != null &&
+            json['middle_left'] is List &&
+            (json['middle_left'] as List).isNotEmpty
+        ? json['middle_left'][0]['content'][0]
         : null;
 
     final visionTitle = contentItem?['title'] ?? "";
     final visionSubtitle = contentItem?['subtitle'] ?? "";
     final visionDescription = contentItem?['subdescription'] ?? "";
+    print(visionDescription);
     return Scaffold(
       backgroundColor: Colors.white,
 
@@ -154,11 +155,12 @@ class _LandingpageState extends State<Landingpage>
                         /// SUBTITLE
                         _VisionSubtitle(
                           subTitle: visionTitle,
-                          fontSize: isTablet
-                              ? responsive.fontSize(2)
-                              : isSmallPhone
-                              ? responsive.fontSize(1.5)
-                              : responsive.fontSize(1.8),
+                          fontSize:responsive.fontSize(2.2)
+                          //  isTablet
+                          //     ? responsive.fontSize(2)
+                          //     : isSmallPhone
+                          //     ? responsive.fontSize(2)
+                          //     : responsive.fontSize(1.8),
                         ),
 
                         SizedBox(height: height * 0.035),
@@ -288,8 +290,8 @@ class _VisionCard extends StatelessWidget {
         child: Center(
           child: SmartHtmlWidget(
             html: textDescription ?? "",
-            textColor: Customcolor.white,
-            fontSize: isTablet ? 17 : 13.5,
+             textColor: Customcolor.white,
+             fontSize: isTablet ? 17 : 16,
 
             ignoreHtmlStyles: true,
           ),
@@ -412,11 +414,13 @@ class _VisionSubtitle extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 18),
 
       child: SmartHtmlWidget(
-        html: subTitle,
+        html:  '<div style="text-align:center;">$subTitle</div>',
+        
         textColor: Customcolor.colorPink,
         fontSize: fontSize,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w800,
         ignoreHtmlStyles: true,
+        textalign: TextAlign.center,
       ),
     );
   }

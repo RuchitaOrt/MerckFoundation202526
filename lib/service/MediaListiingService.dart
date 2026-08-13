@@ -47,16 +47,42 @@ class MediaListingService {
         break;
 
       case MediaType.videoLibrary:
-
+print("VIDEO MEdiaType videoLibrary");
         api = API.getvideolibrary;
 
         body = {
-          "video_category_id":
-              categoryId ?? "",
+           "video_category_id":
+          // [],
+          // [int.parse(categoryId!)],
+          // [94,95],
+             categoryId ?? "",
+      //      "video_category_id":categoryId!.isEmpty?[]: categoryId!
+      // .split(',')
+      // .map((e) => int.parse(e.trim())),
+      // // .toList(),
           "country_id":
               countryId ?? "",
         };
 
+        break;
+         case MediaType.all:
+print("VIDEO MEdiaType");
+        api = API.getvideolibrary;
+
+        body = {
+           
+         
+           "video_category_id": categoryId!.isEmpty
+      ? []
+      : categoryId
+          .split(',')
+          .map((e) => int.parse(e.trim()))
+          .toList(),
+      // .toList(),
+          "country_id":
+              countryId ?? "",
+        };
+print("VIDEO MEdiaType body ${body}");
         break;
 
       case MediaType.photoGallery:
@@ -70,7 +96,17 @@ class MediaListingService {
         api = API.getactivities;
 
         break;
+ case MediaType.digitalLibraryall:
+ api = API.getdigitallibrary;
 
+        body = {
+          "digital_category_id":
+              categoryId ?? "",
+          "language_id":
+              languageId ?? "",
+        };
+
+        break;
       case MediaType.digitalLibrary:
 
         api = API.getdigitallibrary;

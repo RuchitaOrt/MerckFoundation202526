@@ -97,7 +97,8 @@ class _CommonListingScreenState<T, P>
       backgroundColor: Customcolor.background,
       appBar: CommonAppBar(
         type: AppBarType.inner,
-        title: widget.title,
+        title:
+         widget.title,
         onSearch: () {},
         shareLink: widget.shareLink ?? "",
         menuID: widget.menuID,

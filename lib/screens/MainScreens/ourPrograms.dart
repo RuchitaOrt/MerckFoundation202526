@@ -6,7 +6,6 @@ import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/screens/MainUIBody.dart/CommonBody.dart';
 
-
 class OurProgramScreen extends StatelessWidget {
   final String menuID;
   final String title;
@@ -26,11 +25,10 @@ class OurProgramScreen extends StatelessWidget {
       appBar: CommonAppBar(
         type: AppBarType.inner,
         title: title,
-
+        shareLink: shareLink,
         onSearch: () {},
       ),
       body: CommonBody(menuID),
     );
   }
 }
-

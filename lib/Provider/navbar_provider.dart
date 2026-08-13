@@ -52,7 +52,7 @@ class NavbarProvider extends ChangeNotifier {
             response.mobileBottomMenus;
 
         GlobalLists.liveWebsiteUrl =
-            response.liveWebsiteUrl;
+            response.liveWebsiteUrl!;
 
         debugPrint(
           "Navbar Loaded Successfully",

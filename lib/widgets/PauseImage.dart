@@ -12,17 +12,32 @@ class PauseImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return 
+    Container(
       height: size,
       width: size,
      
-      child: Padding(
-        padding: const EdgeInsets.all(6),
-        child: Image.asset(
+      child: 
+     
+        Image.asset(
           CommonImagePath.pauseButton,
           fit: BoxFit.contain,
         ),
-      ),
-    );
+      );
+      //  Padding(
+      //   padding: const EdgeInsets.all(6),
+      //   child: 
+      //      Container(
+      //                           decoration: const BoxDecoration(
+      //                             color: Colors.black54,
+      //                             shape: BoxShape.circle,
+      //                           ),
+      //                           padding: const EdgeInsets.all(10),
+      //                           child: const Icon(
+      //                             Icons.play_arrow,
+      //                             color: Colors.white,
+      //                           ),
+      //                         ),
+    // );
   }
 }

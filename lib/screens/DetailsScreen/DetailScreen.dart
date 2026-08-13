@@ -1,10 +1,12 @@
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/const/GlobalLists.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/dashboard.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/ImageShimmer.dart';
 import 'package:provider/provider.dart';
 import 'package:merckfoundation_252026/Provider/article_provider.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
@@ -28,6 +30,8 @@ class DetailScreen extends StatefulWidget {
   final String? shareLink;
   final String? menuID;
   final bool? isComingFromNotication;
+  final bool isLeader;
+  final String? boilerPlateData;
 
   const DetailScreen(
     this.titleContent,
@@ -38,7 +42,9 @@ class DetailScreen extends StatefulWidget {
     this.articleId = "",
     this.languageId = "",
     this.isDetailApiCalled = false,
-    this.shareLink, this.menuID,this.isComingFromNotication=false
+    this.shareLink,
+    this.menuID,
+    this.isComingFromNotication = false,  this.isLeader=false, this.boilerPlateData="",
   });
 
   @override
@@ -49,21 +55,23 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   void initState() {
     super.initState();
-GlobalLists.launchedFromNotification = false;
+    GlobalLists.launchedFromNotification = false;
     if (widget.isDetailApiCalled) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        print("loadArticleDetail");
         context.read<ArticleProvider>().loadArticleDetail(
-              context,
-              articleId: widget.articleId ?? "",
-              languageId: widget.languageId ?? "",
-            );
+          context,
+          articleId: widget.articleId ?? "",
+          languageId: widget.languageId ?? "",
+        );
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-     final responsive = ResponsiveFlutter.of(context);
+    print("DetailScreen Build  ${widget.isDetailApiCalled} ");
+    final responsive = ResponsiveFlutter.of(context);
     return Scaffold(
       backgroundColor: Customcolor.background,
       appBar: CommonAppBar(
@@ -71,25 +79,23 @@ GlobalLists.launchedFromNotification = false;
         height: 70,
         // title: widget.title,
         onSearch: () {},
-        shareLink: widget.shareLink ,
-        onBack: (){
-          if(widget.isComingFromNotication==true)
-          {
-Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => Dashboard(
-                        index: 0,
-                        menuID: "1",
-                        shareLink: "",
-                        menuLogo:   "",
-                      ),
-                    ),
-                  );
-          }else{
-  Navigator.pop(context);
+        shareLink: widget.shareLink,
+        onBack: () {
+          if (widget.isComingFromNotication == true) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => Dashboard(
+                  index: 0,
+                  menuID: "1",
+                  shareLink: "",
+                  menuLogo: "",
+                ),
+              ),
+            );
+          } else {
+            Navigator.pop(context);
           }
-        
         },
         menuID: widget.menuID,
       ),
@@ -102,26 +108,25 @@ Navigator.pushReplacement(
           if (state == ApiStatus.loading) {
             return const Center(child: CommonLoader());
           }
- if (provider.status != ApiStatus.success &&
-    provider.status != ApiStatus.loading &&
-    provider.status != ApiStatus.initial) {
-
-  return ApiStatusHandler(
-    status: provider.status,
-    errorMessage: provider.errorMessage,
-    onRetry: () {
-       provider.retryDetail(
+          if (provider.status != ApiStatus.success &&
+              provider.status != ApiStatus.loading &&
+              provider.status != ApiStatus.initial) {
+            return ApiStatusHandler(
+              status: provider.status,
+              errorMessage: provider.errorMessage,
+              onRetry: () {
+                provider.retryDetail(
                   context,
                   articleId: widget.articleId ?? "",
                   languageId: widget.languageId ?? "",
                 );
-      },
-  );
-}
-         
+              },
+            );
+          }
+
           final title = widget.isDetailApiCalled
               ? (detail?.title ?? "")
-              : (widget.titleContent ?? "");
+              : (widget.title ?? "");
 
           final description = widget.isDetailApiCalled
               ? (detail?.details ?? "")
@@ -131,8 +136,7 @@ Navigator.pushReplacement(
               ? (detail?.image ?? "")
               : (widget.image ?? "");
 
-          final isEmpty =
-              title.isEmpty && description.isEmpty && image.isEmpty;
+          final isEmpty = title.isEmpty && description.isEmpty && image.isEmpty;
 
           /// EMPTY
           if (isEmpty) {
@@ -147,30 +151,154 @@ Navigator.pushReplacement(
 
           /// SUCCESS
           return ListView(
+            cacheExtent: 500,
             children: [
-              
-              // if (image.isNotEmpty)
-              //   Image.network(image, fit: BoxFit.cover),
-
-              // const SizedBox(height: 12),
-
-              if (title.isNotEmpty)
+              if (title!.isNotEmpty &&  widget.isLeader ==false)
                 Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: SmartHtmlWidget(html: title,  textColor: Customcolor.colorVoilet,
-                  fontSize: responsive.fontSize(3.0),
-                  
-                  fontWeight: FontWeight.w800,),
+                  padding: const EdgeInsets.only(left: 12, right: 12),
+                  child: SmartHtmlWidget(
+                    html: title,
+                    textColor: Customcolor.colorVoilet,
+                    fontSize: responsive.fontSize(3.0),
+                    fontFamily: "Times New Roman",
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+            widget.isDetailApiCalled==false
+                  ? SizedBox()
+                  : provider.articleDetail!.availableLanguages!.isNotEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          alignment: WrapAlignment.end,
+                          spacing: 6,
+                          children: [
+                            const Text(
+                              "View:",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            ...provider.articleDetail!.availableLanguages!.map(
+                              (language) => InkWell(
+                                onTap: () {
+                                  print(language.language);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => DetailScreen(
+                                        "",
+                                        "",
+                                        title: "",
+                                        articleId: language.articleId
+                                            .toString(),
+                                        languageId: language.languageId,
+                                        isDetailApiCalled: true,
+                                        shareLink: widget.shareLink,
+                                        menuID: widget.menuID,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  language.language,
+                                  style: const TextStyle(
+                                    color: Colors.blue,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : const SizedBox(),
+          widget.isDetailApiCalled==true?SizedBox():     Padding(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  top: 16,
+                  bottom: 8,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+
+                  // child:
+                  // AspectRatio(
+                  //   aspectRatio: 4 / 4,
+                  child: 
+                   CachedNetworkImage(
+                    memCacheHeight: 1000,
+  imageUrl: image,
+  fit: BoxFit.contain,
+   placeholder: (context, url) => const ImageShimmer(),
+  
+  errorWidget: (_, __, ___) => Image.asset(
+    CommonImagePath.placeHolder,
+    fit: BoxFit.contain,
+  ),
+),
+
+                  // FadeInImage.assetNetwork(
+                  //   placeholder: CommonImagePath.placeHolder,
+
+                  //   image: image,
+
+                  //   fit: BoxFit.contain,
+
+                  //   placeholderFit: BoxFit.cover,
+
+                  //   fadeInDuration: const Duration(milliseconds: 200),
+
+                  //   imageErrorBuilder: (context, error, stackTrace) {
+                  //     return Container(
+                  //       color: Colors.grey.shade200,
+
+                  //       child: const Icon(
+                  //         Icons.broken_image,
+
+                  //         size: 40,
+
+                  //         color: Colors.grey,
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
+                  // ),
+                ),
+              ),
+                if (title!.isNotEmpty &&  widget.isLeader )
+                Padding(
+                  padding: const EdgeInsets.only(left: 12, right: 12),
+                  child: SmartHtmlWidget(
+                    html: '<div style="text-align:center;">${title!}</div>',
+                    textColor: Customcolor.colorBlue,
+                    fontSize: responsive.fontSize(3.0),
+
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+  if (widget.titleContent!.isNotEmpty && widget.isLeader )
+                Padding(
+                  padding: const EdgeInsets.only(left: 12, right: 12,bottom: 6),
+                  child: SmartHtmlWidget(html: '<div style="text-align:center;">${widget.titleContent!}</div>',),
                 ),
 
               if (description.isNotEmpty)
                 Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.only(left: 12, right: 12),
                   child: SmartHtmlWidget(html: description),
                 ),
 
-              const SizedBox(height: 20),
-
+              const SizedBox(height: 10),
+if (provider.articleDetail!.boilerPlateData!.content!.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(left: 12, right: 12),
+                  child: SmartHtmlWidget(html: provider.articleDetail!.boilerPlateData!.content!),
+                ),
+ const SizedBox(height: 20),
               const FooterFlowerImage(),
               const Bottomcardlink(),
             ],

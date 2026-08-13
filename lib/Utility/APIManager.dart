@@ -160,13 +160,13 @@ class APIManager {
         // Mask sensitive fields
         final safeData = _maskSensitiveData(data);
         final prettyJson = JsonEncoder.withIndent('  ').convert(safeData);
-        print(prettyJson);
+        // print(prettyJson);
       } else if (options.data is String) {
         try {
           final jsonData = jsonDecode(options.data as String);
           final safeData = _maskSensitiveData(jsonData);
           final prettyJson = JsonEncoder.withIndent('  ').convert(safeData);
-          print(prettyJson);
+          // print(prettyJson);
         } catch (e) {
           print('  ${options.data}');
         }
@@ -207,13 +207,13 @@ class APIManager {
           final prettyJson = JsonEncoder.withIndent(
             '  ',
           ).convert(response.data);
-          print(prettyJson);
+          // print(prettyJson);
         } else if (response.data is String) {
           final jsonData = jsonDecode(response.data as String);
           final prettyJson = JsonEncoder.withIndent('  ').convert(jsonData);
-          print(prettyJson);
+          // print(prettyJson);
         } else {
-          print('  ${response.data}');
+          print('  else');
         }
       } catch (e) {
         print('  ${response.data}');
@@ -518,7 +518,7 @@ class APIManager {
 
       print("📡 STATUS CODE: ${e.response?.statusCode}");
 
-      print("📦 RESPONSE: ${e.response?.data}");
+      // print("📦 RESPONSE: ${e.response?.data}");
 
       print("📨 MESSAGE: ${e.message}");
 

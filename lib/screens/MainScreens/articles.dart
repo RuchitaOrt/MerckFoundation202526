@@ -73,12 +73,13 @@ final bool useLocalPagination;
             builder: (_) => DetailScreen(
               "",
               "",
-              title: "Articles",
+              title: "",
               articleId: item.id.toString(),
               languageId: item.language_id ,
               isDetailApiCalled: true,
               shareLink: shareLink,
               menuID:  menuID,
+              // boilerPlateData: item.boilerPlateData!.content! ?? "",
             ),
           ),
         );

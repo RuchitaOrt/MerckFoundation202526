@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_strings.dart';
 import 'package:merckfoundation_252026/Provider/FilterProvider.dart';
 import 'package:merckfoundation_252026/Provider/MediaListingProvider.dart';
 import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
+import 'package:merckfoundation_252026/model/CountryModel.dart';
 import 'package:merckfoundation_252026/model/StoryModel.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/customappbar.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
@@ -27,11 +29,13 @@ class MediaListingScreen extends StatefulWidget {
   final String albumID;
   final String menuID;
   final String title;
+  final String? digitalLibraryCategoryName;
 
   final String? shareLink;
   final List<StoryModel>? initialList;
   final bool useLocalPagination;
   final isFilterApply;
+  final String? videoNavigationKey;
 
   const MediaListingScreen({
     super.key,
@@ -45,6 +49,8 @@ class MediaListingScreen extends StatefulWidget {
     this.initialList,
     this.useLocalPagination = false,
     this.isFilterApply = true,
+    this.digitalLibraryCategoryName,
+     this.videoNavigationKey,
   });
 
   @override
@@ -54,6 +60,7 @@ class MediaListingScreen extends StatefulWidget {
 class _MediaListingScreenState extends State<MediaListingScreen> {
   final ScrollController _controller = ScrollController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+String? categoryId;
 
   @override
   void initState() {
@@ -62,48 +69,267 @@ class _MediaListingScreenState extends State<MediaListingScreen> {
         final filter = context.read<FilterProvider>();
     final provider = context.read<MediaListingProvider>();
 
+WidgetsBinding.instance.addPostFrameCallback((_) async {
+  if (!mounted) return;
 
+  final filter = context.read<FilterProvider>();
+  final provider = context.read<MediaListingProvider>();
 
+  // Reset previous filter state
+  filter.clearFilters();
 
-    /// 🔥 RESET FILTER (prevent carry-over)
+  // Ambassador album does not need filters
+  if (widget.type != MediaType.ambassadorAlbum) {
+    await filter.loadFilters(
+      context,
+      type: widget.type,
+    );
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      context.read<FilterProvider>().clearFilters();
-      if(widget.type!=MediaType.ambassadorAlbum)
-      {
-filter.loadFilters(context, type: widget.type);
-      }
+    if (!mounted) return;
+
+    // ============================
+    // RESTRICT VIDEO CATEGORIES
+    // ============================
+    if (widget.type == MediaType.all &&
+        widget.categoryID.isNotEmpty) {
       
-      if (widget.useLocalPagination && widget.initialList != null) {
-        provider.setLocalData(widget.initialList!);
-      } else {
-        provider.loadInitial(
-          context: context,
-          type: widget.type,
-          countryId: "",
-          categoryId: widget.categoryID,
-          languageId: "",
-          albumID: widget.albumID,
-        );
-      }
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-     
+      final allowedCategoryIds = widget.categoryID
+          .split(',')
+          .map((e) => int.tryParse(e.trim()))
+          .whereType<int>()
+          .toSet();
 
-      if (filter.countries.isEmpty ||
-          filter.categories.isEmpty ||
-          filter.languages.isEmpty) {
-        if (widget.type != MediaType.episodes &&
-    widget.type != MediaType.ambassadorAlbum) {
-          filter.loadFilters(context, type: widget.type);
+      debugPrint(
+        "Allowed category IDs: $allowedCategoryIds",
+      );
+
+      filter.categories = filter.categories
+          .where(
+            (category) =>
+                allowedCategoryIds.contains(category.id),
+          )
+          .toList();
+
+      debugPrint(
+        "Filtered categories: "
+        "${filter.categories.map((e) => '${e.id}-${e.name}').toList()}",
+      );
+    }
+
+    // ============================
+    // DIGITAL LIBRARY
+    // ============================
+    if (widget.type == MediaType.digitalLibraryall) {
+      final id = int.tryParse(
+        widget.categoryID.trim(),
+      );
+
+      if (id != null) {
+        final matchedCategory =
+            filter.categories.firstWhere(
+          (category) => category.id == id,
+          orElse: () => filter.allCategory,
+        );
+
+        if (matchedCategory.id == id) {
+          filter.categories = [matchedCategory];
+
+          filter.selectCategory(
+            matchedCategory,
+          );
+
+          debugPrint(
+            "Selected Digital Library Category: "
+            "${matchedCategory.id} - "
+            "${matchedCategory.name}",
+          );
+        } else {
+          filter.categories = [];
+
+          debugPrint(
+            "Category not found: $id",
+          );
         }
       }
-    });
-
-    if (widget.type == MediaType.photoAlbum) {
-      return;
     }
+     if (widget.type == MediaType.photoAlbum &&
+        widget.categoryID.isNotEmpty) {
+      
+      final allowedCategoryIds = widget.categoryID
+          .split(',')
+          .map((e) => int.tryParse(e.trim()))
+          .whereType<int>()
+          .toSet();
+
+      debugPrint(
+        "Allowed PhotoAlbum category IDs: $allowedCategoryIds",
+      );
+
+      filter.categories = filter.categories
+          .where(
+            (category) =>
+                allowedCategoryIds.contains(category.id),
+          )
+          .toList();
+
+      debugPrint(
+        "FilteredPhotoAlbum categories: "
+        "${filter.categories.map((e) => '${e.id}-${e.name}').toList()}",
+      );
+    }
+  }
+
+  // ============================
+  // LOAD MEDIA
+  // ============================
+  if (widget.useLocalPagination &&
+      widget.initialList != null) {
+    provider.setLocalData(
+      widget.initialList!,
+    );
+  } else {
+    provider.loadInitial(
+      context: context,
+      type: widget.type,
+      countryId: "",
+      categoryId: widget.categoryID,
+      languageId: "",
+      albumID: widget.albumID,
+    );
+  }
+});
+     
+    /// 🔥 RESET FILTER (prevent carry-over)
+
+//     WidgetsBinding.instance.addPostFrameCallback((_) async {
+//       if (!mounted) return;
+//       context.read<FilterProvider>().clearFilters();
+//       if(widget.type!=MediaType.ambassadorAlbum)
+//       {
+//  await filter.loadFilters(context, type: widget.type);
+//  if (widget.type == MediaType.all && widget.categoryID.isNotEmpty) {
+//   print("RANGA");
+//   final allowedCategoryIds = widget.categoryID
+//       .split(',')
+//       .map((e) => int.tryParse(e.trim()))
+//       .whereType<int>()
+//       .toSet();
+//  print("RANGA ${allowedCategoryIds}");
+//   filter.categories = filter.categories
+//       .where((category) => allowedCategoryIds.contains(category.id))
+//       .toList();
+
+//        print("RANGA ${filter.categories}");
+// }
+// if (widget.type == MediaType.digitalLibraryall) {
+//   print("RANGA digitalLibraryall");
+//   print("Category ID = ${widget.categoryID}");
+
+//   final categoryId = int.tryParse(widget.categoryID.trim());
+
+//   if (categoryId != null) {
+//     final matchedCategory = filter.categories.firstWhere(
+//       (category) => category.id == categoryId,
+//       orElse: () => filter.allCategory,
+//     );
+
+//     if (matchedCategory.id == categoryId) {
+//       // Show ONLY the selected category.
+//       filter.categories = [matchedCategory];
+
+//       // Automatically select that category.
+//       filter.selectCategory(matchedCategory);
+
+//       print(
+//         "Selected Digital Library Category: "
+//         "${matchedCategory.id} - ${matchedCategory.name}",
+//       );
+//     } else {
+//       filter.categories = [];
+//       print("Category not found: $categoryId");
+//     }
+//   }
+// }
+// // if(widget.type==MediaType.digitalLibraryall)
+// // {
+// //   print("object");
+// //   print(widget.type);
+// //   if (widget.digitalLibraryCategoryName!.isNotEmpty) {
+// //     print("Selected Category Name: '${widget.digitalLibraryCategoryName}'");
+
+// // for (final item in filter.categories) {
+// //   print(
+// //     "ID: ${item.id}, "
+// //     "Name: '${item.name}', "
+// //     "CatgName: '${item.catgname}'",
+// //   );
+// // }
+
+// // final category = filter.categories.firstWhere(
+// //   (e) =>
+// //       (e.name ?? "").trim().toLowerCase() ==
+// //       (widget.digitalLibraryCategoryName ?? "")
+// //           .trim()
+// //           .toLowerCase(),
+// //   orElse: () => CategoryModel(id: 0, name: ""),
+// // );
+
+// // print("Matched Category:");
+// // print("ID: ${category.id}");
+// // print("Name: ${category.name}");
+// // print("CatgName: ${category.catgname}");
+
+// // if (category.id != 0) {
+// //   categoryId = category.id.toString();
+// //   filter.selectCategory(category);
+// //   print("Category ID: $categoryId");
+// // } else {
+// //   print("No matching category found.");
+// // }
+// //     }
+// // }
+//       }
+//       // if(widget.type==MediaType.all){
+//       //   print("VIDEO ALL");
+//       //  provider.loadInitial(
+//       //     context: context,
+//       //     type: widget.type,
+//       //     countryId: "",
+//       //     categoryId: widget.categoryID,
+//       //     languageId: "",
+//       //     albumID: widget.albumID,
+//       //   );
+//       // }else{
+//         if (widget.useLocalPagination && widget.initialList != null) {
+//         provider.setLocalData(widget.initialList!);
+//       } else {
+//         provider.loadInitial(
+//           context: context,
+//           type: widget.type,
+//           countryId: "",
+//           categoryId:widget.categoryID,
+//           languageId: "",
+//           albumID: widget.albumID,
+//         );
+//       }
+//       // }
+//     });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+     
+
+    //   if (filter.countries.isEmpty ||
+    //       filter.categories.isEmpty ||
+    //       filter.languages.isEmpty) {
+    //     if (widget.type != MediaType.episodes &&
+    // widget.type != MediaType.ambassadorAlbum) {
+    //       filter.loadFilters(context, type: widget.type);
+    //     }
+    //   }
+    // });
+
+    // if (widget.type == MediaType.photoAlbum) {
+    //   return;
+    // }
 
     _controller.addListener(() {
       final provider = context.read<MediaListingProvider>();
@@ -130,6 +356,7 @@ filter.loadFilters(context, type: widget.type);
 
   String getTitle() {
     switch (widget.type) {
+     
       case MediaType.stories:
       // return widget.title;
       case MediaType.videoLibrary:
@@ -140,6 +367,7 @@ filter.loadFilters(context, type: widget.type);
       // return "Photo Gallery";
       case MediaType.activity:
       // return "Our Activities";
+      case MediaType.digitalLibraryall:
       case MediaType.digitalLibrary:
       // return "Digital Library";
       case MediaType.testimonialArticle:
@@ -150,10 +378,41 @@ filter.loadFilters(context, type: widget.type);
       case MediaType.episodes:
         return widget.albumName;
       case MediaType.ambassadorAlbum:
+       case MediaType.all:
         return widget.title;
     }
   }
-
+String getContentTitle() {
+    switch (widget.type) {
+      case MediaType.stories:
+      case MediaType.testimonial:
+      // return "Testimonials";
+      case MediaType.photoGallery:
+      // return "Photo Gallery";
+      case MediaType.activity:
+      // return "Our Activities";
+      case MediaType.digitalLibrary:
+        case MediaType.digitalLibraryall:
+      // return "Digital Library";
+     
+      case MediaType.testimonialArticle:
+        // return "Testimonials of Merck Foundation Alumni";
+        return widget.title;
+      case MediaType.photoAlbum:
+        return widget.albumName;
+      case MediaType.episodes:
+        return widget.albumName;
+      case MediaType.ambassadorAlbum:
+        return widget.title;
+         
+ case MediaType.all:
+ return widget.title;
+        
+    
+        case MediaType.videoLibrary:
+      return "Videos";
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -162,7 +421,8 @@ filter.loadFilters(context, type: widget.type);
 
       appBar: CommonAppBar(
         type: AppBarType.inner,
-        title: getTitle(),
+        title:getContentTitle(),
+        // getTitle(),
         onFilter:
             (widget.type == MediaType.photoGallery ||
                 widget.type == MediaType.photoAlbum ||
@@ -173,7 +433,7 @@ filter.loadFilters(context, type: widget.type);
             ? () => _scaffoldKey.currentState!.openEndDrawer()
             : null,
         onBack:
-            (widget.type == MediaType.stories ||
+            (widget.type == MediaType.stories || widget.type == MediaType.all ||
                 widget.type == MediaType.photoGallery)
             ? null
             : () {
@@ -246,6 +506,7 @@ filter.loadFilters(context, type: widget.type);
                             /// 🖼️ PHOTO GALLERY
                             if (widget.type == MediaType.photoGallery || widget.type == MediaType.ambassadorAlbum ||
                                 widget.type == MediaType.digitalLibrary ||
+                                widget.type == MediaType.digitalLibraryall || 
                                 widget.type == MediaType.photoAlbum ||
                                 widget.type == MediaType.activity) {
                               return MediaCard(
@@ -254,7 +515,7 @@ filter.loadFilters(context, type: widget.type);
                                 id: item.id.toString(),
                                 image: (widget.type == MediaType.photoAlbum|| widget.type == MediaType.ambassadorAlbum)
                                     ? item.photo ?? ""
-                                    : widget.type == MediaType.digitalLibrary
+                                    : (widget.type == MediaType.digitalLibrary ||widget.type == MediaType.digitalLibraryall)
                                     ? item.thumbnail_image ?? ""
                                     : item.image ?? "",
                                 title:  (widget.type == MediaType.photoAlbum|| widget.type == MediaType.ambassadorAlbum)
@@ -264,9 +525,9 @@ filter.loadFilters(context, type: widget.type);
                                     : item.title,
                                 showPlayIcon: false,
                                 onTap: () {
-                                  if (widget.type == MediaType.digitalLibrary) {
+                                  if (widget.type == MediaType.digitalLibrary ||widget.type == MediaType.digitalLibraryall ) {
                                     ShowDialogs.launchURL(item.document!);
-                                  }
+                                  }else
                                   if (widget.type == MediaType.photoGallery) {
                                     Navigator.push(
                                       context,

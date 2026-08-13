@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
 import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/ImageShimmer.dart';
 import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 
 class ContentCarouselWidget extends StatefulWidget {
@@ -46,7 +48,7 @@ class _ContentCarouselWidgetState extends State<ContentCarouselWidget> {
         /// ARROWS
         if (widget.contentList.length > 1)
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.20,
+            top: MediaQuery.of(context).size.height * 0.18,
             left: 0,
             right: 0,
             child: Padding(
@@ -125,32 +127,52 @@ class _ContentPage extends StatelessWidget {
               if (image.toString().isNotEmpty)
                 ClipRRect(
                   borderRadius: BorderRadius.circular(24),
-                  child: AspectRatio(
-                    aspectRatio: 4 / 4,
-                    child: FadeInImage.assetNetwork(
-                      placeholder: CommonImagePath.placeHolder,
-                      image: image,
+                  // child:
+                  //  AspectRatio(
+                  //   aspectRatio: 4 / 4,
+                   
+                    
+                     child:   
+                      CachedNetworkImage(
+                        memCacheHeight: 1000,
+                    imageUrl: item.image,
+                    fit: BoxFit.contain,
+                    placeholder: (context, url) => const ImageShimmer(),
 
-                      /// removes white background issue
-                      fit: BoxFit.cover,
-
-                      /// transparent placeholder area
-                      placeholderFit: BoxFit.cover,
-
-                      fadeInDuration: const Duration(milliseconds: 200),
-
-                      imageErrorBuilder: (context, error, stackTrace) {
-                        return Container(
+                    errorWidget: (_, __, ___) => Container(
                           color: Colors.grey.shade200,
                           child: const Icon(
                             Icons.broken_image,
                             size: 40,
                             color: Colors.grey,
                           ),
-                        );
-                      },
-                    ),
+                        )
                   ),
+                    
+                    //  FadeInImage.assetNetwork(
+                    //   placeholder: CommonImagePath.placeHolder,
+                    //   image: image,
+
+                    //   /// removes white background issue
+                    //   fit: BoxFit.contain,
+
+                    //   /// transparent placeholder area
+                    //   placeholderFit: BoxFit.cover,
+
+                    //   fadeInDuration: const Duration(milliseconds: 200),
+
+                    //   imageErrorBuilder: (context, error, stackTrace) {
+                    //     return Container(
+                    //       color: Colors.grey.shade200,
+                    //       child: const Icon(
+                    //         Icons.broken_image,
+                    //         size: 40,
+                    //         color: Colors.grey,
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
+                  // ),
                 ),
               if (image.toString().isNotEmpty) const SizedBox(height: 18),
 
