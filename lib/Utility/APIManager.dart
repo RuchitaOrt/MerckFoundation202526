@@ -107,7 +107,8 @@ class APIManager {
         onResponse: (response, handler) {
           // Log response details
           _logResponse(response);
-
+         print("Status code ${response.statusCode}");
+           print("Status data ${response.data}");
           print("🍪 Set-Cookie: ${response.headers['set-cookie']}");
           handler.next(response);
         },
@@ -207,11 +208,11 @@ class APIManager {
           final prettyJson = JsonEncoder.withIndent(
             '  ',
           ).convert(response.data);
-          // print(prettyJson);
+           print(prettyJson);
         } else if (response.data is String) {
           final jsonData = jsonDecode(response.data as String);
           final prettyJson = JsonEncoder.withIndent('  ').convert(jsonData);
-          // print(prettyJson);
+           print(prettyJson);
         } else {
           print('  else');
         }

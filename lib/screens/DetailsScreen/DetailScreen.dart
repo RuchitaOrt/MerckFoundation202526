@@ -293,11 +293,12 @@ class _DetailScreenState extends State<DetailScreen> {
                 ),
 
               const SizedBox(height: 10),
-if (provider.articleDetail!.boilerPlateData!.content!.isNotEmpty)
+              widget.isDetailApiCalled==false?Container()
+: (provider.articleDetail!.boilerPlateData!.content!.isNotEmpty)?
                 Padding(
                   padding: const EdgeInsets.only(left: 12, right: 12),
                   child: SmartHtmlWidget(html: provider.articleDetail!.boilerPlateData!.content!),
-                ),
+                ):Container(),
  const SizedBox(height: 20),
               const FooterFlowerImage(),
               const Bottomcardlink(),

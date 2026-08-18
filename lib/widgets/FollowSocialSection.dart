@@ -291,7 +291,7 @@ class FollowSocialDrawer extends StatelessWidget {
       ),
       child: Wrap(
         alignment: WrapAlignment.center,
-        spacing: 14,
+        spacing: 7,
         runSpacing: 14,
         children: socialLinks.map<Widget>((social) {
           final image =

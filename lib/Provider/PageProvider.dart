@@ -84,7 +84,7 @@ print(("Every MEnu id ${menuId}"));
         
        _prepareLayouts(menuId);
 _prepareAwards(menuId);
-print("Awards for $menuId = ${_awards[menuId]?.length}");
+
   // _prepareStories();
       } else {
         status = ApiStatus.error;
@@ -92,11 +92,13 @@ print("Awards for $menuId = ${_awards[menuId]?.length}");
         errorMessage =
             result.message ?? "Something went wrong";
       }
-    } catch (e) {
-      status = ApiStatus.noInternet;
+    } catch (e, stackTrace) {
+  print("Error: ${e.toString()}");
+  print("StackTrace: $stackTrace");
 
-      errorMessage =  CommonStrings.noInternetConnection;
-    }
+  status = ApiStatus.noInternet;
+  errorMessage = CommonStrings.noInternetConnection;
+}
 
     isLoading = false;
 
@@ -189,7 +191,7 @@ void addLayouts(String key) {
             image: e['thumbnail'] ?? "",
             id: e['id'],
             title: e['title'],
-            subtitle: e['subtitle'],
+            subtitle: e['subtitle'].toString(),
             subdescription: e['subdescription'],
             pageUrl: "",
             status: false,
@@ -265,7 +267,7 @@ void _prepareAwards(String menuId) {
             image: e['thumbnail'] ?? "",
             id: e['id'],
             title: e['title'],
-            subtitle: e['subtitle'],
+            subtitle: e['subtitle'].toString(),
             subdescription: e['subdescription'],
             pageUrl: "",
             status: false,

@@ -40,6 +40,7 @@ print(body);
       jsonval: body,
     );
     print("SaveFMREQUEST");
+     print("SaveFMREQUEST ${body}");
 print(result);
     if (result.status == ApiStatus.success) {
         // showToast("FCM: ${result.status}");

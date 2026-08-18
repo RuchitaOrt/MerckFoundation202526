@@ -56,7 +56,14 @@ class _AppDrawerfilterState extends State<AppDrawerfilter> {
                           _buildDropdown(
                             title: "Category",
                             value:
-                                provider.selectedCategory?.name ?? "All",
+                            widget.type == MediaType.testimonialArticle
+        ? (provider.selectedCategory?.catgname?.isNotEmpty == true
+            ? provider.selectedCategory!.catgname!
+            : "All")
+        : (provider.selectedCategory?.name?.isNotEmpty == true
+            ? provider.selectedCategory!.name
+            : "All"),
+                                // provider.selectedCategory?.name ?? "All",
                             expanded: isCategoryExpanded,
                             onTap: () => setState(() =>
                                 isCategoryExpanded =

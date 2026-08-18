@@ -20,6 +20,7 @@ class ApiStatusHandler extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     switch (status) {
+      
       case ApiStatus.noInternet:
         return CommonApiStatusWidget(
           icon: CommonImagePath.noInternet,

@@ -174,6 +174,7 @@ class _CommonBodyState extends State<CommonBody> {
     if (provider.status != ApiStatus.success &&
         provider.status != ApiStatus.loading &&
         provider.status != ApiStatus.initial) {
+           print("status in commonbody ${provider.status}");
       return ApiStatusHandler(
         status: provider.status,
         errorMessage: provider.errorMessage,
@@ -426,12 +427,25 @@ class _CommonBodyState extends State<CommonBody> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 15, bottom: 5),
-                      child: SmartHtmlWidget(
+                      child: 
+                       layout.title ==""? SmartHtmlWidget(
                         html: "Our Awards",
                         textColor: Customcolor.textBlueColor,
                         fontSize: screenWidth * 0.055,
                         fontWeight: FontWeight.w800,
                         ignoreHtmlStyles: true,
+                      ):
+                      SmartHtmlWidget(
+                        html: layout.title,
+                        textColor: Customcolor.violetcolor,
+                    // textColor: Customcolor.textBlueColor,
+                    fontSize: AppSizes.heading(context),
+                    ignorefontStyles: true,
+                        // textColor: Customcolor.textBlueColor,
+                        // fontSize: screenWidth * 0.055,
+                        // fontFamily: "Times New Roman",
+                        // fontWeight: FontWeight.w800,
+                        // ignoreHtmlStyles: true,
                       ),
                     ),
 
@@ -674,9 +688,13 @@ class _CommonBodyState extends State<CommonBody> {
                 //         ),
  SmartHtmlWidget(
                           html: layout.title ?? "",
-                          textColor: Customcolor.colorVoilet,
-                          fontSize: responsive.fontSize(3.0),
-                          fontWeight: FontWeight.w800,
+                          textColor: Customcolor.violetcolor,
+                    // textColor: Customcolor.textBlueColor,
+                    fontSize: AppSizes.heading(context),
+                    ignorefontStyles: true,
+                          // textColor: Customcolor.colorVoilet,
+                          // fontSize: responsive.fontSize(3.0),
+                          // fontWeight: FontWeight.w800,
                         ),
                
                 SmartHtmlWidget(html: """${item['description']}""" ?? ""),

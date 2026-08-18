@@ -84,7 +84,7 @@ class _TestimonialArticlesScreenState extends State<TestimonialArticlesScreen> {
     final filter = context.read<FilterProvider>();
     return Scaffold(
       key: _scaffoldKey,
-      // endDrawer: AppDrawerfilter(type: MediaType.testimonialArticle),
+      endDrawer: AppDrawerfilter(type: MediaType.testimonialArticle),
 
       appBar: CommonAppBar(
         type: AppBarType.inner,
@@ -94,7 +94,7 @@ class _TestimonialArticlesScreenState extends State<TestimonialArticlesScreen> {
             ? "Merck Foundation Alumini Testimonials"
             : widget.title,
         // widget.title,
-        // onFilter: () => _scaffoldKey.currentState!.openEndDrawer(),
+         onFilter: () => _scaffoldKey.currentState!.openEndDrawer(),
 
         onSearch: () {},
 

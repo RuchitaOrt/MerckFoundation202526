@@ -46,14 +46,15 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-
-  await PushNotifications.localNotiInit();
-  await PushNotifications.init();
-
-  await Utility().loadAPIConfig();
+  // FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+   
+  // await PushNotifications.localNotiInit();
+  // await PushNotifications.init();
+if(Platform.isAndroid){
+   await Utility().loadAPIConfig();
+}
   runApp(MyApp());
 }
 
@@ -70,8 +71,41 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeServices();
+    });
+  }
+@override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+  Future<void> _initializeServices() async {
+    try {
+       await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  if(Platform.isIOS){
+       await Utility().loadAPIConfig();
   }
 
+      debugPrint("INIT: API CONFIG DONE");
+      debugPrint("INIT: local notification START");
+
+      await PushNotifications.localNotiInit();
+
+      debugPrint("INIT: local notification DONE");
+
+      await PushNotifications.init();
+
+      debugPrint("INIT: Push notification DONE");
+
+  
+    } catch (e, stackTrace) {
+      debugPrint("INIT ERROR: $e");
+      debugPrint("$stackTrace");
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return MultiProvider(

@@ -64,7 +64,7 @@ class LeaderCard extends StatelessWidget {
           // AspectRatio(
           //   aspectRatio: 4 / 4,
           //   child:
-            ClipRRect(
+         (content['rashaweb_url'] == "false" || content['rashaweb_url'] == ""||content['rashaweb_url'] == false) ?Container():   ClipRRect(
   borderRadius: BorderRadius.circular(8),
   child: content['thumbnail'] != null &&
           content['thumbnail'].toString().isNotEmpty

@@ -409,27 +409,104 @@ else
                         Stack(
                           alignment: Alignment.center,
                           children: [
-                            ClipRRect(
-  borderRadius: BorderRadius.circular(8),
-  clipBehavior: Clip.antiAlias,
-      child: CachedNetworkImage(
-        imageUrl: imageUrl,
-         height: imageHeight,
-        //  width: double.infinity,
-        fit: BoxFit.contain,
-        alignment: Alignment.center,
-        placeholder: (context, url) => const ImageShimmer(),
-        errorWidget: (context, url, error) =>
-            const Icon(Icons.error),
-      ),
+                           Container(
+  width: double.infinity,
+  height: imageHeight,
+  color: Colors.white,
+  child: Center(
+    child: AutoAspectCachedImage(
+      imageUrl: imageUrl,
+      height: imageHeight,
+      maxWidth: itemWidth,
+      // zoomForNarrowImage: 1.0,
+      placeholder: const ImageShimmer(),
+      errorWidget: const Icon(Icons.error),
     ),
+  ),
+),
+//                             SizedBox(
+//   width: double.infinity,
+//   height: imageHeight,
+//   child: ClipRRect(
+//     borderRadius: BorderRadius.circular(8),
+//     child: Stack(
+//       alignment: Alignment.center,
+//       children: [
+
+//         // Background fills entire area
+//         CachedNetworkImage(
+//           imageUrl: imageUrl,
+//           width: double.infinity,
+//           height: double.infinity,
+//           fit: BoxFit.contain,
+//           color: Colors.black.withOpacity(0.15),
+//           colorBlendMode: BlendMode.darken,
+//         ),
+
+//         // Actual image - NEVER cropped or stretched
+//         // CachedNetworkImage(
+//         //   imageUrl: imageUrl,
+//         //   width: double.infinity,
+//         //   height: double.infinity,
+//         //   fit: BoxFit.contain,
+//         //   alignment: Alignment.center,
+//         //   placeholder: (context, url) =>
+//         //       const ImageShimmer(),
+//         //   errorWidget: (context, url, error) =>
+//         //       const Center(
+//         //         child: Icon(Icons.error),
+//         //       ),
+//         // ),
+//       ],
+//     ),
+//   ),
+// ),
+//                            SizedBox(
+//   width: double.infinity,
+//   height: imageHeight,
+//   child: ClipRRect(
+//     borderRadius: BorderRadius.circular(8),
+//     child: CachedNetworkImage(
+//       imageUrl: imageUrl,
+//       width: double.infinity,
+//       height: imageHeight,
+
+//       // Complete image visible, no stretching
+//       fit: BoxFit.contain,
+
+//       alignment: Alignment.center,
+
+//       placeholder: (context, url) =>
+//           const ImageShimmer(),
+
+//       errorWidget: (context, url, error) =>
+//           const Center(
+//             child: Icon(Icons.error),
+//           ),
+//     ),
+//   ),
+// ),
+  //                           ClipRRect(
+  // borderRadius: BorderRadius.circular(8),
+  // clipBehavior: Clip.antiAlias,
+  //     child: CachedNetworkImage(
+  //       imageUrl: imageUrl,
+  //        height: imageHeight,
+  //       //  width: double.infinity,
+  //       fit: BoxFit.contain,
+  //       alignment: Alignment.center,
+  //       placeholder: (context, url) => const ImageShimmer(),
+  //       errorWidget: (context, url, error) =>
+  //           const Icon(Icons.error),
+  //     ),
+  //   ),
 //                             ClipRRect(
 //   borderRadius: BorderRadius.circular(8),
 //   clipBehavior: Clip.antiAlias,
 //   child: Container(
 //     width: double.infinity,
 //     height: imageHeight,
-//     //  color: Colors.black,
+//      color: Colors.black,
 //     child:  ClipRRect(
 //   borderRadius: BorderRadius.circular(8),
 //   clipBehavior: Clip.antiAlias,
@@ -454,13 +531,13 @@ else
                             //       placeholder: (context, url) =>
                             //           const ImageShimmer(),
                             //       imageUrl: imageUrl,
-                            //       //  height: imageHeight,
+                            //         height: imageHeight,
                             //       width: double.infinity,
-                            //       fit: BoxFit.contain,
+                            //       fit: BoxFit.cover,
                                    
                             //     ),
-                             // ),
-                            //),
+                            //  ),
+                            // ),
                             if (widget.showMenu)
                               Positioned(
                                 top: 16,
@@ -511,7 +588,18 @@ else
 
                         const SizedBox(height: 8),
 
-                        Text(
+                    widget.type == HomeLayoutType.PhotoCategory? Center(
+                      child: Text(
+                            stripHtml(item['title'] ?? ""),
+                          style: TextStyle(
+                            
+                            color: Customcolor.textsubtitlecolor,fontWeight: FontWeight.w700,fontFamily: "Verdana",
+                            ),
+                      
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                    ):  Text(
                           stripHtml(item['title'] ?? ""),
                         style: TextStyle(color: Customcolor.textsubtitlecolor,fontWeight: FontWeight.w700,fontFamily: "Verdana"),
 
@@ -562,6 +650,61 @@ else
                   ),
                 ),
         ],
+      ),
+    );
+  }
+}
+class AutoAspectCachedImage extends StatelessWidget {
+  final String imageUrl;
+  final double height;
+  final double maxWidth;
+  final BorderRadius borderRadius;
+  final Widget? placeholder;
+  final Widget? errorWidget;
+
+  const AutoAspectCachedImage({
+    super.key,
+    required this.imageUrl,
+    required this.height,
+    required this.maxWidth,
+    this.borderRadius =
+        const BorderRadius.all(Radius.circular(9)),
+    this.placeholder,
+    this.errorWidget,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: maxWidth,
+      height: height,
+      child: ClipRRect(
+        borderRadius: borderRadius,
+        clipBehavior: Clip.hardEdge,
+        child: CachedNetworkImage(
+          imageUrl: imageUrl,
+
+          width: maxWidth,
+          height: height,
+
+          // Fill the complete width.
+          // Cropping is allowed.
+          fit: BoxFit.cover,
+
+          // ⭐ IMPORTANT
+          // Keep the TOP visible.
+          // Crop happens mainly from the BOTTOM.
+          alignment: Alignment.topCenter,
+
+          placeholder: (context, url) =>
+              placeholder ?? const ImageShimmer(),
+
+          errorWidget: (context, url, error) =>
+              errorWidget ??
+              const Center(
+                child: Icon(Icons.error),
+              ),
+        ),
       ),
     );
   }

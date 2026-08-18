@@ -13,7 +13,7 @@ class PageService {
       queryParams: {
         "menu_id": menuId,
         "channel":
-        //  "android",
+        //"android",
          Platform.isAndroid?"android":"ios",
         "json_type":"final_json" //"preview_json",
       },

@@ -150,11 +150,14 @@ class _SmartHtmlWidgetState extends State<SmartHtmlWidget>
 
     String? htmlFontFamily;
 
-    final fontMatch = RegExp(
-      r'font-family\s*:\s*([^;]+)',
-      caseSensitive: false,
-    ).firstMatch(processedHtml);
-
+    // final fontMatch = RegExp(
+    //   r'font-family\s*:\s*([^;]+)',
+    //   caseSensitive: false,
+    // ).firstMatch(processedHtml);
+final fontMatch = RegExp(
+  r'font-family\s*:\s*([^;]+)',
+  caseSensitive: false,
+).firstMatch(processedHtml);
     if (fontMatch != null) {
       final rawFont = fontMatch.group(1)?.trim();
       htmlFontFamily = mapHtmlFontFamily(rawFont);
@@ -231,7 +234,12 @@ class _SmartHtmlWidgetState extends State<SmartHtmlWidget>
          }
         if (element.localName == 'iframe') {
           final src = element.attributes['src'] ?? "";
-          return YoutubePlayerWidget(src: src);
+          if (src.contains('youtube.com/embed/') ||
+      src.contains('youtu.be/') ||
+      src.contains('youtube.com/watch')) {
+    return YoutubePlayerWidget(src: src);
+  }
+          // return YoutubePlayerWidget(src: src);
         }
 
         /// 🔹 HANDLE VIDEO TAG (fallback to WebView)
@@ -316,11 +324,14 @@ class _SmartHtmlWidgetState extends State<SmartHtmlWidget>
           // ============================
           // ELEMENT FONT FAMILY
           // ============================
-          final fontFamilyMatch = RegExp(
-            r'font-family\s*:\s*([^;]+)',
-            caseSensitive: false,
-          ).firstMatch(style);
-
+          // final fontFamilyMatch = RegExp(
+          //   r'font-family\s*:\s*([^;]+)',
+          //   caseSensitive: false,
+          // ).firstMatch(style);
+final fontFamilyMatch = RegExp(
+  r'font-family\s*:\s*([^;]+)',
+  caseSensitive: false,
+).firstMatch(style);
           final rawFontFamily = fontFamilyMatch?.group(1)?.trim();
 
           final elementFontFamily = mapHtmlFontFamily(rawFontFamily);
@@ -452,29 +463,52 @@ String? mapHtmlFontWeight(String? weight) {
       return null;
   }
 }
-  String? mapHtmlFontFamily(String? fontFamily) {
-    if (fontFamily == null || fontFamily.trim().isEmpty) {
-      return null;
-    }
-
-    final normalized = fontFamily
-        .replaceAll('"', '')
-        .replaceAll("'", '')
-        .trim()
-        .toLowerCase();
-
-    if (normalized == 'times-new-roman' ||
-        normalized == 'times new roman' ||
-        normalized == 'times') {
-      return 'Times New Roman';
-    }
-
-    if (normalized == 'verdana') {
-      return 'Verdana';
-    }
-
+String? mapHtmlFontFamily(String? fontFamily) {
+  if (fontFamily == null || fontFamily.trim().isEmpty) {
     return null;
   }
+
+  final normalized = fontFamily
+      .replaceAll('"', '')
+      .replaceAll("'", '')
+      .trim()
+      .toLowerCase();
+
+  if (normalized.contains('times new roman') ||
+      normalized.contains('times-new-roman') ||
+      normalized == 'times') {
+    return 'Times New Roman';
+  }
+
+  if (normalized.contains('verdana')) {
+    return 'Verdana';
+  }
+
+  return null;
+}
+  // String? mapHtmlFontFamily(String? fontFamily) {
+  //   if (fontFamily == null || fontFamily.trim().isEmpty) {
+  //     return null;
+  //   }
+
+  //   final normalized = fontFamily
+  //       .replaceAll('"', '')
+  //       .replaceAll("'", '')
+  //       .trim()
+  //       .toLowerCase();
+
+  //   if (normalized == 'times-new-roman' ||
+  //       normalized == 'times new roman' ||
+  //       normalized == 'times') {
+  //     return 'Times New Roman';
+  //   }
+
+  //   if (normalized == 'verdana') {
+  //     return 'Verdana';
+  //   }
+
+  //   return null;
+  // }
 
   String removeFontSize(String html) {
     html = decodeHtmlEntities(html);
@@ -643,34 +677,79 @@ class _VideoWebViewState extends State<VideoWebView> {
     return WebViewWidget(controller: controller);
   }
 }
-
 class YoutubePlayerWidget extends StatefulWidget {
   final String src;
 
-  const YoutubePlayerWidget({super.key, required this.src});
+  const YoutubePlayerWidget({
+    super.key,
+    required this.src,
+  });
 
   @override
   State<YoutubePlayerWidget> createState() => _YoutubePlayerWidgetState();
 }
 
 class _YoutubePlayerWidgetState extends State<YoutubePlayerWidget> {
-  late final YoutubePlayerController _controller;
+  late YoutubePlayerController _controller;
+
+  String extractYoutubeId(String url) {
+    try {
+      final uri = Uri.parse(url);
+
+      // https://www.youtube.com/embed/XLZD1gaebgk
+      if (uri.pathSegments.contains('embed')) {
+        final index = uri.pathSegments.indexOf('embed');
+
+        if (index + 1 < uri.pathSegments.length) {
+          return uri.pathSegments[index + 1];
+        }
+      }
+
+      // https://www.youtube.com/watch?v=XLZD1gaebgk
+      if (uri.queryParameters['v'] != null) {
+        return uri.queryParameters['v']!;
+      }
+
+      // https://youtu.be/XLZD1gaebgk
+      if (uri.host.contains('youtu.be')) {
+        return uri.pathSegments.last;
+      }
+    } catch (e) {
+      debugPrint('YouTube URL error: $e');
+    }
+
+    return '';
+  }
 
   @override
   void initState() {
     super.initState();
 
-    final id = YoutubePlayer.convertUrlToId(widget.src) ?? "";
+    final videoId = extractYoutubeId(widget.src);
+
+    debugPrint('YouTube URL: ${widget.src}');
+    debugPrint('YouTube ID: $videoId');
 
     _controller = YoutubePlayerController(
-      initialVideoId: id,
-      flags: const YoutubePlayerFlags(autoPlay: false),
+      initialVideoId: videoId,
+      flags: const YoutubePlayerFlags(
+        autoPlay: false,
+        mute: false,
+        enableCaption: true,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return YoutubePlayer(controller: _controller);
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: YoutubePlayer(
+        controller: _controller,
+        showVideoProgressIndicator: true,
+        progressIndicatorColor: Colors.red,
+      ),
+    );
   }
 
   @override
@@ -679,3 +758,38 @@ class _YoutubePlayerWidgetState extends State<YoutubePlayerWidget> {
     super.dispose();
   }
 }
+// class YoutubePlayerWidget extends StatefulWidget {
+//   final String src;
+
+//   const YoutubePlayerWidget({super.key, required this.src});
+
+//   @override
+//   State<YoutubePlayerWidget> createState() => _YoutubePlayerWidgetState();
+// }
+
+// class _YoutubePlayerWidgetState extends State<YoutubePlayerWidget> {
+//   late final YoutubePlayerController _controller;
+
+//   @override
+//   void initState() {
+//     super.initState();
+
+//     final id = YoutubePlayer.convertUrlToId(widget.src) ?? "";
+
+//     _controller = YoutubePlayerController(
+//       initialVideoId: id,
+//       flags: const YoutubePlayerFlags(autoPlay: false),
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return YoutubePlayer(controller: _controller);
+//   }
+
+//   @override
+//   void dispose() {
+//     _controller.dispose();
+//     super.dispose();
+//   }
+// }

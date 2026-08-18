@@ -56,7 +56,8 @@ class _TestimonialVerticalSectionState
 
     return SizedBox(
       height: screenHeight,
-      child: Stack(
+      child:
+       Stack(
         children: [
           CarouselSlider.builder(
             carouselController: controller,
