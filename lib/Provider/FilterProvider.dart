@@ -48,7 +48,23 @@ class FilterProvider extends ChangeNotifier {
     id: 0,
     name: "All",
   );
+List<NewsLanguageModel> articleLanguages = [];
 
+NewsLanguageModel? selectedArticleLanguage;
+void selectArticleLanguage(
+  NewsLanguageModel value,
+) {
+  selectedArticleLanguage = value;
+  notifyListeners();
+}
+final NewsLanguageModel allArticleLanguage =
+    NewsLanguageModel(
+  id: 0,
+  language: "All",
+  abbr: "",
+  isActive: true,
+  status: true,
+);
   /// LOAD FILTERS
   Future<void> loadFilters(
     BuildContext context, {
@@ -279,7 +295,38 @@ class FilterProvider extends ChangeNotifier {
       /// LANGUAGE
       /// =========================
 
-      if (type ==
+    if (type == MediaType.article) {
+print("ARTICLE GG");
+  final result = await _service.fetchNewsLanguages(
+    context,
+  );
+
+  if (!result.isSuccess) {
+    status = result.status;
+    errorMessage = result.message ?? "";
+    return;
+  }
+
+  final res = result.data ?? {};
+
+  articleLanguages = [
+    allArticleLanguage,
+    ...(res['response']?['data'] ?? [])
+        .where((e) =>
+            e != null
+            //  &&
+            // e['isActive'] == true 
+            // &&
+            // e['status'] == true
+            )
+
+        .map<NewsLanguageModel>(
+          (e) => NewsLanguageModel.fromJson(e),
+        )
+        .toList(),
+  ];
+
+}else  if (type ==
           MediaType.digitalLibrary || type==MediaType.digitalLibraryall) {
 
         final result =
@@ -329,9 +376,14 @@ class FilterProvider extends ChangeNotifier {
 
       selectedCategory ??=
           allCategory;
+if (type == MediaType.article) {
+  selectedArticleLanguage ??= allArticleLanguage;
+} else {
+  selectedLanguage ??= allLanguage;
+}
 
-      selectedLanguage ??=
-          allLanguage;
+      // selectedLanguage ??=
+      //     allLanguage;
 
       status = ApiStatus.success;
 
@@ -388,19 +440,31 @@ class FilterProvider extends ChangeNotifier {
   }
 
   /// SELECT CATEGORY
-  void selectCategory(
-    CategoryModel value,
-  ) {
+  // void selectCategory(
+  //   CategoryModel value,
+  // ) {
 
-    selectedCategory = value;
+  //   selectedCategory = value;
 
-    /// RESET LANGUAGE
-    selectedLanguage =
-        allLanguage;
+  //   /// RESET LANGUAGE
+  //   selectedLanguage =
+  //       allLanguage;
 
-    notifyListeners();
-  }
+  //   notifyListeners();
+  // }
+void selectCategory(
+  CategoryModel value,
+) {
+  selectedCategory = value;
 
+  /// RESET DIGITAL LIBRARY LANGUAGE
+  selectedLanguage = allLanguage;
+
+  /// Article does not have category,
+  /// so no need to reset selectedArticleLanguage here.
+
+  notifyListeners();
+}
   /// SELECT LANGUAGE
   void selectLanguage(
     CategoryModel value,
@@ -412,20 +476,31 @@ class FilterProvider extends ChangeNotifier {
   }
 
   /// CLEAR FILTERS
-  void clearFilters() {
+  // void clearFilters() {
 
-    selectedCountry =
-        allCountry;
+  //   selectedCountry =
+  //       allCountry;
 
-    selectedCategory =
-        allCategory;
+  //   selectedCategory =
+  //       allCategory;
 
-    selectedLanguage =
-        allLanguage;
+  //   selectedLanguage =
+  //       allLanguage;
 
-    notifyListeners();
-  }
+  //   notifyListeners();
+  // }
+void clearFilters() {
+  selectedCountry = allCountry;
+  selectedCategory = allCategory;
 
+  /// Digital Library
+  selectedLanguage = allLanguage;
+
+  /// Article
+  selectedArticleLanguage = allArticleLanguage;
+
+  notifyListeners();
+}
   /// RETRY
   Future<void> retryFilters(
     BuildContext context, {
@@ -435,6 +510,35 @@ class FilterProvider extends ChangeNotifier {
     await loadFilters(
       context,
       type: type,
+    );
+  }
+}
+
+class NewsLanguageModel {
+  int? id;
+  String? language;
+  String? abbr;
+  bool? isActive;
+  bool? status;
+  String? googleLangCode;
+
+  NewsLanguageModel({
+    this.id,
+    this.language,
+    this.abbr,
+    this.isActive,
+    this.status,
+    this.googleLangCode,
+  });
+
+  factory NewsLanguageModel.fromJson(Map<String, dynamic> json) {
+    return NewsLanguageModel(
+      id: json['id'],
+      language: json['language'],
+      abbr: json['abbr'],
+      isActive: json['isActive'],
+      status: json['status'],
+      googleLangCode: json['google_lang_code'],
     );
   }
 }

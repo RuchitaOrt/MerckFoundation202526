@@ -382,6 +382,7 @@ else{
                         widget.type == HomeLayoutType.CallForApplication) {
                       return 
                       MediaCard(
+                      
                         content_button: widget.content_button,
                         type: widget.type,
                         menuID: widget.menuID,
@@ -412,7 +413,8 @@ else{
                             showModalBottomSheet(
                                       context: context,
                                       isScrollControlled: true,
-                                      backgroundColor: Colors.black,
+                                      backgroundColor: Colors.transparent,
+barrierColor: Colors.transparent,
                                       builder: (_) => ImagePreviewDialog(
                                         imageUrl: item.thumbnail ?? "",
                                         title: item.description  ?? "",
@@ -427,6 +429,7 @@ else{
                               context,
                               MaterialPageRoute(
                                 builder: (_) => PhotoAlumbScreen(
+                                  homeLayoutType: HomeLayoutType.PhotoCategory,
                                   pageTile: widget.title,
                                   tile: item.photo_category_name,
                                   categoryID: item.id.toString(),
@@ -439,7 +442,8 @@ else{
                            showModalBottomSheet(
                                       context: context,
                                       isScrollControlled: true,
-                                      backgroundColor: Colors.black,
+                                  backgroundColor: Colors.transparent,
+barrierColor: Colors.transparent,
                                       builder: (_) => ImagePreviewDialog(
                                         imageUrl:item.thumbnail  ?? "",
                                         title:  item.title ?? "",

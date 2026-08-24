@@ -34,7 +34,8 @@ import 'package:merckfoundation_252026/routes/routers.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/splashScreen.dart';
 import 'package:merckfoundation_252026/service/SocialMediaService.dart';
 import 'package:provider/provider.dart';
-
+final RouteObserver<ModalRoute<void>> routeObserver =
+    RouteObserver<ModalRoute<void>>();
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Background message: ${message.notification?.title}");
@@ -141,6 +142,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ),
       ],
       child: MaterialApp(
+          navigatorObservers: [
+    routeObserver,
+  ],
+
         title: 'Merck Foundation',
         debugShowCheckedModeBanner: false,
         builder: (context, child) {

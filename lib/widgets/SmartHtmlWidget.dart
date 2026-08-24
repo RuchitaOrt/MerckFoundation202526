@@ -40,7 +40,8 @@ class SmartHtmlWidget extends StatefulWidget {
     this.softWrap = true,
     this.textOverflow = TextOverflow.ellipsis,
     this.textalign = TextAlign.start,
-    this.ignorefontStyles = false,  this.fontFamily,
+    this.ignorefontStyles = false,
+    this.fontFamily,
   });
 
   @override
@@ -143,7 +144,6 @@ class _SmartHtmlWidgetState extends State<SmartHtmlWidget>
           fontSize: widget.fontSize,
           fontWeight: widget.fontWeight ?? FontWeight.w600,
           height: 1.4,
-        
         ),
       );
     }
@@ -154,10 +154,10 @@ class _SmartHtmlWidgetState extends State<SmartHtmlWidget>
     //   r'font-family\s*:\s*([^;]+)',
     //   caseSensitive: false,
     // ).firstMatch(processedHtml);
-final fontMatch = RegExp(
-  r'font-family\s*:\s*([^;]+)',
-  caseSensitive: false,
-).firstMatch(processedHtml);
+    final fontMatch = RegExp(
+      r'font-family\s*:\s*([^;]+)',
+      caseSensitive: false,
+    ).firstMatch(processedHtml);
     if (fontMatch != null) {
       final rawFont = fontMatch.group(1)?.trim();
       htmlFontFamily = mapHtmlFontFamily(rawFont);
@@ -179,9 +179,9 @@ final fontMatch = RegExp(
       textStyle: TextStyle(
         color: widget.textColor,
         fontSize: widget.fontSize,
-        fontWeight: widget.fontWeight,
+         fontWeight: widget.fontWeight,
         height: 1.4,
-         fontFamily: htmlFontFamily ?? widget.fontFamily,
+        fontFamily: htmlFontFamily ?? widget.fontFamily,
       ),
 
       /// ✅ CUSTOM WIDGETS
@@ -202,43 +202,43 @@ final fontMatch = RegExp(
           //     src.contains("icon")) {
           //   return null;
           // }
-        //   final width = double.tryParse(element.attributes['width'] ?? '');
+          //   final width = double.tryParse(element.attributes['width'] ?? '');
 
-        //   final height = double.tryParse(element.attributes['height'] ?? '');
+          //   final height = double.tryParse(element.attributes['height'] ?? '');
 
-        //   //   print("width ${width}  height  ${height}");
-        //   if (src != null && src.isNotEmpty && width != null) {
-        //     return CachedNetworkImage(
-        //       imageUrl: src,
-        //       fit: BoxFit.contain,
-        //        width: width,
-        //       //  height: height,
-        //       // memCacheHeight: 1000,
-        //       // memCacheWidth: 700,
-        //       // fadeInDuration: Duration.zero,
-        //       // fadeOutDuration: Duration.zero,
+          //   //   print("width ${width}  height  ${height}");
+          //   if (src != null && src.isNotEmpty && width != null) {
+          //     return CachedNetworkImage(
+          //       imageUrl: src,
+          //       fit: BoxFit.contain,
+          //        width: width,
+          //       //  height: height,
+          //       // memCacheHeight: 1000,
+          //       // memCacheWidth: 700,
+          //       // fadeInDuration: Duration.zero,
+          //       // fadeOutDuration: Duration.zero,
 
-        //       // filterQuality: FilterQuality.low,
-        //       placeholder: (_, __) => SizedBox(
-        //         height: 220,
-        //         width: double.infinity,
-        //         //   width: width,
-        //         // height: height,
-        //         child: const ImageShimmer(),
-        //       ),
+          //       // filterQuality: FilterQuality.low,
+          //       placeholder: (_, __) => SizedBox(
+          //         height: 220,
+          //         width: double.infinity,
+          //         //   width: width,
+          //         // height: height,
+          //         child: const ImageShimmer(),
+          //       ),
 
-        //       // errorWidget: (_, __, ___) =>
-        //       //     Icon(Icons.broken_image, color: Customcolor.babyBlue),
-        //     );
-        //   }
-         }
+          //       // errorWidget: (_, __, ___) =>
+          //       //     Icon(Icons.broken_image, color: Customcolor.babyBlue),
+          //     );
+          //   }
+        }
         if (element.localName == 'iframe') {
           final src = element.attributes['src'] ?? "";
           if (src.contains('youtube.com/embed/') ||
-      src.contains('youtu.be/') ||
-      src.contains('youtube.com/watch')) {
-    return YoutubePlayerWidget(src: src);
-  }
+              src.contains('youtu.be/') ||
+              src.contains('youtube.com/watch')) {
+            return YoutubePlayerWidget(src: src);
+          }
           // return YoutubePlayerWidget(src: src);
         }
 
@@ -292,7 +292,10 @@ final fontMatch = RegExp(
                 ? '#${widget.textColor!.value.toRadixString(16).substring(2)}'
                 : '#000000',
             'font-size': '${widget.fontSize ?? 14}px',
-            'font-weight': widget.fontWeight == FontWeight.w800
+            'font-weight': widget.fontWeight == FontWeight.w400
+                ? '400' : widget.fontWeight == FontWeight.w500
+                ? '500'
+                : widget.fontWeight == FontWeight.w800
                 ? '800'
                 : widget.fontWeight == FontWeight.w700
                 ? '700'
@@ -328,10 +331,10 @@ final fontMatch = RegExp(
           //   r'font-family\s*:\s*([^;]+)',
           //   caseSensitive: false,
           // ).firstMatch(style);
-final fontFamilyMatch = RegExp(
-  r'font-family\s*:\s*([^;]+)',
-  caseSensitive: false,
-).firstMatch(style);
+          final fontFamilyMatch = RegExp(
+            r'font-family\s*:\s*([^;]+)',
+            caseSensitive: false,
+          ).firstMatch(style);
           final rawFontFamily = fontFamilyMatch?.group(1)?.trim();
 
           final elementFontFamily = mapHtmlFontFamily(rawFontFamily);
@@ -364,40 +367,33 @@ final fontFamilyMatch = RegExp(
             // Preserve API font-weight
             if (mappedFontWeight != null) 'font-weight': mappedFontWeight,
 
-          
-
-
             'background': 'transparent',
             'background-color': 'transparent',
-              // ⭐ Preserve HTML <strong>/<b>
-            if (element.localName == 'strong' ||
-                element.localName == 'b')
+            // ⭐ Preserve HTML <strong>/<b>
+            if (element.localName == 'strong' || element.localName == 'b')
               'font-weight': '600',
           };
         }
 
         // LINK STYLE
         if (element.localName == 'a') {
-  final hasImage = element.querySelector('img') != null;
+          final hasImage = element.querySelector('img') != null;
 
-  print('A TAG: ${element.outerHtml}');
-  print('hasImage: $hasImage');
+          print('A TAG: ${element.outerHtml}');
+          print('hasImage: $hasImage');
 
-  if (hasImage) {
-    return {
-      'text-decoration': 'none',
-      'color': 'transparent',
-    };
-  }
+          if (hasImage) {
+            return {'text-decoration': 'none', 'color': 'transparent'};
+          }
 
-  return {
-    'color': '#1a0dab',
-    'text-decoration': 'underline',
-    'text-decoration-color': '#2980b9',
-  };
-}
+          return {
+            'color': '#1a0dab',
+            'text-decoration': 'underline',
+            'text-decoration-color': '#2980b9',
+          };
+        }
         // if (element.localName == 'a') {
-   
+
         //   return {
         //     'color': '#1a0dab',
         //     'text-decoration': 'underline',
@@ -406,10 +402,16 @@ final fontFamilyMatch = RegExp(
         // }
 
         // Override <strong> and <b> if API should not make them bold
-        if ((element.localName == 'strong' || element.localName == 'b')) {
-          return {'font-weight': '600'};
-        }
-
+        // if ((element.localName == 'strong' || element.localName == 'b')) {
+        //   return {'font-weight': '500',};
+        // }
+if (element.localName == 'strong' || element.localName == 'b') {
+  return {
+     'font-weight': '500',
+    'line-height': '1.4',
+  'text-shadow': '0.9px 0 currentColor',
+  };
+}
         return null;
       },
 
@@ -419,73 +421,108 @@ final fontFamilyMatch = RegExp(
       },
     );
   }
-String? mapHtmlFontWeight(String? weight) {
-  if (weight == null || weight.isEmpty) {
-    return null;
-  }
 
-  final value = weight
-      .toLowerCase()
-      .replaceAll(RegExp(r'\s*!important'), '')
-      .trim();
-
-  switch (value) {
-    case '100':
-      return '100';
-
-    case '200':
-      return '200';
-
-    case '300':
-      return '300';
-
-    case '400':
-    case 'normal':
-      return '400';
-
-    case '500':
-      return '500';
-
-    case '600':
-      return '600';
-
-    case '700':
-    case 'bold':
-      return '700';
-
-    case '800':
-      return '800';
-
-    case '900':
-      return '900';
-
-    default:
+  String? mapHtmlFontWeight(String? weight) {
+    if (weight == null || weight.isEmpty) {
       return null;
-  }
-}
-String? mapHtmlFontFamily(String? fontFamily) {
-  if (fontFamily == null || fontFamily.trim().isEmpty) {
-    return null;
+    }
+
+    final value = weight
+        .toLowerCase()
+        .replaceAll(RegExp(r'\s*!important'), '')
+        .trim();
+
+    switch (value) {
+      case '100':
+        return '100';
+
+      case '200':
+        return '200';
+
+      case '300':
+        return '300';
+
+      case '400':
+      case 'normal':
+        return '400';
+
+      case '500':
+        return '500';
+        case '510':
+      return '510';
+ case '550':
+      return '550';
+      case '600':
+        return '600';
+
+      case '700':
+        return '700';
+      case 'bold':
+        return '700';
+
+      case '800':
+        return '800';
+
+      case '900':
+        return '900';
+
+      default:
+        return null;
+    }
   }
 
-  final normalized = fontFamily
-      .replaceAll('"', '')
-      .replaceAll("'", '')
-      .trim()
-      .toLowerCase();
+  String? mapHtmlFontFamily(String? fontFamily) {
+    if (fontFamily == null || fontFamily.trim().isEmpty) {
+      return null;
+    }
 
-  if (normalized.contains('times new roman') ||
-      normalized.contains('times-new-roman') ||
-      normalized == 'times') {
-    return 'Times New Roman';
+    // Take the first font from:
+    // "Verdana, Geneva, sans-serif"
+    final firstFont = fontFamily
+        .split(',')
+        .first
+        .replaceAll('"', '')
+        .replaceAll("'", '')
+        .trim()
+        .toLowerCase();
+
+    switch (firstFont) {
+      case 'verdana':
+        return 'Verdana';
+
+      case 'times':
+      case 'times new roman':
+      case 'times-new-roman':
+        return 'Times New Roman';
+
+      default:
+        return null;
+    }
   }
+  //24 aug
+  // String? mapHtmlFontFamily(String? fontFamily) {
+  //   if (fontFamily == null || fontFamily.trim().isEmpty) {
+  //     return null;
+  //   }
 
-  if (normalized.contains('verdana')) {
-    return 'Verdana';
-  }
+  //   final normalized = fontFamily
+  //       .replaceAll('"', '')
+  //       .replaceAll("'", '')
+  //       .trim()
+  //       .toLowerCase();
 
-  return null;
-}
+  //   if (normalized.contains('times new roman') ||
+  //       normalized.contains('times-new-roman') ||
+  //       normalized == 'times') {
+  //     return 'Times New Roman';
+  //   }
+
+  //   if (normalized.contains('verdana')) {
+  //     return 'Verdana';
+  //   }
+
+  //   return null;
+  // }
   // String? mapHtmlFontFamily(String? fontFamily) {
   //   if (fontFamily == null || fontFamily.trim().isEmpty) {
   //     return null;
@@ -567,8 +604,7 @@ String? mapHtmlFontFamily(String? fontFamily) {
             caseSensitive: false,
           ),
           '',
-        )
-        ;
+        );
   }
 
   String removeHtmlStyles(String html) {
@@ -677,13 +713,11 @@ class _VideoWebViewState extends State<VideoWebView> {
     return WebViewWidget(controller: controller);
   }
 }
+
 class YoutubePlayerWidget extends StatefulWidget {
   final String src;
 
-  const YoutubePlayerWidget({
-    super.key,
-    required this.src,
-  });
+  const YoutubePlayerWidget({super.key, required this.src});
 
   @override
   State<YoutubePlayerWidget> createState() => _YoutubePlayerWidgetState();

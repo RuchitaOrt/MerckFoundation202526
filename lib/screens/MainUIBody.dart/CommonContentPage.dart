@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_strings.dart';
 import 'package:merckfoundation_252026/Provider/PageProvider.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
+import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/screens/DetailsScreen/DetailScreen.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
 import 'package:merckfoundation_252026/widgets/AppDrawerfilter.dart';
@@ -39,12 +40,37 @@ class CommonContentPage extends StatefulWidget {
   State<CommonContentPage> createState() => _CommonContentPageState();
 }
 
-class _CommonContentPageState extends State<CommonContentPage> {
+class _CommonContentPageState extends State<CommonContentPage>  with RouteAware {
   bool isProgramMenuVisible = false;
   String pageTitle = "";
   bool shareLink = false;
   List<dynamic> programMenus = [];
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  final CustomAdvFabController _fabController =
+    CustomAdvFabController();
+
+    @override
+void didChangeDependencies() {
+  super.didChangeDependencies();
+
+  final route = ModalRoute.of(context);
+
+  if (route is PageRoute) {
+    routeObserver.subscribe(this, route);
+  }
+}
+@override
+void dispose() {
+  routeObserver.unsubscribe(this);
+  super.dispose();
+}
+@override
+void didPopNext() {
+  // Called when another page is popped and
+  // CommonContentPage becomes visible again.
+
+  _fabController.collapse();
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,6 +110,7 @@ class _CommonContentPageState extends State<CommonContentPage> {
           ? Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: CustomAdvFab(
+                controller: _fabController,
                 icon: Icons.menu,
                 iconColor: Colors.white,
                 backgroundColor: Customcolor.textBlueColor,

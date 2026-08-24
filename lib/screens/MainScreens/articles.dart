@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/Provider/FilterProvider.dart';
+import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:provider/provider.dart';
 
 import 'package:merckfoundation_252026/Provider/article_provider.dart';
@@ -39,7 +41,14 @@ final bool useLocalPagination;
       onRetry: (context) =>
           context.read<ArticleProvider>().retryInitial(context),
       loadInitial: (context) async {
+  /// =========================
+  /// LOAD ARTICLE FILTERS
+  /// =========================
 
+  await context.read<FilterProvider>().loadFilters(
+    context,
+    type: MediaType.article,
+  );
   final provider =
       context.read<ArticleProvider>();
 

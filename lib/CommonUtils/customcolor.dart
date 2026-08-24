@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 class Customcolor {
   static const tablebordercolor =  Color(0xff000000);
   static const textsubtitlecolor =  Color(0xFF4b4e53);
+   static const officeWhite =  Color(0xFFE1DFD9);
+  
 
   // static const colorPink =  Color(0xffE43799);
   static const colorPink =  Color(0xffFF0099);
@@ -25,7 +27,7 @@ class Customcolor {
   static const violetcolor =  Color(0xff532F8F);
   static const darkBlueColor =  Color(0xff2D3091);
 
-  static const yellowColor =  Color(0xffFFE891);
+  // static const yellowColor =  Color(0xffFFE891);
 
   //new colo®
   static const textBlueColor =  Color(0xff005FAA);

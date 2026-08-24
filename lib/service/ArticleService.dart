@@ -6,12 +6,14 @@ import 'package:merckfoundation_252026/Utility/api_result.dart';
 class ArticleService {
   Future<ApiResult<dynamic>> fetchArticle(
     BuildContext context,
-    int page,
+    int page,{
+  String languageId = "",
+}
   ) async {
     return await APIManager().apiRequest(
       context,
       API.getnewslettersarticles,
-      queryParams: {"p": page},
+      queryParams: {"p": page, "language_id": languageId,},
     );
   }
 

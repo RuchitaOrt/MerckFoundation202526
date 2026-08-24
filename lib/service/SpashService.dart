@@ -42,6 +42,7 @@ print(body);
     print("SaveFMREQUEST");
      print("SaveFMREQUEST ${body}");
 print(result);
+// Toast("body ${result.data}");
     if (result.status == ApiStatus.success) {
         // showToast("FCM: ${result.status}");
       return result.data as SaveDeviceTokenResponse;

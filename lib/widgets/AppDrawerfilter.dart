@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/TestimonialProvider.dart';
+import 'package:merckfoundation_252026/Provider/article_provider.dart';
 import 'package:merckfoundation_252026/enum/commonEnum.dart';
 import 'package:provider/provider.dart';
 import '../Provider/FilterProvider.dart';
@@ -52,7 +53,8 @@ class _AppDrawerfilterState extends State<AppDrawerfilter> {
                       children: [
 
                         /// ✅ CATEGORY (ALL TYPES EXCEPT STORIES)
-                        if (widget.type != MediaType.stories)
+                        if (widget.type != MediaType.stories &&
+    widget.type != MediaType.article)
                           _buildDropdown(
                             title: "Category",
                             value:
@@ -74,12 +76,17 @@ class _AppDrawerfilterState extends State<AppDrawerfilter> {
                         const SizedBox(height: 16),
 
                         /// ✅ LANGUAGE (ONLY DIGITAL LIBRARY)
-                        if (widget.type == MediaType.digitalLibrary)
+                        if (widget.type == MediaType.digitalLibrary  ||
+    widget.type == MediaType.article)
                           _buildDropdown(
                             title: "Language",
                             value:
-                                provider.selectedLanguage?.name ??
-                                    "All",
+                             widget.type == MediaType.article
+    ? provider.selectedArticleLanguage?.language ?? "All"
+    : provider.selectedLanguage?.name ?? 
+    "All",
+                                // provider.selectedLanguage?.name ??
+                                //     "All",
                             expanded: isLanguageExpanded,
                             onTap: () => setState(() =>
                                 isLanguageExpanded =
@@ -90,7 +97,8 @@ class _AppDrawerfilterState extends State<AppDrawerfilter> {
                         /// ✅ COUNTRY (EXCEPT DIGITAL LIBRARY & TESTIMONIAL)
                         if (widget.type != MediaType.testimonial &&
                          widget.type != MediaType.testimonialArticle &&
-                            widget.type != MediaType.digitalLibrary)
+                            widget.type != MediaType.digitalLibrary  &&
+    widget.type != MediaType.article)
                           Column(
                             children: [
                               const SizedBox(height: 16),
@@ -128,7 +136,20 @@ class _AppDrawerfilterState extends State<AppDrawerfilter> {
   final filter = context.read<FilterProvider>();
 
   Navigator.pop(context);
+/// =========================
+  if (widget.type == MediaType.article) {
+    final languageId =
+        filter.selectedArticleLanguage?.id == 0
+            ? ""
+            : filter.selectedArticleLanguage?.id?.toString() ?? "";
 
+    await context.read<ArticleProvider>().loadInitial(
+      context,
+      languageId: languageId,
+    );
+
+    return;
+  }
   /// ✅ TESTIMONIAL ARTICLE
   if (widget.type == MediaType.testimonialArticle) {
 
@@ -271,19 +292,61 @@ class _AppDrawerfilterState extends State<AppDrawerfilter> {
   }
 
   /// 🔹 LANGUAGE LIST ✅ NEW
- List<Widget> _buildLanguageList(FilterProvider provider) {
-    return provider.languages
+  List<Widget> _buildLanguageList(FilterProvider provider) {
+
+  /// ARTICLE LANGUAGES
+  if (widget.type == MediaType.article) {
+   
+    return provider.articleLanguages
         .map(
           (e) => ListTile(
-            title: Text(e.name),
+            title: Text(e.language ?? ""),
             selected:
-                provider.selectedLanguage?.id == e.id,
+                provider.selectedArticleLanguage?.id == e.id,
             onTap: () {
-              provider.selectLanguage(e);
-              setState(() => isLanguageExpanded = false);
+              provider.selectArticleLanguage(e);
+
+              setState(() {
+                print("RUCHITA ARTICLE");
+                isLanguageExpanded = false;
+              });
             },
           ),
         )
         .toList();
   }
+
+  /// DIGITAL LIBRARY LANGUAGES
+  return provider.languages
+      .map(
+        (e) => ListTile(
+          title: Text(e.name),
+          selected:
+              provider.selectedLanguage?.id == e.id,
+          onTap: () {
+            provider.selectLanguage(e);
+
+            setState(() {
+              isLanguageExpanded = false;
+            });
+          },
+        ),
+      )
+      .toList();
+}
+//  List<Widget> _buildLanguageList(FilterProvider provider) {
+//     return provider.languages
+//         .map(
+//           (e) => ListTile(
+//             title: Text(e.name),
+//             selected:
+//                 provider.selectedLanguage?.id == e.id,
+//             onTap: () {
+//               provider.selectLanguage(e);
+//               setState(() => isLanguageExpanded = false);
+//             },
+//           ),
+//         )
+//         .toList();
+//   }
 }

@@ -102,4 +102,15 @@ class FilterService {
       API.testimonialcategory,
     );
   }
+
+
+  /// NEWS / ARTICLE LANGUAGE
+Future<ApiResult<dynamic>> fetchNewsLanguages(
+  BuildContext context,
+) async {
+  return await APIManager().apiRequest(
+    context,
+    API.getlanguagelistbyarticles,
+  );
+}
 }

@@ -64,6 +64,7 @@ class HorizontalMediaSection extends StatefulWidget {
 
 class _HorizontalMediaSectionState extends State<HorizontalMediaSection> {
 Future<void> _onViewAllPressed() async {
+  print("WIDGET TYPW ${widget.type}");
  if(widget.type == HomeLayoutType.season){
 
   AppNavigation.navigateByMenuId(
@@ -180,7 +181,7 @@ else
           albumID: "",
           albumName: "",
           menuID: "",
-          title: root['menu_name']?.toString() ?? "",
+          title: root['menu_title']?.toString() ?? "",
           shareLink: root['share_link']?.toString() ?? "",
         ),
       ),
@@ -218,6 +219,7 @@ else
       context,
       MaterialPageRoute(
         builder: (_) => MediaListingScreen(
+        
           type: MediaType.photoAlbum,
           categoryID: root['photo_category_id']?.toString() ?? "",
           albumID: root['photo_album_id']?.toString() ?? "",
@@ -375,6 +377,7 @@ else
                         context,
                         MaterialPageRoute(
                           builder: (_) => PhotoAlumbScreen(
+                            homeLayoutType: HomeLayoutType.PhotoCategory,
                             pageTile: widget.title ?? "",
                             tile: item['photo_category_name'] ?? "",
                             categoryID: item['id'].toString(),
@@ -385,15 +388,29 @@ else
                       );
                     } else if (widget.type == HomeLayoutType.photoGallery) {
                       final item = widget.content[index];
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.black,
-                        builder: (_) => ImagePreviewDialog(
-                          imageUrl: item['thumbnail'] ?? "",
-                          title: item['title'] ?? "",
-                        ),
-                      );
+//                       showModalBottomSheet(
+//                         context: context,
+//                         isScrollControlled: true,
+//                        backgroundColor: Colors.transparent,
+// barrierColor: Colors.transparent,
+//                         builder: (_) => ImagePreviewDialog(
+//                           imageUrl: item['thumbnail'] ?? "",
+//                           title: item['title'] ?? "",
+//                         ),
+//                       );
+showGeneralDialog(
+  context: context,
+  barrierDismissible: true,
+  barrierLabel: 'Image Preview',
+  barrierColor: Colors.transparent,
+  transitionDuration: const Duration(milliseconds: 200),
+  pageBuilder: (context, animation, secondaryAnimation) {
+    return ImagePreviewDialog(
+      imageUrl:  item['thumbnail'] ?? "",
+      title:  item['title'] ?? "",
+    );
+  },
+);
                     }
                   },
                   child: Container(

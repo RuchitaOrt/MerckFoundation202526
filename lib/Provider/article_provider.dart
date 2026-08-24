@@ -76,14 +76,17 @@ void loadMoreLocal() {
   /// =========================
   /// LIST API
   /// =========================
-  Future<void> loadInitial(BuildContext context) async {
+  Future<void> loadInitial(BuildContext context, {
+  String languageId = "",
+}) async {
     if (useLocalPagination) return;
+     selectedLanguageId = languageId;
     isLoading = true;
     status = ApiStatus.loading;
     notifyListeners();
 
     try {
-      final result = await _service.fetchArticle(context, 1);
+      final result = await _service.fetchArticle(context, 1, languageId: selectedLanguageId,);
 
       status = result.status;
 
@@ -165,7 +168,7 @@ void loadMoreLocal() {
   }
 
   Future<void> retryInitial(BuildContext context) async {
-    await loadInitial(context);
+    await loadInitial(context, languageId: selectedLanguageId,);
   }
 
   /// =========================
@@ -186,7 +189,7 @@ void loadMoreLocal() {
 
     final nextPage = currentPage + 1;
 
-    final result = await _service.fetchArticle(context, nextPage);
+    final result = await _service.fetchArticle(context, nextPage ,languageId: selectedLanguageId,);
 
     if (result.isSuccess) {
       final response = result.data;

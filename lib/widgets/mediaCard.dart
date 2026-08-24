@@ -27,6 +27,7 @@ class MediaCard extends StatelessWidget {
   final String subTitle;
   final HomeLayoutType? type;
   final bool content_button;
+  final MediaType? mediaType;
 
   final String? shareLink;
 
@@ -43,7 +44,7 @@ class MediaCard extends StatelessWidget {
     this.shareLink,
     this.subTitle = "",
     this.type,
-    this.content_button = false,
+    this.content_button = false,  this.mediaType,
   });
 
   @override
@@ -66,7 +67,7 @@ class MediaCard extends StatelessWidget {
             /// IMAGE
             Expanded(
               flex:
-                  (type == HomeLayoutType.MerckMoreThanAmbasdarFormer &&
+            mediaType==MediaType.photoGallery?3:     (type == HomeLayoutType.MerckMoreThanAmbasdarFormer &&
                       content_button)
                   ? 1
                   : 2, // 🔥 give more space to image
@@ -87,7 +88,7 @@ class MediaCard extends StatelessWidget {
   imageUrl: image,
   width: double.infinity,
   height: double.infinity,
-  fit: BoxFit.contain,
+  fit:mediaType==MediaType.photoGallery?BoxFit.cover: BoxFit.contain,
   placeholder: (context, url) =>ImageShimmer(),
   errorWidget: (context, url, error) => SizedBox.expand(
     child: Image.asset(
@@ -176,8 +177,8 @@ class MediaCard extends StatelessWidget {
                     FormLabel(
                       text:
                         
-                       title,
-                      maxLines: 3,
+                       "${title}",
+                      maxLines:mediaType==MediaType.photoGallery?2: 3,
                       textAlignment: TextAlign.center,
                       fontSize: screenWidth * 0.030,
                       labelColor: fontColor,

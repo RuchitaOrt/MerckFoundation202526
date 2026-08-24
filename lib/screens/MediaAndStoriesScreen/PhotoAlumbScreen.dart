@@ -20,12 +20,13 @@ class PhotoAlumbScreen extends StatefulWidget {
    final String menuID;
 
   final String? shareLink;
+  final HomeLayoutType homeLayoutType;
 
   const PhotoAlumbScreen({
     super.key,
     this.tile,
     this.categoryID,
-    this.pageTile, required this.menuID, this.shareLink,
+    this.pageTile, required this.menuID, this.shareLink, required this.homeLayoutType,
   });
 
   @override
@@ -49,101 +50,122 @@ class _PhotoAlumbScreenPageState extends State<PhotoAlumbScreen> {
   Widget build(BuildContext context) {
     final provider = context.watch<PhotoAlbumProvider>();
 
-    return Scaffold(
-      backgroundColor: Customcolor.background,
-      appBar: CommonAppBar(
-        type: AppBarType.inner,
-        title: "${widget.tile} Photo Gallery" ,
-        onSearch: () {},
-        shareLink: widget.shareLink ?? "",
-        menuID: widget.menuID,
-        onBack: ()
-        {
-           Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => MediaListingScreen(
-              type: MediaType.photoGallery,
-              categoryID: "",
-              albumID: "",
-              albumName: "",
-              menuID: widget.menuID,
-              shareLink: widget.shareLink,
-              title: MediaType.photoGallery.name ?? "",
+    return WillPopScope(
+       onWillPop: () async{
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => MediaListingScreen(
+                homeLayoutType: HomeLayoutType.PhotoCategory,
+                type: MediaType.photoGallery,
+                categoryID: "",
+                albumID: "",
+                albumName: "",
+                menuID: widget.menuID,
+                shareLink: widget.shareLink,
+                title:"Photo Gallery" ,
+              ),
             ),
-          ),
-        );
-          // Navigator.pop(context);
-        },
-      ),
-     body: provider.isLoading
-    ? const Center(
-        child: CommonLoader(),
-      )
-
-    :   (provider.status != ApiStatus.success &&
-            provider.status != ApiStatus.initial)
-        ? ApiStatusHandler(
-            status: provider.status,
-            errorMessage: provider.errorMessage,
-            onRetry: () {
-              provider.retry(
-                context,
-                widget.categoryID!,
-              );
-            },
-          )
-
-        : provider.albums.isEmpty
-                    ? const Center(
-                        child:
-                            EmptyStateWidget(),
-                      )
-
-                    : ListView.builder(
-                        padding:
-                            const EdgeInsets.only(
-                          bottom: 20,
-                        ),
-                        itemCount:
-                            provider.albums.length,
-                        itemBuilder:
-                            (context, index) {
-
-                          final album =
-                              provider
-                                  .albums[index];
-
-                          if (album
-                              .imagelist
-                              .isEmpty) {
-                            return const SizedBox();
-                          }
-
-                          return HorizontalAlbumWidget(
-                            title:
-                                album.albumName,
-                            images:
-                                album.imagelist,
-                            imageUrl:
-                                (item) =>
-                                    item.photo,
-                            alubumID:
-                                album.id
-                                    .toString(),
-                            alubumName:
-                                album.albumName,
-                            categoryID:
-                                widget.categoryID
-                                    .toString(),
-                            menuID:
-                                widget.menuID,
-                            shareLink:
-                                widget.shareLink,
-                          );
-                        },
-                      ),
+          );
+                return false;   
+      },
+      child: Scaffold(
+        backgroundColor: Customcolor.background,
+        appBar: CommonAppBar(
+          type: AppBarType.inner,
+          title: "${widget.tile} Photo Gallery" ,
+          onSearch: () {},
+          shareLink: widget.shareLink ?? "",
+          menuID: widget.menuID,
+          onBack: ()
+          {
+             Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => MediaListingScreen(
+                homeLayoutType: HomeLayoutType.PhotoCategory,
+                type: MediaType.photoGallery,
+                categoryID: "",
+                albumID: "",
+                albumName: "",
+                menuID: widget.menuID,
+                shareLink: widget.shareLink,
+                title:"Photo Gallery" ,
+              ),
+            ),
+          );
+            // Navigator.pop(context);
+          },
+        ),
+       body: provider.isLoading
+      ? const Center(
+          child: CommonLoader(),
+        )
       
+      :   (provider.status != ApiStatus.success &&
+              provider.status != ApiStatus.initial)
+          ? ApiStatusHandler(
+              status: provider.status,
+              errorMessage: provider.errorMessage,
+              onRetry: () {
+                provider.retry(
+                  context,
+                  widget.categoryID!,
+                );
+              },
+            )
+      
+          : provider.albums.isEmpty
+                      ? const Center(
+                          child:
+                              EmptyStateWidget(),
+                        )
+      
+                      : ListView.builder(
+                          padding:
+                              const EdgeInsets.only(
+                            bottom: 20,
+                          ),
+                          itemCount:
+                              provider.albums.length,
+                          itemBuilder:
+                              (context, index) {
+      
+                            final album =
+                                provider
+                                    .albums[index];
+      
+                            if (album
+                                .imagelist
+                                .isEmpty) {
+                              return const SizedBox();
+                            }
+      
+                            return HorizontalAlbumWidget(
+                              title:
+                                  album.albumName,
+                              images:
+                                  album.imagelist,
+                              imageUrl:
+                                  (item) =>
+                                      item.photo,
+                              alubumID:
+                                  album.id
+                                      .toString(),
+                              alubumName:
+                                  album.albumName,
+                              categoryID:
+                                  widget.categoryID
+                                      .toString(),
+                              menuID:
+                                  widget.menuID,
+                              shareLink:
+                                  widget.shareLink,
+                            );
+                          },
+                        ),
+        
+      ),
     );
   }
 }

@@ -62,15 +62,29 @@ class HorizontalAlbumWidget<T> extends StatelessWidget {
                 return GestureDetector(
                   onTap: ()
                   {
-                     showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.black,
-                        builder: (_) => ImagePreviewDialog(
-                          imageUrl: imageUrl(item) ?? "",
-                          title: title.trim(),
-                        ),
-                      );
+//                      showModalBottomSheet(
+//                         context: context,
+//                         isScrollControlled: true,
+//                       backgroundColor: Colors.transparent,
+// barrierColor: Colors.transparent,
+//                         builder: (_) => ImagePreviewDialog(
+//                           imageUrl: imageUrl(item) ?? "",
+//                           title: title.trim(),
+//                         ),
+//                       );
+showGeneralDialog(
+  context: context,
+  barrierDismissible: true,
+  barrierLabel: 'Image Preview',
+ barrierColor: Colors.black.withOpacity(0.75),
+  transitionDuration: const Duration(milliseconds: 200),
+  pageBuilder: (context, animation, secondaryAnimation) {
+    return ImagePreviewDialog(
+      imageUrl: imageUrl(item) ?? "",
+      title: title.trim(),
+    );
+  },
+);
                   },
                   child: Container(
                     width: 280,

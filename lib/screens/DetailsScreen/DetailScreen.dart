@@ -168,7 +168,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   ? SizedBox()
                   : provider.articleDetail!.availableLanguages!.isNotEmpty
                   ? Padding(
-                      padding: const EdgeInsets.only(right: 10),
+                      padding: const EdgeInsets.only(right: 10,top: 8,bottom: 16),
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Wrap(
@@ -294,11 +294,20 @@ class _DetailScreenState extends State<DetailScreen> {
 
               const SizedBox(height: 10),
               widget.isDetailApiCalled==false?Container()
-: (provider.articleDetail!.boilerPlateData!.content!.isNotEmpty)?
-                Padding(
-                  padding: const EdgeInsets.only(left: 12, right: 12),
-                  child: SmartHtmlWidget(html: provider.articleDetail!.boilerPlateData!.content!),
-                ):Container(),
+: 
+(provider.articleDetail?.boilerPlateData?.content?.trim().isNotEmpty ?? false)
+    ? Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: SmartHtmlWidget(
+          html: provider.articleDetail!.boilerPlateData!.content!,
+        ),
+      )
+    : const SizedBox.shrink(),
+// (provider.articleDetail!.boilerPlateData!.content!.isNotEmpty )?
+//                 Padding(
+//                   padding: const EdgeInsets.only(left: 12, right: 12),
+//                   child: SmartHtmlWidget(html: provider.articleDetail!.boilerPlateData!.content!),
+//                 ):Container(),
  const SizedBox(height: 20),
               const FooterFlowerImage(),
               const Bottomcardlink(),

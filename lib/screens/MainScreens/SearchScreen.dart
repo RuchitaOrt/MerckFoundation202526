@@ -188,7 +188,8 @@ Navigator.push(
                           showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
-                        backgroundColor: Colors.black,
+                       backgroundColor: Colors.transparent,
+barrierColor: Colors.transparent,
                         builder: (_) => ImagePreviewDialog(
                           imageUrl: item.thumbnail ?? "",
                           title: item.title,

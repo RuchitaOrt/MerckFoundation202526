@@ -24,8 +24,8 @@ Widget build(BuildContext context) {
   final screenWidth = MediaQuery.of(context).size.width;
 
   // Alternate flower position
-  final bool showFlowerRight = position % 2 != 0;
-  final bool showFlowerBottom = position % 2== 0;
+  // final bool showFlowerRight = position % 2 != 0;
+  // final bool showFlowerBottom = position % 2== 0;
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,7 +49,7 @@ Widget build(BuildContext context) {
             ),
           ),
 
-          if (showFlowerRight)
+          // if (showFlowerRight)
             Transform.translate(
               offset: const Offset(0, -5),
               child: Image.asset(
@@ -83,14 +83,14 @@ Widget build(BuildContext context) {
         ),
       ),
 
-      if (showFlowerBottom)
-        Padding(
-          padding: const EdgeInsets.only(top: 10),
-          child: Image.asset(
-            CommonImagePath.homeFlowerNew,
-            height: 70,
-          ),
-        ),
+      // if (showFlowerBottom)
+      //   Padding(
+      //     padding: const EdgeInsets.only(top: 10),
+      //     child: Image.asset(
+      //       CommonImagePath.homeFlowerNew,
+      //       height: 70,
+      //     ),
+      //   ),
     ],
   );
 }

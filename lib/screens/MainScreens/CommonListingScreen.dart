@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
+import 'package:merckfoundation_252026/widgets/AppDrawerfilter.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:provider/provider.dart';
@@ -27,20 +28,14 @@ class CommonListingScreen<T, P> extends StatefulWidget {
   final void Function(BuildContext, T item) onTap;
   final Widget? topWidget;
   final String menuID;
- 
-  
 
   final String? shareLink;
 
-  final ApiStatus Function(P provider)
-    getStatus;
+  final ApiStatus Function(P provider) getStatus;
 
-final String Function(P provider)
-    getErrorMessage;
+  final String Function(P provider) getErrorMessage;
 
-final Future<void> Function(
-  BuildContext context,
-) onRetry;
+  final Future<void> Function(BuildContext context) onRetry;
   const CommonListingScreen({
     super.key,
     required this.title,
@@ -52,10 +47,12 @@ final Future<void> Function(
     required this.getImage,
     required this.getTitle,
     required this.onTap,
-    this.topWidget, required this.menuID, this.shareLink,
+    this.topWidget,
+    required this.menuID,
+    this.shareLink,
     required this.getStatus,
-required this.getErrorMessage,
-required this.onRetry,
+    required this.getErrorMessage,
+    required this.onRetry,
   });
 
   @override
@@ -63,8 +60,7 @@ required this.onRetry,
       _CommonListingScreenState<T, P>();
 }
 
-class _CommonListingScreenState<T, P>
-    extends State<CommonListingScreen<T, P>> {
+class _CommonListingScreenState<T, P> extends State<CommonListingScreen<T, P>> {
   final ScrollController _controller = ScrollController();
 
   @override
@@ -91,144 +87,101 @@ class _CommonListingScreenState<T, P>
     super.dispose();
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      endDrawer: AppDrawerfilter(type: MediaType.article),
       backgroundColor: Customcolor.background,
       appBar: CommonAppBar(
         type: AppBarType.inner,
-        title:
-         widget.title,
+        title: widget.title,
         onSearch: () {},
         shareLink: widget.shareLink ?? "",
         menuID: widget.menuID,
+
+        onFilter: () {
+          _scaffoldKey.currentState?.openEndDrawer();
+        },
       ),
       body: Consumer<P>(
-  builder: (context, provider, _) {
+        builder: (context, provider, _) {
+          final list = widget.getList(provider);
 
-    final list =
-        widget.getList(provider);
+          final status = widget.getStatus(provider);
 
-    final status =
-        widget.getStatus(provider);
+          final errorMessage = widget.getErrorMessage(provider);
 
-    final errorMessage =
-        widget.getErrorMessage(
-      provider,
-    );
+          /// =========================
+          /// INITIAL LOADER
+          /// =========================
 
-    /// =========================
-    /// INITIAL LOADER
-    /// =========================
+          if (status == ApiStatus.loading && list.isEmpty) {
+            return const Center(child: CommonLoader());
+          }
+          if (status != ApiStatus.success &&
+              status != ApiStatus.loading &&
+              status != ApiStatus.initial) {
+            return ApiStatusHandler(
+              status: status,
+              errorMessage: errorMessage,
+              onRetry: () {
+                widget.onRetry(context);
+              },
+            );
+          }
 
-    if (status ==
-            ApiStatus.loading &&
-        list.isEmpty) {
+          if (list.isEmpty) {
+            return const EmptyStateWidget();
+          }
 
-      return const Center(
-        child: CommonLoader(),
-      );
-    }
-if (status != ApiStatus.success &&
-    status != ApiStatus.loading &&
-    status != ApiStatus.initial) {
+          /// =========================
+          /// SUCCESS UI
+          /// =========================
 
-  return ApiStatusHandler(
-    status: status,
-    errorMessage: errorMessage,
-    onRetry: () {
-      widget.onRetry(context);
-      },
-  );
-}
+          return CustomScrollView(
+            controller: _controller,
 
-    if (list.isEmpty) {
+            slivers: [
+              /// TOP WIDGET
+              if (widget.topWidget != null)
+                SliverToBoxAdapter(child: widget.topWidget!),
 
-      return const EmptyStateWidget();
-    }
+              /// LIST
+              SliverList(
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  if (index < list.length) {
+                    final item = list[index];
 
-    /// =========================
-    /// SUCCESS UI
-    /// =========================
+                    return CommonListCard(
+                      imageUrl: widget.getImage(item),
 
-    return CustomScrollView(
-      controller: _controller,
+                      htmlTitle: widget.getTitle(item),
 
-      slivers: [
-
-        /// TOP WIDGET
-        if (widget.topWidget != null)
-          SliverToBoxAdapter(
-            child:
-                widget.topWidget!,
-          ),
-
-        /// LIST
-        SliverList(
-          delegate:
-              SliverChildBuilderDelegate(
-            (context, index) {
-
-              if (index <
-                  list.length) {
-
-                final item =
-                    list[index];
-
-                return CommonListCard(
-                  imageUrl:
-                      widget.getImage(
-                    item,
-                  ),
-
-                  htmlTitle:
-                      widget.getTitle(
-                    item,
-                  ),
-
-                  onTap: () {
-
-                    widget.onTap(
-                      context,
-                      item,
+                      onTap: () {
+                        widget.onTap(context, item);
+                      },
                     );
-                  },
-                );
-              }
+                  }
 
-              /// PAGINATION LOADER
-              return widget.hasMore(
-                      provider)
-                  ? const Padding(
-                      padding:
-                          EdgeInsets.all(
-                        16,
-                      ),
-                      child: Center(
-                        child:
-                            CommonLoader(),
-                      ),
-                    )
-                  : const SizedBox();
-            },
+                  /// PAGINATION LOADER
+                  return widget.hasMore(provider)
+                      ? const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Center(child: CommonLoader()),
+                        )
+                      : const SizedBox();
+                }, childCount: list.length + 1),
+              ),
 
-            childCount:
-                list.length + 1,
-          ),
-        ),
+              const SliverToBoxAdapter(child: FooterFlowerImage()),
 
-        const SliverToBoxAdapter(
-          child: FooterFlowerImage(),
-        ),
-
-        const SliverToBoxAdapter(
-          child: Bottomcardlink(),
-        ),
-      ],
-    );
-  },
-),
- 
+              const SliverToBoxAdapter(child: Bottomcardlink()),
+            ],
+          );
+        },
+      ),
     );
   }
 }

@@ -30,7 +30,8 @@ enum MediaType {
   photoAlbum,
   episodes,
   ambassadorAlbum,
-  all
+  all,
+  article
 }
 
 enum HomeSectionType {

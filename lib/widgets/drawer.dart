@@ -283,7 +283,7 @@ class CustomExpansion extends StatelessWidget {
                   child: FormLabel(
                     text: title,
                     labelColor: Customcolor.textDarkBlueColor,
-                    fontSize: responsive.fontSize(2.2),
+                    fontSize: responsive.fontSize(2.5),
                     fontweight: FontWeight.w700,
                     fontheight: 1.2,
                   ),
@@ -361,7 +361,7 @@ class DrawerWidget extends StatelessWidget {
                 maxLines: 3,
                 textOverflow: TextOverflow.ellipsis,
                 labelColor: Customcolor.textDarkBlueColor,
-                fontSize: responsive.fontSize(2),
+                fontSize: responsive.fontSize(2.5),
                 fontheight: 1.1,
                 fontweight: FontWeight.w700,
               ),

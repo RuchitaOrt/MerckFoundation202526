@@ -230,12 +230,7 @@ Future<void> getCurrentVersion() async {
 
     GlobalLists.deviceid = deviceId ?? "";
       print("_getDeviceId ${GlobalLists.deviceid }");
-  print("_getFCMTOKEN  ${GlobalLists.fcmtokenvalue }");
-       await SplashService().saveDeviceToken(
-          routeGlobalKey.currentContext!,
-          deviceId: GlobalLists.deviceid,
-          fcmToken: GlobalLists.fcmtokenvalue,
-        );
+
   }
 
 Future<void> _handleNavigation(

@@ -83,11 +83,16 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
 
   Widget _buildItem(CarouselItem item) {
     final responsive = ResponsiveFlutter.of(routeGlobalKey.currentContext!);
+const double fixedWidth = 300;
+  const double fixedHeight = 200;
 
     return GestureDetector(
       onTap: item.onTap,
       child: Container(
-        color: Colors.white,
+        // color: Colors.white,
+        width: fixedWidth,
+      height: widget.carouselHeight,
+      color: Colors.white,
         child: Column(
           children: [
             Expanded(
@@ -102,7 +107,7 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
 
                     errorWidget: (_, __, ___) => Image.asset(
                       CommonImagePath.placeHolder,
-                      fit: BoxFit.contain,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 
@@ -144,8 +149,10 @@ class _CommonCarouselSectionState extends State<CommonCarouselSection> {
   Widget _navigationArrows(BuildContext context) {
     return Positioned(
       top: widget.carouselHeight / 2 - 20, // 🔥 center of image
-      left: 0,
-      right: 0,
+       left: 35, // 👈 move left arrow toward image
+    right: 35, // 👈 move right arrow toward image
+      // left: 0,
+      // right: 0,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: Row(

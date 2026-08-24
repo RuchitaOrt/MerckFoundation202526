@@ -5,7 +5,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 // import 'package:webview_flutter/webview_flutter.dart';
-
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
 import 'dart:convert';
 
@@ -57,8 +58,16 @@ class _AutoResizeWebViewState extends State<AutoResizeWebView>
           allowsBackForwardNavigationGestures: false,
 
           allowsInlineMediaPlayback: true,
+            // Add these
+  // IMPORTANT
+    disallowOverScroll: true,
+    isPagingEnabled: false,
         ),
-
+ gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+    Factory<HorizontalDragGestureRecognizer>(
+      () => HorizontalDragGestureRecognizer(),
+    ),
+  },
         initialData: InAppWebViewInitialData(
           data: _html(),
           mimeType: "text/html",
@@ -102,141 +111,173 @@ class _AutoResizeWebViewState extends State<AutoResizeWebView>
       ),
     );
   }
-
-  String _html() {
-    return '''
+String _html() {
+  return '''
 <!DOCTYPE html>
-
 <html>
 
 <head>
 
 <meta charset="utf-8">
 
-<meta
-name="viewport"
-content="width=device-width,initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1.0">
 
 <style>
 
-html,body{
-
-margin:0;
-padding:0;
-
-overflow:hidden;
-
-font-family:sans-serif;
-
-background:transparent;
-
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  overscroll-behavior: none;
+  touch-action: pan-x;
 }
 
-*{
-
-box-sizing:border-box;
-
+* {
+  box-sizing: border-box;
 }
 
-img{
-
-max-width:100% !important;
-height:auto !important;
-
+img {
+  max-width: 100% !important;
+  height: auto !important;
 }
 
-.table-wrapper{
-    width:100%;
-    overflow-x:auto;
-    overflow-y:hidden;
-    white-space:nowrap;
-    -webkit-overflow-scrolling:touch;
-     margin:0;
-    padding:0;
+/* TABLE SCROLL */
+// .table-responsive,
+// figure.table {
+//   width: 100% !important;
+//   max-width: 100% !important;
+
+//   overflow-x: auto !important;
+//   overflow-y: hidden !important;
+
+//   -webkit-overflow-scrolling: touch;
+//   touch-action: pan-x;
+
+//   margin: 0 !important;
+//   padding: 0 !important;
+// }
+// .table-responsive,
+// figure.table {
+//   display: block !important;
+
+//   width: 100% !important;
+//   max-width: 100% !important;
+
+//   overflow-x: auto !important;
+//   overflow-y: hidden !important;
+
+//   -webkit-overflow-scrolling: touch;
+
+//   touch-action: pan-x;
+//   overscroll-behavior-x: contain;
+//   overscroll-behavior-y: none;
+
+//   margin: 0 !important;
+//   padding: 0 !important;
+// }
+// table {
+//   border-collapse: collapse;
+//   margin: 0 !important;
+//   padding: 0 !important;
+
+//   width: max-content !important;
+//   min-width: max-content !important;
+// }
+
+// th,
+// td {
+//   padding: 12px 16px;
+//   white-space: nowrap;
+//   min-width: 180px;
+// }
+/* =========================
+   TABLE CONTAINER
+   ========================= */
+
+.table-responsive,
+figure.table {
+  display: block !important;
+
+  width: 100% !important;
+  max-width: 100% !important;
+
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+
+  -webkit-overflow-scrolling: touch;
+
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: none;
+
+  margin-top: 0 !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+
+  /* THIS creates the gap */
+  margin-bottom: 20px !important;
+
+  padding: 0 !important;
 }
 
-table{
-    border-collapse:collapse;
-    margin:0 !important;
-    padding:0 !important;
-    width:max-content !important;
-    min-width:max-content !important;
-}
-.table-responsive{
-    width:100%;
-    overflow-x:auto;
-    overflow-y:hidden;
-    -webkit-overflow-scrolling:touch;
-}
-figure.table{
-    display:block !important;
-    width:100% !important;
-    max-width:100% !important;
-    margin:0 !important;
-    overflow-x:auto;
-    overflow-y:hidden;
-    -webkit-overflow-scrolling:touch;
-}
- 
-figure.table table{
-    width:max-content !important;
-    min-width:100% !important;
-    margin:0 !important;
-    border-collapse:collapse;
-}
-th,td{
 
-padding:12px 16px;
+/* =========================
+   TABLE
+   ========================= */
 
-white-space:nowrap;
+table {
+  border-collapse: collapse !important;
 
-min-width:180px;
+  margin: 0 !important;
+  padding: 0 !important;
 
+  width: max-content !important;
+  min-width: max-content !important;
 }
 
+
+/* =========================
+   TABLE CELLS
+   ========================= */
+
+th,
+td {
+  padding: 12px 16px;
+  white-space: nowrap;
+  min-width: 180px;
+}
 </style>
 
 </head>
 
 <body>
 
-<div class="table-wrapper">
-
 ${widget.htmlContent}
-
-</div>
 
 <script>
 
-function sendHeight(){
+function sendHeight() {
 
-var h=Math.max(
+  var h = Math.max(
+    document.body.scrollHeight,
+    document.documentElement.scrollHeight
+  );
 
-document.body.scrollHeight,
-
-document.documentElement.scrollHeight
-
-);
-
-window.flutter_inappwebview.callHandler(
-
-'Height',
-
-h
-
-);
-
+  window.flutter_inappwebview.callHandler(
+    'Height',
+    h
+  );
 }
 
-window.onload=function(){
-
-sendHeight();
-
+window.onload = function() {
+  sendHeight();
 };
 
-setTimeout(sendHeight,300);
-
-setTimeout(sendHeight,700);
+setTimeout(sendHeight, 300);
+setTimeout(sendHeight, 700);
 
 </script>
 
@@ -244,7 +285,154 @@ setTimeout(sendHeight,700);
 
 </html>
 ''';
-  }
+}
+//   String _html() {
+//     return '''
+// <!DOCTYPE html>
+
+// <html>
+
+// <head>
+
+// <meta charset="utf-8">
+
+// <meta
+// name="viewport"
+// content="width=device-width,initial-scale=1.0">
+
+// <style>
+
+// html,body{
+
+// margin:0;
+// padding:0;
+
+// overflow:hidden;
+
+// font-family:sans-serif;
+
+// background:transparent;
+
+// }
+
+// *{
+
+// box-sizing:border-box;
+
+// }
+
+// img{
+
+// max-width:100% !important;
+// height:auto !important;
+
+// }
+
+// .table-wrapper{
+//     width:100%;
+//     overflow-x:auto;
+//     overflow-y:hidden;
+//     white-space:nowrap;
+//     -webkit-overflow-scrolling:touch;
+//      margin:0;
+//     padding:0;
+//      /* Better touch scrolling */
+//     -webkit-overflow-scrolling: touch;
+//     touch-action: pan-x;
+// }
+
+// table{
+//     border-collapse:collapse;
+//     margin:0 !important;
+//     padding:0 !important;
+//     width:max-content !important;
+//     min-width:max-content !important;
+// }
+// .table-responsive{
+//     width:100%;
+//     overflow-x:auto;
+//     overflow-y:hidden;
+//     -webkit-overflow-scrolling:touch;
+
+//       touch-action: pan-x;
+// }
+// figure.table{
+//     display:block !important;
+//     width:100% !important;
+//     max-width:100% !important;
+//     margin:0 !important;
+//     overflow-x:auto;
+//     overflow-y:hidden;
+//     -webkit-overflow-scrolling:touch;
+// }
+ 
+// figure.table table{
+//     width:max-content !important;
+//     min-width:100% !important;
+//     margin:0 !important;
+//     border-collapse:collapse;
+// }
+// th,td{
+
+// padding:12px 16px;
+
+// white-space:nowrap;
+
+// min-width:180px;
+
+// }
+
+// </style>
+
+// </head>
+
+// <body>
+
+// <div class="table-wrapper">
+
+// ${widget.htmlContent}
+
+// </div>
+
+// <script>
+
+// function sendHeight(){
+
+// var h=Math.max(
+
+// document.body.scrollHeight,
+
+// document.documentElement.scrollHeight
+
+// );
+
+// window.flutter_inappwebview.callHandler(
+
+// 'Height',
+
+// h
+
+// );
+
+// }
+
+// window.onload=function(){
+
+// sendHeight();
+
+// };
+
+// setTimeout(sendHeight,300);
+
+// setTimeout(sendHeight,700);
+
+// </script>
+
+// </body>
+
+// </html>
+// ''';
+//   }
 }
 // class AutoResizeWebView extends StatefulWidget {
 //   final String htmlContent;

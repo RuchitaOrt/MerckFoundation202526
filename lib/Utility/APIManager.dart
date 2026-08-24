@@ -65,6 +65,11 @@ enum API {
   search,
   SaveUserDeviceTokenAPI,
   getappversion,
+
+  getlanguagelistbyarticles,
+  GetCountriesByVideoCategory
+
+
 }
 
 enum HTTPMethod { GET, POST, PUT, DELETE }
@@ -416,6 +421,11 @@ class APIManager {
 
       case API.getappversion:
         return "api/newsletters_articles/get-app-version";
+ case API.getlanguagelistbyarticles:
+        return "api/page_structure/get-languagelist-byarticles";
+        case API.GetCountriesByVideoCategory:
+        return "api/page_structure/GetCountriesByVideoCategory";
+        
     }
   }
 
@@ -442,6 +452,8 @@ class APIManager {
       case API.getceomessages:
       case API.mobiledrawermedia:
       case API.getappversion:
+      case API.getlanguagelistbyarticles:
+       case API.GetCountriesByVideoCategory:
         return HTTPMethod.GET;
 
       default:

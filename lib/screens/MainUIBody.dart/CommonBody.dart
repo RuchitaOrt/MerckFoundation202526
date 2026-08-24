@@ -390,16 +390,128 @@ class _CommonBodyState extends State<CommonBody> {
       if (tabs.isEmpty) {
         return const SizedBox();
       }
+/// ✅ HANDLE THESE CAROUSEL SECTIONS VERTICALLY
+if (tabTypes.contains(layout.type) &&
+    (layout.mobileView == "horizontal" ||
+        layout.mobileView == "Horizontal")) {
+  
+  /// Find all carousel layouts of these types
+  final validCarouselLayouts = allLayouts.where((e) {
+    final List content = e.content ?? [];
 
-      return SizedBox(
-        height: tabShowViewButton
-            ? CommonStrings.tabheightwithview
-            : CommonStrings.tabheight,
-        child: DynamicTabView(
-          tabs: tabs,
-          indicatorColor: Customcolor.pinkBgColor,
-        ),
+    return tabTypes.contains(e.type) &&
+        content.isNotEmpty &&
+        (e.mobileView == "horizontal" ||
+            e.mobileView == "Horizontal");
+  }).toList();
+
+  /// Only render once.
+  /// Otherwise every layout will render all sections again.
+  if (validCarouselLayouts.isEmpty ||
+      layout != validCarouselLayouts.first) {
+    return const SizedBox();
+  }
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: validCarouselLayouts.map<Widget>((carouselLayout) {
+      final List content = carouselLayout.content ?? [];
+
+      final items = content.map<CarouselItem>((e) {
+        final image = e['thumbnail'];
+        final title = e['title'];
+        final pageUrl = e['page_url'];
+
+        return CarouselItem(
+          image: image is String ? image : "",
+          title: title is String ? title : "",
+          onTap:
+              carouselLayout.type ==
+                      HomeLayoutType.MerckMoreThanAmbasdar
+                  ? null
+                  : () {
+                      if (pageUrl != null &&
+                          pageUrl.toString().isNotEmpty) {
+                        ShowDialogs.launchURL(
+                          pageUrl.toString(),
+                        );
+                      }
+                    },
+        );
+      }).toList();
+
+      final showButton =
+          carouselLayout.viewButton == true;
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// ==========================
+          /// SECTION TITLE
+          /// ==========================
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+            ),
+            child: SmartHtmlWidget(
+              html: carouselLayout.title ?? "",
+              fontSize: AppSizes.heading(context),
+              ignorefontStyles: true,
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          /// ==========================
+          /// CAROUSEL
+          /// ==========================
+          CommonCarouselSection(
+            controller: controllerCarousel,
+            carouselHeight:
+                CommonStrings.callcoursaheight,
+            imageWidth:
+                CommonStrings.callimagewidth,
+            imageHeight:
+                CommonStrings.callimageheight,
+
+            buttonText: showButton
+                ? (carouselLayout.buttonText ?? "")
+                : "",
+
+            onViewAll: () {
+              AppNavigation.navigateByMenuId(
+                context,
+                menuId:
+                    carouselLayout.buttonMenuId.toString(),
+                albumId: "",
+                albumName: "",
+                categoryId: "",
+                type: carouselLayout.type,
+                title:
+                    carouselLayout.title ?? "",
+                shareLink:
+                    carouselLayout.buttonLink,
+              );
+            },
+
+            items: items,
+          ),
+
+          const SizedBox(height: 24),
+        ],
       );
+    }).toList(),
+  );
+}
+      // return SizedBox(
+      //   height: tabShowViewButton
+      //       ? CommonStrings.tabheightwithview
+      //       : CommonStrings.tabheight,
+      //   child: DynamicTabView(
+      //     tabs: tabs,
+      //     indicatorColor: Customcolor.pinkBgColor,
+      //   ),
+      // );
     }
     final isFirstContentLayout =
         type == HomeLayoutType.content &&
@@ -632,7 +744,7 @@ class _CommonBodyState extends State<CommonBody> {
                 //     .toList(),
                 content: layout.stories,
                 shareLink: layout.buttonLink ?? '',
-
+         
                 type: type,
                 title: layout.title ?? "",
                 buttonText: showViewButton ? (layout.buttonText ?? "") : "",

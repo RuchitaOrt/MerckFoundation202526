@@ -5,9 +5,11 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:merckfoundation_252026/Utility/showdailog.dart';
 import 'package:merckfoundation_252026/const/GlobalLists.dart';
 import 'package:merckfoundation_252026/main.dart';
 import 'package:merckfoundation_252026/screens/DetailsScreen/DetailScreen.dart';
+import 'package:merckfoundation_252026/service/SpashService.dart';
 
 class PushNotifications {
   static final FirebaseMessaging _messaging =
@@ -77,13 +79,20 @@ FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
     
     GlobalLists.fcmtokenvalue=token!;
     print("FCM TOKEN: $token");
-  //  showToast("FCM: $token");
+    // showToast("FCM: $token");
     if (token != null && token.isNotEmpty) {
 
         GlobalLists.fcmtokenvalue = token;
 
         print("FCM TOKEN : $token");
  print("deviceid : ${GlobalLists.deviceid},");
+
+   print("_getFCMTOKEN  ${GlobalLists.fcmtokenvalue }");
+       await SplashService().saveDeviceToken(
+          routeGlobalKey.currentContext!,
+          deviceId: GlobalLists.deviceid,
+          fcmToken: GlobalLists.fcmtokenvalue,
+        );
         // await SplashService().saveDeviceToken(
         //   routeGlobalKey.currentContext!,
         //   deviceId: GlobalLists.deviceid,

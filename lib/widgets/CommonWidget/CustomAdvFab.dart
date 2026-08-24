@@ -5,7 +5,7 @@ class CustomAdvFab extends StatefulWidget {
   final IconData icon;
   final Color iconColor;
   final Color backgroundColor;
-  final Widget expandedContent;
+  final Widget expandedContent; final CustomAdvFabController? controller;
 
   const CustomAdvFab({
     super.key,
@@ -13,6 +13,7 @@ class CustomAdvFab extends StatefulWidget {
     required this.iconColor,
     required this.backgroundColor,
     required this.expandedContent,
+    this.controller,
   });
 
   @override
@@ -22,9 +23,44 @@ class CustomAdvFab extends StatefulWidget {
 class CustomAdvFabState extends State<CustomAdvFab>
     with SingleTickerProviderStateMixin {
   bool isExpanded = false;
+ @override
+  void initState() {
+    super.initState();
 
-  void toggle() => setState(() => isExpanded = !isExpanded);
-  void collapse() => isExpanded ? toggle() : null;
+    widget.controller?._collapse = collapse;
+  }
+
+  @override
+  void didUpdateWidget(covariant CustomAdvFab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    oldWidget.controller?._collapse = null;
+    widget.controller?._collapse = collapse;
+  }
+
+  @override
+  void dispose() {
+    widget.controller?._collapse = null;
+    super.dispose();
+  }
+   void toggle() {
+    setState(() {
+      isExpanded = !isExpanded;
+    });
+  }
+
+  void collapse() {
+    if (!mounted) return;
+
+    if (isExpanded) {
+      setState(() {
+        isExpanded = false;
+      });
+    }
+  }
+
+  // void toggle() => setState(() => isExpanded = !isExpanded);
+  // void collapse() => isExpanded ? toggle() : null;
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +110,7 @@ class CustomAdvFabState extends State<CustomAdvFab>
                       height: size.height * 0.60,
                       margin: const EdgeInsets.only(bottom: 12),
                       decoration: BoxDecoration(
-                        color: Customcolor.yellowColor,
+                        color: Customcolor.officeWhite,
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: const [
                           BoxShadow(blurRadius: 10, color: Colors.black26),
@@ -103,5 +139,12 @@ class CustomAdvFabState extends State<CustomAdvFab>
         ),
       ],
     );
+  }
+}
+class CustomAdvFabController {
+  VoidCallback? _collapse;
+
+  void collapse() {
+    _collapse?.call();
   }
 }
