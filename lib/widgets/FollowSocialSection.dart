@@ -24,75 +24,164 @@ Widget build(BuildContext context) {
   final screenWidth = MediaQuery.of(context).size.width;
 
   // Alternate flower position
-  // final bool showFlowerRight = position % 2 != 0;
+  final bool showFlowerRight = position % 2 != 0;
   // final bool showFlowerBottom = position % 2== 0;
-
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+return Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    // =========================================================
+    // TITLE + FLOWER
+    // =========================================================
+    SizedBox(
+      width: double.infinity,
+      child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 10, 0),
-              child: Text(
-                title,
-                maxLines: 4,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: screenWidth * 0.055,
-                  fontWeight: FontWeight.w800,
-                  color: Customcolor.textBlueColor,
-                ),
+          // =====================================================
+          // TITLE
+          // Keep original LEFT position
+          // =====================================================
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              16,
+              0,
+              80,
+              0,
+            ),
+            child: Text(
+              title,
+              maxLines: 4,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: screenWidth * 0.055,
+                fontWeight: FontWeight.w800,
+                color: Customcolor.textBlueColor,
               ),
             ),
           ),
 
-          // if (showFlowerRight)
-            Transform.translate(
-              offset: const Offset(0, -5),
-              child: Image.asset(
-                CommonImagePath.homeFlowerNew,
-                height: 70,
+          // =====================================================
+          // FLOWER
+          // Does NOT take layout space
+          // =====================================================
+          if (showFlowerRight)
+            Positioned(
+              right: 20,
+              top: -18,
+              child: IgnorePointer(
+                child: Image.asset(
+                  CommonImagePath.followusflower,
+                  height: 70,
+                ),
               ),
             ),
         ],
       ),
+    ),
 
-      const SizedBox(height: 12),
+    // =========================================================
+    // SMALL GAP
+    // =========================================================
+    const SizedBox(height: 8),
 
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Wrap(
-          alignment: WrapAlignment.start,
-          spacing: 14,
-          runSpacing: 14,
-          children: socialLinks.map<Widget>((social) {
-            return SocialIcon(
-              social['social_media_image'] ?? '',
-              iconSize: iconSize,
-              onTap: () async {
-                final link = social['social_media_link'] ?? '';
-                if (link.isNotEmpty) {
-                  await ShowDialogs.launchURL(link);
-                }
-              },
-            );
-          }).toList(),
-        ),
+    // =========================================================
+    // SOCIAL ICONS
+    // Keep original horizontal position
+    // =========================================================
+    Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: Wrap(
+        alignment: WrapAlignment.start,
+        spacing: 8,
+        runSpacing: 14,
+        children: socialLinks.map<Widget>((social) {
+          return SocialIcon(
+            social['social_media_image'] ?? '',
+            iconSize: iconSize,
+            onTap: () async {
+              final link =
+                  social['social_media_link'] ?? '';
+
+              if (link.isNotEmpty) {
+                await ShowDialogs.launchURL(link);
+              }
+            },
+          );
+        }).toList(),
       ),
+    ),
+  ],
+);
+  // return Column(
+  //   crossAxisAlignment: CrossAxisAlignment.start,
+  //   children: [
+  //     Row(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Expanded(
+  //           child: Padding(
+  //             padding: const EdgeInsets.fromLTRB(16, 0, 10, 0),
+  //             child: Text(
+  //               title,
+  //               maxLines: 4,
+  //               overflow: TextOverflow.ellipsis,
+  //               style: TextStyle(
+  //                 fontSize: screenWidth * 0.055,
+  //                 fontWeight: FontWeight.w800,
+  //                 color: Customcolor.textBlueColor,
+  //               ),
+  //             ),
+  //           ),
+  //         ),
 
-      // if (showFlowerBottom)
-      //   Padding(
-      //     padding: const EdgeInsets.only(top: 10),
-      //     child: Image.asset(
-      //       CommonImagePath.homeFlowerNew,
-      //       height: 70,
-      //     ),
-      //   ),
-    ],
-  );
+  //          if (showFlowerRight)
+  //           // Transform.translate(
+  //           //   offset: const Offset(0, -5),
+  //           //   child: 
+  //             Padding(
+  //               padding: const EdgeInsets.only(right: 20),
+  //               child: Image.asset(
+  //                 CommonImagePath.followusflower,
+  //                 height: 70,
+  //               ),
+  //             ),
+  //           // ),
+  //       ],
+  //     ),
+
+  //     const SizedBox(height: 12),
+
+  //     Padding(
+  //       padding: const EdgeInsets.symmetric(horizontal: 10),
+  //       child: Wrap(
+  //         alignment: WrapAlignment.start,
+  //         spacing: 14,
+  //         runSpacing: 14,
+  //         children: socialLinks.map<Widget>((social) {
+  //           return SocialIcon(
+  //             social['social_media_image'] ?? '',
+  //             iconSize: iconSize,
+  //             onTap: () async {
+  //               final link = social['social_media_link'] ?? '';
+  //               if (link.isNotEmpty) {
+  //                 await ShowDialogs.launchURL(link);
+  //               }
+  //             },
+  //           );
+  //         }).toList(),
+  //       ),
+  //     ),
+
+  //     // if (showFlowerBottom)
+  //     //   Padding(
+  //     //     padding: const EdgeInsets.only(top: 10),
+  //     //     child: Image.asset(
+  //     //       CommonImagePath.homeFlowerNew,
+  //     //       height: 70,
+  //     //     ),
+  //     //   ),
+  //   ],
+  // );
 }
 // @override
 // Widget build(BuildContext context) {

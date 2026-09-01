@@ -35,6 +35,8 @@ class CommonImagePath {
   static const String home = "assets/newImages/home.png";
 
   static const String homeFlowerNew = "assets/newImages/flower_new1.png";
+    static const String followusflower = "assets/newImages/followusflower.png";
+  
   static const String pdfImage = "assets/newImages/pdf.png";
 
   static const String flowerFooter = "assets/newImages/flowers_footer.png";

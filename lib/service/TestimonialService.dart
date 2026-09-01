@@ -12,14 +12,16 @@ class TestimonialService {
   Future<ApiResult<List<TestimonialModel>>> fetchTestimonials(
       BuildContext context,
       String categoryId,
+      String country_id
   ) async {
 
     final result = await _apiManager.apiRequest(
       context,
       API.testimonialarticles,
-      jsonval: {"category_id": categoryId},
+      jsonval: {"category_id": categoryId,"country_id":country_id},
     );
-
+print("category_id ${categoryId}");
+print("country_id ${country_id}");
     if (!result.isSuccess) {
       return ApiResult(
         status: result.status,

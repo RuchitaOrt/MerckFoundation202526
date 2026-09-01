@@ -8,7 +8,7 @@ class ArticleModel {
   final String detailsPageUrl;
   final String createdAt;
   final String articleTypeDisplay;
-
+final String? leader_lang;
   /// ✅ FIX
   final String language_id;
 
@@ -29,6 +29,7 @@ class ArticleModel {
     required this.language_id,
     required this.availableLanguages,
     this.boilerPlateData,
+    this.leader_lang
   });
 
   factory ArticleModel.fromJson(Map<String, dynamic> json) {
@@ -53,6 +54,7 @@ class ArticleModel {
       boilerPlateData: json['boiler_plate_data'] is Map<String, dynamic>
           ? BoilerPlateData.fromJson(json['boiler_plate_data'])
           : null,
+          leader_lang:json['leader_lang'] ?? ""
     );
   }
 }

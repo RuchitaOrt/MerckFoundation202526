@@ -36,6 +36,7 @@ class CommonListingScreen<T, P> extends StatefulWidget {
   final String Function(P provider) getErrorMessage;
 
   final Future<void> Function(BuildContext context) onRetry;
+  final bool? isCEO;
   const CommonListingScreen({
     super.key,
     required this.title,
@@ -53,6 +54,7 @@ class CommonListingScreen<T, P> extends StatefulWidget {
     required this.getStatus,
     required this.getErrorMessage,
     required this.onRetry,
+    this.isCEO
   });
 
   @override
@@ -101,9 +103,11 @@ class _CommonListingScreenState<T, P> extends State<CommonListingScreen<T, P>> {
         shareLink: widget.shareLink ?? "",
         menuID: widget.menuID,
 
-        onFilter: () {
-          _scaffoldKey.currentState?.openEndDrawer();
-        },
+        onFilter:  widget.isCEO == true
+    ? null
+    : () {
+        _scaffoldKey.currentState?.openEndDrawer();
+      },
       ),
       body: Consumer<P>(
         builder: (context, provider, _) {

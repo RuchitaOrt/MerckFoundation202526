@@ -33,4 +33,20 @@ class ArticleService {
       
     );
   }
+   Future<ApiResult<dynamic>> fetchLeaderDetail(
+    BuildContext context, {
+    required String leader_id,
+    
+  }) async {
+   
+    return await APIManager().apiRequest(
+      context,
+      API.getleaderdetailsbyid,
+      jsonval: {
+        "leader_id": leader_id,
+        
+      },
+      
+    );
+  }
 }

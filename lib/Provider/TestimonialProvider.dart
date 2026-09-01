@@ -79,6 +79,7 @@ class TestimonialArticleProvider extends ChangeNotifier {
   Future<void> fetchTestimonials(
     BuildContext context,
     String categoryId,
+    String country_id
   ) async {
     useLocalPagination = false;
 
@@ -91,7 +92,7 @@ class TestimonialArticleProvider extends ChangeNotifier {
     final result =
         await _service.fetchTestimonials(
       context,
-      categoryId,
+      categoryId,country_id
     );
 
     status = result.status;
@@ -199,7 +200,7 @@ class TestimonialArticleProvider extends ChangeNotifier {
     } else {
       await fetchTestimonials(
         context,
-        "",
+        "",""
       );
     }
   }

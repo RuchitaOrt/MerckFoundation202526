@@ -32,6 +32,7 @@ class DetailScreen extends StatefulWidget {
   final bool? isComingFromNotication;
   final bool isLeader;
   final String? boilerPlateData;
+ final bool? isLeadership;
 
   const DetailScreen(
     this.titleContent,
@@ -45,6 +46,7 @@ class DetailScreen extends StatefulWidget {
     this.shareLink,
     this.menuID,
     this.isComingFromNotication = false,  this.isLeader=false, this.boilerPlateData="",
+    this.isLeadership
   });
 
   @override
@@ -65,9 +67,41 @@ class _DetailScreenState extends State<DetailScreen> {
           languageId: widget.languageId ?? "",
         );
       });
+    }else if(widget.isLeader)
+    {
+       WidgetsBinding.instance.addPostFrameCallback((_) {
+        print("isLeader");
+        context.read<ArticleProvider>().loadLeaderDetail(
+          context,
+        leader_id:  widget.articleId!
+        );
+      });
     }
   }
+String? extractLastPathFromLeaderLang(String html) {
+  final match = RegExp(
+    r'''href\s*=\s*["']([^"']+)["']''',
+    caseSensitive: false,
+  ).firstMatch(html);
 
+  if (match == null) return null;
+
+  final href = match.group(1);
+
+  if (href == null || href.isEmpty) return null;
+
+  final uri = Uri.tryParse(href);
+
+  if (uri == null) return null;
+
+  final segments = uri.pathSegments
+      .where((segment) => segment.isNotEmpty)
+      .toList();
+
+  if (segments.isEmpty) return null;
+
+  return segments.last;
+}
   @override
   Widget build(BuildContext context) {
     print("DetailScreen Build  ${widget.isDetailApiCalled} ");
@@ -115,11 +149,19 @@ class _DetailScreenState extends State<DetailScreen> {
               status: provider.status,
               errorMessage: provider.errorMessage,
               onRetry: () {
+                if(widget.isDetailApiCalled){
                 provider.retryDetail(
                   context,
                   articleId: widget.articleId ?? "",
                   languageId: widget.languageId ?? "",
                 );
+                }else if(widget.isLeader)
+                {
+                   provider.retryLeaderDetail(
+                  context,
+leader_id:widget.articleId!
+                );
+                }
               },
             );
           }
@@ -153,6 +195,43 @@ class _DetailScreenState extends State<DetailScreen> {
           return ListView(
             cacheExtent: 500,
             children: [
+// (provider.articleDetail?.leader_lang?.trim().isNotEmpty ?? false)
+//     ? Padding(
+//         padding: const EdgeInsets.symmetric(
+//           horizontal: 12,
+//           vertical: 3,
+//         ),
+//         child: SmartHtmlWidget(
+//           html: '''
+//             <div style="text-align: right;">
+//               ${provider.articleDetail!.leader_lang!}
+//             </div>
+//           ''',
+//           onLinkTap: (url) {
+//             if (url.isEmpty) return;
+
+//             debugPrint('Clicked URL: $url');
+
+//             final uri = Uri.tryParse(url);
+
+//             if (uri == null) return;
+
+//             final segments = uri.pathSegments
+//                 .where((e) => e.isNotEmpty)
+//                 .toList();
+
+//             if (segments.isEmpty) return;
+
+//             final slug = segments.last;
+
+//             debugPrint('Slug: $slug');
+
+//             // Call your API here
+//             // provider.yourApiMethod(slug);
+//           },
+//         ),
+//       )
+//     : const SizedBox(),
               if (title!.isNotEmpty &&  widget.isLeader ==false)
                 Padding(
                   padding: const EdgeInsets.only(left: 12, right: 12),

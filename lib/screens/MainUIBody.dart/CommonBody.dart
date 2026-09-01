@@ -353,6 +353,7 @@ class _CommonBodyState extends State<CommonBody> {
           ),
 
           content: CommonCarouselSection(
+            layoutType:tabLayout.type.name ,
             controller: controllerCarousel,
             carouselHeight: CommonStrings.callcoursaheight,
             imageWidth: CommonStrings.callimagewidth,
@@ -412,95 +413,100 @@ if (tabTypes.contains(layout.type) &&
     return const SizedBox();
   }
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: validCarouselLayouts.map<Widget>((carouselLayout) {
-      final List content = carouselLayout.content ?? [];
-
-      final items = content.map<CarouselItem>((e) {
-        final image = e['thumbnail'];
-        final title = e['title'];
-        final pageUrl = e['page_url'];
-
-        return CarouselItem(
-          image: image is String ? image : "",
-          title: title is String ? title : "",
-          onTap:
-              carouselLayout.type ==
-                      HomeLayoutType.MerckMoreThanAmbasdar
-                  ? null
-                  : () {
-                      if (pageUrl != null &&
-                          pageUrl.toString().isNotEmpty) {
-                        ShowDialogs.launchURL(
-                          pageUrl.toString(),
-                        );
-                      }
-                    },
+  return Padding(
+    padding: const EdgeInsets.only(top: 20),
+    child:
+     Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: validCarouselLayouts.map<Widget>((carouselLayout) {
+        final List content = carouselLayout.content ?? [];
+    
+        final items = content.map<CarouselItem>((e) {
+          final image = e['thumbnail'];
+          final title = e['title'];
+          final pageUrl = e['page_url'];
+    
+          return CarouselItem(
+            image: image is String ? image : "",
+            title: title is String ? title : "",
+            onTap:
+                carouselLayout.type ==
+                        HomeLayoutType.MerckMoreThanAmbasdar
+                    ? null
+                    : () {
+                        if (pageUrl != null &&
+                            pageUrl.toString().isNotEmpty) {
+                          ShowDialogs.launchURL(
+                            pageUrl.toString(),
+                          );
+                        }
+                      },
+          );
+        }).toList();
+    
+        final showButton =
+            carouselLayout.viewButton == true;
+    
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// ==========================
+            /// SECTION TITLE
+            /// ==========================
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+              ),
+              child: SmartHtmlWidget(
+                html: carouselLayout.title ?? "",
+                fontSize: AppSizes.heading(context),
+                ignorefontStyles: true,
+              ),
+            ),
+    
+            const SizedBox(height: 12),
+    
+            /// ==========================
+            /// CAROUSEL
+            /// ==========================
+            CommonCarouselSection(
+               layoutType: carouselLayout.type.name ,
+              controller: controllerCarousel,
+              carouselHeight:
+                  CommonStrings.callcoursaheight,
+              imageWidth:
+                  CommonStrings.callimagewidth,
+              imageHeight:
+                  CommonStrings.callimageheight,
+    
+              buttonText: showButton
+                  ? (carouselLayout.buttonText ?? "")
+                  : "",
+    
+              onViewAll: () {
+                AppNavigation.navigateByMenuId(
+                  context,
+                  menuId:
+                      carouselLayout.buttonMenuId.toString(),
+                  albumId: "",
+                  albumName: "",
+                  categoryId: "",
+                  type: carouselLayout.type,
+                  title:
+                      carouselLayout.title ?? "",
+                  shareLink:
+                      carouselLayout.buttonLink,
+                );
+              },
+    
+              items: items,
+            ),
+    
+            const SizedBox(height: 24),
+          ],
         );
-      }).toList();
-
-      final showButton =
-          carouselLayout.viewButton == true;
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// ==========================
-          /// SECTION TITLE
-          /// ==========================
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-            ),
-            child: SmartHtmlWidget(
-              html: carouselLayout.title ?? "",
-              fontSize: AppSizes.heading(context),
-              ignorefontStyles: true,
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          /// ==========================
-          /// CAROUSEL
-          /// ==========================
-          CommonCarouselSection(
-            controller: controllerCarousel,
-            carouselHeight:
-                CommonStrings.callcoursaheight,
-            imageWidth:
-                CommonStrings.callimagewidth,
-            imageHeight:
-                CommonStrings.callimageheight,
-
-            buttonText: showButton
-                ? (carouselLayout.buttonText ?? "")
-                : "",
-
-            onViewAll: () {
-              AppNavigation.navigateByMenuId(
-                context,
-                menuId:
-                    carouselLayout.buttonMenuId.toString(),
-                albumId: "",
-                albumName: "",
-                categoryId: "",
-                type: carouselLayout.type,
-                title:
-                    carouselLayout.title ?? "",
-                shareLink:
-                    carouselLayout.buttonLink,
-              );
-            },
-
-            items: items,
-          ),
-
-          const SizedBox(height: 24),
-        ],
-      );
-    }).toList(),
+      }).toList(),
+    ),
   );
 }
       // return SizedBox(
@@ -725,6 +731,7 @@ if (tabTypes.contains(layout.type) &&
       case HomeLayoutType.MerckMoreThanAmbasdar:
       case HomeLayoutType.MerckMoreThanAmbasdarFormer:
       case HomeLayoutType.CallForApplication:
+      case HomeLayoutType.OurPartners:
         return (type == HomeLayoutType.testimonials &&
                     layout.mobileView == "vertical" ||
                 layout.mobileView == "Vertical")
@@ -751,7 +758,20 @@ if (tabTypes.contains(layout.type) &&
                 menuID: layout.buttonMenuId.toString(),
                 content_button: layout.contentButton,
               )
-            : HorizontalMediaSection(
+            :type == HomeLayoutType.OurPartners?VerticalMediaSection(
+                // content: (layout.content as List? ?? [])
+                //     .map((e) => StoryModel.fromJson(e))
+                //     .toList(),
+                content: layout.stories,
+                shareLink: layout.buttonLink ?? '',
+         
+                type: type,
+                title: layout.title ?? "",
+                buttonText: showViewButton ? (layout.buttonText ?? "") : "",
+                menuID: layout.buttonMenuId.toString(),
+                content_button: layout.contentButton,
+              ): HorizontalMediaSection(
+                contentbutton:layout.contentButton,
                 content: layout.content ?? [],
                 shareLink: layout.buttonLink ?? '',
                 buttonText: showViewButton ? (layout.buttonText ?? "") : "",
@@ -815,8 +835,7 @@ if (tabTypes.contains(layout.type) &&
             ),
           );
         }
-
-        return ContentCarouselWidget(contentList: contentList);
+return ContentCarouselWidget(contentList: contentList);
       case HomeLayoutType.leadership:
         return LeaderCard(
           content: layout.content ?? [],

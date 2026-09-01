@@ -60,7 +60,7 @@ class _TestimonialArticlesScreenState extends State<TestimonialArticlesScreen> {
       if (widget.useLocalPagination && widget.initialList != null) {
         provider.loadLocalTestimonials(widget.initialList!);
       } else {
-        await provider.fetchTestimonials(context, "");
+        await provider.fetchTestimonials(context, "","");
       }
 
       _scrollController.addListener(() {

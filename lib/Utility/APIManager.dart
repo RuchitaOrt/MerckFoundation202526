@@ -67,8 +67,10 @@ enum API {
   getappversion,
 
   getlanguagelistbyarticles,
-  GetCountriesByVideoCategory
-
+  GetCountriesByVideoCategory,
+  getleaderdetailsbyid,
+  getcountrybytestimonialcategory
+,
 
 }
 
@@ -425,6 +427,10 @@ class APIManager {
         return "api/page_structure/get-languagelist-byarticles";
         case API.GetCountriesByVideoCategory:
         return "api/page_structure/GetCountriesByVideoCategory";
+         case API.getleaderdetailsbyid:
+        return "api/leadership/get_leader_details_by_id";
+         case API.getcountrybytestimonialcategory:
+        return "api/page_structure/get-country-bytestimonial-category";
         
     }
   }

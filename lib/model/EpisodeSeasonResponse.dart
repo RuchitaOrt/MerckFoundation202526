@@ -84,6 +84,7 @@ class EpisodeModel {
   /// ✅ FOR HorizontalMediaSection
   Map<String, dynamic> toMap() {
     return {
+      "id":id,
       "title": episodeName,
       "thumbnail": videoLink,
       "description": "",

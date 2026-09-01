@@ -102,7 +102,21 @@ class FilterService {
       API.testimonialcategory,
     );
   }
-
+ Future<ApiResult<dynamic>>
+      fetchCountryByTestimonialCategories(
+    BuildContext context,
+    String categoryID,
+  ) async {
+print("categoryID ${categoryID}");
+    return await APIManager().apiRequest(
+      context,
+      API.getcountrybytestimonialcategory,
+      jsonval: {
+        "category_id": categoryID,
+      },
+    );
+    
+  }
 
   /// NEWS / ARTICLE LANGUAGE
 Future<ApiResult<dynamic>> fetchNewsLanguages(

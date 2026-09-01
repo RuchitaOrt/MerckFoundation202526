@@ -7,6 +7,7 @@ import 'package:merckfoundation_252026/Utility/api_status.dart';
 import 'package:merckfoundation_252026/model/CountryModel.dart';
 import 'package:merckfoundation_252026/model/StoryModel.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/dashboard.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/customappbar.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
@@ -522,16 +523,23 @@ String getContentTitle() {
                           delegate: SliverChildBuilderDelegate(
                             (context, index) {
                               /// ✅ LOAD MORE LOADER
-                              if (widget.type != MediaType.photoAlbum &&
-                                  index >= provider.storyList.length) {
-                                return provider.hasMore && provider.isLoading
-                                    ? const Padding(
-                                        padding: EdgeInsets.all(16),
-                                        child: Center(child: CommonLoader()),
-                                      )
-                                    : const SizedBox();
-                              }
-      
+                              // if (widget.type != MediaType.photoAlbum &&
+                              //     index >= provider.storyList.length) {
+                              //   return provider.hasMore && provider.isLoading
+                              //       ? const Padding(
+                              //           padding: EdgeInsets.all(16),
+                              //           child: Center(child: CommonLoader()),
+                              //         )
+                              //       : const SizedBox();
+                              // }
+      if (index >= provider.storyList.length) {
+  return const Padding(
+    padding: EdgeInsets.all(16),
+    child: Center(
+      child: CommonLoader(),
+    ),
+  );
+}
                               final item = provider.storyList[index];
       
                               /// 🖼️ PHOTO GALLERY
@@ -627,19 +635,33 @@ String getContentTitle() {
                                     : false,
                                 showPlayIcon: true,
                                 onTap: () {
-                                  var key = item.videoLink.substring(
-                                    item.videoLink.length - 11,
-                                  );
+                                  print("25Aug");
+                                  final key = getYoutubeVideoId(item.videoLink);
+
+if (key != null && key.isNotEmpty) {
+  ShowDialogs.youtubevideolink(
+    "https://www.youtube.com/watch?v=$key&autoplay=1",
+  );
+}
+                                  // var key = item.videoLink.substring(
+                                  //   item.videoLink.length - 11,
+                                  // );
       
-                                  ShowDialogs.youtubevideolink(
-                                    "https://www.youtube.com/watch?v=$key?autoplay=1",
-                                  );
+                                  // ShowDialogs.youtubevideolink(
+                                  //   "https://www.youtube.com/watch?v=$key?autoplay=1",
+                                  // );
                                 },
                               );
                             },
-                            childCount: widget.type == MediaType.photoAlbum
-                                ? provider.storyList.length
-                                : provider.storyList.length + 1,
+                            childCount: provider.storyList.length +
+    ((widget.type != MediaType.photoAlbum &&
+            provider.hasMore &&
+            provider.isLoading)
+        ? 1
+        : 0),
+                            // childCount: widget.type == MediaType.photoAlbum
+                            //     ? provider.storyList.length
+                            //     : provider.storyList.length + 1,
                           ),
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(

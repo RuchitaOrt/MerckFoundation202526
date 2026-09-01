@@ -51,7 +51,8 @@ class _EpisodeInformationState extends State<EpisodeInformation> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<EpisodeProvider>();
-      provider.getEpisodeInfo(context, int.parse(widget.episodeid));
+      print("episode infor ${widget.episodeid}");
+      provider.getEpisodeInfo(context, widget.episodeid.toString());
     });
   }
 
@@ -68,7 +69,7 @@ class _EpisodeInformationState extends State<EpisodeInformation> {
         status: provider.status,
         errorMessage: provider.errorMessage,
         onRetry: () {
-          provider.retryEpisodeInfo(context, int.parse(widget.episodeid));
+          provider.retryEpisodeInfo(context, widget.episodeid.toString());
         },
       );
     }
@@ -79,7 +80,7 @@ class _EpisodeInformationState extends State<EpisodeInformation> {
         type: AppBarType.inner,
         title: "Episode Information",
         onSearch: () {},
-        shareLink: widget.shareLink ?? "",
+         shareLink:  "",
         menuID: widget.menuID,
       ),
       body: provider.isLoading
@@ -117,7 +118,8 @@ class _EpisodeInformationState extends State<EpisodeInformation> {
                         MaterialPageRoute(
                           builder: (_) => MediaListingScreen(
                             type: MediaType.episodes,
-                            categoryID: widget.episodeid,
+                            categoryID:data.seasonId.toString(),
+                            //  widget.episodeid,
                             albumID: "",
                             albumName: "Episodes",
                             menuID: widget.menuID,

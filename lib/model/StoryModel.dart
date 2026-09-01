@@ -19,6 +19,7 @@ class StoryModel {
   final String? description;
   final String? thumbnail;
   final String? pdfFile;
+  final String? page_url;
 
   StoryModel({
     required this.id,
@@ -40,7 +41,8 @@ class StoryModel {
     this.languageid,
     this.description,
     this.thumbnail,
-    this.pdfFile
+    this.pdfFile,
+    this.page_url
   });
 
   factory StoryModel.fromJson(Map<String, dynamic> json) {
@@ -80,7 +82,8 @@ class StoryModel {
       episode_name: json['episode_name'] ?? "",
       languageid: json['language_id'] ?? "",
       description: json['description'] ?? "",
-      pdfFile:json["page_url"] ??""
+      pdfFile:json["page_url"] ??"",
+      page_url:json['page_url'] ?? ""
   
     );
   }

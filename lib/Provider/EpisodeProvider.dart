@@ -82,7 +82,7 @@ class EpisodeProvider
 
   Future<void> getEpisodeInfo(
     BuildContext context,
-    int episodeId,
+    String episodeId,
   ) async {
 
     isLoading = true;
@@ -90,7 +90,7 @@ class EpisodeProvider
     infoStatus = ApiStatus.loading;
 
     notifyListeners();
-
+   print("Episode provider ${episodeId}");
     final result =
         await _service.fetchEpisodeInfo(
       context,
@@ -127,7 +127,7 @@ class EpisodeProvider
 
   Future<void> retryEpisodeInfo(
     BuildContext context,
-    int episodeId,
+    String episodeId,
   ) async {
 
     await getEpisodeInfo(

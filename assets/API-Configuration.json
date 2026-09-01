@@ -1,17 +1,13 @@
 {
     "environment": "UAT",
     "version": "1",
-
-
     "UAT": {
-        "hostUrl":  "https://mfv1-uat.ortdemo.com/",
-     
+        "hostUrl": "https://mfv1-uat.ortdemo.com/",
         "timeout": 120,
         "retry": 3
     },
     "development": {
-        "hostUrl":  "https://mfv1-uat.ortdemo.com/",
-     
+        "hostUrl": "https://mfv1-uat.ortdemo.com/",
         "timeout": 120,
         "retry": 3
     },
@@ -30,8 +26,4 @@
         "timeout": 120,
         "retry": 3
     }
-    
-   
 }
-
- 

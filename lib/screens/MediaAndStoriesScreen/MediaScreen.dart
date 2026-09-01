@@ -26,7 +26,7 @@ class MediaScreen extends StatelessWidget {
       getList: (provider) => provider.mediaList,
       isLoading: (provider) => provider.isLoading,
       hasMore: (provider) => provider.hasMore,
-
+     isCEO: true,
       /// API STATUS
       getStatus: (provider) =>
           provider.status,

@@ -127,7 +127,41 @@ final NewsLanguageModel allArticleLanguage =
               .toList(),
         ];
 
-      } else {
+      }
+      else if (type == MediaType.testimonialArticle) {
+
+        final result =
+            await _service
+                .fetchCountryByTestimonialCategories(
+          context,
+          categoryId,
+        );
+
+        if (!result.isSuccess) {
+
+          status = result.status;
+
+          errorMessage =
+              result.message ?? "";
+
+          return;
+        }
+
+        final res =
+            result.data ?? {};
+
+        countries = [
+          allCountry,
+          ...(res['data'] ?? [])
+              .map<CountryModel>(
+                (e) =>
+                    CountryModel.fromJson(e),
+              )
+              .toList(),
+        ];
+
+      } 
+      else {
 
         final result =
             await _service.fetchCountries(
@@ -377,7 +411,12 @@ print("ARTICLE GG");
       selectedCategory ??=
           allCategory;
 if (type == MediaType.article) {
-  selectedArticleLanguage ??= allArticleLanguage;
+ 
+  // selectedArticleLanguage ??= allArticleLanguage;
+   selectedArticleLanguage ??= articleLanguages.firstWhere(
+    (e) => e.id == 10,
+    orElse: () => allArticleLanguage,
+  );
 } else {
   selectedLanguage ??= allLanguage;
 }

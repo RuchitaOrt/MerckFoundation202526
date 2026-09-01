@@ -54,13 +54,22 @@ class AwardService {
     final List data =
         response['data'] ?? [];
 
-    final awardList = data
-        .map(
-          (e) =>
-              AwardModel.fromJson(e),
-        )
-        .toList();
-
+    // final awardList = data
+    //     .map(
+    //       (e) =>
+    //           AwardModel.fromJson(e),
+    //     )
+    //     .toList();
+/// Remove inactive awards
+  final awardList = data
+      .where(
+        (e) =>
+            e['status'] == true,
+      )
+      .map(
+        (e) => AwardModel.fromJson(e),
+      )
+      .toList();
     return ApiResult(
       status: result.status,
       data: awardList,

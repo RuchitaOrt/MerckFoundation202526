@@ -29,7 +29,7 @@ class CeoMessageScreen extends StatelessWidget {
     return CommonListingScreen<
         ArticleModel,
         CeoMessageProvider>(
-
+     isCEO: true,
       title: title,
 
       menuID: menuID,

@@ -70,17 +70,45 @@ class _DigitalLibraryViewerState extends State<DigitalLibraryViewer> {
   bool isLoading = true;
 
   late WebViewController controller;
+String getSanityUrl(String pageUrl) {
+  const mediaPath = '/media/';
 
+  final index = pageUrl.indexOf(mediaPath);
 
+  if (index == -1) {
+    return pageUrl;
+  }
+
+  final pathAfterMedia =
+      pageUrl.substring(index + mediaPath.length);
+
+  return 'https://sanity.merck-foundation.com/flipbook-proxy/$pathAfterMedia';
+}
   @override
   void initState() {
     super.initState();
-    print("pdf");
+    print("DIGIRALpdf");
+ print("${widget.pdfUrl}");
 
-final pdfViewerUrl =
-    'https://mf-front-v2-uat.ortdemo.com/pdf-viewer'
-    '?url=${Uri.encodeComponent(widget.pdfUrl)}';
+// final pdfViewerUrl =
 
+// https://sanity.merck-foundation.com/flipbook-proxy/news_and_application/8552f984-235a-42b1-9db1-d36ed820f08e_TUM%20HI%20HO%203.pdf
+// https://sanity.merck-foundation.com/flipbook-proxy/news_and_applications/1764061440_61341f0c02e7cd3028aa.pdf
+    // 'https://mf-front-v2-uat.ortdemo.com/pdf-viewer'
+    // '?url=${Uri.encodeComponent(widget.pdfUrl)}';
+    // "https://sanity.merck-foundation.com/flipbook-proxy/news_and_applications/1764061440_61341f0c02e7cd3028aa.pdf";
+// final pdfViewerUrl =
+//     'https://sanity.merck-foundation.com/flipbook-proxy/news_and_applications/1764061440_61341f0c02e7cd3028aa.pdf';
+  // 'https://mf-front-v2-uat.ortdemo.com/pdf-viewer'
+    // '?url=${Uri.encodeComponent(widget.pdfUrl)}';
+
+    // https://sanity.merck-foundation.com/flipbook-proxy/digital_library/1639993429_cca7a831eeb6dbe2c188.pdf
+    // "https://sanity.merck-foundation.com/flipbook-proxy/${"/digital_library/1777285839_08f4b190035b71be43e1.pdf"}";
+    final sanityPdfUrl = getSanityUrl(widget.pdfUrl);
+
+final pdfViewerUrl =sanityPdfUrl;
+    // 'https://mf-front-v2-uat.ortdemo.com/pdf-viewer'
+    // '?url=${Uri.encodeComponent(sanityPdfUrl)}';
 debugPrint('PDF URL: ${widget.pdfUrl}');
 debugPrint('PDF Viewer URL: $pdfViewerUrl');
 

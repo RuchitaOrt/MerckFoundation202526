@@ -39,7 +39,7 @@ class NewsRelease extends StatelessWidget {
   Widget build(BuildContext context) {
     return CommonListingScreen<MediaModel, NewsReleaseProvider>(
       title:title,
-
+isCEO: true,
       /// 🔥 ADD THIS
       topWidget: Padding(
         padding: const EdgeInsets.all(1),

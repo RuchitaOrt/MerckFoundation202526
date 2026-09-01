@@ -93,16 +93,17 @@ class EpisodeService {
   Future<ApiResult<EpisodeInfo>>
       fetchEpisodeInfo(
     BuildContext context,
-    int episodeId,
+    String episodeId,
   ) async {
-
+print("episode_id ${episodeId}");
     final result =
         await _apiManager.apiRequest(
       context,
       API.getepisodeinfo,
       jsonval: {
         "episode_id":
-            episodeId.toString(),
+        episodeId
+            // int.parse(episodeId.toString()),
       },
     );
 

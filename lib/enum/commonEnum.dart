@@ -72,7 +72,8 @@ MerckMoreThanAmbasdar,
   award,
   season,
   MerckMoreThanAmbasdarFormer,
-  PhotoCategory
+  PhotoCategory,
+  OurPartners
 }
 
 extension HomeLayoutTypeExtension on String {
@@ -106,7 +107,8 @@ extension HomeLayoutTypeExtension on String {
 
       case "LeaderShip":
         return HomeLayoutType.leadership;
-
+  case "OurPartners":
+        return HomeLayoutType.OurPartners;
       case "Marquee":
         return HomeLayoutType.marquee;
 

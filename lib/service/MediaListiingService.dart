@@ -149,7 +149,7 @@ print(body);
           "season_id":
               categoryId,
         };
-
+print(body);
         break;
 
         case MediaType.ambassadorAlbum:

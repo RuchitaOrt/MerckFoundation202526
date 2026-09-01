@@ -14,6 +14,7 @@ import 'package:merckfoundation_252026/widgets/CommonWidget/ImageShimmer.dart';
 
 import 'package:merckfoundation_252026/widgets/PauseImage.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
+import 'package:merckfoundation_252026/widgets/share_bottom_sheet.dart';
 
 class MediaCard extends StatelessWidget {
   final String id;
@@ -67,10 +68,11 @@ class MediaCard extends StatelessWidget {
             /// IMAGE
             Expanded(
               flex:
-            mediaType==MediaType.photoGallery?3:     (type == HomeLayoutType.MerckMoreThanAmbasdarFormer &&
+            //  mediaType==MediaType.photoGallery?3:    
+             (type == HomeLayoutType.MerckMoreThanAmbasdarFormer &&
                       content_button)
-                  ? 1
-                  : 2, // 🔥 give more space to image
+                  ? 1 :type == HomeLayoutType.MerckMoreThanAmbasdarFormer?2: title.length>30 ?2:3,
+                  // :title.length <10?4:title.length <20?3: 1, // 🔥 give more space to image
               child: Stack(
                 alignment: Alignment.center,
                 children: [
@@ -79,6 +81,7 @@ class MediaCard extends StatelessWidget {
                       left: 8,
                       right: 8,
                       top: 10,
+
                     ), // 🔥 equal padding
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
@@ -88,7 +91,8 @@ class MediaCard extends StatelessWidget {
   imageUrl: image,
   width: double.infinity,
   height: double.infinity,
-  fit:mediaType==MediaType.photoGallery?BoxFit.cover: BoxFit.contain,
+  fit:type==HomeLayoutType.OurPartners?BoxFit.contain: BoxFit.cover,
+  //  mediaType==MediaType.photoGallery?BoxFit.cover: BoxFit.contain,
   placeholder: (context, url) =>ImageShimmer(),
   errorWidget: (context, url, error) => SizedBox.expand(
     child: Image.asset(
@@ -139,6 +143,7 @@ class MediaCard extends StatelessWidget {
                           iconcolor: Colors.white,
                           onSelected: (value) {
                             if (value == "More Info") {
+                              print("ID is ${id}");
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -150,6 +155,9 @@ class MediaCard extends StatelessWidget {
                                   ),
                                 ),
                               );
+                            }else{
+                                print("SHARE Mediea https://sanity.merck-foundation.com${shareLink!}");
+                              ShareBottomSheet.show(context, shareLink: shareLink!);
                             }
                           },
                         ),
@@ -162,7 +170,7 @@ class MediaCard extends StatelessWidget {
             ),
 
             /// TEXT
-            Expanded(
+         title.length==0?Container(height: 8,):   Expanded(
               flex: 1,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
@@ -176,9 +184,10 @@ class MediaCard extends StatelessWidget {
                   children: [
                     FormLabel(
                       text:
-                        
-                       "${title}",
-                      maxLines:mediaType==MediaType.photoGallery?2: 3,
+                        // "22222222223333333 erererererererkj nkjkjkjk",
+                        "${title}",
+                      maxLines:3,
+                      // mediaType==MediaType.photoGallery?2: 3,
                       textAlignment: TextAlign.center,
                       fontSize: screenWidth * 0.030,
                       labelColor: fontColor,

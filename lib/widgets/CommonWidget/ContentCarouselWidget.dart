@@ -149,30 +149,7 @@ class _ContentPage extends StatelessWidget {
                         )
                   ),
                     
-                    //  FadeInImage.assetNetwork(
-                    //   placeholder: CommonImagePath.placeHolder,
-                    //   image: image,
-
-                    //   /// removes white background issue
-                    //   fit: BoxFit.contain,
-
-                    //   /// transparent placeholder area
-                    //   placeholderFit: BoxFit.cover,
-
-                    //   fadeInDuration: const Duration(milliseconds: 200),
-
-                    //   imageErrorBuilder: (context, error, stackTrace) {
-                    //     return Container(
-                    //       color: Colors.grey.shade200,
-                    //       child: const Icon(
-                    //         Icons.broken_image,
-                    //         size: 40,
-                    //         color: Colors.grey,
-                    //       ),
-                    //     );
-                    //   },
-                    // ),
-                  // ),
+                   
                 ),
               if (image.toString().isNotEmpty) const SizedBox(height: 18),
 
@@ -190,7 +167,11 @@ class _ContentPage extends StatelessWidget {
 
               /// DESCRIPTION
               if ((item['description'] ?? "").toString().isNotEmpty)
-                SmartHtmlWidget(html: item['description']),
+                SmartHtmlWidget(html: 
+
+                item['description'],
+                
+                ),
 
               const SizedBox(height: 20),
             ],

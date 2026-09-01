@@ -450,7 +450,7 @@ barrierColor: Colors.transparent,
                                       ),
                                     );
                         } else if (widget.type ==
-                                  HomeLayoutType.DigitalLibrary ||
+                                  HomeLayoutType.DigitalLibrary  ||
                               widget.type ==
                                   HomeLayoutType.CallForApplication) {
                             ShowDialogs.launchURL(item.pdfFile ?? "");
@@ -475,6 +475,23 @@ barrierColor: Colors.transparent,
                           }
                         },
                       );
+                    }  
+
+                    if(widget.type==HomeLayoutType.OurPartners)
+                    {
+                      return  MediaCard(
+                        content_button: widget.content_button,
+                      menuID: widget.menuID,
+                      shareLink: widget.shareLink,
+                      id: item.id.toString(),
+                      image: item.thumbnail ?? "" ,
+                      title:  item.title ?? "",
+                     
+                    type: HomeLayoutType.OurPartners,
+                      onTap: () {
+                    ShowDialogs.launchURL(item.pdfFile ?? "");
+                      },
+                    );
                     }
  final thumb = item.thumbnail ?? "";
 
@@ -503,13 +520,20 @@ barrierColor: Colors.transparent,
                       showmenu: widget.type == HomeLayoutType.episodes,
                       showPlayIcon: true,
                       onTap: () {
-                        final key = imageUrl.substring(
-                          imageUrl.length - 11,
-                        );
+                        print("25Aug pat");
+                        print(imageUrl);
+                        final key = getYoutubeVideoId(thumb);
 
-                        ShowDialogs.youtubevideolink(
-                          "https://www.youtube.com/watch?v=$key?autoplay=1",
-                        );
+if (key != null && key.isNotEmpty) {
+  ShowDialogs.youtubevideolink(
+    "https://www.youtube.com/watch?v=$key&autoplay=1",
+  );
+}
+//                        final key = getYoutubeVideoId(imageUrl);
+// print(key);
+//                         ShowDialogs.youtubevideolink(
+//                           "https://www.youtube.com/watch?v=$key?autoplay=1",
+//                         );
                       },
                     );
                   },

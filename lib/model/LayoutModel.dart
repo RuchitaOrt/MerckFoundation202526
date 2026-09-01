@@ -4,6 +4,7 @@ import 'package:merckfoundation_252026/model/CommonModel.dart';
 import 'package:merckfoundation_252026/model/StoryModel.dart';
 
 class LayoutModel {
+  final String? id;
   final HomeLayoutType type;
 
   final String title;
@@ -37,5 +38,6 @@ class LayoutModel {
     this.stories = const [],
     this.awards = const [],
     this.carouselItems = const [],
+    this.id
   });
 }

@@ -40,39 +40,45 @@ class CommonContentPage extends StatefulWidget {
   State<CommonContentPage> createState() => _CommonContentPageState();
 }
 
-class _CommonContentPageState extends State<CommonContentPage>  with RouteAware {
+class _CommonContentPageState extends State<CommonContentPage> with RouteAware {
   bool isProgramMenuVisible = false;
   String pageTitle = "";
   bool shareLink = false;
   List<dynamic> programMenus = [];
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-  final CustomAdvFabController _fabController =
-    CustomAdvFabController();
+  final CustomAdvFabController _fabController = CustomAdvFabController();
 
-    @override
-void didChangeDependencies() {
-  super.didChangeDependencies();
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
-  final route = ModalRoute.of(context);
+    final route = ModalRoute.of(context);
 
-  if (route is PageRoute) {
-    routeObserver.subscribe(this, route);
+    if (route is PageRoute) {
+      routeObserver.subscribe(this, route);
+    }
   }
-}
-@override
-void dispose() {
-  routeObserver.unsubscribe(this);
-  super.dispose();
-}
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
 @override
 void didPopNext() {
-  // Called when another page is popped and
-  // CommonContentPage becomes visible again.
-
-  _fabController.collapse();
+  _fabController.collapseImmediately();
 }
+  // @override
+  // void didPopNext() {
+  //   // Called when another page is popped and
+  //   // CommonContentPage becomes visible again.
+
+  //   _fabController.collapse();
+  // }
+
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Customcolor.background,
 
@@ -84,6 +90,7 @@ void didPopNext() {
         shareLink: shareLink ? widget.shareLink : "", //widget.shareLink ?? "",
         menuID: widget.menuID ?? "",
         onBack: () {
+         _fabController.collapseImmediately();
           Navigator.pop(context);
         },
       ),
@@ -111,6 +118,7 @@ void didPopNext() {
               padding: const EdgeInsets.only(bottom: 10),
               child: CustomAdvFab(
                 controller: _fabController,
+                expandedHeight:programMenus.length ==3? size.height * 0.30:programMenus.length ==5? size.height * 0.40:programMenus.length ==6? size.height * 0.45:programMenus.length ==7? size.height * 0.55: size.height * 0.60,
                 icon: Icons.menu,
                 iconColor: Colors.white,
                 backgroundColor: Customcolor.textBlueColor,
@@ -170,8 +178,8 @@ void didPopNext() {
 
                             /// ✅ OPEN MAIN PAGE ALSO
                             onExpansionChanged: (expanded) {
-  onExpansionTap(expanded, item);
-},
+                              onExpansionTap(expanded, item);
+                            },
 
                             children: submenus.map<Widget>((submenu) {
                               return Container(
@@ -194,8 +202,8 @@ void didPopNext() {
                                     size: 12,
                                   ),
                                   onTap: () {
-    SubMenuTap(submenu);
-  },
+                                    SubMenuTap(submenu);
+                                  },
                                 ),
                               );
                             }).toList(),
@@ -227,11 +235,11 @@ void didPopNext() {
                           ),
                         ),
                         onTap: () {
-  MenuWithoutSubmenu(
-    context,
-    Map<String, dynamic>.from(item),
-  );
-},
+                          MenuWithoutSubmenu(
+                            context,
+                            Map<String, dynamic>.from(item),
+                          );
+                        },
                       ),
                     );
                   },
@@ -242,470 +250,435 @@ void didPopNext() {
     );
   }
 
-// ignore: non_constant_identifier_names
-Future<void> MenuWithoutSubmenu(
-  BuildContext context,
-  Map<String, dynamic> item,
-) async {
-  print("HIT1");
+  // ignore: non_constant_identifier_names
+  Future<void> MenuWithoutSubmenu(
+    BuildContext context,
+    Map<String, dynamic> item,
+  ) async {
+    print("HIT1");
 
-//   final provider = Provider.of<PageProvider>(
-//     context,
-//     listen: false,
-//   );
+    //   final provider = Provider.of<PageProvider>(
+    //     context,
+    //     listen: false,
+    //   );
 
-//   final data = await provider.fetchWatchMorePage(
-//     context,
-//     item['id'].toString(),
-//   );
+    //   final data = await provider.fetchWatchMorePage(
+    //     context,
+    //     item['id'].toString(),
+    //   );
 
-//   if (!mounted) return;
+    //   if (!mounted) return;
 
-//   debugPrint("WATCH MORE DATA = $data");
+    //   debugPrint("WATCH MORE DATA = $data");
 
-//   if (data == null) {
-//     debugPrint("WATCH MORE: DATA IS NULL");
-//     return;
-//   }
+    //   if (data == null) {
+    //     debugPrint("WATCH MORE: DATA IS NULL");
+    //     return;
+    //   }
 
-//   final root = data['data'];
+    //   final root = data['data'];
 
-//   if (root == null || root is! Map) {
-//     debugPrint("WATCH MORE: INVALID ROOT");
-//     debugPrint("ROOT = $root");
-//     return;
-//   }
+    //   if (root == null || root is! Map) {
+    //     debugPrint("WATCH MORE: INVALID ROOT");
+    //     debugPrint("ROOT = $root");
+    //     return;
+    //   }
 
-//   // Convert to Map<String, dynamic>
-//   final menu = Map<String, dynamic>.from(root);
-// print("MENU ${item['id'].toString()}");
-  // --------------------------------------------------
-  // STATIC MENU
-  // --------------------------------------------------
-  if (item['menu_type'] == "static") {
+    //   // Convert to Map<String, dynamic>
+    //   final menu = Map<String, dynamic>.from(root);
+    // print("MENU ${item['id'].toString()}");
+    // --------------------------------------------------
+    // STATIC MENU
+    // --------------------------------------------------
+    if (item['menu_type'] == "static") {
+      // NEWSLETTER
+      if (item['is_newsletter'] == true) {
+        debugPrint("NAVIGATING -> NEWSLETTER");
 
-    // NEWSLETTER
-    if (item['is_newsletter'] == true) {
-      debugPrint("NAVIGATING -> NEWSLETTER");
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => DetailScreen(
-            "",
-            "",
-            title: item['menu_name']?.toString() ?? "",
-            articleId: item['newsletter_id']?.toString() ?? "",
-            languageId: "",
-            isDetailApiCalled: true,
-            shareLink: "",
-            menuID:  item['id'].toString(),
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DetailScreen(
+              "",
+              "",
+              title: item['menu_name']?.toString() ?? "",
+              articleId: item['newsletter_id']?.toString() ?? "",
+              languageId: "",
+              isDetailApiCalled: true,
+              shareLink: "",
+              menuID: item['id'].toString(),
+            ),
           ),
-        ),
-      );
+        );
 
-      return;
-    }
-else
-    // AWARDS
-    if (item['is_awards'] == true) {
-      debugPrint("NAVIGATING -> AWARDS");
+        return;
+      } else
+      // AWARDS
+      if (item['is_awards'] == true) {
+        debugPrint("NAVIGATING -> AWARDS");
 
-      AppNavigation.navigateByMenuId(
-        context,
-        menuId: item['award_id']?.toString() ?? "",
-        title: item['menu_name']?.toString() ?? "",
-      );
+        AppNavigation.navigateByMenuId(
+          context,
+          menuId: item['award_id']?.toString() ?? "",
+          title: item['menu_name']?.toString() ?? "",
+        );
 
-      return;
-    }
-else
-    // VIDEO
-    if (item['is_video'] == true) {
-      debugPrint("NAVIGATING -> VIDEO");
+        return;
+      } else
+      // VIDEO
+      if (item['is_video'] == true) {
+        debugPrint("NAVIGATING -> VIDEO");
 
-      final videoCategories = item['video_category_array'];
+        final videoCategories = item['video_category_array'];
 
-      debugPrint("VIDEO CATEGORY = $videoCategories");
+        debugPrint("VIDEO CATEGORY = $videoCategories");
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MediaListingScreen(
-            type: MediaType.all,
-            categoryID: videoCategories is List
-                ? videoCategories.join(',')
-                : "",
-            albumID: "",
-            albumName: "",
-            menuID:  item['id'].toString(),
-            title: item['menu_name']?.toString() ?? "",
-            shareLink: item['share_link']?.toString() ?? "",
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MediaListingScreen(
+              type: MediaType.all,
+              categoryID: videoCategories is List
+                  ? videoCategories.join(',')
+                  : "",
+              albumID: "",
+              albumName: "",
+              menuID: item['id'].toString(),
+              title: item['menu_name']?.toString() ?? "",
+              shareLink: item['share_link']?.toString() ?? "",
+            ),
           ),
-        ),
-      );
+        );
 
-      return;
-    }
-else
-    // DIGITAL LIBRARY
-    if (item['is_dglibrary'] == true) {
-      debugPrint("NAVIGATING -> DIGITAL LIBRARY");
+        return;
+      } else
+      // DIGITAL LIBRARY
+      if (item['is_dglibrary'] == true) {
+        debugPrint("NAVIGATING -> DIGITAL LIBRARY");
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MediaListingScreen(
-            type: MediaType.digitalLibraryall,
-            categoryID: item['digital_library_id']?.toString() ?? "",
-            albumID: "",
-            albumName: "",
-            menuID:  item['id'].toString(),
-            shareLink: "",
-            title: "Digital Library",
-            digitalLibraryCategoryName: "",
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MediaListingScreen(
+              type: MediaType.digitalLibraryall,
+              categoryID: item['digital_library_id']?.toString() ?? "",
+              albumID: "",
+              albumName: "",
+              menuID: item['id'].toString(),
+              shareLink: "",
+              title: "Digital Library",
+              digitalLibraryCategoryName: "",
+            ),
           ),
-        ),
-      );
+        );
 
-      return;
-    }
-else
-    // PHOTO
-    if (item['is_photo'] == true) {
-      debugPrint("NAVIGATING -> PHOTO");
+        return;
+      } else
+      // PHOTO
+      if (item['is_photo'] == true) {
+        debugPrint("NAVIGATING -> PHOTO");
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MediaListingScreen(
-            type: MediaType.photoAlbum,
-            categoryID: item['photo_category_id']?.toString() ?? "",
-            albumID: item['photo_album_id']?.toString() ?? "",
-            albumName:  item['menu_title']?.toString() ?? "",
-            menuID:  item['id'].toString(),
-            shareLink: "",
-            title: item['menu_title']?.toString() ?? "",
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MediaListingScreen(
+              type: MediaType.photoAlbum,
+              categoryID: item['photo_category_id']?.toString() ?? "",
+              albumID: item['photo_album_id']?.toString() ?? "",
+              albumName: item['menu_title']?.toString() ?? "",
+              menuID: item['id'].toString(),
+              shareLink: "",
+              title: item['menu_title']?.toString() ?? "",
+            ),
           ),
-        ),
-      );
+        );
 
-      return;
-    }
-else{
-    // PDF / EXTERNAL URL
-    debugPrint("NAVIGATING -> URL");
+        return;
+      } else {
+        // PDF / EXTERNAL URL
+        debugPrint("NAVIGATING -> URL");
 
-    ShowDialogs.launchURL(
-      item['full_url']?.toString() ?? "",
-    );
+        ShowDialogs.launchURL(item['full_url']?.toString() ?? "");
 
-    return;
-}
-  }else{
- // --------------------------------------------------
-  // NORMAL MENU
-  // --------------------------------------------------
-     final provider = Provider.of<PageProvider>(
-    context,
-    listen: false,
-  );
-
-  final data = await provider.fetchWatchMorePage(
-    context,
-   item['id'].toString(),
-  );
-
-  if (!context.mounted) return;
-
-  final root = data?['data'];
-
-  if (root is Map) {
-    final dataType =
-        (root['data_type'] ?? '').toString().toLowerCase();
-
-    debugPrint("MENU ID: ");
-    debugPrint("DATA TYPE: $dataType");
-
-    if (dataType == 'pdf' || dataType == 'redirectionlink') {
-      final pdfUrl =
-          root['pdf_data']?['pdf_url']?.toString() ?? '';
-
-      if (pdfUrl.isNotEmpty) {
-        await ShowDialogs.launchURL(pdfUrl);
+        return;
       }
+    } else {
+      // --------------------------------------------------
+      // NORMAL MENU
+      // --------------------------------------------------
+      final provider = Provider.of<PageProvider>(context, listen: false);
 
-      return;
-    }else{
-      debugPrint("NAVIGATING -> APP NAVIGATION");
+      final data = await provider.fetchWatchMorePage(
+        context,
+        item['id'].toString(),
+      );
 
-  AppNavigation.navigateByMenuId(
-    context,
-    menuId: item['id']?.toString() ?? "",
-    title: item['menu_name']?.toString() ?? "",
-    shareLink: item['menu_url']?.toString(),
-  );
+      if (!context.mounted) return;
+
+      final root = data?['data'];
+
+      if (root is Map) {
+        final dataType = (root['data_type'] ?? '').toString().toLowerCase();
+
+        debugPrint("MENU ID: ");
+        debugPrint("DATA TYPE: $dataType");
+
+        if (dataType == 'pdf' || dataType == 'redirectionlink') {
+          final pdfUrl = root['pdf_data']?['pdf_url']?.toString() ?? '';
+
+          if (pdfUrl.isNotEmpty) {
+            await ShowDialogs.launchURL(pdfUrl);
+          }
+
+          return;
+        } else {
+          debugPrint("NAVIGATING -> APP NAVIGATION");
+
+          AppNavigation.navigateByMenuId(
+            context,
+            menuId: item['id']?.toString() ?? "",
+            title: item['menu_name']?.toString() ?? "",
+            shareLink: item['menu_url']?.toString(),
+          );
+        }
+      }
     }
   }
-  
-  }
 
- 
-}
   Future<void> SubMenuTap(Map<String, dynamic> submenu) async {
-  print(" SubMenuTap HIT submenu");
+    print(" SubMenuTap HIT submenu");
 
-  if (submenu['menu_type'] == "static") {
-    if (submenu['is_newsletter'] == true) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => DetailScreen(
-            "",
-            "",
-            title: submenu['menu_name'],
-            articleId: submenu['newsletter_id'].toString(),
-            languageId: "",
-            isDetailApiCalled: true,
-            shareLink: "",
-            menuID: submenu['id'].toString() ,
+    if (submenu['menu_type'] == "static") {
+      if (submenu['is_newsletter'] == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DetailScreen(
+              "",
+              "",
+              title: submenu['menu_name'],
+              articleId: submenu['newsletter_id'].toString(),
+              languageId: "",
+              isDetailApiCalled: true,
+              shareLink: "",
+              menuID: submenu['id'].toString(),
+            ),
           ),
-        ),
-      );
-    } else if (submenu['is_awards'] == true) {
-      print("HIT submenu awards");
+        );
+      } else if (submenu['is_awards'] == true) {
+        print("HIT submenu awards");
 
-      AppNavigation.navigateByMenuId(
-        context,
-        menuId: submenu['award_id'].toString(),
-        title: submenu['menu_name'],
-      );
-    } else if (submenu['is_video'] == true) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MediaListingScreen(
-            type: MediaType.all,
-            categoryID: submenu['video_category_id'].join(','),
-            albumID: "",
-            albumName: "",
-            menuID: submenu['id'].toString(),
-            title: submenu['menu_name'],
-            shareLink: "",
+        AppNavigation.navigateByMenuId(
+          context,
+          menuId: submenu['award_id'].toString(),
+          title: submenu['menu_name'],
+        );
+      } else if (submenu['is_video'] == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MediaListingScreen(
+              type: MediaType.all,
+              categoryID: submenu['video_category_id'].join(','),
+              albumID: "",
+              albumName: "",
+              menuID: submenu['id'].toString(),
+              title: submenu['menu_name'],
+              shareLink: "",
+            ),
           ),
-        ),
-      );
-    } else if (submenu['is_dglibrary'] == true) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MediaListingScreen(
-            type: MediaType.digitalLibrary,
-            categoryID: submenu['digital_library_id'],
-            albumID: "",
-            albumName: "",
-            menuID: submenu['id'].toString() ,
-            shareLink: "",
-            title: "Digital Library",
-            digitalLibraryCategoryName: "",
+        );
+      } else if (submenu['is_dglibrary'] == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MediaListingScreen(
+              type: MediaType.digitalLibrary,
+              categoryID: submenu['digital_library_id'],
+              albumID: "",
+              albumName: "",
+              menuID: submenu['id'].toString(),
+              shareLink: "",
+              title: "Digital Library",
+              digitalLibraryCategoryName: "",
+            ),
           ),
-        ),
-      );
-    } else if (submenu['is_photo'] == true) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MediaListingScreen(
-            type: MediaType.photoAlbum,
-            categoryID: submenu['photo_category_id'].toString(),
-            albumID: submenu['photo_album_id'].toString(),
-            albumName: submenu['menu_title'],
-            menuID: submenu['id'].toString() ,
-            shareLink: "",
-            title: submenu['menu_title'],
+        );
+      } else if (submenu['is_photo'] == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MediaListingScreen(
+              type: MediaType.photoAlbum,
+              categoryID: submenu['photo_category_id'].toString(),
+              albumID: submenu['photo_album_id'].toString(),
+              albumName: submenu['menu_title'],
+              menuID: submenu['id'].toString(),
+              shareLink: "",
+              title: submenu['menu_title'],
+            ),
           ),
-        ),
-      );
-    } else {
-      ShowDialogs.launchURL(
-        submenu['full_url'] ?? "",
-      );
-    }
-  } 
-  else {
-    print(" SubMenuTap HIT submenu else");
-              final provider = Provider.of<PageProvider>(
-    context,
-    listen: false,
-  );
-
-  final data = await provider.fetchWatchMorePage(
-    context,
-  submenu['id'].toString(),
-  );
-
-  if (!context.mounted) return;
-
-  final root = data?['data'];
-
-  if (root is Map) {
-    final dataType =
-        (root['data_type'] ?? '').toString().toLowerCase();
-print(dataType);
-    debugPrint("MENU ID: ");
-    debugPrint("DATA TYPE DATA TYPE: $dataType");
-
-    if (dataType == 'pdf' || dataType == 'redirectionlink') {
-      final pdfUrl =
-          root['pdf_data']?['pdf_url']?.toString() ?? '';
- print("pdfUrl");
- print(pdfUrl);
-      if (pdfUrl.isNotEmpty) {
-         
-        await ShowDialogs.launchURL(pdfUrl);
+        );
+      } else {
+        ShowDialogs.launchURL(submenu['full_url'] ?? "");
       }
-
-      return;
-    }
-  else{
-      print("caaoled");
-     AppNavigation.navigateByMenuId(
-      context,
-      menuId: submenu['id'].toString(),
-      title: submenu['menu_name'],
-      shareLink: submenu['menu_url'],
-    );
-   }
-  }
-
-   
-  }
-}
-Future<void> onExpansionTap(bool expanded, Map<String, dynamic> item) async {
-   print("ONExpansion");
-  if (!expanded) return;
-
-  final List submenus = item['submenus'] ?? [];
-  final bool hasSubmenus = submenus.isNotEmpty;
-
-  if (hasSubmenus) return;
-
-  if (item['menu_type'] == "static") {
-    if (item['is_newsletter'] == true) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => DetailScreen(
-            "",
-            "",
-            title: item['menu_name'],
-            articleId: item['newsletter_id'].toString(),
-            languageId: "",
-            isDetailApiCalled: true,
-            shareLink: "",
-            menuID:item['id'].toString() 
-          ),
-        ),
-      );
-    } else if (item['is_awards'] == true) {
-      AppNavigation.navigateByMenuId(
-        context,
-        menuId: item['award_id'].toString(),
-        title: item['menu_name'],
-      );
-    } else if (item['is_video'] == true) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MediaListingScreen(
-            type: MediaType.all,
-            categoryID: item['video_category_id'].join(','),
-            albumID: "",
-            albumName: "",
-            menuID: item['id'].toString(),
-            title: item['menu_name'],
-            shareLink: "",
-          ),
-        ),
-      );
-    } else if (item['is_dglibrary'] == true) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MediaListingScreen(
-            type: MediaType.digitalLibrary,
-            categoryID: item['digital_library_id'],
-            albumID: "",
-            albumName: "",
-            menuID: item['id'].toString() ,
-            shareLink: "",
-            title: "Digital Library",
-            digitalLibraryCategoryName: "",
-          ),
-        ),
-      );
-    } else if (item['is_photo'] == true) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MediaListingScreen(
-            type: MediaType.photoAlbum,
-            categoryID: item['photo_category_id'],
-            albumID: item['photo_album_id'],
-            albumName:item['menu_title'],
-            menuID: item['id'].toString() ,
-            shareLink: "",
-            title:item['menu_title'],
-          ),
-        ),
-      );
     } else {
-      ShowDialogs.launchURL(
-        item['full_url'] ?? "",
+      print(" SubMenuTap HIT submenu else");
+      final provider = Provider.of<PageProvider>(context, listen: false);
+
+      final data = await provider.fetchWatchMorePage(
+        context,
+        submenu['id'].toString(),
       );
-    }
-  } else {
-              final provider = Provider.of<PageProvider>(
-    context,
-    listen: false,
-  );
 
-  final data = await provider.fetchWatchMorePage(
-    context,
-   item['id'].toString() 
-  );
+      if (!context.mounted) return;
 
-  if (!context.mounted) return;
+      final root = data?['data'];
 
-  final root = data?['data'];
+      if (root is Map) {
+        final dataType = (root['data_type'] ?? '').toString().toLowerCase();
+        print(dataType);
+        debugPrint("MENU ID: ");
+        debugPrint("DATA TYPE DATA TYPE: $dataType");
 
-  if (root is Map) {
-    final dataType =
-        (root['data_type'] ?? '').toString().toLowerCase();
+        if (dataType == 'pdf' || dataType == 'redirectionlink') {
+          final pdfUrl = root['pdf_data']?['pdf_url']?.toString() ?? '';
+          print("pdfUrl");
+          print(pdfUrl);
+          if (pdfUrl.isNotEmpty) {
+            await ShowDialogs.launchURL(pdfUrl);
+          }
 
-    debugPrint("MENU ID: ");
-    debugPrint("DATA TYPE: $dataType");
-
-    if (dataType == 'pdf' || dataType == 'redirectionlink') {
-      final pdfUrl =
-          root['pdf_data']?['pdf_url']?.toString() ?? '';
-
-      if (pdfUrl.isNotEmpty) {
-        await ShowDialogs.launchURL(pdfUrl);
+          return;
+        } else {
+          print("caaoled");
+          AppNavigation.navigateByMenuId(
+            context,
+            menuId: submenu['id'].toString(),
+            title: submenu['menu_name'],
+            shareLink: submenu['menu_url'],
+          );
+        }
       }
-
-      return;
-    }else{
-
-    AppNavigation.navigateByMenuId(
-      context,
-      menuId: item['id'].toString(),
-      title: item['menu_name'],
-      shareLink: item['menu_url'],
-    );
     }
   }
 
+  Future<void> onExpansionTap(bool expanded, Map<String, dynamic> item) async {
+    print("ONExpansion");
+    if (!expanded) return;
+
+    final List submenus = item['submenus'] ?? [];
+    final bool hasSubmenus = submenus.isNotEmpty;
+
+    if (hasSubmenus) return;
+
+    if (item['menu_type'] == "static") {
+      if (item['is_newsletter'] == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DetailScreen(
+              "",
+              "",
+              title: item['menu_name'],
+              articleId: item['newsletter_id'].toString(),
+              languageId: "",
+              isDetailApiCalled: true,
+              shareLink: "",
+              menuID: item['id'].toString(),
+            ),
+          ),
+        );
+      } else if (item['is_awards'] == true) {
+        AppNavigation.navigateByMenuId(
+          context,
+          menuId: item['award_id'].toString(),
+          title: item['menu_name'],
+        );
+      } else if (item['is_video'] == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MediaListingScreen(
+              type: MediaType.all,
+              categoryID: item['video_category_id'].join(','),
+              albumID: "",
+              albumName: "",
+              menuID: item['id'].toString(),
+              title: item['menu_name'],
+              shareLink: "",
+            ),
+          ),
+        );
+      } else if (item['is_dglibrary'] == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MediaListingScreen(
+              type: MediaType.digitalLibrary,
+              categoryID: item['digital_library_id'],
+              albumID: "",
+              albumName: "",
+              menuID: item['id'].toString(),
+              shareLink: "",
+              title: "Digital Library",
+              digitalLibraryCategoryName: "",
+            ),
+          ),
+        );
+      } else if (item['is_photo'] == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MediaListingScreen(
+              type: MediaType.photoAlbum,
+              categoryID: item['photo_category_id'],
+              albumID: item['photo_album_id'],
+              albumName: item['menu_title'],
+              menuID: item['id'].toString(),
+              shareLink: "",
+              title: item['menu_title'],
+            ),
+          ),
+        );
+      } else {
+        ShowDialogs.launchURL(item['full_url'] ?? "");
+      }
+    } else {
+      final provider = Provider.of<PageProvider>(context, listen: false);
+
+      final data = await provider.fetchWatchMorePage(
+        context,
+        item['id'].toString(),
+      );
+
+      if (!context.mounted) return;
+
+      final root = data?['data'];
+
+      if (root is Map) {
+        final dataType = (root['data_type'] ?? '').toString().toLowerCase();
+
+        debugPrint("MENU ID: ");
+        debugPrint("DATA TYPE: $dataType");
+
+        if (dataType == 'pdf' || dataType == 'redirectionlink') {
+          final pdfUrl = root['pdf_data']?['pdf_url']?.toString() ?? '';
+
+          if (pdfUrl.isNotEmpty) {
+            await ShowDialogs.launchURL(pdfUrl);
+          }
+
+          return;
+        } else {
+          AppNavigation.navigateByMenuId(
+            context,
+            menuId: item['id'].toString(),
+            title: item['menu_name'],
+            shareLink: item['menu_url'],
+          );
+        }
+      }
+    }
   }
-}
 }

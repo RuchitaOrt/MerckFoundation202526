@@ -215,6 +215,7 @@ void addLayouts(String key) {
     return LayoutModel(
       type: type,
 
+      id:layout['id'] ?? "",
       title: layout['title'] ?? "",
 
       mobileView: layout['mobile_view'] ?? "",

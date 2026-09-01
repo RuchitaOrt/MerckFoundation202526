@@ -28,9 +28,10 @@ class SearchProvider extends ChangeNotifier {
   isLoading = true;
   notifyListeners();
 
-  
+  print("keyword");
+  print(keyword);
 final model = await _service.search(keyword, _page);
-
+print(model);
 if (model != null) {
   searchList = model.results ?? [];
   hasMore = model.next != null;

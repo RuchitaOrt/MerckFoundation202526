@@ -92,20 +92,17 @@ Widget build(BuildContext context) {
 
         final season = provider.seasons[index];
 
-        return Padding(
-          padding: const EdgeInsets.only(top: 10, bottom: 20),
-          child: HorizontalMediaSection(
-            title: season.seasonName,
-            buttonText: CommonStrings.viewAll,
-            seasonID: season.id.toString(),
-            showMenu: true,
-            buttonLink: HomeLayoutType.season.name,
-            menuID: "",
-            shareLink: widget.shareLink,
-            type: HomeLayoutType.season,
-            content: season.episodes.map((e) => e.toMap()).toList(),
-            
-          ),
+        return HorizontalMediaSection(
+          title: season.seasonName,
+          buttonText: CommonStrings.viewAll,
+          seasonID: season.id.toString(),
+          showMenu: true,
+          buttonLink: HomeLayoutType.season.name,
+          menuID: "",
+          shareLink: widget.shareLink,
+          type: HomeLayoutType.season,
+          content: season.episodes.map((e) => e.toMap()).toList(),
+          
         );
       },
     );

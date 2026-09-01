@@ -31,6 +31,7 @@ class SplashProvider with ChangeNotifier {
   if (response != null) {
     serverVersion = response.data?.androidVersion;
     iosVersion = response.data?.iosVersion;
+    print("Android: ${serverVersion}");
 
     debugPrint(serverVersion);
     debugPrint(iosVersion);

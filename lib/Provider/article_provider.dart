@@ -77,7 +77,7 @@ void loadMoreLocal() {
   /// LIST API
   /// =========================
   Future<void> loadInitial(BuildContext context, {
-  String languageId = "",
+  String languageId = "10",
 }) async {
     if (useLocalPagination) return;
      selectedLanguageId = languageId;
@@ -154,6 +154,44 @@ void loadMoreLocal() {
     isDetailLoading = false;
     notifyListeners();
   }
+  Future<void> loadLeaderDetail(
+    BuildContext context, {
+    required String leader_id
+   
+  }) async {
+    isDetailLoading = true;
+    detailStatus = ApiStatus.loading;
+    notifyListeners();
+
+    try {
+      final result = await _service.fetchLeaderDetail(
+        context,
+        leader_id:leader_id
+      );
+ 
+      detailStatus = result.status;
+ 
+      if (result.isSuccess) {
+        final response = result.data;
+
+        articleDetail = ArticleModel.fromJson(response['data']);
+        selectedLanguageId = articleDetail?.language_id ?? "";
+         print("availabe labguage");
+      print(articleDetail!.availableLanguages!.length);
+      } else {
+        detailStatus = ApiStatus.error;
+        errorMessage = result.message ?? "";
+         print("loadArticleDetail 4");
+      }
+    } catch (e) {
+      detailStatus = ApiStatus.noInternet;
+      errorMessage =  CommonStrings.noInternetConnection;
+       print("loadArticleDetail 5 ${e.toString()}");
+    }
+
+    isDetailLoading = false;
+    notifyListeners();
+  }
 
   Future<void> retryDetail(
     BuildContext context, {
@@ -166,7 +204,16 @@ void loadMoreLocal() {
       languageId: languageId,
     );
   }
-
+  Future<void> retryLeaderDetail(
+    BuildContext context, {
+    required String leader_id
+   
+  }) async {
+    await loadLeaderDetail(
+      context,
+      leader_id: leader_id
+    );
+  }
   Future<void> retryInitial(BuildContext context) async {
     await loadInitial(context, languageId: selectedLanguageId,);
   }

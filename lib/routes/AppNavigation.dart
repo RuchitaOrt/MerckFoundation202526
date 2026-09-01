@@ -93,18 +93,18 @@ class AppNavigation {
         break;
 
       /// OUR PARTNERS
-      case '15':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => OurPartnersScreen(
-              menuID: menuId,
-              title: title,
-              shareLink: shareLink,
-            ),
-          ),
-        );
-        break;
+      // case '15':
+      //   Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //       builder: (_) => OurPartnersScreen(
+      //         menuID: menuId,
+      //         title: title,
+      //         shareLink: shareLink,
+      //       ),
+      //     ),
+      //   );
+      //   break;
 
       /// VIDEO LIBRARY
       case '26':
@@ -229,6 +229,7 @@ class AppNavigation {
             builder: (_) => ChangeNotifierProvider(
               create: (_) => NewsReleaseProvider(),
               child: NewsRelease(
+                
                 menuID: menuId,
                 shareLink: shareLink,
                 title: title,
