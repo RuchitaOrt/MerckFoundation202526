@@ -125,6 +125,9 @@ print("VIDEO MEdiaType body ${body}");
       case MediaType.testimonialArticle:
 
         api = API.testimonialarticles;
+         body = {
+         "category_id": categoryId,"country_id":countryId
+        };
 
         break;
 

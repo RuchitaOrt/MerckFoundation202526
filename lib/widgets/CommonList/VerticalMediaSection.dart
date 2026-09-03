@@ -379,6 +379,7 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                           return MediaCard(
                             content_button: widget.content_button,
                             type: widget.type,
+                           
                             menuID: widget.menuID,
                             shareLink: widget.shareLink,
                             id: item.id.toString(),

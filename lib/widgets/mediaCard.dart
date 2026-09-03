@@ -135,7 +135,7 @@ print(mediaType);
     :   Expanded(
               flex:
                   //  mediaType==MediaType.photoGallery?3:
-                  (type == HomeLayoutType.MerckMoreThanAmbasdarFormer &&
+             type == HomeLayoutType.OurPartners?1:     (type == HomeLayoutType.MerckMoreThanAmbasdarFormer &&
                       content_button)
                   ? 1
                   : type == HomeLayoutType.MerckMoreThanAmbasdarFormer
@@ -253,7 +253,7 @@ print(mediaType);
             ),
 
             /// TEXT
-       mediaType==MediaType.photoAlbum?Container(height: 6,):      title.length == 0
+      ( mediaType==MediaType.photoAlbum || type == HomeLayoutType.photoGallery ||type == HomeLayoutType.DigitalLibrary) ?Container(height: 6,):      title.length == 0
                 ? Container(height: 8)
                 :type == HomeLayoutType.MerckMoreThanAmbasdar
     ? Padding(
@@ -336,7 +336,7 @@ print(mediaType);
                             text:
                                 // "22222222223333333 erererererererkj nkjkjkjk",
                                 "${title}",
-                            maxLines: 3,
+                            maxLines: type==HomeLayoutType.OurPartners?6:3,
                             // mediaType==MediaType.photoGallery?2: 3,
                             textAlignment: TextAlign.center,
                             fontSize: screenWidth * 0.030,

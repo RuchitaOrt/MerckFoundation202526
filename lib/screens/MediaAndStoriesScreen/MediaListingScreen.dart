@@ -596,8 +596,14 @@ String getContentTitle() {
   context: context,
   barrierDismissible: true,
   barrierLabel: 'Image Preview',
-  barrierColor: Colors.transparent,
-  transitionDuration: const Duration(milliseconds: 200),
+
+  // Transparent black overlay over the previous screen
+  barrierColor: Colors.black.withOpacity(0.55),
+
+  transitionDuration: const Duration(
+    milliseconds: 200,
+  ),
+
   pageBuilder: (
     context,
     animation,
@@ -606,11 +612,48 @@ String getContentTitle() {
     return ImagePreviewDialog(
       items: provider.storyList,
       initialIndex: index,
-      imageUrl: (item) => item.thumbnail ?? "",
-      title: (item) => item.description ?? "",
+      imageUrl: (item) => item.photo ?? "",
+      title: (item) => item.photo_description ?? "",
     );
   },
 );
+      //                                      showGeneralDialog(
+      //                             context: context,
+      //                             barrierDismissible: true,
+      //                             barrierLabel: 'Image Preview',
+      //                             barrierColor: Colors.transparent,
+      //                             transitionDuration: const Duration(
+      //                               milliseconds: 200,
+      //                             ),
+      //                             pageBuilder:
+      //                                 (context, animation, secondaryAnimation) {
+      //                                   return ImagePreviewDialog(
+      //                                     items: provider.storyList,
+      // initialIndex: index,
+      // imageUrl: (item) => item.photo ?? "",
+      // title: (item) => item.photo_description ?? "",
+      //                                   );
+      //                                 },
+      //                           );
+//                                           showGeneralDialog(
+//   context: context,
+//   barrierDismissible: true,
+//   barrierLabel: 'Image Preview',
+//   barrierColor: Colors.transparent,
+//   transitionDuration: const Duration(milliseconds: 200),
+//   pageBuilder: (
+//     context,
+//     animation,
+//     secondaryAnimation,
+//   ) {
+//     return ImagePreviewDialog(
+//       items: provider.storyList,
+//       initialIndex: index,
+//       imageUrl: (item) => item.photo ?? "",
+//       title: (item) => item.photo_description ?? "",
+//     );
+//   },
+// );
       //                                 showModalBottomSheet(
       //                                   context: context,
       //                                   isScrollControlled: true,

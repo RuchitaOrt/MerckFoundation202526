@@ -507,7 +507,7 @@ leader_id:widget.articleId!
         height: 42,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Customcolor.colorBlue,
           border: Border.all(
             color: Colors.grey.shade400,
           ),
@@ -519,11 +519,11 @@ leader_id:widget.articleId!
 
             icon: const Icon(
               Icons.keyboard_arrow_down,
-              color: Colors.blue,
+              color: Colors.white,
             ),
 
             style: const TextStyle(
-              color: Colors.black87,
+              color: Colors.white,
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
@@ -544,8 +544,8 @@ leader_id:widget.articleId!
                     language["language"].toString(),
                     style: TextStyle(
                       color: isCurrent
-                          ? Colors.blue
-                          : Colors.black87,
+                          ? Colors.white
+                          : Customcolor.colorBlue,
                       fontWeight: isCurrent
                           ? FontWeight.w600
                           : FontWeight.normal,

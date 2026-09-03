@@ -158,7 +158,7 @@ final languageId =
                         final categoryId = filter.selectedCategory?.id == 0
                             ? ""
                             : filter.selectedCategory!.id.toString();
-
+                      print("Category ${categoryId} ${filter.selectedCountry!.id.toString()}");
                         await context
                             .read<TestimonialArticleProvider>()
                             .fetchTestimonials(

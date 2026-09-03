@@ -92,7 +92,8 @@ class TestimonialArticleProvider extends ChangeNotifier {
     final result =
         await _service.fetchTestimonials(
       context,
-      categoryId,country_id
+      categoryId,country_id,
+      1,
     );
 
     status = result.status;

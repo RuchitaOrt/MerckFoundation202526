@@ -12,13 +12,21 @@ class TestimonialService {
   Future<ApiResult<List<TestimonialModel>>> fetchTestimonials(
       BuildContext context,
       String categoryId,
-      String country_id
+      String country_id,
+      int page,
   ) async {
 
     final result = await _apiManager.apiRequest(
       context,
       API.testimonialarticles,
-      jsonval: {"category_id": categoryId,"country_id":country_id},
+       jsonval:{ "p": page,
+         "category_id": categoryId,"country_id":country_id=="0"?"":country_id
+        }
+  //     queryParams: {
+  //   "category_id": categoryId,
+  //   "country_id": country_id,
+  // },
+      // jsonval: {"category_id": categoryId,"country_id":country_id},
     );
 print("category_id ${categoryId}");
 print("country_id ${country_id}");

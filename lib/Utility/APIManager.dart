@@ -505,12 +505,12 @@ class APIManager {
       var url = apiEndPoint(api);
 
 // Use UAT URL only for Rasha Insights
-if (api == API.rashainsights) {
-  url = "https://mfv1-uat.ortdemo.com/api/page_structure/rasha_insights";
+// if (api == API.rashainsights) {
+//   url = "https://mfv1-uat.ortdemo.com/api/page_structure/rasha_insights";
 
-  print("🧪 UAT URL USED FOR RASHA INSIGHTS:");
-  print(url);
-}
+//   print("🧪 UAT URL USED FOR RASHA INSIGHTS:");
+//   print(url);
+// }
       final response = await dio.request(
         url,
         data: jsonval,

@@ -1347,7 +1347,7 @@ double get fixedTitleHeight {
 
             if (widget.items.length > 1)
               Positioned(
-                left: 20,
+                left: 40,
 
                 // Center arrow vertically
                 // inside IMAGE only.
@@ -1374,7 +1374,7 @@ double get fixedTitleHeight {
 
             if (widget.items.length > 1)
               Positioned(
-                right: 20,
+                right: 40,
 
                 // Center arrow vertically
                 // inside IMAGE only.
@@ -1461,7 +1461,7 @@ double get fixedTitleHeight {
       
                   height: fixedImageHeight,
       
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
       
                   alignment: Alignment.center,
       

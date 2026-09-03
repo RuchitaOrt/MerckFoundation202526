@@ -200,22 +200,38 @@ Future<void> _loadNextLocalPage() async {
     final response =
         result.data ?? {};
 
-    final data =
-        response['data'] ?? [];
+    // final data =
+    //     response['data'] ?? [];
 
-    storyList = data
-        .map<StoryModel>(
-          (e) =>
-              StoryModel.fromJson(e),
-        )
-        .toList();
+    // storyList = data
+    //     .map<StoryModel>(
+    //       (e) =>
+    //           StoryModel.fromJson(e),
+    //     )
+    //     .toList();
 
-    hasMore = type ==
-            MediaType.photoGallery
-        ? false
-        : response['next'] != null;
+    // hasMore = type ==
+    //         MediaType.photoGallery
+    //     ? false
+    //     : response['next'] != null;
+final rawData = response['data'];
 
-  } else {
+if (rawData is List) {
+  storyList = rawData
+      .map<StoryModel>(
+        (e) => StoryModel.fromJson(e),
+      )
+      .toList();
+} else {
+  storyList = [];
+}
+
+hasMore = type == MediaType.photoGallery
+    ? false
+    : response['next'] != null;
+
+  } 
+  else {
 
     errorMessage =
         result.message ?? "";
