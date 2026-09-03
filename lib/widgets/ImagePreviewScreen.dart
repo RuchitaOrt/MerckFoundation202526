@@ -1,4 +1,404 @@
 
+// // import 'package:cached_network_image/cached_network_image.dart';
+// // import 'package:flutter/material.dart';
+
+// // import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
+// // import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
+// // import 'package:merckfoundation_252026/widgets/CommonWidget/ImageShimmer.dart';
+
+// // class ImagePreviewDialog extends StatefulWidget {
+// //   final String imageUrl;
+// //   final String title;
+
+// //   final VoidCallback? onPrevious;
+// //   final VoidCallback? onNext;
+
+// //   const ImagePreviewDialog({
+// //     super.key,
+// //     required this.imageUrl,
+// //     required this.title,
+// //     this.onPrevious,
+// //     this.onNext,
+// //   });
+
+// //   @override
+// //   State<ImagePreviewDialog> createState() =>
+// //       _ImagePreviewDialogState();
+// // }
+
+// // class _ImagePreviewDialogState
+// //     extends State<ImagePreviewDialog> {
+
+// //   double? imageAspectRatio;
+
+// //   ImageStream? _imageStream;
+// //   ImageStreamListener? _imageStreamListener;
+
+// //   @override
+// //   void initState() {
+// //     super.initState();
+// //     _loadImageSize();
+// //   }
+
+// //   // ===============================================================
+// //   // GET ACTUAL IMAGE SIZE
+// //   // ===============================================================
+
+// //   void _loadImageSize() {
+// //     final provider =
+// //         CachedNetworkImageProvider(widget.imageUrl);
+
+// //     final stream = provider.resolve(
+// //       const ImageConfiguration(),
+// //     );
+
+// //     _imageStream = stream;
+
+// //     _imageStreamListener = ImageStreamListener(
+// //       (ImageInfo info, bool synchronousCall) {
+// //         final width = info.image.width.toDouble();
+// //         final height = info.image.height.toDouble();
+
+// //         if (width > 0 && height > 0) {
+// //           if (mounted) {
+// //             setState(() {
+// //               imageAspectRatio = width / height;
+// //             });
+// //           }
+// //         }
+// //       },
+// //     );
+
+// //     stream.addListener(_imageStreamListener!);
+// //   }
+
+// //   @override
+// //   void dispose() {
+// //     if (_imageStream != null &&
+// //         _imageStreamListener != null) {
+// //       _imageStream!.removeListener(
+// //         _imageStreamListener!,
+// //       );
+// //     }
+
+// //     super.dispose();
+// //   }
+
+// //   @override
+// //   Widget build(BuildContext context) {
+// //     final size = MediaQuery.of(context).size;
+
+// //     // =========================================================
+// //     // CARD WIDTH
+// //     // =========================================================
+
+// //     final cardWidth = size.width * 0.82;
+
+// //     // =========================================================
+// //     // MAXIMUM IMAGE HEIGHT
+// //     //
+// //     // Vertical images will never become too tall.
+// //     // =========================================================
+
+// //     const double maxImageHeight = 500;
+
+// //     // =========================================================
+// //     // CALCULATE IMAGE HEIGHT
+// //     //
+// //     // Horizontal image:
+// //     // width / aspect ratio
+// //     //
+// //     // Vertical image:
+// //     // also keeps original ratio but limited by max height.
+// //     // =========================================================
+
+// //     double imageHeight = 300;
+
+// //     if (imageAspectRatio != null) {
+// //       imageHeight =
+// //           cardWidth / imageAspectRatio!;
+
+// //       if (imageHeight > maxImageHeight) {
+// //         imageHeight = maxImageHeight;
+// //       }
+// //     }
+
+// //     return Material(
+// //       color: Colors.transparent,
+
+// //       child: Center(
+// //         child: ConstrainedBox(
+// //           constraints: BoxConstraints(
+// //             maxWidth: cardWidth,
+// //             maxHeight: size.height * 0.82,
+// //           ),
+
+// //           child: Stack(
+// //             clipBehavior: Clip.none,
+
+// //             children: [
+
+// //               // =====================================================
+// //               // MAIN WHITE CARD
+// //               // =====================================================
+
+// //               Container(
+// //                 width: cardWidth,
+
+// //                 decoration: BoxDecoration(
+// //                   color: Colors.white,
+// //                   borderRadius:
+// //                       BorderRadius.circular(16),
+// //                 ),
+
+// //                 clipBehavior: Clip.antiAlias,
+
+// //                 child: SingleChildScrollView(
+// //                   child: Column(
+// //                     mainAxisSize:
+// //                         MainAxisSize.min,
+
+// //                     children: [
+
+// //                       // =================================================
+// //                       // IMAGE
+// //                       // =================================================
+
+// //                       SizedBox(
+// //                         width: double.infinity,
+// //                         height: imageHeight,
+
+// //                         child: CachedNetworkImage(
+// //                           imageUrl:
+// //                               widget.imageUrl,
+
+// //                           // =================================================
+// //                           // CONTAIN
+// //                           //
+// //                           // Image keeps its original aspect ratio.
+// //                           // Because imageHeight is now calculated from
+// //                           // the actual image ratio, horizontal images
+// //                           // will no longer have large white gaps.
+// //                           // =================================================
+
+// //                           fit: BoxFit.contain,
+
+// //                           placeholder:
+// //                               (context, url) {
+// //                             return const ImageShimmer();
+// //                           },
+
+// //                           errorWidget:
+// //                               (context, url, error) {
+// //                             return Image.asset(
+// //                               CommonImagePath
+// //                                   .placeHolder,
+
+// //                               width:
+// //                                   double.infinity,
+
+// //                               height:
+// //                                   double.infinity,
+
+// //                               fit:
+// //                                   BoxFit.contain,
+// //                             );
+// //                           },
+// //                         ),
+// //                       ),
+
+// //                       // =================================================
+// //                       // TITLE
+// //                       // =================================================
+
+// //                       Padding(
+// //                         padding:
+// //                             const EdgeInsets.fromLTRB(
+// //                           8,
+// //                           8,
+// //                           8,
+// //                           8,
+// //                         ),
+
+// //                         child: Align(
+// //                           alignment:
+// //                               Alignment.centerLeft,
+
+// //                           child: Text(
+// //                             stripHtml(
+// //                               widget.title,
+// //                             ),
+
+// //                             textAlign:
+// //                                 TextAlign.left,
+
+// //                             style:
+// //                                 const TextStyle(
+// //                               fontSize: 14,
+// //                               fontWeight:
+// //                                   FontWeight.w500,
+// //                               color:
+// //                                   Colors.black87,
+// //                               height: 1.25,
+// //                             ),
+// //                           ),
+// //                         ),
+// //                       ),
+// //                     ],
+// //                   ),
+// //                 ),
+// //               ),
+
+// //               // =====================================================
+// //               // CLOSE BUTTON
+// //               // =====================================================
+
+// //               Positioned(
+// //                 top: -18,
+// //                 right: -18,
+
+// //                 child: Material(
+// //                   color:
+// //                       Colors.transparent,
+
+// //                   child: InkWell(
+// //                     onTap: () {
+// //                       Navigator.of(
+// //                         context,
+// //                       ).pop();
+// //                     },
+
+// //                     borderRadius:
+// //                         BorderRadius.circular(22),
+
+// //                     child: Container(
+// //                       width: 42,
+// //                       height: 42,
+
+// //                       decoration:
+// //                           BoxDecoration(
+// //                         color: Colors.black,
+
+// //                         shape:
+// //                             BoxShape.circle,
+
+// //                         border:
+// //                             Border.all(
+// //                           color: Colors.white,
+// //                           width: 2,
+// //                         ),
+
+// //                         boxShadow: [
+// //                           BoxShadow(
+// //                             color: Colors.black
+// //                                 .withOpacity(
+// //                               0.25,
+// //                             ),
+// //                             blurRadius: 6,
+// //                             offset:
+// //                                 const Offset(
+// //                               0,
+// //                               2,
+// //                             ),
+// //                           ),
+// //                         ],
+// //                       ),
+
+// //                       child:
+// //                           const Icon(
+// //                         Icons.close,
+// //                         color: Colors.white,
+// //                         size: 24,
+// //                       ),
+// //                     ),
+// //                   ),
+// //                 ),
+// //               ),
+
+// //               // =====================================================
+// //               // PREVIOUS BUTTON
+// //               // =====================================================
+
+// //               if (widget.onPrevious != null)
+// //                 Positioned(
+// //                   left: -22,
+
+// //                   top:
+// //                       imageHeight / 2 - 22,
+
+// //                   child:
+// //                       _navigationButton(
+// //                     icon:
+// //                         Icons.chevron_left,
+// //                     onTap:
+// //                         widget.onPrevious!,
+// //                   ),
+// //                 ),
+
+// //               // =====================================================
+// //               // NEXT BUTTON
+// //               // =====================================================
+
+// //               if (widget.onNext != null)
+// //                 Positioned(
+// //                   right: -22,
+
+// //                   top:
+// //                       imageHeight / 2 - 22,
+
+// //                   child:
+// //                       _navigationButton(
+// //                     icon:
+// //                         Icons.chevron_right,
+// //                     onTap:
+// //                         widget.onNext!,
+// //                   ),
+// //                 ),
+// //             ],
+// //           ),
+// //         ),
+// //       ),
+// //     );
+// //   }
+
+// //   // ===============================================================
+// //   // NAVIGATION BUTTON
+// //   // ===============================================================
+
+// //   Widget _navigationButton({
+// //     required IconData icon,
+// //     required VoidCallback onTap,
+// //   }) {
+// //     return Material(
+// //       color: Colors.transparent,
+
+// //       child: InkWell(
+// //         onTap: onTap,
+
+// //         borderRadius:
+// //             BorderRadius.circular(22),
+
+// //         child: Container(
+// //           width: 44,
+// //           height: 44,
+
+// //           decoration: BoxDecoration(
+// //             color: Colors.black.withOpacity(
+// //               0.60,
+// //             ),
+// //             shape: BoxShape.circle,
+// //           ),
+
+// //           child: Icon(
+// //             icon,
+// //             color: Colors.white,
+// //             size: 32,
+// //           ),
+// //         ),
+// //       ),
+// //     );
+// //   }
+// // }
 // import 'package:cached_network_image/cached_network_image.dart';
 // import 'package:flutter/material.dart';
 
@@ -6,74 +406,208 @@
 // import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 // import 'package:merckfoundation_252026/widgets/CommonWidget/ImageShimmer.dart';
 
-// class ImagePreviewDialog extends StatefulWidget {
-//   final String imageUrl;
-//   final String title;
+// class ImagePreviewDialog<T> extends StatefulWidget {
+//   // ===============================================================
+//   // COMPLETE LIST
+//   // ===============================================================
 
-//   final VoidCallback? onPrevious;
-//   final VoidCallback? onNext;
+//   final List<T> items;
+
+//   // ===============================================================
+//   // CURRENT / TAPPED INDEX
+//   // ===============================================================
+
+//   final int initialIndex;
+
+//   // ===============================================================
+//   // HOW TO GET IMAGE URL FROM MODEL
+//   // ===============================================================
+
+//   final String Function(T item) imageUrl;
+
+//   // ===============================================================
+//   // HOW TO GET TITLE FROM MODEL
+//   // ===============================================================
+
+//   final String Function(T item) title;
 
 //   const ImagePreviewDialog({
 //     super.key,
+//     required this.items,
+//     required this.initialIndex,
 //     required this.imageUrl,
 //     required this.title,
-//     this.onPrevious,
-//     this.onNext,
 //   });
 
 //   @override
-//   State<ImagePreviewDialog> createState() =>
-//       _ImagePreviewDialogState();
+//   State<ImagePreviewDialog<T>> createState() =>
+//       _ImagePreviewDialogState<T>();
 // }
 
-// class _ImagePreviewDialogState
-//     extends State<ImagePreviewDialog> {
+// class _ImagePreviewDialogState<T>
+//     extends State<ImagePreviewDialog<T>> {
+// bool isTitleExpanded = false;
+//   // ===============================================================
+//   // CURRENT INDEX
+//   // ===============================================================
+
+//   late int currentIndex;
+
+//   // ===============================================================
+//   // IMAGE RATIO
+//   // ===============================================================
 
 //   double? imageAspectRatio;
 
 //   ImageStream? _imageStream;
 //   ImageStreamListener? _imageStreamListener;
 
+//   // ===============================================================
+//   // CURRENT ITEM
+//   // ===============================================================
+
+//   T get currentItem =>
+//       widget.items[currentIndex];
+
+//   // ===============================================================
+//   // CURRENT IMAGE
+//   // ===============================================================
+
+//   String get currentImage =>
+//       widget.imageUrl(currentItem);
+
+//   // ===============================================================
+//   // CURRENT TITLE
+//   // ===============================================================
+
+//   String get currentTitle =>
+//       widget.title(currentItem);
+
+//   // ===============================================================
+//   // CAN GO PREVIOUS
+//   // ===============================================================
+
+//   bool get canGoPrevious =>
+//       currentIndex > 0;
+
+//   // ===============================================================
+//   // CAN GO NEXT
+//   // ===============================================================
+
+//   bool get canGoNext =>
+//       currentIndex < widget.items.length - 1;
+
 //   @override
 //   void initState() {
 //     super.initState();
+
+//     // Safety check
+//     currentIndex = widget.initialIndex.clamp(
+//       0,
+//       widget.items.length - 1,
+//     );
+
 //     _loadImageSize();
 //   }
 
 //   // ===============================================================
-//   // GET ACTUAL IMAGE SIZE
+//   // LOAD ACTUAL IMAGE SIZE
 //   // ===============================================================
 
 //   void _loadImageSize() {
-//     final provider =
-//         CachedNetworkImageProvider(widget.imageUrl);
 
-//     final stream = provider.resolve(
+//     // Remove previous listener
+//     if (_imageStream != null &&
+//         _imageStreamListener != null) {
+//       _imageStream!.removeListener(
+//         _imageStreamListener!,
+//       );
+//     }
+
+//     // Reset ratio
+//     imageAspectRatio = null;
+
+//     final imageProvider =
+//         CachedNetworkImageProvider(
+//       currentImage,
+//     );
+
+//     final stream = imageProvider.resolve(
 //       const ImageConfiguration(),
 //     );
 
 //     _imageStream = stream;
 
-//     _imageStreamListener = ImageStreamListener(
+//     _imageStreamListener =
+//         ImageStreamListener(
 //       (ImageInfo info, bool synchronousCall) {
-//         final width = info.image.width.toDouble();
-//         final height = info.image.height.toDouble();
+
+//         final width =
+//             info.image.width.toDouble();
+
+//         final height =
+//             info.image.height.toDouble();
 
 //         if (width > 0 && height > 0) {
+
 //           if (mounted) {
 //             setState(() {
-//               imageAspectRatio = width / height;
+//               imageAspectRatio =
+//                   width / height;
 //             });
 //           }
 //         }
 //       },
 //     );
 
-//     stream.addListener(_imageStreamListener!);
+//     stream.addListener(
+//       _imageStreamListener!,
+//     );
 //   }
+
+//   // ===============================================================
+//   // PREVIOUS
+//   // ===============================================================
+
+// void _previousImage() {
+
+//   if (!canGoPrevious) {
+//     return;
+//   }
+
+//   setState(() {
+//     currentIndex--;
+//     isTitleExpanded = false;
+//   });
+
+//   _loadImageSize();
+// }
+
+//   // ===============================================================
+//   // NEXT
+//   // ===============================================================
+
+// void _nextImage() {
+
+//   if (!canGoNext) {
+//     return;
+//   }
+
+//   setState(() {
+//     currentIndex++;
+//     isTitleExpanded = false;
+//   });
+
+//   _loadImageSize();
+// }
+
+//   // ===============================================================
+//   // DISPOSE
+//   // ===============================================================
 
 //   @override
 //   void dispose() {
+
 //     if (_imageStream != null &&
 //         _imageStreamListener != null) {
 //       _imageStream!.removeListener(
@@ -84,42 +618,44 @@
 //     super.dispose();
 //   }
 
+//   // ===============================================================
+//   // BUILD
+//   // ===============================================================
+
 //   @override
 //   Widget build(BuildContext context) {
-//     final size = MediaQuery.of(context).size;
 
-//     // =========================================================
+//     final size =
+//         MediaQuery.of(context).size;
+
+//     // =============================================================
 //     // CARD WIDTH
-//     // =========================================================
+//     // =============================================================
 
-//     final cardWidth = size.width * 0.82;
+//     final cardWidth =
+//         size.width * 0.82;
 
-//     // =========================================================
-//     // MAXIMUM IMAGE HEIGHT
-//     //
-//     // Vertical images will never become too tall.
-//     // =========================================================
+//     // =============================================================
+//     // MAX IMAGE HEIGHT
+//     // =============================================================
 
 //     const double maxImageHeight = 500;
 
-//     // =========================================================
-//     // CALCULATE IMAGE HEIGHT
-//     //
-//     // Horizontal image:
-//     // width / aspect ratio
-//     //
-//     // Vertical image:
-//     // also keeps original ratio but limited by max height.
-//     // =========================================================
+//     // =============================================================
+//     // IMAGE HEIGHT
+//     // =============================================================
 
 //     double imageHeight = 300;
 
 //     if (imageAspectRatio != null) {
+
 //       imageHeight =
 //           cardWidth / imageAspectRatio!;
 
-//       if (imageHeight > maxImageHeight) {
-//         imageHeight = maxImageHeight;
+//       if (imageHeight >
+//           maxImageHeight) {
+//         imageHeight =
+//             maxImageHeight;
 //       }
 //     }
 
@@ -130,7 +666,8 @@
 //         child: ConstrainedBox(
 //           constraints: BoxConstraints(
 //             maxWidth: cardWidth,
-//             maxHeight: size.height * 0.82,
+//             maxHeight:
+//                 size.height * 0.82,
 //           ),
 
 //           child: Stack(
@@ -138,58 +675,62 @@
 
 //             children: [
 
-//               // =====================================================
+//               // ===================================================
 //               // MAIN WHITE CARD
-//               // =====================================================
+//               // ===================================================
 
 //               Container(
-//                 width: cardWidth,
+//                width: cardWidth,
+//   decoration: BoxDecoration(
+//     color: Colors.transparent,
+//     borderRadius: BorderRadius.circular(16),
+//   ),
+//   clipBehavior: Clip.antiAlias,
 
-//                 decoration: BoxDecoration(
-//                   color: Colors.white,
-//                   borderRadius:
-//                       BorderRadius.circular(16),
-//                 ),
+//                 child:
+//                     SingleChildScrollView(
 
-//                 clipBehavior: Clip.antiAlias,
-
-//                 child: SingleChildScrollView(
 //                   child: Column(
 //                     mainAxisSize:
 //                         MainAxisSize.min,
 
 //                     children: [
 
-//                       // =================================================
+//                       // =========================================
 //                       // IMAGE
-//                       // =================================================
+//                       // =========================================
 
 //                       SizedBox(
-//                         width: double.infinity,
-//                         height: imageHeight,
+//                         width:
+//                             double.infinity,
 
-//                         child: CachedNetworkImage(
+//                         height:
+//                             imageHeight,
+
+//                         child:
+//                             CachedNetworkImage(
+//                           key: ValueKey(
+//                             currentImage,
+//                           ),
+
 //                           imageUrl:
-//                               widget.imageUrl,
+//                               currentImage,
 
-//                           // =================================================
-//                           // CONTAIN
-//                           //
-//                           // Image keeps its original aspect ratio.
-//                           // Because imageHeight is now calculated from
-//                           // the actual image ratio, horizontal images
-//                           // will no longer have large white gaps.
-//                           // =================================================
-
-//                           fit: BoxFit.contain,
+//                           fit:
+//                               BoxFit.contain,
 
 //                           placeholder:
 //                               (context, url) {
-//                             return const ImageShimmer();
+//                             return const
+//                                 ImageShimmer();
 //                           },
 
 //                           errorWidget:
-//                               (context, url, error) {
+//                               (
+//                             context,
+//                             url,
+//                             error,
+//                           ) {
 //                             return Image.asset(
 //                               CommonImagePath
 //                                   .placeHolder,
@@ -207,51 +748,164 @@
 //                         ),
 //                       ),
 
-//                       // =================================================
-//                       // TITLE
-//                       // =================================================
 
-//                       Padding(
-//                         padding:
-//                             const EdgeInsets.fromLTRB(
-//                           8,
-//                           8,
-//                           8,
-//                           8,
-//                         ),
+// // =========================================
+// // TITLE
+// // =========================================
 
-//                         child: Align(
-//                           alignment:
-//                               Alignment.centerLeft,
+// Padding(
+//   padding: const EdgeInsets.fromLTRB(
+//     8,
+//     8,
+//     8,
+//     8,
+//   ),
 
-//                           child: Text(
-//                             stripHtml(
-//                               widget.title,
-//                             ),
+//   child: Align(
+//     alignment: Alignment.centerLeft,
 
-//                             textAlign:
-//                                 TextAlign.left,
+//     child: LayoutBuilder(
+//       builder: (context, constraints) {
 
-//                             style:
-//                                 const TextStyle(
-//                               fontSize: 14,
-//                               fontWeight:
-//                                   FontWeight.w500,
-//                               color:
-//                                   Colors.black87,
-//                               height: 1.25,
-//                             ),
-//                           ),
-//                         ),
-//                       ),
+//         final titleText = stripHtml(
+//           currentTitle,
+//         );
+
+//         // Check whether text actually needs more than 2 lines
+//         final textPainter = TextPainter(
+//           text: TextSpan(
+//             text: titleText,
+//             style: const TextStyle(
+//               fontSize: 14,
+//               fontWeight: FontWeight.w500,
+//               color: Colors.black87,
+//               height: 1.25,
+//             ),
+//           ),
+//           maxLines: 2,
+//           textDirection: TextDirection.ltr,
+//         )..layout(
+//             maxWidth: constraints.maxWidth,
+//           );
+
+//         final isTextOverflowing =
+//             textPainter.didExceedMaxLines;
+
+//         return Column(
+//           crossAxisAlignment:
+//               CrossAxisAlignment.start,
+
+//           children: [
+
+//             Text(
+//               titleText,
+
+//               maxLines:
+//                   isTitleExpanded
+//                       ? null
+//                       : 2,
+
+//               overflow:
+//                   isTitleExpanded
+//                       ? TextOverflow.visible
+//                       : TextOverflow.ellipsis,
+
+//               textAlign:
+//                   TextAlign.left,
+
+//               style:
+//                   const TextStyle(
+//                 fontSize: 14,
+//                 fontWeight:
+//                     FontWeight.w500,
+//                 color:
+//                     Colors.black87,
+//                 height: 1.25,
+//               ),
+//             ),
+
+//             // Show Read More only when
+//             // title has more than 2 lines
+//             if (isTextOverflowing)
+//               GestureDetector(
+//                 onTap: () {
+//                   setState(() {
+//                     isTitleExpanded =
+//                         !isTitleExpanded;
+//                   });
+//                 },
+
+//                 child: Padding(
+//                   padding:
+//                       const EdgeInsets.only(
+//                     top: 4,
+//                   ),
+
+//                   child: Text(
+//                     isTitleExpanded
+//                         ? 'Read Less'
+//                         : 'Read More',
+
+//                     style:
+//                         const TextStyle(
+//                       fontSize: 13,
+//                       fontWeight:
+//                           FontWeight.w600,
+//                       color:
+//                           Colors.blue,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//           ],
+//         );
+//       },
+//     ),
+//   ),
+// ),
+
+//                       // Padding(
+//                       //   padding:
+//                       //       const EdgeInsets
+//                       //           .fromLTRB(
+//                       //     8,
+//                       //     8,
+//                       //     8,
+//                       //     8,
+//                       //   ),
+
+//                       //   child: Align(
+//                       //     alignment:
+//                       //         Alignment.centerLeft,
+
+//                       //     child: Text(
+//                       //       stripHtml(
+//                       //         currentTitle,
+//                       //       ),
+
+//                       //       textAlign:
+//                       //           TextAlign.left,
+
+//                       //       style:
+//                       //           const TextStyle(
+//                       //         fontSize: 14,
+//                       //         fontWeight:
+//                       //             FontWeight.w500,
+//                       //         color:
+//                       //             Colors.black87,
+//                       //         height: 1.25,
+//                       //       ),
+//                       //     ),
+//                       //   ),
+//                       // ),
 //                     ],
 //                   ),
 //                 ),
 //               ),
 
-//               // =====================================================
+//               // ===================================================
 //               // CLOSE BUTTON
-//               // =====================================================
+//               // ===================================================
 
 //               Positioned(
 //                 top: -18,
@@ -269,7 +923,9 @@
 //                     },
 
 //                     borderRadius:
-//                         BorderRadius.circular(22),
+//                         BorderRadius.circular(
+//                       22,
+//                     ),
 
 //                     child: Container(
 //                       width: 42,
@@ -315,13 +971,13 @@
 //                 ),
 //               ),
 
-//               // =====================================================
+//               // ===================================================
 //               // PREVIOUS BUTTON
-//               // =====================================================
+//               // ===================================================
 
-//               if (widget.onPrevious != null)
+//               if (canGoPrevious)
 //                 Positioned(
-//                   left: -22,
+//                   left: 20,
 
 //                   top:
 //                       imageHeight / 2 - 22,
@@ -330,18 +986,19 @@
 //                       _navigationButton(
 //                     icon:
 //                         Icons.chevron_left,
+
 //                     onTap:
-//                         widget.onPrevious!,
+//                         _previousImage,
 //                   ),
 //                 ),
 
-//               // =====================================================
+//               // ===================================================
 //               // NEXT BUTTON
-//               // =====================================================
+//               // ===================================================
 
-//               if (widget.onNext != null)
+//               if (canGoNext)
 //                 Positioned(
-//                   right: -22,
+//                   right: 20,
 
 //                   top:
 //                       imageHeight / 2 - 22,
@@ -350,8 +1007,9 @@
 //                       _navigationButton(
 //                     icon:
 //                         Icons.chevron_right,
+
 //                     onTap:
-//                         widget.onNext!,
+//                         _nextImage,
 //                   ),
 //                 ),
 //             ],
@@ -382,12 +1040,16 @@
 //           width: 44,
 //           height: 44,
 
-//           decoration: BoxDecoration(
-//             color: Colors.black.withOpacity(
-//               0.60,
-//             ),
-//             shape: BoxShape.circle,
-//           ),
+//           // decoration:
+//           //     BoxDecoration(
+//           //   color:
+//           //       Colors.black.withOpacity(
+//           //     0.60,
+//           //   ),
+
+//           //   shape:
+//           //       BoxShape.circle,
+//           // ),
 
 //           child: Icon(
 //             icon,
@@ -446,7 +1108,8 @@ class ImagePreviewDialog<T> extends StatefulWidget {
 
 class _ImagePreviewDialogState<T>
     extends State<ImagePreviewDialog<T>> {
-bool isTitleExpanded = false;
+  bool isTitleExpanded = false;
+
   // ===============================================================
   // CURRENT INDEX
   // ===============================================================
@@ -466,29 +1129,25 @@ bool isTitleExpanded = false;
   // CURRENT ITEM
   // ===============================================================
 
-  T get currentItem =>
-      widget.items[currentIndex];
+  T get currentItem => widget.items[currentIndex];
 
   // ===============================================================
   // CURRENT IMAGE
   // ===============================================================
 
-  String get currentImage =>
-      widget.imageUrl(currentItem);
+  String get currentImage => widget.imageUrl(currentItem);
 
   // ===============================================================
   // CURRENT TITLE
   // ===============================================================
 
-  String get currentTitle =>
-      widget.title(currentItem);
+  String get currentTitle => widget.title(currentItem);
 
   // ===============================================================
   // CAN GO PREVIOUS
   // ===============================================================
 
-  bool get canGoPrevious =>
-      currentIndex > 0;
+  bool get canGoPrevious => currentIndex > 0;
 
   // ===============================================================
   // CAN GO NEXT
@@ -497,11 +1156,14 @@ bool isTitleExpanded = false;
   bool get canGoNext =>
       currentIndex < widget.items.length - 1;
 
+  // ===============================================================
+  // INIT
+  // ===============================================================
+
   @override
   void initState() {
     super.initState();
 
-    // Safety check
     currentIndex = widget.initialIndex.clamp(
       0,
       widget.items.length - 1,
@@ -515,7 +1177,6 @@ bool isTitleExpanded = false;
   // ===============================================================
 
   void _loadImageSize() {
-
     // Remove previous listener
     if (_imageStream != null &&
         _imageStreamListener != null) {
@@ -541,7 +1202,6 @@ bool isTitleExpanded = false;
     _imageStreamListener =
         ImageStreamListener(
       (ImageInfo info, bool synchronousCall) {
-
         final width =
             info.image.width.toDouble();
 
@@ -549,7 +1209,6 @@ bool isTitleExpanded = false;
             info.image.height.toDouble();
 
         if (width > 0 && height > 0) {
-
           if (mounted) {
             setState(() {
               imageAspectRatio =
@@ -566,40 +1225,38 @@ bool isTitleExpanded = false;
   }
 
   // ===============================================================
-  // PREVIOUS
+  // PREVIOUS IMAGE
   // ===============================================================
 
-void _previousImage() {
+  void _previousImage() {
+    if (!canGoPrevious) {
+      return;
+    }
 
-  if (!canGoPrevious) {
-    return;
+    setState(() {
+      currentIndex--;
+      isTitleExpanded = false;
+    });
+
+    _loadImageSize();
   }
 
-  setState(() {
-    currentIndex--;
-    isTitleExpanded = false;
-  });
-
-  _loadImageSize();
-}
-
   // ===============================================================
-  // NEXT
+  // NEXT IMAGE
   // ===============================================================
 
-void _nextImage() {
+  void _nextImage() {
+    if (!canGoNext) {
+      return;
+    }
 
-  if (!canGoNext) {
-    return;
+    setState(() {
+      currentIndex++;
+      isTitleExpanded = false;
+    });
+
+    _loadImageSize();
   }
-
-  setState(() {
-    currentIndex++;
-    isTitleExpanded = false;
-  });
-
-  _loadImageSize();
-}
 
   // ===============================================================
   // DISPOSE
@@ -607,7 +1264,6 @@ void _nextImage() {
 
   @override
   void dispose() {
-
     if (_imageStream != null &&
         _imageStreamListener != null) {
       _imageStream!.removeListener(
@@ -624,16 +1280,13 @@ void _nextImage() {
 
   @override
   Widget build(BuildContext context) {
-
-    final size =
-        MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
 
     // =============================================================
     // CARD WIDTH
     // =============================================================
 
-    final cardWidth =
-        size.width * 0.82;
+    final cardWidth = size.width * 0.82;
 
     // =============================================================
     // MAX IMAGE HEIGHT
@@ -648,14 +1301,11 @@ void _nextImage() {
     double imageHeight = 300;
 
     if (imageAspectRatio != null) {
-
       imageHeight =
           cardWidth / imageAspectRatio!;
 
-      if (imageHeight >
-          maxImageHeight) {
-        imageHeight =
-            maxImageHeight;
+      if (imageHeight > maxImageHeight) {
+        imageHeight = maxImageHeight;
       }
     }
 
@@ -666,8 +1316,7 @@ void _nextImage() {
         child: ConstrainedBox(
           constraints: BoxConstraints(
             maxWidth: cardWidth,
-            maxHeight:
-                size.height * 0.82,
+            maxHeight: size.height * 0.82,
           ),
 
           child: Stack(
@@ -682,22 +1331,19 @@ void _nextImage() {
               Container(
                 width: cardWidth,
 
-                decoration:
-                    BoxDecoration(
+                decoration: BoxDecoration(
+                  // IMPORTANT:
+                  // White background keeps title INSIDE the card.
                   color: Colors.white,
 
                   borderRadius:
-                      BorderRadius.circular(
-                    16,
-                  ),
+                      BorderRadius.circular(16),
                 ),
 
                 clipBehavior:
                     Clip.antiAlias,
 
-                child:
-                    SingleChildScrollView(
-
+                child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize:
                         MainAxisSize.min,
@@ -756,156 +1402,148 @@ void _nextImage() {
                         ),
                       ),
 
+                      // =========================================
+                      // TITLE
+                      // =========================================
 
-// =========================================
-// TITLE
-// =========================================
+                      Padding(
+                        padding:
+                            const EdgeInsets.fromLTRB(
+                          8,
+                          8,
+                          8,
+                          8,
+                        ),
 
-Padding(
-  padding: const EdgeInsets.fromLTRB(
-    8,
-    8,
-    8,
-    8,
-  ),
+                        child: Align(
+                          alignment:
+                              Alignment.centerLeft,
 
-  child: Align(
-    alignment: Alignment.centerLeft,
+                          child: LayoutBuilder(
+                            builder:
+                                (
+                              context,
+                              constraints,
+                            ) {
+                              final titleText =
+                                  stripHtml(
+                                currentTitle,
+                              );
 
-    child: LayoutBuilder(
-      builder: (context, constraints) {
+                              // ---------------------------------
+                              // CHECK 2 LINE OVERFLOW
+                              // ---------------------------------
 
-        final titleText = stripHtml(
-          currentTitle,
-        );
+                              final textPainter =
+                                  TextPainter(
+                                text: TextSpan(
+                                  text: titleText,
+                                  style:
+                                      const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight:
+                                        FontWeight.w500,
+                                    color:
+                                        Colors.black87,
+                                    height: 1.25,
+                                  ),
+                                ),
 
-        // Check whether text actually needs more than 2 lines
-        final textPainter = TextPainter(
-          text: TextSpan(
-            text: titleText,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-              height: 1.25,
-            ),
-          ),
-          maxLines: 2,
-          textDirection: TextDirection.ltr,
-        )..layout(
-            maxWidth: constraints.maxWidth,
-          );
+                                maxLines: 2,
 
-        final isTextOverflowing =
-            textPainter.didExceedMaxLines;
+                                textDirection:
+                                    TextDirection.ltr,
+                              )..layout(
+                                  maxWidth:
+                                      constraints.maxWidth,
+                                );
 
-        return Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+                              final isTextOverflowing =
+                                  textPainter
+                                      .didExceedMaxLines;
 
-          children: [
+                              return Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment
+                                        .start,
 
-            Text(
-              titleText,
+                                children: [
 
-              maxLines:
-                  isTitleExpanded
-                      ? null
-                      : 2,
+                                  // -----------------------------
+                                  // TITLE TEXT
+                                  // -----------------------------
 
-              overflow:
-                  isTitleExpanded
-                      ? TextOverflow.visible
-                      : TextOverflow.ellipsis,
+                                  Text(
+                                    titleText,
 
-              textAlign:
-                  TextAlign.left,
+                                    maxLines:
+                                        isTitleExpanded
+                                            ? null
+                                            : 2,
 
-              style:
-                  const TextStyle(
-                fontSize: 14,
-                fontWeight:
-                    FontWeight.w500,
-                color:
-                    Colors.black87,
-                height: 1.25,
-              ),
-            ),
+                                    overflow:
+                                        isTitleExpanded
+                                            ? TextOverflow
+                                                .visible
+                                            : TextOverflow
+                                                .ellipsis,
 
-            // Show Read More only when
-            // title has more than 2 lines
-            if (isTextOverflowing)
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isTitleExpanded =
-                        !isTitleExpanded;
-                  });
-                },
+                                    textAlign:
+                                        TextAlign.left,
 
-                child: Padding(
-                  padding:
-                      const EdgeInsets.only(
-                    top: 4,
-                  ),
+                                    style:
+                                        const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight:
+                                          FontWeight.w500,
+                                      color:
+                                          Colors.black87,
+                                      height: 1.25,
+                                    ),
+                                  ),
 
-                  child: Text(
-                    isTitleExpanded
-                        ? 'Read Less'
-                        : 'Read More',
+                                  // -----------------------------
+                                  // READ MORE / LESS
+                                  // -----------------------------
 
-                    style:
-                        const TextStyle(
-                      fontSize: 13,
-                      fontWeight:
-                          FontWeight.w600,
-                      color:
-                          Colors.blue,
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        );
-      },
-    ),
-  ),
-),
+                                  if (isTextOverflowing)
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          isTitleExpanded =
+                                              !isTitleExpanded;
+                                        });
+                                      },
 
-                      // Padding(
-                      //   padding:
-                      //       const EdgeInsets
-                      //           .fromLTRB(
-                      //     8,
-                      //     8,
-                      //     8,
-                      //     8,
-                      //   ),
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets
+                                                .only(
+                                          top: 4,
+                                        ),
 
-                      //   child: Align(
-                      //     alignment:
-                      //         Alignment.centerLeft,
+                                        child: Text(
+                                          isTitleExpanded
+                                              ? 'Read Less'
+                                              : 'Read More',
 
-                      //     child: Text(
-                      //       stripHtml(
-                      //         currentTitle,
-                      //       ),
-
-                      //       textAlign:
-                      //           TextAlign.left,
-
-                      //       style:
-                      //           const TextStyle(
-                      //         fontSize: 14,
-                      //         fontWeight:
-                      //             FontWeight.w500,
-                      //         color:
-                      //             Colors.black87,
-                      //         height: 1.25,
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
+                                          style:
+                                              const TextStyle(
+                                            fontSize: 13,
+                                            fontWeight:
+                                                FontWeight.w600,
+                                            color:
+                                                Colors.blue,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -958,7 +1596,9 @@ Padding(
                                 .withOpacity(
                               0.25,
                             ),
+
                             blurRadius: 6,
+
                             offset:
                                 const Offset(
                               0,
@@ -985,7 +1625,7 @@ Padding(
 
               if (canGoPrevious)
                 Positioned(
-                  left: -18,
+                  left: 20,
 
                   top:
                       imageHeight / 2 - 22,
@@ -1006,7 +1646,7 @@ Padding(
 
               if (canGoNext)
                 Positioned(
-                  right: -18,
+                  right: 20,
 
                   top:
                       imageHeight / 2 - 22,
@@ -1047,17 +1687,6 @@ Padding(
         child: Container(
           width: 44,
           height: 44,
-
-          decoration:
-              BoxDecoration(
-            color:
-                Colors.black.withOpacity(
-              0.60,
-            ),
-
-            shape:
-                BoxShape.circle,
-          ),
 
           child: Icon(
             icon,

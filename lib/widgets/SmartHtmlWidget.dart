@@ -615,15 +615,17 @@ onTapUrl: (url) async {
           RegExp(r'line-height\s*:\s*[^;"]+;?', caseSensitive: false),
           'line-height:24px;',
         )
-        .replaceAll(
-          RegExp(r'border-left\s*:\s*[^;"]+;?', caseSensitive: false),
-          '',
-        )
-        .replaceAll(
-          RegExp(r'padding-left\s*:\s*[^;"]+;?', caseSensitive: false),
-          '',
-        )
-        .replaceAll(RegExp(r'padding\s*:\s*[^;"]+;?', caseSensitive: false), '')
+
+        //commented because we want that |
+        // .replaceAll(
+        //   RegExp(r'border-left\s*:\s*[^;"]+;?', caseSensitive: false),
+        //   '',
+        // )
+        // .replaceAll(
+        //   RegExp(r'padding-left\s*:\s*[^;"]+;?', caseSensitive: false),
+        //   '',
+        // )
+        // .replaceAll(RegExp(r'padding\s*:\s*[^;"]+;?', caseSensitive: false), '')
         .replaceAll(
           RegExp(
             r'background(?:-color)?\s*:\s*(?:white|#fff(?:fff)?|rgb\s*\(\s*255\s*,\s*255\s*,\s*255\s*\))\s*;?',

@@ -48,6 +48,28 @@ case '27':
       shareLink: menu.menuUrl,
     );
   }
+  case '26':
+  if (menu.isVideo == true) {
+    return MediaListingScreen(
+      type: MediaType.all,
+      categoryID: menu.videoCategoryArray.join(','),
+      albumID: "",
+      albumName: "",
+      menuID: menu.id.toString(),
+      title: menu.menuTitle!,
+      shareLink: "",
+    );
+  } else {
+    return MediaListingScreen(
+      type: MediaType.videoLibrary,
+      categoryID: "",
+      albumID: "",
+      albumName: "",
+      menuID: menu.id.toString(),
+      title: menu.menuTitle!,
+      shareLink: menu.menuUrl,
+    );
+  }
       // case '27':
       
       //   return MediaListingScreen(

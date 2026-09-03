@@ -70,7 +70,8 @@ enum API {
   GetCountriesByVideoCategory,
   getleaderdetailsbyid,
   getcountrybytestimonialcategory
-,
+  
+,rashainsights
 
 }
 
@@ -431,6 +432,8 @@ class APIManager {
         return "api/leadership/get_leader_details_by_id";
          case API.getcountrybytestimonialcategory:
         return "api/page_structure/get-country-bytestimonial-category";
+        case API.rashainsights:
+        return "api/page_structure/rasha_insights";
         
     }
   }
@@ -460,6 +463,7 @@ class APIManager {
       case API.getappversion:
       case API.getlanguagelistbyarticles:
        case API.GetCountriesByVideoCategory:
+       case API.rashainsights:
         return HTTPMethod.GET;
 
       default:
@@ -498,8 +502,15 @@ class APIManager {
     Map<String, dynamic>? queryParams,
   }) async {
     try {
-      final url = apiEndPoint(api);
+      var url = apiEndPoint(api);
 
+// Use UAT URL only for Rasha Insights
+if (api == API.rashainsights) {
+  url = "https://mfv1-uat.ortdemo.com/api/page_structure/rasha_insights";
+
+  print("🧪 UAT URL USED FOR RASHA INSIGHTS:");
+  print(url);
+}
       final response = await dio.request(
         url,
         data: jsonval,

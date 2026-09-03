@@ -176,7 +176,7 @@ class _CommonBodyState extends State<CommonBody> {
     if (provider.status != ApiStatus.success &&
         provider.status != ApiStatus.loading &&
         provider.status != ApiStatus.initial) {
-           print("status in commonbody ${provider.status}");
+      print("status in commonbody ${provider.status}");
       return ApiStatusHandler(
         status: provider.status,
         errorMessage: provider.errorMessage,
@@ -342,11 +342,10 @@ class _CommonBodyState extends State<CommonBody> {
 
           title: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 2),
-            child: 
-            SmartHtmlWidget(
+            child: SmartHtmlWidget(
               html: tabLayout.title ?? "",
               fontSize: AppSizes.body(context),
-             
+
               ignorefontStyles: true,
               // textColor: Customcolor.textBlueColor,
 
@@ -355,7 +354,7 @@ class _CommonBodyState extends State<CommonBody> {
           ),
 
           content: CommonCarouselSection(
-            layoutType:tabLayout.type.name ,
+            layoutType: tabLayout.type.name,
             controller: controllerCarousel,
             carouselHeight: CommonStrings.callcoursaheight,
             imageWidth: CommonStrings.callimagewidth,
@@ -393,124 +392,114 @@ class _CommonBodyState extends State<CommonBody> {
       if (tabs.isEmpty) {
         return const SizedBox();
       }
-/// ✅ HANDLE THESE CAROUSEL SECTIONS VERTICALLY
-if (tabTypes.contains(layout.type) &&
-    (layout.mobileView == "horizontal" ||
-        layout.mobileView == "Horizontal")) {
-  
-  /// Find all carousel layouts of these types
-  final validCarouselLayouts = allLayouts.where((e) {
-    final List content = e.content ?? [];
 
-    return tabTypes.contains(e.type) &&
-        content.isNotEmpty &&
-        (e.mobileView == "horizontal" ||
-            e.mobileView == "Horizontal");
-  }).toList();
+      /// ✅ HANDLE THESE CAROUSEL SECTIONS VERTICALLY
+      if (tabTypes.contains(layout.type) &&
+          (layout.mobileView == "horizontal" ||
+              layout.mobileView == "Horizontal")) {
+        /// Find all carousel layouts of these types
+        final validCarouselLayouts = allLayouts.where((e) {
+          final List content = e.content ?? [];
 
-  /// Only render once.
-  /// Otherwise every layout will render all sections again.
-  if (validCarouselLayouts.isEmpty ||
-      layout != validCarouselLayouts.first) {
-    return const SizedBox();
-  }
-
-  return Padding(
-    padding: const EdgeInsets.only(top: 20),
-    child:
-     Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: validCarouselLayouts.map<Widget>((carouselLayout) {
-        final List content = carouselLayout.content ?? [];
-    
-        final items = content.map<CarouselItem>((e) {
-          final image = e['thumbnail'];
-          final title = e['title'];
-          final pageUrl = e['page_url'];
-    
-          return CarouselItem(
-            image: image is String ? image : "",
-            title: title is String ? title : "",
-            onTap:
-                carouselLayout.type ==
-                        HomeLayoutType.MerckMoreThanAmbasdar
-                    ? null
-                    : () {
-                        if (pageUrl != null &&
-                            pageUrl.toString().isNotEmpty) {
-                          ShowDialogs.launchURL(
-                            pageUrl.toString(),
-                          );
-                        }
-                      },
-          );
+          return tabTypes.contains(e.type) &&
+              content.isNotEmpty &&
+              (e.mobileView == "horizontal" || e.mobileView == "Horizontal");
         }).toList();
-    
-        final showButton =
-            carouselLayout.viewButton == true;
-    
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            /// ==========================
-            /// SECTION TITLE
-            /// ==========================
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-              ),
-              child: SmartHtmlWidget(
-                html: carouselLayout.title ?? "",
-                fontSize: AppSizes.heading(context),
-                ignorefontStyles: true,
-              ),
-            ),
-    
-            const SizedBox(height: 12),
-    
-            /// ==========================
-            /// CAROUSEL
-            /// ==========================
-            CommonCarouselSection(
-               layoutType: carouselLayout.type.name ,
-              controller: controllerCarousel,
-              carouselHeight:
-                  CommonStrings.callcoursaheight,
-              imageWidth:
-                  CommonStrings.callimagewidth,
-              imageHeight:
-                  CommonStrings.callimageheight,
-    
-              buttonText: showButton
-                  ? (carouselLayout.buttonText ?? "")
-                  : "",
-    
-              onViewAll: () {
-                AppNavigation.navigateByMenuId(
-                  context,
-                  menuId:
-                      carouselLayout.buttonMenuId.toString(),
-                  albumId: "",
-                  albumName: "",
-                  categoryId: "",
-                  type: carouselLayout.type,
-                  title:
-                      carouselLayout.title ?? "",
-                  shareLink:
-                      carouselLayout.buttonLink,
+
+        /// Only render once.
+        /// Otherwise every layout will render all sections again.
+        if (validCarouselLayouts.isEmpty ||
+            layout != validCarouselLayouts.first) {
+          return const SizedBox();
+        }
+
+        return Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: validCarouselLayouts.map<Widget>((carouselLayout) {
+              final List content = carouselLayout.content ?? [];
+
+              final items = content.map<CarouselItem>((e) {
+                final image = e['thumbnail'];
+                final title = e['title'];
+                final pageUrl = e['page_url'];
+                final subtitle=e['subtitle'];
+
+                return CarouselItem(
+                  image: image is String ? image : "",
+                  title: title is String ? title : "",
+                  subTitle:carouselLayout.type ==
+                          HomeLayoutType.MerckMoreThanAmbasdar? subtitle is String ? subtitle: "":"",
+                  onTap:
+                      carouselLayout.type ==
+                          HomeLayoutType.MerckMoreThanAmbasdar
+                      ? null
+                      : () {
+                          if (pageUrl != null &&
+                              pageUrl.toString().isNotEmpty) {
+                            ShowDialogs.launchURL(pageUrl.toString());
+                          }
+                        },
                 );
-              },
-    
-              items: items,
-            ),
-    
-            const SizedBox(height: 24),
-          ],
+              }).toList();
+
+              final showButton = carouselLayout.viewButton == true;
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// ==========================
+                  /// SECTION TITLE
+                  /// ==========================
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: SmartHtmlWidget(
+                      html: carouselLayout.title ?? "",
+                      fontSize: AppSizes.heading(context),
+                      ignorefontStyles: true,
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  /// ==========================
+                  /// CAROUSEL
+                  /// ==========================
+                  CommonCarouselSection(
+                    layoutType: carouselLayout.type.name,
+                    controller: controllerCarousel,
+                    carouselHeight: CommonStrings.callcoursaheight,
+                    imageWidth: CommonStrings.callimagewidth,
+                    imageHeight: CommonStrings.callimageheight,
+
+                    buttonText: showButton
+                        ? (carouselLayout.buttonText ?? "")
+                        : "",
+
+                    onViewAll: () {
+                      AppNavigation.navigateByMenuId(
+                        context,
+                        menuId: carouselLayout.buttonMenuId.toString(),
+                        albumId: "",
+                        albumName: "",
+                        categoryId: "",
+                        type: carouselLayout.type,
+                        title: carouselLayout.title ?? "",
+                        shareLink: carouselLayout.buttonLink,
+                      );
+                    },
+
+                    items: items,
+                  ),
+
+                  const SizedBox(height: 24),
+                ],
+              );
+            }).toList(),
+          ),
         );
-      }).toList(),
-    ),
-  );
-}
+      }
       // return SizedBox(
       //   height: tabShowViewButton
       //       ? CommonStrings.tabheightwithview
@@ -547,26 +536,26 @@ if (tabTypes.contains(layout.type) &&
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 15, bottom: 5),
-                      child: 
-                       layout.title ==""? SmartHtmlWidget(
-                        html: "Our Awards",
-                        textColor: Customcolor.textBlueColor,
-                        fontSize: screenWidth * 0.055,
-                        fontWeight: FontWeight.w800,
-                        ignoreHtmlStyles: true,
-                      ):
-                      SmartHtmlWidget(
-                        html: layout.title,
-                        textColor: Customcolor.violetcolor,
-                    // textColor: Customcolor.textBlueColor,
-                    fontSize: AppSizes.heading(context),
-                    ignorefontStyles: true,
-                        // textColor: Customcolor.textBlueColor,
-                        // fontSize: screenWidth * 0.055,
-                        // fontFamily: "Times New Roman",
-                        // fontWeight: FontWeight.w800,
-                        // ignoreHtmlStyles: true,
-                      ),
+                      child: layout.title == ""
+                          ? SmartHtmlWidget(
+                              html: "Our Awards",
+                              textColor: Customcolor.textBlueColor,
+                              fontSize: screenWidth * 0.055,
+                              fontWeight: FontWeight.w800,
+                              ignoreHtmlStyles: true,
+                            )
+                          : SmartHtmlWidget(
+                              html: layout.title,
+                              textColor: Customcolor.violetcolor,
+                              // textColor: Customcolor.textBlueColor,
+                              fontSize: AppSizes.heading(context),
+                              ignorefontStyles: true,
+                              // textColor: Customcolor.textBlueColor,
+                              // fontSize: screenWidth * 0.055,
+                              // fontFamily: "Times New Roman",
+                              // fontWeight: FontWeight.w800,
+                              // ignoreHtmlStyles: true,
+                            ),
                     ),
 
                     SizedBox(
@@ -708,7 +697,7 @@ if (tabTypes.contains(layout.type) &&
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 15,right: 15),
+              padding: const EdgeInsets.only(left: 15, right: 15),
               child: SmartHtmlWidget(
                 html: layout.title ?? "",
                 // textColor: Customcolor.textBlueColor,
@@ -727,7 +716,7 @@ if (tabTypes.contains(layout.type) &&
       case HomeLayoutType.episodes:
       case HomeLayoutType.video:
       case HomeLayoutType.newsLettersAndArticles:
-       case HomeLayoutType.ceoMessage:
+      case HomeLayoutType.ceoMessage:
       case HomeLayoutType.merckFoundationInMedia:
       case HomeLayoutType.testimonials:
       case HomeLayoutType.DigitalLibrary:
@@ -754,27 +743,29 @@ if (tabTypes.contains(layout.type) &&
                 //     .toList(),
                 content: layout.stories,
                 shareLink: layout.buttonLink ?? '',
-         
+
                 type: type,
                 title: layout.title ?? "",
                 buttonText: showViewButton ? (layout.buttonText ?? "") : "",
                 menuID: layout.buttonMenuId.toString(),
                 content_button: layout.contentButton,
               )
-            :type == HomeLayoutType.OurPartners?VerticalMediaSection(
+            : type == HomeLayoutType.OurPartners
+            ? VerticalMediaSection(
                 // content: (layout.content as List? ?? [])
                 //     .map((e) => StoryModel.fromJson(e))
                 //     .toList(),
                 content: layout.stories,
                 shareLink: layout.buttonLink ?? '',
-         
+
                 type: type,
                 title: layout.title ?? "",
                 buttonText: showViewButton ? (layout.buttonText ?? "") : "",
                 menuID: layout.buttonMenuId.toString(),
                 content_button: layout.contentButton,
-              ): HorizontalMediaSection(
-                contentbutton:layout.contentButton,
+              )
+            : HorizontalMediaSection(
+                contentbutton: layout.contentButton,
                 content: layout.content ?? [],
                 shareLink: layout.buttonLink ?? '',
                 buttonText: showViewButton ? (layout.buttonText ?? "") : "",
@@ -821,63 +812,61 @@ if (tabTypes.contains(layout.type) &&
                 //           // fontSize: responsive.fontSize(3.0),
                 //           // fontWeight: FontWeight.w800,
                 //         ),
- SmartHtmlWidget(
-                          html: layout.title ?? "",
-                          textColor: Customcolor.violetcolor,
-                    // textColor: Customcolor.textBlueColor,
-                    fontSize: AppSizes.heading(context),
-                    ignorefontStyles: true,
-                          // textColor: Customcolor.colorVoilet,
-                          // fontSize: responsive.fontSize(3.0),
-                          // fontWeight: FontWeight.w800,
-                        ),
-               
-                SmartHtmlWidget(html: """${item['description']}""" ?? ""),
-              //  ( item['view_button']==true ||  item['view_button']=="true")? 
-                Align(
-                  alignment: Alignment.center,
-              child: Padding(
-                padding:
-                    EdgeInsets.only(bottom: 5),
-                child: CommonBorderButton(
-                  title:
-                    layout.buttonText,
-                  onTap: ()
-                  {
-                     AppNavigation.navigateByMenuId(
-          context,
-          menuId:layout.buttonMenuId.toString() ?? "",
-          title: layout.title ?? "",
-        );
-                  }
-                  ,
+                SmartHtmlWidget(
+                  html: layout.title ?? "",
+                  textColor: Customcolor.violetcolor,
+                  // textColor: Customcolor.textBlueColor,
+                  fontSize: AppSizes.heading(context),
+                  ignorefontStyles: true,
+                  // textColor: Customcolor.colorVoilet,
+                  // fontSize: responsive.fontSize(3.0),
+                  // fontWeight: FontWeight.w800,
                 ),
-              ),
-            )
-            // :Container()
+
+                SmartHtmlWidget(html: """${item['description']}""" ?? ""),
+            (layout.viewButton == true || layout.viewButton == "true")?    SizedBox(height: 10,): SizedBox(height: 0,),
+                (layout.viewButton == true || layout.viewButton == "true")
+                    ? Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 5),
+                          child: CommonBorderButton(
+                            title: layout.buttonText,
+                            onTap: () {
+                              AppNavigation.navigateByMenuId(
+                                context,
+                                menuId: layout.buttonMenuId.toString() ?? "",
+                                title: layout.title ?? "",
+                              );
+                            },
+                          ),
+                        ),
+                      )
+                    : Container(),
                 //  const SizedBox(height: 10),
               ],
             ),
           );
         }
-return ContentCarouselWidget(contentList: contentList);
+        return ContentCarouselWidget(contentList: contentList);
       case HomeLayoutType.leadership:
         return LeaderCard(
           content: layout.content ?? [],
           shareLink: layout.buttonLink ?? '',
           menuID: widget.menuID ?? "",
         );
-         case HomeLayoutType.RashaInsights:
-         return
-RashaKelejCard(
-  title: layout.title,
-  content: layout.content ?? [],
-  shareLink: layout.buttonLink ?? '',
-          menuID: widget.menuID ?? "",
-);
+      // case HomeLayoutType.RashaInsights:
+      //   return RashaKelejCard(
+      //     title: layout.title,
+      //     content: layout.content ?? [],
+      //     shareLink: layout.buttonLink ?? '',
+      //     menuID: widget.menuID ?? "",
+      //   );
       case HomeLayoutType.marquee:
         return Column(
-          children: [CommonMarqueeWidget(contents: layout.content ?? [])],
+          children: [CommonMarqueeWidget(contents: layout.content ?? []),
+       
+          ],
         );
       case HomeLayoutType.MenuManagement:
         return Column(

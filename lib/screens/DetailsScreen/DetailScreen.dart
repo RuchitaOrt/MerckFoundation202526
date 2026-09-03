@@ -243,57 +243,72 @@ leader_id:widget.articleId!
                     fontWeight: FontWeight.w900,
                   ),
                 ),
-            widget.isDetailApiCalled==false
-                  ? SizedBox()
-                  : provider.articleDetail!.availableLanguages!.isNotEmpty
-                  ? Padding(
-                      padding: const EdgeInsets.only(right: 10,top: 8,bottom: 16),
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          alignment: WrapAlignment.end,
-                          spacing: 6,
-                          children: [
-                            const Text(
-                              "View:",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            ...provider.articleDetail!.availableLanguages!.map(
-                              (language) => InkWell(
-                                onTap: () {
-                                  print(language.language);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => DetailScreen(
-                                        "",
-                                        "",
-                                        title: "",
-                                        articleId: language.articleId
-                                            .toString(),
-                                        languageId: language.languageId,
-                                        isDetailApiCalled: true,
-                                        shareLink: widget.shareLink,
-                                        menuID: widget.menuID,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  language.language,
-                                  style: const TextStyle(
-                                    color: Colors.blue,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  : const SizedBox(),
+            // widget.isDetailApiCalled==false
+            //       ? SizedBox()
+            //       : provider.articleDetail!.availableLanguages!.isNotEmpty
+            //       ? Padding(
+            //           padding: const EdgeInsets.only(right: 10,top: 8,bottom: 16),
+            //           child: Align(
+            //             alignment: Alignment.centerRight,
+            //             child: Wrap(
+            //               crossAxisAlignment: WrapCrossAlignment.center,
+            //               alignment: WrapAlignment.end,
+            //               spacing: 6,
+            //               children: [
+            //                 const Text(
+            //                   "View:",
+            //                   style: TextStyle(fontWeight: FontWeight.bold),
+            //                 ),
+            //                 ...provider.articleDetail!.availableLanguages!.map(
+            //                   (language) => InkWell(
+            //                     onTap: () {
+            //                       print(language.language);
+            //                       Navigator.push(
+            //                         context,
+            //                         MaterialPageRoute(
+            //                           builder: (_) => DetailScreen(
+            //                             "",
+            //                             "",
+            //                             title: "",
+            //                             articleId: language.articleId
+            //                                 .toString(),
+            //                             languageId: language.languageId,
+            //                             isDetailApiCalled: true,
+            //                             shareLink: widget.shareLink,
+            //                             menuID: widget.menuID,
+            //                           ),
+            //                         ),
+            //                       );
+            //                     },
+            //                     child: Text(
+            //                       language.language,
+            //                       style: const TextStyle(
+            //                         color: Colors.blue,
+            //                         decoration: TextDecoration.underline,
+            //                       ),
+            //                     ),
+            //                   ),
+            //                 ),
+            //               ],
+            //             ),
+            //           ),
+            //         )
+            //       : const SizedBox(),
+            if (widget.isDetailApiCalled && provider.articleDetail != null)
+  Padding(
+    padding: const EdgeInsets.only(
+      right: 10,
+      top: 8,
+      bottom: 16,
+    ),
+    child: Align(
+      alignment: Alignment.centerRight,
+      child: _buildLanguageDropdown(
+        context,
+        provider,
+      ),
+    ),
+  ),
           widget.isDetailApiCalled==true?SizedBox():     Padding(
                 padding: const EdgeInsets.only(
                   left: 16,
@@ -396,4 +411,207 @@ leader_id:widget.articleId!
       ),
     );
   }
+  Widget _buildLanguageDropdown(
+  BuildContext context,
+  ArticleProvider provider,
+) {
+  final detail = provider.articleDetail;
+
+  if (detail == null) {
+    return const SizedBox();
+  }
+
+  // Current article language
+  final List<Map<String, dynamic>> languages = [];
+
+  String currentLanguage = detail!.language ?? "";
+
+  // Convert current language code into display name
+  String currentLanguageName;
+
+  switch (currentLanguage.toUpperCase()) {
+    case "EN":
+      currentLanguageName = "English";
+      break;
+    case "FR":
+      currentLanguageName = "French";
+      break;
+    case "PT":
+      currentLanguageName = "Portuguese";
+      break;
+    case "ES":
+      currentLanguageName = "Spanish";
+      break;
+    case "AR":
+      currentLanguageName = "Arabic";
+      break;
+    case "SW":
+      currentLanguageName = "Swahili";
+      break;
+    default:
+      currentLanguageName = currentLanguage;
+  }
+
+  // Add CURRENT language first
+  languages.add({
+    "article_id": detail.id,
+    "language_id": detail.language,
+    "language": currentLanguageName,
+    "abbr": currentLanguage,
+    "is_current": true,
+  });
+
+  // Add available languages
+  for (final language in detail.availableLanguages ?? []) {
+    languages.add({
+      "article_id": language.articleId,
+      "language_id": language.languageId,
+      "language": language.language,
+      "abbr": language.abbr,
+      "is_current": false,
+    });
+  }
+
+  if (languages.isEmpty) {
+    return const SizedBox();
+  }
+
+  // Current selected language
+  final String selectedLanguageId =
+      detail.language?.toString() ??
+      widget.languageId?.toString() ??
+      "";
+
+  // Make sure selected value exists in DropdownButton
+  final bool selectedExists = languages.any(
+    (language) =>
+        language["language_id"]?.toString() == selectedLanguageId,
+  );
+
+  final String? dropdownValue =
+      selectedExists ? selectedLanguageId : null;
+
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      const Text(
+        "View in other languages:",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+
+      const SizedBox(width: 8),
+
+      Container(
+        height: 42,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(
+            color: Colors.grey.shade400,
+          ),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            value: dropdownValue,
+
+            icon: const Icon(
+              Icons.keyboard_arrow_down,
+              color: Colors.blue,
+            ),
+
+            style: const TextStyle(
+              color: Colors.black87,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+
+            dropdownColor: Colors.white,
+
+            items: languages.map<DropdownMenuItem<String>>(
+              (language) {
+                final String languageId =
+                    language["language_id"].toString();
+
+                final bool isCurrent =
+                    language["is_current"] == true;
+
+                return DropdownMenuItem<String>(
+                  value: languageId,
+                  child: Text(
+                    language["language"].toString(),
+                    style: TextStyle(
+                      color: isCurrent
+                          ? Colors.blue
+                          : Colors.black87,
+                      fontWeight: isCurrent
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                  ),
+                );
+              },
+            ).toList(),
+
+            onChanged: (String? selectedLanguageId) {
+              if (selectedLanguageId == null) {
+                return;
+              }
+
+              final selectedLanguage = languages.firstWhere(
+                (language) =>
+                    language["language_id"].toString() ==
+                    selectedLanguageId,
+              );
+
+              final bool isCurrent =
+                  selectedLanguage["is_current"] == true;
+
+              // Already on this language
+              if (isCurrent) {
+                return;
+              }
+
+              final String articleId =
+                  selectedLanguage["article_id"].toString();
+
+              final String languageId =
+                  selectedLanguage["language_id"].toString();
+
+              debugPrint(
+                "Selected Language: ${selectedLanguage["language"]}",
+              );
+
+              debugPrint(
+                "Article ID: $articleId",
+              );
+
+              debugPrint(
+                "Language ID: $languageId",
+              );
+
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => DetailScreen(
+                    "",
+                    "",
+                    title: "",
+                    articleId: articleId,
+                    languageId: languageId,
+                    isDetailApiCalled: true,
+                    shareLink: widget.shareLink,
+                    menuID: widget.menuID,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    ],
+  );
+}
 }

@@ -87,5 +87,6 @@ class CommonImagePath {
   static const noInternet = "assets/newImages/noInternet.png";
 
   static const timeOut = "assets/newImages/timeOut.png";
+   static const substack = "assets/newImages/substack.png";
   static const unauthorized = "assets/newImages/unAuthorized.jpeg";
 }

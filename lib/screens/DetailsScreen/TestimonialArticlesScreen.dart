@@ -330,8 +330,19 @@ class _TestimonialPage extends StatelessWidget {
               const SizedBox(height: 18),
 
               /// TITLE
-              SmartHtmlWidget(
-                html: item.title,
+              // SmartHtmlWidget(
+              //   html: item.title,
+
+              //   textColor: Customcolor.colorVoilet,
+
+              //   fontSize: responsive.fontSize(3),
+
+              //   fontWeight: FontWeight.bold,
+              // ),
+
+              // const SizedBox(height: 12),
+ SmartHtmlWidget(
+                html: item.testimonial_name,
 
                 textColor: Customcolor.colorVoilet,
 
@@ -339,7 +350,6 @@ class _TestimonialPage extends StatelessWidget {
 
                 fontWeight: FontWeight.bold,
               ),
-
               const SizedBox(height: 12),
 
               // DEPARTMENT

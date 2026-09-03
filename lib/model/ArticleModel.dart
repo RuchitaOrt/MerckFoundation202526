@@ -8,6 +8,7 @@ class ArticleModel {
   final String detailsPageUrl;
   final String createdAt;
   final String articleTypeDisplay;
+  final String language;
 final String? leader_lang;
   /// ✅ FIX
   final String language_id;
@@ -25,6 +26,7 @@ final String? leader_lang;
     required this.image,
     required this.detailsPageUrl,
     required this.createdAt,
+    required this.language,
     required this.articleTypeDisplay,
     required this.language_id,
     required this.availableLanguages,
@@ -43,6 +45,7 @@ final String? leader_lang;
       detailsPageUrl: json['details_page_url'] ?? "",
       createdAt: json['createdAt'] ?? "",
       articleTypeDisplay: json['article_type_display'] ?? "",
+      language:json['language']??"",
 
       /// ✅ IMPORTANT FIX
       language_id: (json['language_id'] ?? "").toString(),

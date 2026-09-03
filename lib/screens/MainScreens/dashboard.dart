@@ -1,6 +1,8 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 import 'package:merckfoundation_252026/Provider/SocialProvider.dart';
 import 'package:merckfoundation_252026/Provider/navbar_provider.dart';
 import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
@@ -37,7 +39,10 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   late int currentIndex;
-  late PageController pageController;
+  // late PageController pageController;
+   late PageController pageController;
+
+  OverlayEntry? _exitOverlay;
 
   @override
   void initState() {
@@ -47,7 +52,85 @@ class _DashboardState extends State<Dashboard> {
 
     pageController = PageController(initialPage: widget.index);
   }
+  bool _canExit = false;
+void _showExitMessage() {
+  ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
+  final screenWidth = MediaQuery.of(context).size.width;
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      behavior: SnackBarBehavior.floating,
+
+      // Position above bottom navigation
+      margin: EdgeInsets.only(
+        left: 16,
+        right: 16,
+       bottom: MediaQuery.of(context).padding.bottom + 16,
+      ),
+
+      duration: const Duration(seconds: 3),
+
+      padding: EdgeInsets.zero,
+
+      content: Center(
+        child: Container(
+          width: screenWidth > 512
+              ? 480
+              : screenWidth - 32,
+
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 8,
+          ),
+
+          decoration: BoxDecoration(
+            color: Customcolor.textsubtitlecolor,
+            borderRadius: BorderRadius.circular(40),
+          ),
+
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // My logo
+            
+Container(
+                width: 22,
+                height: 22,
+                decoration: const BoxDecoration(
+                  color:Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child:   Image.asset(CommonImagePath.logoMenu,width: 20,height: 20,),
+              ),
+              const SizedBox(width: 14),
+
+              const Expanded(
+                child: Text(
+                  "Press back again to exit",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+
+  Future.delayed(const Duration(seconds: 3), () {
+    if (mounted) {
+      _canExit = false;
+    }
+  });
+}
  BottomNavyBarItem _navItemDynamic({
   required int index,
   required int menuId,
@@ -164,6 +247,76 @@ icon: CachedNetworkImage(
   //     textAlign: TextAlign.center,
   //   );
   // }
+//   void _showExitMessage() {
+//   _exitOverlay?.remove();
+
+//   _exitOverlay = OverlayEntry(
+//     builder: (context) {
+//       return Positioned(
+//         left: 16,
+//         right: 16,
+//         bottom: 10,
+//         child: Material(
+//           color: Colors.transparent,
+//           child: Container(
+//             padding: const EdgeInsets.symmetric(
+//               horizontal: 16,
+//               vertical: 12,
+//             ),
+//             decoration: BoxDecoration(
+//               color: Colors.black87,
+//               borderRadius: BorderRadius.circular(30),
+//             ),
+//             child: Row(
+//               children: [
+//                 const Expanded(
+//                   child: Text(
+//                     "Press back again to exit",
+//                     style: TextStyle(
+//                       color: Colors.white,
+//                       fontSize: 14,
+//                       fontWeight: FontWeight.w500,
+//                     ),
+//                   ),
+//                 ),
+
+//                 TextButton(
+//                   onPressed: () {
+//                     _exitOverlay?.remove();
+//                     _exitOverlay = null;
+//                     _isExitMessageShown = false;
+
+//                     SystemNavigator.pop();
+//                   },
+//                   child: const Text(
+//                     "EXIT",
+//                     style: TextStyle(
+//                       color: Colors.white,
+//                       fontWeight: FontWeight.bold,
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       );
+//     },
+//   );
+
+//   Overlay.of(context).insert(_exitOverlay!);
+// bool _isExitMessageShown = false;
+//   Future.delayed(const Duration(seconds: 3), () {
+//     if (_exitOverlay != null) {
+//       _exitOverlay?.remove();
+//       _exitOverlay = null;
+
+//       _isExitMessageShown = false;
+//     }
+//   });
+// }
+bool _isExitMessageShown = false;
+
 @override
 Widget build(BuildContext context) {
   final navbarProvider = Provider.of<NavbarProvider>(context);
@@ -171,14 +324,31 @@ Widget build(BuildContext context) {
  
 
   
-  return Scaffold(
-    backgroundColor: Customcolor.background,
+  return PopScope(
+    canPop: false,
+  onPopInvokedWithResult: (didPop, result) {
+    if (didPop) return;
 
-  
-    // ✅ ONLY BODY CHANGES
-    body: _buildBody(navbarProvider, navMenus),
-
-    bottomNavigationBar: _buildBottomBar(navbarProvider, navMenus),
+    if (_canExit) {
+      // Second back press
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      SystemNavigator.pop();
+    } else {
+      // First back press
+      _canExit = true;
+      _showExitMessage();
+    }
+  },
+    child: Scaffold(
+      
+      backgroundColor: Customcolor.background,
+    
+    
+      // ✅ ONLY BODY CHANGES
+      body: _buildBody(navbarProvider, navMenus),
+    
+      bottomNavigationBar: _buildBottomBar(navbarProvider, navMenus),
+    ),
   );
 }
 Widget _buildBody(NavbarProvider navbarProvider, List navMenus) {
@@ -283,7 +453,7 @@ Widget _buildBottomBar(NavbarProvider navbarProvider, List navMenus) {
   index: index,
   menuId: item.id,
   title: item.menuTitle,
-  menuLogo: item.mobileMenuIcon,
+  menuLogo: item.mobileMenuIcon ?? "",
 );
               }),
             ),
@@ -293,10 +463,12 @@ Widget _buildBottomBar(NavbarProvider navbarProvider, List navMenus) {
     ),
   );
 }
+@override
+void dispose() {
+  _exitOverlay?.remove();
+  _exitOverlay = null;
 
-  @override
-  void dispose() {
-    pageController.dispose();
-    super.dispose();
-  }
+  pageController.dispose();
+  super.dispose();
+}
 }

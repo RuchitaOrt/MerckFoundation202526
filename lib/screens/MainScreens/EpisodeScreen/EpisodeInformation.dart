@@ -95,9 +95,9 @@ class _EpisodeInformationState extends State<EpisodeInformation> {
 
                 _htmlBlock(data.showBrief),
 
-                _buildSectionTitle("Episode Brief:"),
+                // _buildSectionTitle("Episode Brief:"),
 
-                _htmlBlock(data.episodeBrief),
+                // _htmlBlock(data.episodeBrief),
 
                 _buildSectionTitle("Guests & Designer Information:"),
 
@@ -142,6 +142,28 @@ class _EpisodeInformationState extends State<EpisodeInformation> {
 
                 _photoGallery(data),
                 SizedBox(height: 20),
+                Center(
+                  child: CommonBorderButton(
+                    title: "VIEW MORE",
+                    onTap: () {
+                      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MediaListingScreen(
+              type: MediaType.photoAlbum,
+              categoryID: data.Photo_category,
+              albumID: data.album_id.toString(),
+              albumName: data.albumName.toString() ?? "",
+              menuID: widget.menuID,
+              shareLink: "",
+              title: data.albumName?.toString() ?? "",
+            ),
+          ),
+        );
+                    },
+                  ),
+                ),
+
 
                 const FooterFlowerImage(),
                 8.0.heightBox,

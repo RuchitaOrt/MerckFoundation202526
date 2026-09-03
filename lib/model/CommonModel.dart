@@ -62,11 +62,13 @@ class DynamicTabItem {
 class CarouselItem {
   final String image;
   final String? title;
+   final String? subTitle;
   final VoidCallback? onTap;
 
   CarouselItem({
     required this.image,
     this.title,
+    this.subTitle,
     this.onTap,
   });
 

@@ -14,6 +14,7 @@ import 'package:merckfoundation_252026/Provider/MediaProvider.dart';
 import 'package:merckfoundation_252026/Provider/MediaListingProvider.dart';
 import 'package:merckfoundation_252026/Provider/OurPartnersProvider.dart';
 import 'package:merckfoundation_252026/Provider/PhotoAlbumProvider.dart';
+import 'package:merckfoundation_252026/Provider/RashaInsightsProvider.dart';
 import 'package:merckfoundation_252026/Provider/SearchProvider.dart';
 import 'package:merckfoundation_252026/Provider/SocialProvider.dart';
 
@@ -140,6 +141,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ChangeNotifierProvider(
           create: (_) => CovidProvider()..loadInitialData(),
         ),
+        ChangeNotifierProvider(
+  create: (_) => RashaInsightsProvider(),
+),
       ],
       child: MaterialApp(
           navigatorObservers: [

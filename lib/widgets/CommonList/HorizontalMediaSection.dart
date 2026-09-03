@@ -5,6 +5,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:merckfoundation_252026/Provider/PageProvider.dart';
 import 'package:merckfoundation_252026/Utility/APIManager.dart';
 import 'package:merckfoundation_252026/Utility/AppSizes.dart';
+import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
 import 'package:merckfoundation_252026/model/TestimonialModel.dart';
 import 'package:merckfoundation_252026/routes/AppNavigation.dart';
@@ -206,7 +207,19 @@ class _HorizontalMediaSectionState extends State<HorizontalMediaSection> {
 
         return;
       }
-
+// if(widget.type==HomeLayoutType.testimonials)
+// {
+//   print("RUCHITA");
+//    Navigator.push(
+//           context,
+//           MaterialPageRoute(
+//             builder: (_) => TestimonialArticlesScreen(
+//               shareLink: widget.shareLink ?? "",
+//               title: widget.title!,
+//             ),
+//           ),
+//         );
+// }
       AppNavigation.navigateByMenuId(
         context,
         menuId: widget.menuID,
@@ -238,7 +251,7 @@ class _HorizontalMediaSectionState extends State<HorizontalMediaSection> {
     final itemHeight =
         widget.type == HomeLayoutType.testimonials
             ? screenHeight * 0.39
-            :widget.contentbutton==true ?screenHeight * 0.40:screenHeight * 0.35;
+            :widget.contentbutton==true ?screenHeight * 0.43:screenHeight * 0.35;
 
     final imageHeight = screenHeight * 0.28;
 
@@ -256,7 +269,7 @@ class _HorizontalMediaSectionState extends State<HorizontalMediaSection> {
               children: [
                 Expanded(
                   child: SmartHtmlWidget(
-                    html: widget.title!,
+                    html:"${widget.title!}",
                     textColor: Customcolor.violetcolor,
                     fontSize: AppSizes.heading(context),
                     ignorefontStyles: true,
@@ -309,7 +322,7 @@ class _HorizontalMediaSectionState extends State<HorizontalMediaSection> {
 
                 // Move every 2 seconds
                 autoPlayInterval:
-                    const Duration(seconds: 2),
+                    const Duration(seconds: 8),
 
                 // Animation duration
                 autoPlayAnimationDuration:
@@ -458,6 +471,7 @@ class _HorizontalMediaSectionState extends State<HorizontalMediaSection> {
                 HomeLayoutType.testimonials) {
           final clickedTestimonial =
               TestimonialModel(
+                testimonial_name: item['testimonial_name']??"",
             image: item['thumbnail'] ?? "",
             title: item['title'] ?? "",
             departmentName: "",
@@ -519,33 +533,61 @@ class _HorizontalMediaSectionState extends State<HorizontalMediaSection> {
         else if (
             widget.type ==
                 HomeLayoutType.photoGallery) {
-          showGeneralDialog(
-            context: context,
-            barrierDismissible: true,
-            barrierLabel: 'Image Preview',
-            barrierColor:
-                Colors.transparent,
-            transitionDuration:
-                const Duration(
-              milliseconds: 200,
-            ),
-            pageBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-            ) {
-              return ImagePreviewDialog(
-                 items: widget.content,
-  initialIndex: index,
-  imageUrl: (item) => item.thumbnail ?? "",
-  title: (item) => item.title ?? "",
-                // imageUrl:
-                //     item['thumbnail'] ?? "",
-                // title:
-                //     item['title'] ?? "",
-              );
-            },
-          );
+                   print("3Image");
+                   showGeneralDialog(
+  context: context,
+  barrierDismissible: true,
+  barrierLabel: 'Image Preview',
+
+  // Transparent black overlay over the previous screen
+  barrierColor: Colors.black.withOpacity(0.55),
+
+  transitionDuration: const Duration(
+    milliseconds: 200,
+  ),
+
+  pageBuilder: (
+    context,
+    animation,
+    secondaryAnimation,
+  ) {
+    return ImagePreviewDialog(
+      items: widget.content,
+      initialIndex: index,
+      imageUrl: (item) =>
+          item['thumbnail']?.toString() ?? "",
+      title: (item) =>
+          item['title']?.toString() ?? "",
+    );
+  },
+);
+  //         showGeneralDialog(
+  //           context: context,
+  //           barrierDismissible: true,
+  //           barrierLabel: 'Image Preview',
+  //           barrierColor:
+  //               Colors.transparent,
+  //           transitionDuration:
+  //               const Duration(
+  //             milliseconds: 200,
+  //           ),
+  //           pageBuilder: (
+  //             context,
+  //             animation,
+  //             secondaryAnimation,
+  //           ) {
+  //             return ImagePreviewDialog(
+  //               items: widget.content,
+  // initialIndex: index,
+  // imageUrl: (item) => item['thumbnail']?.toString() ?? "",
+  // title: (item) => item['title']?.toString() ?? "",
+  //               // imageUrl:
+  //               //     item['thumbnail'] ?? "",
+  //               // title:
+  //               //     item['title'] ?? "",
+  //             );
+  //           },
+  //         );
         }
       },
 
@@ -678,6 +720,8 @@ class _HorizontalMediaSectionState extends State<HorizontalMediaSection> {
                             .textsubtitlecolor,
                         fontWeight:
                             FontWeight.w700,
+                            fontSize: ResponsiveFlutter.of(context).fontSize(3),
+                            //AppSizes.heading(context),
                         fontFamily:
                             "Verdana",
                       ),

@@ -185,20 +185,39 @@ Navigator.push(
                 );
                         }else if(item.sourceType=="ambassador")
                         {
-                          showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                       backgroundColor: Colors.transparent,
-barrierColor: Colors.transparent,
-                        builder: (_) => ImagePreviewDialog(
-                          items: provider.searchList,
+                          showGeneralDialog(
+  context: context,
+  barrierDismissible: true,
+  barrierLabel: 'Image Preview',
+  barrierColor: Colors.transparent,
+  transitionDuration: const Duration(milliseconds: 200),
+  pageBuilder: (
+    context,
+    animation,
+    secondaryAnimation,
+  ) {
+    return ImagePreviewDialog(
+       items: provider.searchList,
       initialIndex: index,
       imageUrl: (item) => item.thumbnail ?? "",
-      title: (item) => item.title ?? "",
-                          // imageUrl: item.thumbnail ?? "",
-                          // title: item.title,
-                        ),
-                      );
+      title: (item) => item.description ?? "",
+    );
+  },
+);
+//                           showModalBottomSheet(
+//                         context: context,
+//                         isScrollControlled: true,
+//                        backgroundColor: Colors.transparent,
+// barrierColor: Colors.transparent,
+//                         builder: (_) => ImagePreviewDialog(
+//                           items: provider.searchList,
+//       initialIndex: index,
+//       imageUrl: (item) => item.thumbnail ?? "",
+//       title: (item) => item.title ?? "",
+//                           // imageUrl: item.thumbnail ?? "",
+//                           // title: item.title,
+//                         ),
+                      // );
                         }else if(item.sourceType=="award")
                         {
                            Navigator.push(
@@ -216,6 +235,7 @@ barrierColor: Colors.transparent,
 
 
                       final clickedTestimonial = TestimonialModel(
+                        testimonial_name:"",
                         image: item.thumbnail ?? "",
                         title: item.title ?? "",
                         departmentName: "",

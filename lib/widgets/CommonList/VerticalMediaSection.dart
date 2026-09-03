@@ -36,7 +36,9 @@ class VerticalMediaSection extends StatefulWidget {
     required this.type,
     required this.menuID,
     required this.shareLink,
-    required this.title, required this.content_button,this.buttonText=""
+    required this.title,
+    required this.content_button,
+    this.buttonText = "",
   });
 
   @override
@@ -57,176 +59,161 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
         ? pageSize
         : widget.content.length;
   }
-Future<void> _onViewAllPressed() async {
-  debugPrint("=================================");
-  debugPrint("WATCH MORE CLICKED");
-  debugPrint("MENU ID = ${widget.menuID}");
-  debugPrint("TYPE = ${widget.type}");
-  debugPrint("TITLE = ${widget.title}");
-  debugPrint("=================================");
 
-  if (widget.menuID.isEmpty) {
-    debugPrint("ERROR: menuID is EMPTY");
-    return;
-  }
+  Future<void> _onViewAllPressed() async {
+    debugPrint("=================================");
+    debugPrint("WATCH MORE CLICKED");
+    debugPrint("MENU ID = ${widget.menuID}");
+    debugPrint("TYPE = ${widget.type}");
+    debugPrint("TITLE = ${widget.title}");
+    debugPrint("=================================");
 
-  final provider = Provider.of<PageProvider>(
-    context,
-    listen: false,
-  );
+    if (widget.menuID.isEmpty) {
+      debugPrint("ERROR: menuID is EMPTY");
+      return;
+    }
 
-  final data = await provider.fetchWatchMorePage(
-    context,
-    widget.menuID,
-  );
+    final provider = Provider.of<PageProvider>(context, listen: false);
 
-  if (!mounted) return;
+    final data = await provider.fetchWatchMorePage(context, widget.menuID);
 
-  debugPrint("WATCH MORE DATA = $data");
+    if (!mounted) return;
 
-  if (data == null) {
-    debugPrint("WATCH MORE: DATA IS NULL");
-    return;
-  }
+    debugPrint("WATCH MORE DATA = $data");
 
-  final root = data['data'];
+    if (data == null) {
+      debugPrint("WATCH MORE: DATA IS NULL");
+      return;
+    }
 
-  if (root == null || root is! Map) {
-    debugPrint("WATCH MORE: INVALID ROOT");
+    final root = data['data'];
+
+    if (root == null || root is! Map) {
+      debugPrint("WATCH MORE: INVALID ROOT");
+      debugPrint("ROOT = $root");
+      return;
+    }
+
+    debugPrint("========== ROOT ==========");
     debugPrint("ROOT = $root");
-    return;
-  }
+    debugPrint("is_newsletter = ${root['is_newsletter']}");
+    debugPrint("is_awards = ${root['is_awards']}");
+    debugPrint("is_video = ${root['is_video']}");
+    debugPrint("is_dglibrary = ${root['is_dglibrary']}");
+    debugPrint("is_photo = ${root['is_photo']}");
+    debugPrint("==========================");
 
-  debugPrint("========== ROOT ==========");
-  debugPrint("ROOT = $root");
-  debugPrint("is_newsletter = ${root['is_newsletter']}");
-  debugPrint("is_awards = ${root['is_awards']}");
-  debugPrint("is_video = ${root['is_video']}");
-  debugPrint("is_dglibrary = ${root['is_dglibrary']}");
-  debugPrint("is_photo = ${root['is_photo']}");
-  debugPrint("==========================");
+    if (root['is_newsletter'] == true) {
+      debugPrint("NAVIGATING -> NEWSLETTER");
 
-  if (root['is_newsletter'] == true) {
-    debugPrint("NAVIGATING -> NEWSLETTER");
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => DetailScreen(
-          "",
-          "",
-          title: root['menu_name']?.toString() ?? "",
-          articleId: root['newsletter_id']?.toString() ?? "",
-          languageId: "",
-          isDetailApiCalled: true,
-          shareLink: "",
-          menuID: widget.menuID,
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => DetailScreen(
+            "",
+            "",
+            title: root['menu_name']?.toString() ?? "",
+            articleId: root['newsletter_id']?.toString() ?? "",
+            languageId: "",
+            isDetailApiCalled: true,
+            shareLink: "",
+            menuID: widget.menuID,
+          ),
         ),
-      ),
-    );
+      );
 
-    return;
-  }
-else
-  if (root['is_awards'] == true) {
-    debugPrint("NAVIGATING -> AWARDS");
+      return;
+    } else if (root['is_awards'] == true) {
+      debugPrint("NAVIGATING -> AWARDS");
 
-    AppNavigation.navigateByMenuId(
-      context,
-      menuId: root['award_id']?.toString() ?? "",
-      title: root['menu_name']?.toString() ?? "",
-    );
+      AppNavigation.navigateByMenuId(
+        context,
+        menuId: root['award_id']?.toString() ?? "",
+        title: root['menu_name']?.toString() ?? "",
+      );
 
-    return;
-  }
-else
-  if (root['is_video'] == true) {
-    debugPrint("NAVIGATING -> VIDEO");
+      return;
+    } else if (root['is_video'] == true) {
+      debugPrint("NAVIGATING -> VIDEO");
 
-    final videoCategories = root['video_category_array'];
+      final videoCategories = root['video_category_array'];
 
-    
+      debugPrint("VIDEO CATEGORY = $videoCategories");
 
-    debugPrint("VIDEO CATEGORY = $videoCategories");
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => MediaListingScreen(
-          type: MediaType.all,
-          categoryID: videoCategories.join(','),
-          albumID: "",
-          albumName: "",
-          menuID: "",
-          title: root['menu_name']?.toString() ?? "",
-          shareLink: root['share_link']?.toString() ?? "",
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MediaListingScreen(
+            type: MediaType.all,
+            categoryID: videoCategories.join(','),
+            albumID: "",
+            albumName: "",
+            menuID: "",
+            title: root['menu_name']?.toString() ?? "",
+            shareLink: root['share_link']?.toString() ?? "",
+          ),
         ),
-      ),
-    );
+      );
 
-    return;
-  }
-else
-  if (root['is_dglibrary'] == true) {
-    debugPrint("NAVIGATING -> DIGITAL LIBRARY");
+      return;
+    } else if (root['is_dglibrary'] == true) {
+      debugPrint("NAVIGATING -> DIGITAL LIBRARY");
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => MediaListingScreen(
-          type: MediaType.digitalLibraryall,
-          categoryID: root['digital_library_id']?.toString() ?? "",
-          albumID: "",
-          albumName: "",
-          menuID: "",
-          shareLink: "",
-          title: "Digital Library",
-          digitalLibraryCategoryName: "",
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MediaListingScreen(
+            type: MediaType.digitalLibraryall,
+            categoryID: root['digital_library_id']?.toString() ?? "",
+            albumID: "",
+            albumName: "",
+            menuID: "",
+            shareLink: "",
+            title: "Digital Library",
+            digitalLibraryCategoryName: "",
+          ),
         ),
-      ),
-    );
+      );
 
-    return;
-  }
-else
-  if (root['is_photo'] == true) {
-    debugPrint("NAVIGATING -> PHOTO");
+      return;
+    } else if (root['is_photo'] == true) {
+      debugPrint("NAVIGATING -> PHOTO");
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => MediaListingScreen(
-          type: MediaType.photoAlbum,
-          categoryID: root['photo_category_id']?.toString() ?? "",
-          albumID: root['photo_album_id']?.toString() ?? "",
-          albumName: "",
-          menuID: "",
-          shareLink: "",
-          title: root['menu_name']?.toString() ?? "",
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MediaListingScreen(
+            type: MediaType.photoAlbum,
+            categoryID: root['photo_category_id']?.toString() ?? "",
+            albumID: root['photo_album_id']?.toString() ?? "",
+            albumName: "",
+            menuID: "",
+            shareLink: "",
+            title: root['menu_name']?.toString() ?? "",
+          ),
         ),
-      ),
-    );
+      );
 
-    return;
+      return;
+    } else {
+      debugPrint("NO SPECIAL TYPE FOUND");
+      debugPrint("NAVIGATING -> DEFAULT");
+
+      AppNavigation.navigateByMenuId(
+        context,
+        menuId: widget.menuID,
+        albumId: "",
+
+        albumName: "",
+        categoryId: "",
+        title: widget.title ?? "",
+        shareLink: widget.shareLink,
+        seasonId: "",
+        type: widget.type,
+      );
+    }
   }
-else{
-  debugPrint("NO SPECIAL TYPE FOUND");
-  debugPrint("NAVIGATING -> DEFAULT");
 
-   AppNavigation.navigateByMenuId(
-                          context,
-                          menuId: widget.menuID,
-                          albumId: "",
-                    
-                          albumName: "",
-                          categoryId: "",
-                          title: widget.title ?? "",
-                          shareLink: widget.shareLink,
-                          seasonId:  "",
-                          type: widget.type,
-                        );
-}
-}
   Future<void> _loadMore() async {
     if (isLoadingMore) return;
 
@@ -259,12 +246,11 @@ else{
     //     details: story.details ?? "",
     //   );
     // }).toList();
-//     if (widget.type == HomeLayoutType.testimonials) {
-//   return TestimonialCarouselWidget(
-//     items: testimonialItems,
-//   );
-// }
-
+    //     if (widget.type == HomeLayoutType.testimonials) {
+    //   return TestimonialCarouselWidget(
+    //     items: testimonialItems,
+    //   );
+    // }
 
     return Column(
       children: [
@@ -273,14 +259,13 @@ else{
                 widget.type == HomeLayoutType.CallForApplication)
             ? Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
-                child: 
-                SmartHtmlWidget(
+                child: SmartHtmlWidget(
                   html: widget.title ?? "",
-                   textColor: Customcolor.textwebBlueColor,
+                  textColor: Customcolor.textwebBlueColor,
                   fontSize: screenWidth * 0.055,
                   fontWeight: FontWeight.w600,
                   // ignoreHtmlStyles: true,
-                   ignorefontStyles: true,
+                  ignorefontStyles: true,
                 ),
               )
             : Container(),
@@ -317,9 +302,9 @@ else{
                         if (widget.type ==
                             HomeLayoutType.merckFoundationInMedia) {
                           ShowDialogs.launchURL(item.pdfFile ?? "");
-                        }else if (widget.type ==
+                        } else if (widget.type ==
                             HomeLayoutType.newsLettersAndArticles) {
-                              print("RUCHIobject");
+                          print("RUCHIobject");
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -340,242 +325,288 @@ else{
                     );
                   },
                 )
-              :
-              Column(
-  children: [
-             
-               GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: visibleCount + (hasMore ? 1 : 0),
-                  gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount:widget.type ==
-                            HomeLayoutType.MerckMoreThanAmbasdar?1: 2,
-                    childAspectRatio:( widget.type == HomeLayoutType.MerckMoreThanAmbasdar && widget.content_button)?0.80:
-                    ( widget.type == HomeLayoutType.MerckMoreThanAmbasdar && widget.content_button==false)?1:
-                    (widget.type ==
-                            HomeLayoutType.MerckMoreThanAmbasdarFormer && widget.content_button)?0.63
-                    : 0.80,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                  ),
-                  itemBuilder: (context, index) {
-                    /// Loader Cell
-                    if (index >= visibleCount) {
-                      if (!isLoadingMore) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          _loadMore();
-                        });
-                      }
-
-                      return const Center(child: CommonLoader());
-                    }
-
-                    final item = widget.content[index];
-
-                    /// PHOTO TYPES
-                    if (widget.type == HomeLayoutType.photoGallery ||
-                        widget.type == HomeLayoutType.DigitalLibrary ||
-                        widget.type == HomeLayoutType.MerckMoreThanAmbasdar ||
-                        widget.type ==
-                            HomeLayoutType.MerckMoreThanAmbasdarFormer ||
-                        widget.type == HomeLayoutType.CallForApplication) {
-                      return 
-                      MediaCard(
-                      
-                        content_button: widget.content_button,
-                        type: widget.type,
-                        menuID: widget.menuID,
-                        shareLink: widget.shareLink,
-                        id: item.id.toString(),
-                       
-                        image:
+              : Column(
+                  children: [
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: visibleCount + (hasMore ? 1 : 0),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount:
+                            widget.type == HomeLayoutType.MerckMoreThanAmbasdar
+                            ? 1
+                            : 2,
+                        childAspectRatio:
                             (widget.type ==
-                                    HomeLayoutType.MerckMoreThanAmbasdar ||
-                                widget.type ==
-                                    HomeLayoutType
-                                        .MerckMoreThanAmbasdarFormer ||
-                                widget.type == HomeLayoutType.DigitalLibrary ||
-                                widget.type ==
-                                    HomeLayoutType.CallForApplication || widget.type==HomeLayoutType.photoGallery)
-                            ? item.thumbnail ?? ""
-                            : item.image ?? "",
-                        title: 
-                        widget.type == HomeLayoutType.photoGallery
-                            ? item.description ?? ""
-                            :
-                             item.title ?? "",
+                                    HomeLayoutType.MerckMoreThanAmbasdar &&
+                                widget.content_button)
+                            ? 0.80
+                            : (widget.type ==
+                                      HomeLayoutType.MerckMoreThanAmbasdar &&
+                                  widget.content_button == false)
+                            ? 1
+                            : (widget.type ==
+                                      HomeLayoutType
+                                          .MerckMoreThanAmbasdarFormer &&
+                                  widget.content_button)
+                            ? 0.63
+                            : 0.80,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                      ),
+                      itemBuilder: (context, index) {
+                        /// Loader Cell
+                        if (index >= visibleCount) {
+                          if (!isLoadingMore) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              _loadMore();
+                            });
+                          }
+
+                          return const Center(child: CommonLoader());
+                        }
+
+                        final item = widget.content[index];
+
+                        /// PHOTO TYPES
+                        if (widget.type == HomeLayoutType.photoGallery ||
+                            widget.type == HomeLayoutType.DigitalLibrary ||
+                            widget.type ==
+                                HomeLayoutType.MerckMoreThanAmbasdar ||
+                            widget.type ==
+                                HomeLayoutType.MerckMoreThanAmbasdarFormer ||
+                            widget.type == HomeLayoutType.CallForApplication) {
+                          return MediaCard(
+                            content_button: widget.content_button,
+                            type: widget.type,
+                            menuID: widget.menuID,
+                            shareLink: widget.shareLink,
+                            id: item.id.toString(),
+
+                            image:
+                                (widget.type ==
+                                        HomeLayoutType.MerckMoreThanAmbasdar ||
+                                    widget.type ==
+                                        HomeLayoutType
+                                            .MerckMoreThanAmbasdarFormer ||
+                                    widget.type ==
+                                        HomeLayoutType.DigitalLibrary ||
+                                    widget.type ==
+                                        HomeLayoutType.CallForApplication ||
+                                    widget.type == HomeLayoutType.photoGallery)
+                                ? item.thumbnail ?? ""
+                                : item.image ?? "",
+                            title: widget.type == HomeLayoutType.photoGallery
+                                ? item.description ?? ""
+                                : item.title ?? "",
                             subTitle: item.subtitle ?? "",
-                        showPlayIcon: false,
-                        onTap: () {
-                          print("MEDIA WATCH MORE");
-                          if (widget.type == HomeLayoutType.photoGallery ){
-                            showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      backgroundColor: Colors.transparent,
-barrierColor: Colors.transparent,
-                                      builder: (_) => ImagePreviewDialog(
-                                        items: widget.content,
-  initialIndex: index,
-  imageUrl: (item) => item.thumbnail ?? "",
-  title: (item) => item.description ?? "",
-                                        // imageUrl: item.thumbnail ?? "",
-                                        // title: item.description  ?? "",
+                            showPlayIcon: false,
+                            onTap: () {
+                              print("MEDIA WATCH MORE");
+                              if (widget.type == HomeLayoutType.photoGallery) {
+                                 print("4Image");
+                                showGeneralDialog(
+                                  context: context,
+                                  barrierDismissible: true,
+                                  barrierLabel: 'Image Preview',
+                                  barrierColor: Colors.transparent,
+                                  transitionDuration: const Duration(
+                                    milliseconds: 200,
+                                  ),
+                                  pageBuilder:
+                                      (context, animation, secondaryAnimation) {
+                                        return ImagePreviewDialog(
+                                          items: widget.content,
+                                          initialIndex: index,
+                                          imageUrl: (item) =>
+                                              item.thumbnail ?? "",
+                                          title: (item) =>
+                                              item.description ?? "",
+                                        );
+                                      },
+                                );
+                                //                             showModalBottomSheet(
+                                //                                       context: context,
+                                //                                       isScrollControlled: true,
+                                //                                       backgroundColor: Colors.transparent,
+                                // barrierColor: Colors.transparent,
+                                //                                       builder: (_) => ImagePreviewDialog(
+                                //                                         items: widget.content,
+                                //   initialIndex: index,
+                                //   imageUrl: (item) => item.thumbnail ?? "",
+                                //   title: (item) => item.description ?? "",
+                                //                                         // imageUrl: item.thumbnail ?? "",
+                                //                                         // title: item.description  ?? "",
+                                //                                       ),
+                                //                                     );
+                              } else if (widget.type ==
+                                  HomeLayoutType.PhotoCategory) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => PhotoAlumbScreen(
+                                      homeLayoutType:
+                                          HomeLayoutType.PhotoCategory,
+                                      pageTile: widget.title,
+                                      tile: item.photo_category_name,
+                                      categoryID: item.id.toString(),
+                                      menuID: widget.menuID,
+                                      shareLink: widget.shareLink,
+                                    ),
+                                  ),
+                                );
+                              } else if (widget.type ==
+                                      HomeLayoutType.MerckMoreThanAmbasdar ||
+                                  widget.type ==
+                                      HomeLayoutType
+                                          .MerckMoreThanAmbasdarFormer) {
+                                             print("5Image");
+                                             Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => MediaListingScreen(
+                                          type: MediaType.ambassadorAlbum,
+                                          categoryID: "",
+                                          albumID: item.id.toString(),
+                                          albumName: item.title,
+                                          menuID: widget.menuID,
+                                          title: item.title,
+                                          shareLink: widget.shareLink,
+                                        ),
                                       ),
                                     );
-                          }
-                          
-                          else 
-                          if
-                          (widget.type == HomeLayoutType.PhotoCategory) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => PhotoAlumbScreen(
-                                  homeLayoutType: HomeLayoutType.PhotoCategory,
-                                  pageTile: widget.title,
-                                  tile: item.photo_category_name,
-                                  categoryID: item.id.toString(),
-                                  menuID: widget.menuID,
-                                  shareLink: widget.shareLink,
-                                ),
-                              ),
-                            );
-                          }else if(widget.type==HomeLayoutType.MerckMoreThanAmbasdar ||widget.type==HomeLayoutType.MerckMoreThanAmbasdarFormer){
-                           showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                  backgroundColor: Colors.transparent,
-barrierColor: Colors.transparent,
-                                      builder: (_) => ImagePreviewDialog(
-                                        items: widget.content,
-  initialIndex: index,
-  imageUrl: (item) => item.thumbnail ?? "",
-  title: (item) => item.description ?? "",
-                                        // imageUrl:item.thumbnail  ?? "",
-                                        // title:  item.title ?? "",
-                                      ),
-                                    );
-                        } else if (widget.type ==
-                                  HomeLayoutType.DigitalLibrary  ||
-                              widget.type ==
-                                  HomeLayoutType.CallForApplication) {
-                            ShowDialogs.launchURL(item.pdfFile ?? "");
-                          } else if (widget.type ==
-                            HomeLayoutType.newsLettersAndArticles){
-                             print("RUCHIobject 2");
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => DetailScreen(
-                                  item.title,
-                                  item.details,
-                                  title: widget.title,
-                                  shareLink: widget.shareLink,
-                                  isDetailApiCalled: true,
-                                  articleId: item.id.toString(),
-                                  languageId: item.languageid,
-                                  menuID: widget.menuID,
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                      );
-                    }  
+                                // showModalBottomSheet(
+                                //   context: context,
+                                //   isScrollControlled: true,
+                                //   backgroundColor: Colors.transparent,
+                                //   barrierColor: Colors.transparent,
+                                //   builder: (_) => ImagePreviewDialog(
+                                //     items: widget.content,
+                                //     initialIndex: index,
+                                //     imageUrl: (item) => item.thumbnail ?? "",
+                                //     title: (item) => item.description ?? "",
+                                //     // imageUrl:item.thumbnail  ?? "",
+                                //     // title:  item.title ?? "",
+                                //   ),
+                                // );
+                              } else if (widget.type ==
+                                      HomeLayoutType.DigitalLibrary ||
+                                  widget.type ==
+                                      HomeLayoutType.CallForApplication) {
+                                ShowDialogs.launchURL(item.pdfFile ?? "");
+                              } else if (widget.type ==
+                                  HomeLayoutType.newsLettersAndArticles) {
+                                print("RUCHIobject 2");
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => DetailScreen(
+                                      item.title,
+                                      item.details,
+                                      title: widget.title,
+                                      shareLink: widget.shareLink,
+                                      isDetailApiCalled: true,
+                                      articleId: item.id.toString(),
+                                      languageId: item.languageid,
+                                      menuID: widget.menuID,
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          );
+                        }
 
-                    if(widget.type==HomeLayoutType.OurPartners)
-                    {
-                      return  MediaCard(
-                        content_button: widget.content_button,
-                      menuID: widget.menuID,
-                      shareLink: widget.shareLink,
-                      id: item.id.toString(),
-                      image: item.thumbnail ?? "" ,
-                      title:  item.title ?? "",
-                     
-                    type: HomeLayoutType.OurPartners,
-                      onTap: () {
-                    ShowDialogs.launchURL(item.pdfFile ?? "");
+                        if (widget.type == HomeLayoutType.OurPartners) {
+                          return MediaCard(
+                            content_button: widget.content_button,
+                            menuID: widget.menuID,
+                            shareLink: widget.shareLink,
+                            id: item.id.toString(),
+                            image: item.thumbnail ?? "",
+                            title: item.title ?? "",
+
+                            type: HomeLayoutType.OurPartners,
+                            onTap: () {
+                              ShowDialogs.launchURL(item.pdfFile ?? "");
+                            },
+                          );
+                        }
+                        final thumb = item.thumbnail ?? "";
+
+                        final isYoutube =
+                            thumb.contains("youtube.com") ||
+                            thumb.contains("youtu.be");
+
+                        String imageUrl = thumb;
+
+                        if (isYoutube) {
+                          final videoId = getYoutubeId(thumb);
+
+                          imageUrl =
+                              "https://img.youtube.com/vi/$videoId/hqdefault.jpg";
+                        }
+
+                        /// VIDEO TYPES
+                        return MediaCard(
+                          content_button: widget.content_button,
+                          menuID: widget.menuID,
+                          shareLink: widget.shareLink,
+                          id: item.id.toString(),
+                          image: imageUrl,
+                          title: widget.type == HomeLayoutType.episodes
+                              ? item.episode_name ?? ""
+                              : item.description ?? "",
+                          showmenu: widget.type == HomeLayoutType.episodes,
+                          showPlayIcon: true,
+                          onTap: () {
+                            print("25Aug pat");
+                            print(imageUrl);
+                            final key = getYoutubeVideoId(thumb);
+
+                            if (key != null && key.isNotEmpty) {
+                              ShowDialogs.youtubevideolink(
+                                "https://www.youtube.com/watch?v=$key&autoplay=1",
+                              );
+                            }
+                            //                        final key = getYoutubeVideoId(imageUrl);
+                            // print(key);
+                            //                         ShowDialogs.youtubevideolink(
+                            //                           "https://www.youtube.com/watch?v=$key?autoplay=1",
+                            //                         );
+                          },
+                        );
                       },
-                    );
-                    }
- final thumb = item.thumbnail ?? "";
-
-                final isYoutube =
-                    thumb.contains("youtube.com") || thumb.contains("youtu.be");
-
-                String imageUrl = thumb;
-
-                if (isYoutube) {
-                  final videoId = getYoutubeId(thumb);
-
-                  imageUrl =
-                      "https://img.youtube.com/vi/$videoId/hqdefault.jpg";
-                }
-
-                    /// VIDEO TYPES
-                    return MediaCard(
-                        content_button: widget.content_button,
-                      menuID: widget.menuID,
-                      shareLink: widget.shareLink,
-                      id: item.id.toString(),
-                      image: imageUrl,
-                      title: widget.type == HomeLayoutType.episodes
-                          ? item.episode_name ?? ""
-                          : item.description ?? "",
-                      showmenu: widget.type == HomeLayoutType.episodes,
-                      showPlayIcon: true,
-                      onTap: () {
-                        print("25Aug pat");
-                        print(imageUrl);
-                        final key = getYoutubeVideoId(thumb);
-
-if (key != null && key.isNotEmpty) {
-  ShowDialogs.youtubevideolink(
-    "https://www.youtube.com/watch?v=$key&autoplay=1",
-  );
-}
-//                        final key = getYoutubeVideoId(imageUrl);
-// print(key);
-//                         ShowDialogs.youtubevideolink(
-//                           "https://www.youtube.com/watch?v=$key?autoplay=1",
-//                         );
-                      },
-                    );
-                  },
-                ),
-    const SizedBox(height: 16),
-
-    if (widget.buttonText!="")
-    Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 5),
-                    child: CommonBorderButton(
-                      title: widget.buttonText,
-                      onTap: _onViewAllPressed
-                      // () {
-                    
-                      //   AppNavigation.navigateByMenuId(
-                      //     context,
-                      //     menuId: widget.menuID,
-                      //     albumId: "",
-                    
-                      //     albumName: "",
-                      //     categoryId: "",
-                      //     title: widget.title ?? "",
-                      //     shareLink: widget.shareLink,
-                      //     seasonId:  "",
-                      //     type: widget.type,
-                      //   );
-                      // },
                     ),
-                  ),
+                    const SizedBox(height: 16),
+
+                    if (widget.buttonText != "")
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 5),
+                          child: CommonBorderButton(
+                            title: widget.buttonText,
+                            onTap: _onViewAllPressed,
+                            // () {
+
+                            //   AppNavigation.navigateByMenuId(
+                            //     context,
+                            //     menuId: widget.menuID,
+                            //     albumId: "",
+
+                            //     albumName: "",
+                            //     categoryId: "",
+                            //     title: widget.title ?? "",
+                            //     shareLink: widget.shareLink,
+                            //     seasonId:  "",
+                            //     type: widget.type,
+                            //   );
+                            // },
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
-  ],
-)
-    
         ),
       ],
     );

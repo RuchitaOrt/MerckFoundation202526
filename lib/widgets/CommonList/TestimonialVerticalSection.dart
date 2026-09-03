@@ -41,6 +41,7 @@ class _TestimonialVerticalSectionState
 
     testimonials = widget.content.map((e) {
       return TestimonialModel(
+         testimonial_name: e.title,
         title: e.title,
         image: e.thumbnail ?? "",
         departmentName: "",

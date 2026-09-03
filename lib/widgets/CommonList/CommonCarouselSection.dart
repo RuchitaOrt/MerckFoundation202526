@@ -1197,8 +1197,15 @@ class _CommonCarouselSectionState
   // FIXED TITLE HEIGHT
   // ============================================================
 
-  double get fixedTitleHeight => 48.0;
+  // double get fixedTitleHeight => 48.0;
+double get fixedTitleHeight {
+  if (widget.layoutType ==
+      HomeLayoutType.MerckMoreThanAmbasdar.name) {
+    return 60.0;
+  }
 
+  return 48.0;
+}
   // ============================================================
   // IMAGE -> TITLE GAP
   // ============================================================
@@ -1232,7 +1239,7 @@ class _CommonCarouselSectionState
     }
 
     _autoScrollTimer = Timer.periodic(
-      const Duration(seconds: 2),
+      const Duration(seconds: 8),
       (_) {
         if (!mounted || widget.items.isEmpty) {
           return;
@@ -1499,49 +1506,105 @@ class _CommonCarouselSectionState
             // ==================================================
             // TITLE
             // ==================================================
+      SizedBox(
+  width: double.infinity,
+  height: fixedTitleHeight,
+  child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+  
+      if (item.title != null &&
+          item.title!.trim().isNotEmpty)
+        FormLabel(
+          text: item.title!,
+          maxLines: 2,
+          textOverflow: TextOverflow.ellipsis,
+          textAlignment: TextAlign.center,
+          labelColor: Colors.black,
+          fontweight: FontWeight.w500,
+          fontSize: responsive.fontSize(2.2),
+        ),
+  
+      if (item.subTitle!.trim().isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.only(top: 2,left: 2,right: 2),
+          child: FormLabel(
+            text: item.subTitle,
+            maxLines: 1,
+            textOverflow: TextOverflow.ellipsis,
+            textAlignment: TextAlign.center,
+            labelColor: Colors.black,
+            fontweight: FontWeight.w500,
+            fontSize: responsive.fontSize(2.2),
+          ),
+        ),
+    ],
+  ),
+),
+      //       SizedBox(
+      //         width: double.infinity,
       
-            SizedBox(
-              width: double.infinity,
+      //         height: fixedTitleHeight,
       
-              height: fixedTitleHeight,
+      //         child: Padding(
+      //           padding: const EdgeInsets.symmetric(
+      //             horizontal: 20,
+      //           ),
       
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                ),
+      //           child: Center(
+      //             child:
+      //                 item.title != null &&
+      //                         item.title!
+      //                             .trim()
+      //                             .isNotEmpty
+      //                     ? FormLabel(
+      //                         text: item.title!,
       
-                child: Center(
-                  child:
-                      item.title != null &&
-                              item.title!
-                                  .trim()
-                                  .isNotEmpty
-                          ? FormLabel(
-                              text: item.title!,
+      //                         maxLines: 2,
       
-                              maxLines: 2,
+      //                         textOverflow:
+      //                             TextOverflow.ellipsis,
       
-                              textOverflow:
-                                  TextOverflow.ellipsis,
+      //                         textAlignment:
+      //                             TextAlign.center,
       
-                              textAlignment:
-                                  TextAlign.center,
+      //                         labelColor:
+      //                             Colors.black,
       
-                              labelColor:
-                                  Colors.black,
+      //                         fontweight:
+      //                             FontWeight.w500,
       
-                              fontweight:
-                                  FontWeight.w500,
+      //                         fontSize:
+      //                             responsive.fontSize(
+      //                           2.2,
+      //                         ),
+      //                       )
+      //                     : const SizedBox(),
+      //           ),
+      //         ),
+      //       ),
+      // item.subTitle==""?SizedBox():      Center(child: FormLabel(
+      //                         text: item.subTitle,
       
-                              fontSize:
-                                  responsive.fontSize(
-                                2.2,
-                              ),
-                            )
-                          : const SizedBox(),
-                ),
-              ),
-            ),
+      //                         maxLines: 2,
+      
+      //                         textOverflow:
+      //                             TextOverflow.ellipsis,
+      
+      //                         textAlignment:
+      //                             TextAlign.center,
+      
+      //                         labelColor:
+      //                             Colors.black,
+      
+      //                         fontweight:
+      //                             FontWeight.w500,
+      
+      //                         fontSize:
+      //                             responsive.fontSize(
+      //                           2.2,
+      //                         ),
+      //                       ),)
           ],
         ),
       ),

@@ -22,6 +22,7 @@ import 'package:merckfoundation_252026/screens/MainScreens/OurPartnersScreen/Our
 import 'package:merckfoundation_252026/screens/DetailsScreen/OurAwardScreen.dart';
 import 'package:merckfoundation_252026/screens/MainUIBody.dart/CommonContentPage.dart';
 import 'package:merckfoundation_252026/screens/MainScreens/dashboard.dart';
+import 'package:merckfoundation_252026/widgets/CommonList/RashaInsightCard.dart';
 import 'package:provider/provider.dart';
 
 class AppNavigation {
@@ -39,7 +40,6 @@ class AppNavigation {
     HomeLayoutType? type,
     List<TestimonialModel>? testimonialList,
     List<ArticleModel>? articleList,
-    
   }) async {
     switch (menuId) {
       case '1':
@@ -138,7 +138,14 @@ class AppNavigation {
           ),
         );
         break;
-
+      case '234':
+        Navigator.push(context, MaterialPageRoute(builder: (_) => RashaKelejCard(
+          // title: layout.title,
+          // content: layout.content ?? [],
+          // shareLink: layout.buttonLink ?? '',
+          menuID: menuId ?? "",
+        )));
+        break;
       //OUrProgam
 
       case '16':
@@ -229,7 +236,6 @@ class AppNavigation {
             builder: (_) => ChangeNotifierProvider(
               create: (_) => NewsReleaseProvider(),
               child: NewsRelease(
-                
                 menuID: menuId,
                 shareLink: shareLink,
                 title: title,
@@ -258,7 +264,7 @@ class AppNavigation {
 
       /// DIGITAL LIBRARY
       case '33':
-      // case '161':
+        // case '161':
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -413,40 +419,36 @@ class AppNavigation {
       // case HomeLayoutType.merckFoundationInMedia:
 
       default:
-     
-        if(type==HomeLayoutType.season)
-        {
-              Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => MediaListingScreen(
-              type: MediaType.episodes,
-              categoryID: seasonId ?? "",
-              albumID: "",
-              albumName: title ?? "",
-              menuID: menuId,
-              title: title ?? "",
-              shareLink: shareLink,
+        if (type == HomeLayoutType.season) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => MediaListingScreen(
+                type: MediaType.episodes,
+                categoryID: seasonId ?? "",
+                albumID: "",
+                albumName: title ?? "",
+                menuID: menuId,
+                title: title ?? "",
+                shareLink: shareLink,
+              ),
             ),
-          ),
-        );
-         break;
-        }else{
-
+          );
+          break;
+        } else {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (_) => CommonContentPage(
                 title: title,
-                
+
                 menuID: menuId,
                 shareLink: shareLink,
               ),
             ),
           );
         }
-          break;
-        
+        break;
     }
   }
 }

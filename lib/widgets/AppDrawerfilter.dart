@@ -232,10 +232,53 @@ final languageId =
   }
 
   /// 🔹 CATEGORY LIST
-  List<Widget> _buildCategoryList(FilterProvider provider) {
-    return provider.categories
-        .map(
-          (e) => ListTile(
+//   List<Widget> _buildCategoryList(FilterProvider provider) {
+//     return provider.categories
+//         .map(
+//           (e) => ListTile(
+//             title: Text(
+//               widget.type == MediaType.testimonialArticle
+//                   ? e.catgname ?? ""
+//                   : e.name,
+//             ),
+//             selected: provider.selectedCategory?.id == e.id,
+//             onTap: () async {
+//               provider.selectCategory(e);
+// if (widget.type == MediaType.testimonialArticle) {
+//     provider.selectedCountry = provider.allCountry;
+
+//     await provider.loadFilters(
+//       context,
+//       type: MediaType.testimonialArticle,
+//     );
+//   }
+//               if (widget.type == MediaType.videoLibrary) {
+//                  await provider.loadVideoCountriesByCategory(context);
+//                 // provider.selectedCountry = provider.allCountry;
+//                 // await provider.loadFilters(context, type: widget.type);
+//               }
+
+//               if (widget.type == MediaType.digitalLibrary) {
+//                 await provider.loadFilters(context, type: widget.type);
+//               }
+
+//               setState(() => isCategoryExpanded = false);
+//             },
+//           ),
+//         )
+//         .toList();
+//   }
+List<Widget> _buildCategoryList(FilterProvider provider) {
+  final items = provider.categories.toList();
+
+  return List.generate(
+    items.length,
+    (index) {
+      final e = items[index];
+
+      return Column(
+        children: [
+          ListTile(
             title: Text(
               widget.type == MediaType.testimonialArticle
                   ? e.catgname ?? ""
@@ -244,36 +287,65 @@ final languageId =
             selected: provider.selectedCategory?.id == e.id,
             onTap: () async {
               provider.selectCategory(e);
-if (widget.type == MediaType.testimonialArticle) {
-    provider.selectedCountry = provider.allCountry;
 
-    await provider.loadFilters(
-      context,
-      type: MediaType.testimonialArticle,
-    );
-  }
+              if (widget.type == MediaType.testimonialArticle) {
+                provider.selectedCountry = provider.allCountry;
+
+                await provider.loadFilters(
+                  context,
+                  type: MediaType.testimonialArticle,
+                );
+              }
+
               if (widget.type == MediaType.videoLibrary) {
-                 await provider.loadVideoCountriesByCategory(context);
-                // provider.selectedCountry = provider.allCountry;
-                // await provider.loadFilters(context, type: widget.type);
+                await provider.loadVideoCountriesByCategory(context);
               }
 
               if (widget.type == MediaType.digitalLibrary) {
-                await provider.loadFilters(context, type: widget.type);
+                await provider.loadFilters(
+                  context,
+                  type: widget.type,
+                );
               }
 
               setState(() => isCategoryExpanded = false);
             },
           ),
-        )
-        .toList();
-  }
 
+          // Divider ONLY between items
+          if (index < items.length - 1)
+            const Divider(height: 1,color: Customcolor.textGreyColor,thickness: 0.2,),
+        ],
+      );
+    },
+  );
+}
   /// 🔹 COUNTRY LIST
-  List<Widget> _buildCountryList(FilterProvider provider) {
-    return provider.countries
-        .map(
-          (e) => ListTile(
+  // List<Widget> _buildCountryList(FilterProvider provider) {
+  //   return provider.countries
+  //       .map(
+  //         (e) => ListTile(
+  //           title: Text(e.name),
+  //           selected: provider.selectedCountry?.id == e.id,
+  //           onTap: () {
+  //             provider.selectCountry(e);
+  //             setState(() => isCountryExpanded = false);
+  //           },
+  //         ),
+  //       )
+  //       .toList();
+  // }
+List<Widget> _buildCountryList(FilterProvider provider) {
+  final items = provider.countries.toList();
+
+  return List.generate(
+    items.length,
+    (index) {
+      final e = items[index];
+
+      return Column(
+        children: [
+          ListTile(
             title: Text(e.name),
             selected: provider.selectedCountry?.id == e.id,
             onTap: () {
@@ -281,36 +353,57 @@ if (widget.type == MediaType.testimonialArticle) {
               setState(() => isCountryExpanded = false);
             },
           ),
-        )
-        .toList();
-  }
 
-  /// 🔹 LANGUAGE LIST ✅ NEW
-  List<Widget> _buildLanguageList(FilterProvider provider) {
-    /// ARTICLE LANGUAGES
-    if (widget.type == MediaType.article) {
-      return provider.articleLanguages
-          .map(
-            (e) => ListTile(
+          // Divider ONLY between items
+          if (index < items.length - 1)
+              const Divider(height: 1,color: Customcolor.textGreyColor,thickness: 0.2,),
+        ],
+      );
+    },
+  );
+}
+List<Widget> _buildLanguageList(FilterProvider provider) {
+  if (widget.type == MediaType.article) {
+    final items = provider.articleLanguages.toList();
+
+    return List.generate(
+      items.length,
+      (index) {
+        final e = items[index];
+
+        return Column(
+          children: [
+            ListTile(
               title: Text(e.language ?? ""),
-              selected: provider.selectedArticleLanguage?.id == e.id,
+              selected:
+                  provider.selectedArticleLanguage?.id == e.id,
               onTap: () {
                 provider.selectArticleLanguage(e);
 
                 setState(() {
-                  print("RUCHITA ARTICLE");
                   isLanguageExpanded = false;
                 });
               },
             ),
-          )
-          .toList();
-    }
 
-    /// DIGITAL LIBRARY LANGUAGES
-    return provider.languages
-        .map(
-          (e) => ListTile(
+            if (index < items.length - 1)
+            const Divider(height: 1,color: Customcolor.textGreyColor,thickness: 0.2,),
+          ],
+        );
+      },
+    );
+  }
+
+  final items = provider.languages.toList();
+
+  return List.generate(
+    items.length,
+    (index) {
+      final e = items[index];
+
+      return Column(
+        children: [
+          ListTile(
             title: Text(e.name),
             selected: provider.selectedLanguage?.id == e.id,
             onTap: () {
@@ -321,9 +414,53 @@ if (widget.type == MediaType.testimonialArticle) {
               });
             },
           ),
-        )
-        .toList();
-  }
+
+          if (index < items.length - 1)
+            const Divider(height: 1,color: Customcolor.textGreyColor,thickness: 0.2,),
+        ],
+      );
+    },
+  );
+}
+  /// 🔹 LANGUAGE LIST ✅ NEW
+  // List<Widget> _buildLanguageList(FilterProvider provider) {
+  //   /// ARTICLE LANGUAGES
+  //   if (widget.type == MediaType.article) {
+  //     return provider.articleLanguages
+  //         .map(
+  //           (e) => ListTile(
+  //             title: Text(e.language ?? ""),
+  //             selected: provider.selectedArticleLanguage?.id == e.id,
+  //             onTap: () {
+  //               provider.selectArticleLanguage(e);
+
+  //               setState(() {
+  //                 print("RUCHITA ARTICLE");
+  //                 isLanguageExpanded = false;
+  //               });
+  //             },
+  //           ),
+  //         )
+  //         .toList();
+  //   }
+
+  //   /// DIGITAL LIBRARY LANGUAGES
+  //   return provider.languages
+  //       .map(
+  //         (e) => ListTile(
+  //           title: Text(e.name),
+  //           selected: provider.selectedLanguage?.id == e.id,
+  //           onTap: () {
+  //             provider.selectLanguage(e);
+
+  //             setState(() {
+  //               isLanguageExpanded = false;
+  //             });
+  //           },
+  //         ),
+  //       )
+  //       .toList();
+  // }
 
   //  List<Widget> _buildLanguageList(FilterProvider provider) {
   //     return provider.languages

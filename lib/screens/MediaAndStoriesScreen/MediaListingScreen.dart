@@ -426,7 +426,9 @@ String getContentTitle() {
        onWillPop: () async {
          print("onpop");
         print(widget.type);
-    (widget.type == MediaType.stories || widget.type == MediaType.all ||
+    (widget.type == MediaType.stories ||
+     widget.type == MediaType.videoLibrary ||
+    //  widget.type == MediaType.all ||
                   widget.type == MediaType.photoGallery)
               ?   Navigator.pushReplacement(
           context,
@@ -464,7 +466,9 @@ String getContentTitle() {
               ? () => _scaffoldKey.currentState!.openEndDrawer()
               : null,
           onBack:
-              (widget.type == MediaType.stories || widget.type == MediaType.all ||
+              (widget.type == MediaType.stories ||
+              widget.type == MediaType.videoLibrary ||
+              //  widget.type == MediaType.all ||
                   widget.type == MediaType.photoGallery)
               ? null
               : () {
@@ -587,24 +591,44 @@ String getContentTitle() {
                                     } else if (widget.type ==
                                         MediaType.photoAlbum || widget.type ==
                                         MediaType.ambassadorAlbum) {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                     backgroundColor: Colors.transparent,
-      barrierColor: Colors.transparent,
-                                        builder: (_) => 
-                                        ImagePreviewDialog(
-                                          items: provider.storyList,
+                                          print("1Image");
+                                          showGeneralDialog(
+  context: context,
+  barrierDismissible: true,
+  barrierLabel: 'Image Preview',
+  barrierColor: Colors.transparent,
+  transitionDuration: const Duration(milliseconds: 200),
+  pageBuilder: (
+    context,
+    animation,
+    secondaryAnimation,
+  ) {
+    return ImagePreviewDialog(
+      items: provider.storyList,
       initialIndex: index,
+      imageUrl: (item) => item.thumbnail ?? "",
+      title: (item) => item.description ?? "",
+    );
+  },
+);
+      //                                 showModalBottomSheet(
+      //                                   context: context,
+      //                                   isScrollControlled: true,
+      //                                backgroundColor: Colors.transparent,
+      // barrierColor: Colors.transparent,
+      //                                   builder: (_) => 
+      //                                   ImagePreviewDialog(
+      //                                     items: provider.storyList,
+      // initialIndex: index,
 
-      imageUrl: (item) => item.photo ?? "",
+      // imageUrl: (item) => item.photo ?? "",
 
-      title: (item) =>
-          item.photo_description ?? "",
-                                          // imageUrl: item.photo ?? "",
-                                          // title: item.photo_description ?? "",
-                                        ),
-                                      );
+      // title: (item) =>
+      //     item.photo_description ?? "",
+      //                                     // imageUrl: item.photo ?? "",
+      //                                     // title: item.photo_description ?? "",
+      //                                   ),
+      //                                 );
                                     } else {
                                       print("COm ${widget.type}");
                                       Navigator.push(
@@ -630,6 +654,7 @@ String getContentTitle() {
                               /// 🎥 VIDEO TYPES
                               return
                                MediaCard(
+                                
                                 mediaType: widget.type ,
                                 menuID: widget.menuID,
                                 shareLink: widget.shareLink,

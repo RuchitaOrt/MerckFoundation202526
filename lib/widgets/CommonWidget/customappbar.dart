@@ -106,8 +106,29 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           const Spacer(),
 
           // LOGO
-          Image.asset(CommonImagePath.drawerImg, height:
-           type == AppBarType.home?80: 45),
+          GestureDetector(
+            onTap: ()
+            {
+              if( type != AppBarType.home)
+              {
+ Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => Dashboard(
+                        index: 0,
+                        menuID: menuID,
+                        shareLink: shareLink,
+                        menuLogo: mennuLogo ?? "",
+                      ),
+                    ),
+                  );
+              }
+             
+
+            },
+            child: Image.asset(CommonImagePath.drawerImg, height:
+             type == AppBarType.home?80: 65),
+          ),
 
           const Spacer(),
           if (shareLink != "" 
