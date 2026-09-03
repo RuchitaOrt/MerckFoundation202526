@@ -42,4 +42,6 @@ class Customcolor {
 
   //program
   static const darkProgramBlueColor =  Color(0xff0e69af);
+  static const yellow =  Color(0xffffcb04);
+  
 }

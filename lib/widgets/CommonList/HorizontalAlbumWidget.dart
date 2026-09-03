@@ -550,7 +550,7 @@ class _HorizontalAlbumWidgetState<T>
 
                 return _buildImageCard(
                   context,
-                  item,
+                  item, index,
                   cardWidth,
                   cardHeight,
                 );
@@ -681,6 +681,7 @@ class _HorizontalAlbumWidgetState<T>
   Widget _buildImageCard(
     BuildContext context,
     T item,
+    int index,
     double cardWidth,
     double cardHeight,
   ) {
@@ -713,11 +714,15 @@ class _HorizontalAlbumWidgetState<T>
             secondaryAnimation,
           ) {
             return ImagePreviewDialog(
-              imageUrl:
-                  widget.imageUrl(item),
+               items: widget.images,
+  initialIndex: index,
+  imageUrl: widget.imageUrl,
+  title: (item) => widget.title.trim(),
+              // imageUrl:
+              //     widget.imageUrl(item),
 
-              title:
-                  widget.title.trim(),
+              // title:
+              //     widget.title.trim(),
             );
           },
         );

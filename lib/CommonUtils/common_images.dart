@@ -5,7 +5,7 @@ class CommonImagePath {
   static String splashLogo = "assets/newImages/splashbg.png";
   static String splashflower = "assets/newImages/splashflower.png";
   static String splashdrawer = 'assets/newImages/drawer_img.png';
-  static const String logoMenu = 'assets/newImages/logo_menu.png';
+  static const String logoMenu = 'assets/newImages/logo.png';
 
   static const String homeSelected = "assets/newImages/home_bottom.png";
   static const String homeUnselected = "assets/newImages/home_unselect.png";

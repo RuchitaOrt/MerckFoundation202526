@@ -99,6 +99,7 @@ class _AppDrawerfilterState extends State<AppDrawerfilter> {
 
                         /// ✅ COUNTRY (EXCEPT DIGITAL LIBRARY & TESTIMONIAL)
                         if (widget.type != MediaType.testimonial &&
+                        // widget.type != MediaType.stories &&
                             //  widget.type != MediaType.testimonialArticle &&
                             widget.type != MediaType.digitalLibrary &&
                             widget.type != MediaType.article)
@@ -252,8 +253,9 @@ if (widget.type == MediaType.testimonialArticle) {
     );
   }
               if (widget.type == MediaType.videoLibrary) {
-                provider.selectedCountry = provider.allCountry;
-                await provider.loadFilters(context, type: widget.type);
+                 await provider.loadVideoCountriesByCategory(context);
+                // provider.selectedCountry = provider.allCountry;
+                // await provider.loadFilters(context, type: widget.type);
               }
 
               if (widget.type == MediaType.digitalLibrary) {

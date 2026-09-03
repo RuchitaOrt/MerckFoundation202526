@@ -153,20 +153,20 @@ class _AppDrawerState extends State<AppDrawer> {
                     ),
             ),
 
-            Consumer<SocialProvider>(
-              builder: (context, provider, child) {
-                if (provider.isLoading) {
-                  return const CircularProgressIndicator();
-                }
+            // Consumer<SocialProvider>(
+            //   builder: (context, provider, child) {
+            //     if (provider.isLoading) {
+            //       return const CircularProgressIndicator();
+            //     }
 
-                return FollowSocialDrawer(
-                  title: "",
-                  iconSize: 12,
-                  // position: int.tryParse(item['position'].toString()) ?? 0,
-                  socialLinks: provider.socialMediaList,
-                );
-              },
-            ),
+            //     return FollowSocialDrawer(
+            //       title: "",
+            //       iconSize: 12,
+            //       // position: int.tryParse(item['position'].toString()) ?? 0,
+            //       socialLinks: provider.socialMediaList,
+            //     );
+            //   },
+            // ),
             // FollowSection(title: "", iconSize: 15),
             SizedBox(height: 10),
           ],

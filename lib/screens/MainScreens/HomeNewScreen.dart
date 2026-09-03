@@ -53,50 +53,210 @@ class MerckHomeScreen extends StatelessWidget {
   }
 }
 
+
 class CategorySection extends StatelessWidget {
   final List content;
 
-  const CategorySection({super.key, required this.content});
+  const CategorySection({
+    super.key,
+    required this.content,
+  });
 
   @override
   Widget build(BuildContext context) {
-    if (content.isEmpty) return const SizedBox();
+    if (content.isEmpty) {
+      return const SizedBox();
+    }
 
     return Container(
-      width: double.infinity, // ⭐ IMPORTANT: forces full width alignment
+      width: double.infinity,
       padding: const EdgeInsets.symmetric(
         horizontal: 16,
         vertical: 5,
-      ), // match other sections
-      child: Wrap(
-        alignment: WrapAlignment.start, // ⭐ key fix
-        runAlignment: WrapAlignment.start,
-        crossAxisAlignment: WrapCrossAlignment.start,
-        spacing: 10,
-        runSpacing: 10,
-        children: content.map<Widget>((e) {
-          final String title = e['title'] is String ? e['title'] : "";
-          final int menuID = e['id'] is int ? e['id'] : "";
+      ),
+      child: SizedBox(
+        height: 100,
 
-          final String colorString = e['subdescription'] is String
-              ? e['subdescription']
-              : "0xFF000000";
-          final String menuurl = e['description'] is String
-              ? e['description']
-              : "";
-          final Color color = Color(int.parse(colorString));
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
 
-          return CategoryChip(
-            title: title,
-            color: color,
-            menuID: menuID.toString(),
-            menuurl: menuurl,
-          );
-        }).toList(),
+          child: Row(
+            children: content.map<Widget>((e) {
+              final String title =
+                  e['title'] is String
+                      ? e['title']
+                      : "";
+
+              final int menuID =
+                  e['id'] is int
+                      ? e['id']
+                      : 0;
+
+              // final String colorString =
+              //     e['subdescription'] is String
+              //         ? e['subdescription']
+              //         : "0xFF000000";
+
+              // final String menuurl =
+              //     e['description'] is String
+              //         ? e['description']
+              //         : "";
+
+              // final Color color =
+              //     Color(int.parse(colorString));
+final String colorString =
+    e['subdescription'] is String
+        ? e['subdescription'].toString().trim()
+        : "";
+
+final String menuurl =
+    e['description'] is String
+        ? e['description'].toString()
+        : "";
+
+Color color = Customcolor.colorBlue;
+
+try {
+  String value = colorString;
+
+  // Handle #RRGGBB
+  if (value.startsWith('#')) {
+    value = value.substring(1);
+
+    // Add FF for opacity if only RRGGBB is provided
+    if (value.length == 6) {
+      value = 'FF$value';
+    }
+
+    color = Color(int.parse(value, radix: 16));
+  }
+  // Handle 0xFFRRGGBB
+  else if (value.startsWith('0x') || value.startsWith('0X')) {
+    color = Color(int.parse(value));
+  }
+  // Handle plain integer
+  else {
+    color = Color(int.parse(value));
+  }
+} catch (e) {
+  color = Customcolor.colorBlue;
+}
+              return Padding(
+                padding: const EdgeInsets.only(
+                  right: 10,
+                ),
+
+                child: GestureDetector(
+                  onTap: () {
+                    // Your existing navigation logic
+
+        AppNavigation.navigateByMenuId(
+          context,
+          menuId: menuID.toString(),
+          title: title,
+          shareLink: menuurl,
+        );
+                  },
+
+                  child: Container(
+                    width: 110, // ⭐ SAME WIDTH FOR ALL BOXES
+                    height: 130,  // ⭐ BOX HEIGHT
+
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 10,
+                    ),
+
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius:
+                          BorderRadius.circular(6),
+
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black
+                              .withOpacity(0.12),
+                          blurRadius: 4,
+                          offset:
+                              const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+
+                    child: Center(
+                      child: Text(
+                        title,
+                        textAlign: TextAlign.center,
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
+
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight:
+                              FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
       ),
     );
   }
 }
+
+
+
+
+
+// class CategorySection extends StatelessWidget {
+//   final List content;
+
+//   const CategorySection({super.key, required this.content});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     if (content.isEmpty) return const SizedBox();
+
+//     return Container(
+//       width: double.infinity, // ⭐ IMPORTANT: forces full width alignment
+//       padding: const EdgeInsets.symmetric(
+//         horizontal: 16,
+//         vertical: 5,
+//       ), // match other sections
+//       child: Wrap(
+//         alignment: WrapAlignment.start, // ⭐ key fix
+//         runAlignment: WrapAlignment.start,
+//         crossAxisAlignment: WrapCrossAlignment.start,
+//         spacing: 10,
+//         runSpacing: 10,
+//         children: content.map<Widget>((e) {
+//           final String title = e['title'] is String ? e['title'] : "";
+//           final int menuID = e['id'] is int ? e['id'] : "";
+
+//           final String colorString = e['subdescription'] is String
+//               ? e['subdescription']
+//               : "0xFF000000";
+//           final String menuurl = e['description'] is String
+//               ? e['description']
+//               : "";
+//           final Color color = Color(int.parse(colorString));
+
+//           return CategoryChip(
+//             title: title,
+//             color: color,
+//             menuID: menuID.toString(),
+//             menuurl: menuurl,
+//           );
+//         }).toList(),
+//       ),
+//     );
+//   }
+// }
 
 class CategoryChip extends StatelessWidget {
   final String title;

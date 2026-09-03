@@ -181,7 +181,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: GestureDetector(
         onTap: onTap,
-        child: Image.asset(asset, height: 22),
+        child: Image.asset(asset, height:28),
       ),
     );
   }

@@ -1,5 +1,5 @@
 {
-    "environment": "UAT",
+    "environment": "sanityLive",
     "version": "1",
     "UAT": {
         "hostUrl": "https://mfv1-uat.ortdemo.com/",

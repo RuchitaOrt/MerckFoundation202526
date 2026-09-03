@@ -495,7 +495,7 @@ void selectCategory(
   CategoryModel value,
 ) {
   selectedCategory = value;
-
+selectedCountry = allCountry;
   /// RESET DIGITAL LIBRARY LANGUAGE
   selectedLanguage = allLanguage;
 
@@ -503,6 +503,53 @@ void selectCategory(
   /// so no need to reset selectedArticleLanguage here.
 
   notifyListeners();
+}
+
+Future<void> loadVideoCountriesByCategory(
+    BuildContext context) async {
+  final categoryId = selectedCategory?.id == 0
+      ? ""
+      : selectedCategory?.id.toString() ?? "";
+
+  isLoading = true;
+  status = ApiStatus.loading;
+  errorMessage = "";
+  notifyListeners();
+
+  try {
+    final result =
+        await _service.fetchCountryVideoLibraryCategories(
+      context,
+      categoryId,
+    );
+
+    if (!result.isSuccess) {
+      status = result.status;
+      errorMessage = result.message ?? "";
+      return;
+    }
+
+    final res = result.data ?? {};
+
+    countries = [
+      allCountry,
+      ...(res['data'] ?? [])
+          .map<CountryModel>(
+            (e) => CountryModel.fromJson(e),
+          )
+          .toList(),
+    ];
+
+    selectedCountry = allCountry;
+
+    status = ApiStatus.success;
+  } catch (e) {
+    errorMessage = e.toString();
+    status = ApiStatus.error;
+  } finally {
+    isLoading = false;
+    notifyListeners();
+  }
 }
   /// SELECT LANGUAGE
   void selectLanguage(

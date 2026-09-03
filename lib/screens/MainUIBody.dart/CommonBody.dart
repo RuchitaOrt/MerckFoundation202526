@@ -13,8 +13,10 @@ import 'package:merckfoundation_252026/screens/CovidScreen/Covid/CovidFlipSectio
 import 'package:merckfoundation_252026/screens/DetailsScreen/OurAwardScreen.dart';
 import 'package:merckfoundation_252026/screens/MainUIBody.dart/CommonContentPage.dart';
 import 'package:merckfoundation_252026/screens/MediaAndStoriesScreen/MediaListingScreen.dart';
+import 'package:merckfoundation_252026/widgets/CommonList/RashaInsightCard.dart';
 import 'package:merckfoundation_252026/widgets/CommonList/TestimonialVerticalSection.dart';
 import 'package:merckfoundation_252026/widgets/CommonList/VerticalMediaSection.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/CommonBorderButton.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart';
 
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
@@ -725,6 +727,7 @@ if (tabTypes.contains(layout.type) &&
       case HomeLayoutType.episodes:
       case HomeLayoutType.video:
       case HomeLayoutType.newsLettersAndArticles:
+       case HomeLayoutType.ceoMessage:
       case HomeLayoutType.merckFoundationInMedia:
       case HomeLayoutType.testimonials:
       case HomeLayoutType.DigitalLibrary:
@@ -830,6 +833,28 @@ if (tabTypes.contains(layout.type) &&
                         ),
                
                 SmartHtmlWidget(html: """${item['description']}""" ?? ""),
+              //  ( item['view_button']==true ||  item['view_button']=="true")? 
+                Align(
+                  alignment: Alignment.center,
+              child: Padding(
+                padding:
+                    EdgeInsets.only(bottom: 5),
+                child: CommonBorderButton(
+                  title:
+                    layout.buttonText,
+                  onTap: ()
+                  {
+                     AppNavigation.navigateByMenuId(
+          context,
+          menuId:layout.buttonMenuId.toString() ?? "",
+          title: layout.title ?? "",
+        );
+                  }
+                  ,
+                ),
+              ),
+            )
+            // :Container()
                 //  const SizedBox(height: 10),
               ],
             ),
@@ -842,7 +867,14 @@ return ContentCarouselWidget(contentList: contentList);
           shareLink: layout.buttonLink ?? '',
           menuID: widget.menuID ?? "",
         );
-
+         case HomeLayoutType.RashaInsights:
+         return
+RashaKelejCard(
+  title: layout.title,
+  content: layout.content ?? [],
+  shareLink: layout.buttonLink ?? '',
+          menuID: widget.menuID ?? "",
+);
       case HomeLayoutType.marquee:
         return Column(
           children: [CommonMarqueeWidget(contents: layout.content ?? [])],

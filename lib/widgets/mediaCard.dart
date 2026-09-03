@@ -91,7 +91,7 @@ class MediaCard extends StatelessWidget {
   imageUrl: image,
   width: double.infinity,
   height: double.infinity,
-  fit:type==HomeLayoutType.OurPartners?BoxFit.contain: BoxFit.cover,
+  fit:(type==HomeLayoutType.OurPartners||type== HomeLayoutType.MerckMoreThanAmbasdar)?BoxFit.contain: BoxFit.cover,
   //  mediaType==MediaType.photoGallery?BoxFit.cover: BoxFit.contain,
   placeholder: (context, url) =>ImageShimmer(),
   errorWidget: (context, url, error) => SizedBox.expand(

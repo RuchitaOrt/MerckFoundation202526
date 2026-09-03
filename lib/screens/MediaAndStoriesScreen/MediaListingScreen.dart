@@ -592,9 +592,17 @@ String getContentTitle() {
                                         isScrollControlled: true,
                                      backgroundColor: Colors.transparent,
       barrierColor: Colors.transparent,
-                                        builder: (_) => ImagePreviewDialog(
-                                          imageUrl: item.photo ?? "",
-                                          title: item.photo_description ?? "",
+                                        builder: (_) => 
+                                        ImagePreviewDialog(
+                                          items: provider.storyList,
+      initialIndex: index,
+
+      imageUrl: (item) => item.photo ?? "",
+
+      title: (item) =>
+          item.photo_description ?? "",
+                                          // imageUrl: item.photo ?? "",
+                                          // title: item.photo_description ?? "",
                                         ),
                                       );
                                     } else {

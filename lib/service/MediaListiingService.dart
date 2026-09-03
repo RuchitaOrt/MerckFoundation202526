@@ -149,7 +149,7 @@ print(body);
           "season_id":
               categoryId,
         };
-print(body);
+
         break;
 
         case MediaType.ambassadorAlbum:
@@ -159,7 +159,8 @@ print(body);
         body = {
           "id": albumID,
         };
-
+        print("print(body);");
+print(body);
         break;
         case MediaType.article:
          api = API.getlanguagelistbyarticles;

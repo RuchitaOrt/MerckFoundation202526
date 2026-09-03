@@ -416,8 +416,12 @@ else{
                                       backgroundColor: Colors.transparent,
 barrierColor: Colors.transparent,
                                       builder: (_) => ImagePreviewDialog(
-                                        imageUrl: item.thumbnail ?? "",
-                                        title: item.description  ?? "",
+                                        items: widget.content,
+  initialIndex: index,
+  imageUrl: (item) => item.thumbnail ?? "",
+  title: (item) => item.description ?? "",
+                                        // imageUrl: item.thumbnail ?? "",
+                                        // title: item.description  ?? "",
                                       ),
                                     );
                           }
@@ -445,8 +449,12 @@ barrierColor: Colors.transparent,
                                   backgroundColor: Colors.transparent,
 barrierColor: Colors.transparent,
                                       builder: (_) => ImagePreviewDialog(
-                                        imageUrl:item.thumbnail  ?? "",
-                                        title:  item.title ?? "",
+                                        items: widget.content,
+  initialIndex: index,
+  imageUrl: (item) => item.thumbnail ?? "",
+  title: (item) => item.description ?? "",
+                                        // imageUrl:item.thumbnail  ?? "",
+                                        // title:  item.title ?? "",
                                       ),
                                     );
                         } else if (widget.type ==

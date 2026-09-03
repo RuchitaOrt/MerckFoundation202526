@@ -16,6 +16,7 @@ enum ProgramType {
   educatingLinda,
   nationwide,
   capacity,
+  
 }
 
 enum MediaType {
@@ -31,7 +32,8 @@ enum MediaType {
   episodes,
   ambassadorAlbum,
   all,
-  article
+  article,
+  
 }
 
 enum HomeSectionType {
@@ -65,6 +67,7 @@ enum HomeLayoutType {
   CallForApplication,
   DigitalLibrary,
 MerckMoreThanAmbasdar,
+ceoMessage,
   episodesviewall,
   nocontent,
   MenuManagement,
@@ -73,6 +76,7 @@ MerckMoreThanAmbasdar,
   season,
   MerckMoreThanAmbasdarFormer,
   PhotoCategory,
+  RashaInsights,
   OurPartners
 }
 
@@ -133,6 +137,11 @@ extension HomeLayoutTypeExtension on String {
         return HomeLayoutType.MerckMoreThanAmbasdarFormer;
         case 'Photo Category':
         return HomeLayoutType.PhotoCategory;
+         case 'CEO Messages':
+        return HomeLayoutType.ceoMessage;
+        case 'Rasha Insights':
+        return HomeLayoutType.RashaInsights;
+        
 
       default:
         return HomeLayoutType.nocontent;

@@ -191,8 +191,12 @@ Navigator.push(
                        backgroundColor: Colors.transparent,
 barrierColor: Colors.transparent,
                         builder: (_) => ImagePreviewDialog(
-                          imageUrl: item.thumbnail ?? "",
-                          title: item.title,
+                          items: provider.searchList,
+      initialIndex: index,
+      imageUrl: (item) => item.thumbnail ?? "",
+      title: (item) => item.title ?? "",
+                          // imageUrl: item.thumbnail ?? "",
+                          // title: item.title,
                         ),
                       );
                         }else if(item.sourceType=="award")
