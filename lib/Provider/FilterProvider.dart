@@ -504,7 +504,106 @@ selectedCountry = allCountry;
 
   notifyListeners();
 }
+Future<void> loadDigitalLibraryLanguages(
+  BuildContext context,
+) async {
+  final categoryId = selectedCategory?.id == 0
+      ? ""
+      : selectedCategory?.id.toString() ?? "";
 
+  try {
+    final result = await _service.fetchLanguageByDigitalCategories(
+      context,
+      categoryId,
+    );
+
+    if (!result.isSuccess) {
+      status = result.status;
+      errorMessage = result.message ?? "";
+      return;
+    }
+
+    final res = result.data ?? {};
+
+    languages = [
+      allLanguage,
+      ...(res['data'] ?? [])
+          .map<CategoryModel>(
+            (e) => CategoryModel(
+              id: e['id'],
+              name: e['language'],
+            ),
+          )
+          .toList(),
+    ];
+
+    selectedLanguage = allLanguage;
+
+    notifyListeners();
+  } catch (e) {
+    debugPrint("Digital Library language error: $e");
+  }
+}
+Future<void> loadTestimonialArticleCountriesByCategory(
+  BuildContext context,
+) async {
+  final categoryId = selectedCategory?.id == 0
+      ? ""
+      : selectedCategory?.id.toString() ?? "";
+
+  debugPrint(
+    "Loading testimonial article countries for category: $categoryId",
+  );
+
+  isLoading = true;
+  status = ApiStatus.loading;
+  errorMessage = "";
+  notifyListeners();
+
+  try {
+    final result =
+        await _service.fetchCountryByTestimonialCategories(
+      context,
+      categoryId,
+    );
+
+    if (!result.isSuccess) {
+      status = result.status;
+      errorMessage = result.message ?? "";
+      return;
+    }
+
+    final res = result.data ?? {};
+
+    countries = [
+      allCountry,
+      ...(res['data'] ?? [])
+          .map<CountryModel>(
+            (e) => CountryModel.fromJson(e),
+          )
+          .toList(),
+    ];
+
+    /// Do not select All if countries are available.
+    selectedCountry = allCountry;
+
+    debugPrint(
+      "Countries loaded: ${countries.map((e) => '${e.id}:${e.name}').toList()}",
+    );
+
+    status = ApiStatus.success;
+  } catch (e) {
+    errorMessage = e.toString();
+    status = ApiStatus.error;
+
+    debugPrint(
+      "Testimonial Article Country Error: $e",
+    );
+  } finally {
+    isLoading = false;
+    notifyListeners();
+  }
+}
 Future<void> loadVideoCountriesByCategory(
     BuildContext context) async {
   final categoryId = selectedCategory?.id == 0

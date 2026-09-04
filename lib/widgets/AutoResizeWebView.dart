@@ -439,7 +439,7 @@ color: #272727 !important;
  
   color: #272727 !important;
 
-  font-size: 18px !important;
+  font-size: 14px !important;
 
   line-height: 1.6 !important;
 }

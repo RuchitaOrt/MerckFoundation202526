@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -34,146 +35,772 @@ class _AppDrawerState extends State<AppDrawer> {
   void initState() {
     super.initState();
   }
-
   @override
-  Widget build(BuildContext context) {
-    final responsive = ResponsiveFlutter.of(context);
-    final navbarProvider = Provider.of<NavbarProvider>(context);
+Widget build(BuildContext context) {
+  final responsive = ResponsiveFlutter.of(context);
+  final navbarProvider = Provider.of<NavbarProvider>(context);
 
-    return Drawer(
-      child: Container(
-        color: Customcolor.babyBlue,
-        child: Column(
-          children: [
-            /// Scrollable drawer content
-            Expanded(
-              child: navbarProvider.isLoading
-                  ? Center(child: CommonLoader())
-                  : ListView(
-                      padding: EdgeInsets.zero,
-                      children: [
-                        _buildHeader(context, "1", "", "", ""),
-                        16.0.heightBox,
+  return Drawer(
+    child: Container(
+      color: Customcolor.babyBlue,
+      child: navbarProvider.isLoading
+          ? const Center(
+              child: CommonLoader(),
+            )
+          : CustomScrollView(
+              slivers: [
 
-                        ...navbarProvider.menuList.map((item) {
-                          Widget widget;
+                /// =================================================
+                /// HEADER
+                /// =================================================
 
-                          if (item.submenu.isEmpty) {
-                            widget = DrawerWidget(
-                              value: item.menuName!,
-                              image: item.mobileLogo,
-                              onTapfun: () {
+                SliverToBoxAdapter(
+                  child: _buildHeader(
+                    context,
+                    "1",
+                    "",
+                    "",
+                    "",
+                  ),
+                ),
+
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: 16),
+                ),
+
+                /// =================================================
+                /// MENU ITEMS
+                /// =================================================
+
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final item =
+                          navbarProvider.menuList[index];
+
+                      Widget widget;
+
+                      if (item.submenu.isEmpty) {
+                        widget = DrawerWidget(
+                          value: item.menuName!,
+                          image: item.mobileLogo,
+                          onTapfun: () {
+                            AppNavigation.navigateByMenuId(
+                              context,
+                              menuId: item.id.toString(),
+                              title: item.menuName!,
+                              shareLink: item.menuUrl,
+                            );
+                          },
+                        );
+                      } else {
+                        widget = CustomExpansion(
+                          title: item.menuName!,
+                          id: item.id.toString(),
+                          leadingIcon: item.mobileLogo!,
+                          expanded:
+                              expansionState[item.menuName] ?? false,
+
+                          onTap: () {
+                            setState(() {
+                              if (item.id == 16) {
                                 AppNavigation.navigateByMenuId(
                                   context,
                                   menuId: item.id.toString(),
                                   title: item.menuName!,
                                   shareLink: item.menuUrl,
                                 );
-                              },
-                            );
-                          } else {
-                            widget = CustomExpansion(
-                              title: item.menuName!,
-                              id: item.id.toString(),
-                              leadingIcon: item.mobileLogo!,
-                              expanded: expansionState[item.menuName] ?? false,
-                              onTap: () {
-                                setState(() {
-                                  if (item.id == 16) {
-                                    AppNavigation.navigateByMenuId(
-                                      context,
-                                      menuId: item.id.toString(),
-                                      title: item.menuName!,
-                                      shareLink: item.menuUrl,
-                                    );
-                                  }
-                                  expansionState[item.menuName!] =
-                                      !(expansionState[item.menuName] ?? false);
-                                });
-                              },
-                              children: item.id == 16
-                                  ? <Widget>[Container()]
-                                  : item.submenu.map((sub) {
-                                      return DrawerWidget(
-                                        value: sub.menuName!,
-                                        // image: sub.mobileLogo,
-                                        onTapfun: () {
-                                          print("VIDEO ${sub.isVideo}");
-                                          if (sub.isVideo == true) {
-                                            print(
-                                              "VIDEO  Navigate${sub.isVideo} ${sub.menuTitle!}",
-                                            );
-                                            print(
-                                              "VIDEO  ${sub.videoCategoryArray.toString()}",
-                                            );
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (_) =>
-                                                    MediaListingScreen(
-                                                      type: MediaType.all,
-                                                      categoryID: sub
-                                                          .videoCategoryArray
-                                                          .join(','),
-                                                      albumID: "",
-                                                      albumName: "",
-                                                      menuID: sub.id.toString(),
-                                                      title: sub.menuTitle!,
-                                                      shareLink: "",
-                                                    ),
-                                              ),
-                                            );
-                                          } else {
-                                            AppNavigation.navigateByMenuId(
-                                              context,
-                                              menuId: sub.id.toString(),
-                                              title: sub.menuName!,
-                                              shareLink: sub.menuUrl,
-                                            );
-                                          }
-                                        },
+                              }
+
+                              expansionState[item.menuName!] =
+                                  !(expansionState[item.menuName] ?? false);
+                            });
+                          },
+
+                          children: item.id == 16
+                              ? <Widget>[
+                                  Container(),
+                                ]
+                              : item.submenu.map((sub) {
+                                  return DrawerWidget(
+                                    value: sub.menuName!,
+                                    onTapfun: () {
+                                      print(
+                                        "VIDEO ${sub.isVideo}",
                                       );
-                                    }).toList(),
-                            );
-                          }
 
-                          /// ✅ ADD SPACE BETWEEN ITEMS
-                          return Column(
-                            children: [
-                              widget,
-                              SizedBox(
-                                height: responsive.height(1.5),
-                              ), // 🔥 control spacing here
-                            ],
-                          );
-                        }).toList(),
+                                      if (sub.isVideo == true) {
+                                        print(
+                                          "VIDEO Navigate ${sub.isVideo} ${sub.menuTitle!}",
+                                        );
 
-                        16.0.heightBox,
-                      ],
-                    ),
+                                        print(
+                                          "VIDEO ${sub.videoCategoryArray.toString()}",
+                                        );
+
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                MediaListingScreen(
+                                              type: MediaType.all,
+                                              categoryID: sub
+                                                  .videoCategoryArray
+                                                  .join(','),
+                                              albumID: "",
+                                              albumName: "",
+                                              menuID:
+                                                  sub.id.toString(),
+                                              title:
+                                                  sub.menuTitle!,
+                                              shareLink: "",
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        AppNavigation
+                                            .navigateByMenuId(
+                                          context,
+                                          menuId:
+                                              sub.id.toString(),
+                                          title:
+                                              sub.menuName!,
+                                          shareLink:
+                                              sub.menuUrl,
+                                        );
+                                      }
+                                    },
+                                  );
+                                }).toList(),
+                        );
+                      }
+
+                      return Column(
+                        children: [
+                          widget,
+
+                          SizedBox(
+                            height: responsive.height(1.5),
+                          ),
+                        ],
+                      );
+                    },
+                    childCount:
+                        navbarProvider.menuList.length,
+                  ),
+                ),
+
+                /// =================================================
+                /// FOLLOW SECTION
+                ///
+                /// If menu is short -> stays at bottom
+                /// If menu expands -> moves down and scrolls
+                /// =================================================
+SliverFillRemaining(
+  hasScrollBody: false,
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+
+      /// ============================================
+      /// PUSH FOLLOW SECTION TO BOTTOM
+      /// ============================================
+      const Spacer(),
+
+      /// ============================================
+      /// FOLLOW SOCIAL SECTION
+      /// ============================================
+      Consumer<SocialProvider>(
+        builder: (context, provider, child) {
+          if (provider.isLoading) {
+            return const Center(
+              child: CommonLoader(),
+            );
+          }
+
+          if (provider.socialMediaListCommon.isEmpty) {
+            return const SizedBox();
+          }
+
+          return Padding(
+            padding: const EdgeInsets.only(
+              top: 20,
+              bottom: 20,
             ),
+            child: Column(
+              children:
+                  provider.socialMediaListCommon.map<Widget>((item) {
+                List<dynamic> socialLinks = [];
 
-            // Consumer<SocialProvider>(
-            //   builder: (context, provider, child) {
-            //     if (provider.isLoading) {
-            //       return const CircularProgressIndicator();
-            //     }
+                try {
+                  final description =
+                      item['description']?.toString() ?? "[]";
 
-            //     return FollowSocialDrawer(
-            //       title: "",
-            //       iconSize: 12,
-            //       // position: int.tryParse(item['position'].toString()) ?? 0,
-            //       socialLinks: provider.socialMediaList,
-            //     );
-            //   },
-            // ),
-            // FollowSection(title: "", iconSize: 15),
-            SizedBox(height: 10),
-          ],
-        ),
+                  final decoded = jsonDecode(description);
+
+                  if (decoded is List) {
+                    socialLinks = decoded;
+                  }
+                } catch (e) {
+                  debugPrint("Social parse error: $e");
+                }
+
+                final String title =
+                    item['title']?.toString() ?? "";
+
+                return Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 10,left: 10
+                  ),
+                  child: FollowSocialDrawer(
+                    title: title,
+                    iconSize: 30,
+                    socialLinks: socialLinks,
+                  ),
+                );
+              }).toList(),
+            ),
+          );
+        },
       ),
-    );
-  }
+    ],
+  ),
+),
+                // SliverFillRemaining(
+                //   hasScrollBody: false,
+                //   child: Column(
+                //     crossAxisAlignment:
+                //         CrossAxisAlignment.start,
+                //     children: [
+
+                //       /// This pushes Follow section to bottom
+                //       /// when there is empty space.
+                //       const Spacer(),
+
+                //       /// =================================================
+                //       /// FOLLOW US
+                //       /// =================================================
+
+                //       Padding(
+                //         padding:
+                //             const EdgeInsets.only(left: 10),
+                //         child: FormLabel(
+                //           text: "Follow Us",
+                //           labelColor:
+                //               Customcolor.textDarkBlueColor,
+                //           fontSize:
+                //               responsive.fontSize(2.5),
+                //           fontweight:
+                //               FontWeight.w700,
+                //           fontheight: 1.2,
+                //         ),
+                //       ),
+
+                //       const SizedBox(height: 10),
+
+                //       Consumer<SocialProvider>(
+                //         builder:
+                //             (context, provider, child) {
+                //           if (provider.isLoading) {
+                //             return const Center(
+                //               child:
+                //                   CircularProgressIndicator(),
+                //             );
+                //           }
+
+                //           return FollowSocialDrawer(
+                //             title: "Follow US",
+                //             iconSize: 30,
+                //             socialLinks:
+                //                 provider.socialMediaList,
+                //           );
+                //         },
+                //       ),
+
+                //       const SizedBox(height: 15),
+
+                //       /// =================================================
+                //       /// FOLLOW DR RASHA KELEJ
+                //       /// =================================================
+
+                //       Padding(
+                //         padding:
+                //             const EdgeInsets.only(left: 10),
+                //         child: FormLabel(
+                //           text:
+                //               "Follow Dr Rasha Kelej",
+                //           labelColor:
+                //               Customcolor.textDarkBlueColor,
+                //           fontSize:
+                //               responsive.fontSize(2.5),
+                //           fontweight:
+                //               FontWeight.w700,
+                //           fontheight: 1.2,
+                //         ),
+                //       ),
+
+                //       const SizedBox(height: 10),
+
+                //       Consumer<SocialProvider>(
+                //         builder:
+                //             (context, provider, child) {
+                //           if (provider.isLoading) {
+                //             return const Center(
+                //               child:
+                //                   CircularProgressIndicator(),
+                //             );
+                //           }
+
+                //           return FollowSocialDrawer(
+                //             title: "",
+                //             iconSize: 30,
+                //             socialLinks:
+                //                 provider.socialMediaList,
+                //           );
+                //         },
+                //       ),
+
+                //       const SizedBox(height: 20),
+                //     ],
+                //   ),
+                // ),
+              ],
+            ),
+    ),
+  );
+}
+// @override
+// Widget build(BuildContext context) {
+//   final responsive = ResponsiveFlutter.of(context);
+//   final navbarProvider = Provider.of<NavbarProvider>(context);
+
+//   return Drawer(
+//     child: Container(
+//       color: Customcolor.babyBlue,
+
+//       child: navbarProvider.isLoading
+//           ? const Center(
+//               child: CommonLoader(),
+//             )
+//           : ListView(
+//               padding: EdgeInsets.zero,
+//               children: [
+
+//                 /// =================================================
+//                 /// HEADER
+//                 /// =================================================
+
+//                 _buildHeader(
+//                   context,
+//                   "1",
+//                   "",
+//                   "",
+//                   "",
+//                 ),
+
+//                 16.0.heightBox,
+
+//                 /// =================================================
+//                 /// MENU ITEMS
+//                 /// =================================================
+
+//                 ...navbarProvider.menuList.map((item) {
+//                   Widget widget;
+
+//                   if (item.submenu.isEmpty) {
+//                     widget = DrawerWidget(
+//                       value: item.menuName!,
+//                       image: item.mobileLogo,
+
+//                       onTapfun: () {
+//                         AppNavigation.navigateByMenuId(
+//                           context,
+//                           menuId: item.id.toString(),
+//                           title: item.menuName!,
+//                           shareLink: item.menuUrl,
+//                         );
+//                       },
+//                     );
+//                   } else {
+//                     widget = CustomExpansion(
+//                       title: item.menuName!,
+//                       id: item.id.toString(),
+//                       leadingIcon: item.mobileLogo!,
+//                       expanded:
+//                           expansionState[item.menuName] ?? false,
+
+//                       onTap: () {
+//                         setState(() {
+//                           if (item.id == 16) {
+//                             AppNavigation.navigateByMenuId(
+//                               context,
+//                               menuId: item.id.toString(),
+//                               title: item.menuName!,
+//                               shareLink: item.menuUrl,
+//                             );
+//                           }
+
+//                           expansionState[item.menuName!] =
+//                               !(expansionState[item.menuName] ?? false);
+//                         });
+//                       },
+
+//                       children: item.id == 16
+//                           ? <Widget>[
+//                               Container(),
+//                             ]
+//                           : item.submenu.map((sub) {
+//                               return DrawerWidget(
+//                                 value: sub.menuName!,
+
+//                                 onTapfun: () {
+//                                   print(
+//                                     "VIDEO ${sub.isVideo}",
+//                                   );
+
+//                                   if (sub.isVideo == true) {
+//                                     print(
+//                                       "VIDEO Navigate ${sub.isVideo} ${sub.menuTitle!}",
+//                                     );
+
+//                                     print(
+//                                       "VIDEO ${sub.videoCategoryArray.toString()}",
+//                                     );
+
+//                                     Navigator.push(
+//                                       context,
+//                                       MaterialPageRoute(
+//                                         builder: (_) =>
+//                                             MediaListingScreen(
+//                                           type: MediaType.all,
+
+//                                           categoryID: sub
+//                                               .videoCategoryArray
+//                                               .join(','),
+
+//                                           albumID: "",
+
+//                                           albumName: "",
+
+//                                           menuID:
+//                                               sub.id.toString(),
+
+//                                           title:
+//                                               sub.menuTitle!,
+
+//                                           shareLink: "",
+//                                         ),
+//                                       ),
+//                                     );
+//                                   } else {
+//                                     AppNavigation
+//                                         .navigateByMenuId(
+//                                       context,
+//                                       menuId:
+//                                           sub.id.toString(),
+//                                       title:
+//                                           sub.menuName!,
+//                                       shareLink:
+//                                           sub.menuUrl,
+//                                     );
+//                                   }
+//                                 },
+//                               );
+//                             }).toList(),
+//                     );
+//                   }
+
+//                   /// SPACE BETWEEN MENU ITEMS
+//                   return Column(
+//                     children: [
+//                       widget,
+
+//                       SizedBox(
+//                         height: responsive.height(1.5),
+//                       ),
+//                     ],
+//                   );
+//                 }).toList(),
+
+//                 100.0.heightBox,
+
+//                 /// =================================================
+//                 /// FOLLOW US
+//                 /// =================================================
+
+//                 Align(
+//                   alignment: Alignment.topLeft,
+//                   child: Padding(
+//                     padding:
+//                         const EdgeInsets.only(left: 10),
+//                     child: FormLabel(
+//                       text: "Follow Us",
+//                       labelColor:
+//                           Customcolor.textDarkBlueColor,
+//                       fontSize:
+//                           responsive.fontSize(2.5),
+//                       fontweight:
+//                           FontWeight.w700,
+//                       fontheight: 1.2,
+//                     ),
+//                   ),
+//                 ),
+
+//                 const SizedBox(height: 10),
+
+//                 Consumer<SocialProvider>(
+//                   builder:
+//                       (context, provider, child) {
+//                     if (provider.isLoading) {
+//                       return const Center(
+//                         child:
+//                             CircularProgressIndicator(),
+//                       );
+//                     }
+
+//                     return FollowSocialDrawer(
+//                       title: "Follow US",
+//                       iconSize: 30,
+//                       socialLinks:
+//                           provider.socialMediaList,
+//                     );
+//                   },
+//                 ),
+
+//                 const SizedBox(height: 15),
+
+//                 /// =================================================
+//                 /// FOLLOW DR RASHA KELEJ
+//                 /// =================================================
+
+//                 Align(
+//                   alignment: Alignment.topLeft,
+//                   child: Padding(
+//                     padding:
+//                         const EdgeInsets.only(left: 10),
+//                     child: FormLabel(
+//                       text:
+//                           "Follow Dr Rasha Kelej",
+//                       labelColor:
+//                           Customcolor.textDarkBlueColor,
+//                       fontSize:
+//                           responsive.fontSize(2.5),
+//                       fontweight:
+//                           FontWeight.w700,
+//                       fontheight: 1.2,
+//                     ),
+//                   ),
+//                 ),
+
+//                 const SizedBox(height: 10),
+
+//                 Consumer<SocialProvider>(
+//                   builder:
+//                       (context, provider, child) {
+//                     if (provider.isLoading) {
+//                       return const Center(
+//                         child:
+//                             CircularProgressIndicator(),
+//                       );
+//                     }
+
+//                     return FollowSocialDrawer(
+//                       title: "",
+//                       iconSize: 30,
+//                       socialLinks:
+//                           provider.socialMediaList,
+//                     );
+//                   },
+//                 ),
+
+//                 const SizedBox(height: 20),
+//               ],
+//             ),
+//     ),
+//   );
+// }
+//   @override
+//   Widget build(BuildContext context) {
+//     final responsive = ResponsiveFlutter.of(context);
+//     final navbarProvider = Provider.of<NavbarProvider>(context);
+
+//     return Drawer(
+//       child: Container(
+//         color: Customcolor.babyBlue,
+//         child: Column(
+//           children: [
+//             /// Scrollable drawer content
+//             Expanded(
+//               child: navbarProvider.isLoading
+//                   ? Center(child: CommonLoader())
+//                   : ListView(
+//                       padding: EdgeInsets.zero,
+//                       children: [
+//                         _buildHeader(context, "1", "", "", ""),
+//                         16.0.heightBox,
+
+//                         ...navbarProvider.menuList.map((item) {
+//                           Widget widget;
+
+//                           if (item.submenu.isEmpty) {
+//                             widget = DrawerWidget(
+//                               value: item.menuName!,
+//                               image: item.mobileLogo,
+//                               onTapfun: () {
+//                                 AppNavigation.navigateByMenuId(
+//                                   context,
+//                                   menuId: item.id.toString(),
+//                                   title: item.menuName!,
+//                                   shareLink: item.menuUrl,
+//                                 );
+//                               },
+//                             );
+//                           } else {
+//                             widget = CustomExpansion(
+//                               title: item.menuName!,
+//                               id: item.id.toString(),
+//                               leadingIcon: item.mobileLogo!,
+//                               expanded: expansionState[item.menuName] ?? false,
+//                               onTap: () {
+//                                 setState(() {
+//                                   if (item.id == 16) {
+//                                     AppNavigation.navigateByMenuId(
+//                                       context,
+//                                       menuId: item.id.toString(),
+//                                       title: item.menuName!,
+//                                       shareLink: item.menuUrl,
+//                                     );
+//                                   }
+//                                   expansionState[item.menuName!] =
+//                                       !(expansionState[item.menuName] ?? false);
+//                                 });
+//                               },
+//                               children: item.id == 16
+//                                   ? <Widget>[Container()]
+//                                   : item.submenu.map((sub) {
+//                                       return DrawerWidget(
+//                                         value: sub.menuName!,
+//                                         // image: sub.mobileLogo,
+//                                         onTapfun: () {
+//                                           print("VIDEO ${sub.isVideo}");
+//                                           if (sub.isVideo == true) {
+//                                             print(
+//                                               "VIDEO  Navigate${sub.isVideo} ${sub.menuTitle!}",
+//                                             );
+//                                             print(
+//                                               "VIDEO  ${sub.videoCategoryArray.toString()}",
+//                                             );
+//                                             Navigator.push(
+//                                               context,
+//                                               MaterialPageRoute(
+//                                                 builder: (_) =>
+//                                                     MediaListingScreen(
+//                                                       type: MediaType.all,
+//                                                       categoryID: sub
+//                                                           .videoCategoryArray
+//                                                           .join(','),
+//                                                       albumID: "",
+//                                                       albumName: "",
+//                                                       menuID: sub.id.toString(),
+//                                                       title: sub.menuTitle!,
+//                                                       shareLink: "",
+//                                                     ),
+//                                               ),
+//                                             );
+//                                           } else {
+//                                             AppNavigation.navigateByMenuId(
+//                                               context,
+//                                               menuId: sub.id.toString(),
+//                                               title: sub.menuName!,
+//                                               shareLink: sub.menuUrl,
+//                                             );
+//                                           }
+//                                         },
+//                                       );
+//                                     }).toList(),
+//                             );
+//                           }
+
+//                           /// ✅ ADD SPACE BETWEEN ITEMS
+//                           return Column(
+//                             children: [
+//                               widget,
+//                               SizedBox(
+//                                 height: responsive.height(1.5),
+//                               ), // 🔥 control spacing here
+//                             ],
+//                           );
+//                         }).toList(),
+
+//                         16.0.heightBox,
+//                       ],
+//                     ),
+//             ),
+// // FollowSection(title: "Follow US", iconSize: 15),
+// Align(
+//   alignment: Alignment.topLeft,
+//   child: Padding(
+//     padding: const EdgeInsets.only(left: 10),
+//     child: FormLabel(
+//                       text: "Follow Us",
+//                       labelColor: Customcolor.textDarkBlueColor,
+//                       fontSize: responsive.fontSize(2.5),
+//                       fontweight: FontWeight.w700,
+//                       fontheight: 1.2,
+//                     ),
+//   ),),
+//             Consumer<SocialProvider>(
+//               builder: (context, provider, child) {
+//                 if (provider.isLoading) {
+//                   return const CircularProgressIndicator();
+//                 }
+
+//                 return FollowSocialDrawer(
+//                   title: "Follow US",
+//                   iconSize: 30,
+//                   // position: int.tryParse(item['position'].toString()) ?? 0,
+//                   socialLinks: provider.socialMediaList,
+//                 );
+//               },
+//             ),
+//              SizedBox(height: 10,),
+//             Align(
+//                alignment: Alignment.topLeft,
+//               child: 
+//                Padding(
+//                  padding: const EdgeInsets.only(left: 10),
+//                  child: FormLabel(
+//                       text: "Follow Dr Rasha Kelej",
+//                       labelColor: Customcolor.textDarkBlueColor,
+//                       fontSize: responsive.fontSize(2.5),
+//                       fontweight: FontWeight.w700,
+//                       fontheight: 1.2,
+                    
+//                                ),
+//                )),
+//               SizedBox(height: 10,),
+//             // FollowSection(title: "", iconSize: 15),
+//             Consumer<SocialProvider>(
+//               builder: (context, provider, child) {
+//                 if (provider.isLoading) {
+//                   return const CircularProgressIndicator();
+//                 }
+
+//                 return FollowSocialDrawer(
+//                   title: "",
+//                   iconSize: 30,
+//                   // position: int.tryParse(item['position'].toString()) ?? 0,
+//                   socialLinks: provider.socialMediaList,
+//                 );
+//               },
+//             ),
+//             // FollowSection(title: "", iconSize: 15),
+//             SizedBox(height: 10),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
 
   Widget _buildHeader(
     BuildContext context,

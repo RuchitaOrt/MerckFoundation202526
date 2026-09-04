@@ -301,7 +301,7 @@ void didPopNext() {
             builder: (_) => DetailScreen(
               "",
               "",
-              title: item['menu_name']?.toString() ?? "",
+              title: item['menu_title']?.toString() ?? "",
               articleId: item['newsletter_id']?.toString() ?? "",
               languageId: "",
               isDetailApiCalled: true,
@@ -327,12 +327,12 @@ void didPopNext() {
       } else
       // VIDEO
       if (item['is_video'] == true) {
-        debugPrint("NAVIGATING -> VIDEO");
+        debugPrint(" RUCHITA RANENAVIGATING -> VIDEO");
 
         final videoCategories = item['video_category_array'];
 
         debugPrint("VIDEO CATEGORY = $videoCategories");
-
+debugPrint("VIDEO CATEGORYMEnu = $item['menu_title']?.toString() ");
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -344,7 +344,7 @@ void didPopNext() {
               albumID: "",
               albumName: "",
               menuID: item['id'].toString(),
-              title: item['menu_name']?.toString() ?? "",
+              title: item['menu_title']?.toString() ?? "",
               shareLink: item['share_link']?.toString() ?? "",
             ),
           ),

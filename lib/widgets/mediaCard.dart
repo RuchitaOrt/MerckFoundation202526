@@ -167,7 +167,7 @@ print(mediaType);
                                         .MerckMoreThanAmbasdarFormer || mediaType ==
                                     MediaType
                                         .ambassadorAlbum||
-                                mediaType == MediaType.digitalLibrary)
+                                mediaType == MediaType.digitalLibrary||mediaType == MediaType.photoAlbum)
                             ? BoxFit.contain
                             : BoxFit.cover,
                         //  mediaType==MediaType.photoGallery?BoxFit.cover: BoxFit.contain,
@@ -271,7 +271,7 @@ print(mediaType);
               maxLines: 3,
               textAlignment: TextAlign.center,
               fontSize: screenWidth * 0.030,
-              labelColor: fontColor,
+              labelColor:(type == HomeLayoutType.MerckMoreThanAmbasdar)?Customcolor.colorPink: fontColor,
               fontweight: FontWeight.w500,
               textOverflow: TextOverflow.ellipsis,
             ),
@@ -340,7 +340,7 @@ print(mediaType);
                             // mediaType==MediaType.photoGallery?2: 3,
                             textAlignment: TextAlign.center,
                             fontSize: screenWidth * 0.030,
-                            labelColor: fontColor,
+                            labelColor: type == HomeLayoutType.MerckMoreThanAmbasdarFormer?Customcolor.colorPink: fontColor,
                             fontweight: FontWeight.w500,
                             textOverflow: TextOverflow.ellipsis,
                           ),

@@ -207,6 +207,23 @@ class _HorizontalMediaSectionState extends State<HorizontalMediaSection> {
 
         return;
       }
+       if (root['is_testimonials'] == true) {
+        final videoCategories = root['testimonial_id'];
+
+          Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => TestimonialArticlesScreen(
+              shareLink: widget.shareLink ?? "",
+              title: widget.title!,
+              videoCategories:videoCategories.toString()
+            ),
+          ),
+        
+        );
+
+        return;
+      }
 // if(widget.type==HomeLayoutType.testimonials)
 // {
 //   print("RUCHITA");
@@ -322,7 +339,7 @@ class _HorizontalMediaSectionState extends State<HorizontalMediaSection> {
 
                 // Move every 2 seconds
                 autoPlayInterval:
-                    const Duration(seconds: 8),
+                    const Duration(seconds: 6),
 
                 // Animation duration
                 autoPlayAnimationDuration:

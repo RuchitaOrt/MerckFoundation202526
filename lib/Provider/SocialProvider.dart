@@ -12,7 +12,14 @@ class SocialProvider extends ChangeNotifier {
 
   List<dynamic> _socialMediaList = [];
   List<dynamic> get socialMediaList => _socialMediaList;
+   
+List<dynamic> _socialMediaListCommon = [];
+List<dynamic> get socialMediaListCommon => _socialMediaListCommon;
 
+void setSocialMediaList(List<dynamic> data) {
+  _socialMediaListCommon = data;
+  notifyListeners();
+}
   Future<void> getSocialMediaDrawer(BuildContext context) async {
     try {
       _isLoading = true;

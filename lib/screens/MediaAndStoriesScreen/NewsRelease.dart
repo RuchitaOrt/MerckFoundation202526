@@ -28,12 +28,12 @@ class NewsRelease extends StatelessWidget {
       email: "mehak.handa@external.merckgroup.com",
       image: "",
     ),
-    MediaContactModel(
-      name: "Mr. Harsh Sharma",
-      phone: "+91 9540932090",
-      email: "harsh.sharma@external.merckgroup.com",
-      image: "",
-    ),
+    // MediaContactModel(
+    //   name: "Mr. Harsh Sharma",
+    //   phone: "+91 9540932090",
+    //   email: "harsh.sharma@external.merckgroup.com",
+    //   image: "",
+    // ),
   ];
   @override
   Widget build(BuildContext context) {

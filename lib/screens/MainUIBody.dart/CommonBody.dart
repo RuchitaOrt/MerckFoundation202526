@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:merckfoundation_252026/Provider/SocialProvider.dart';
 import 'package:merckfoundation_252026/Utility/ApiStatusHandler.dart';
 import 'package:merckfoundation_252026/Utility/AppSizes.dart';
 import 'package:merckfoundation_252026/Utility/api_status.dart';
@@ -106,13 +107,31 @@ class _CommonBodyState extends State<CommonBody> {
 
     // final data = provider.pageData;
     final data = provider.pageDataFor(widget.menuID ?? "");
+
+    
     if (!mounted) return;
 
     if (data == null) {
       setState(() => hasLoaded = true);
       return;
     }
+final layouts = provider.layoutsFor(widget.menuID ?? "");
 
+final socialLayouts = layouts
+    .where((layout) => layout.type == HomeLayoutType.socialLinks)
+    .toList();
+
+if (socialLayouts.isNotEmpty) {
+  final socialProvider =
+      Provider.of<SocialProvider>(context, listen: false);
+
+  final List<dynamic> socialMediaList = socialLayouts
+      .map((layout) => layout.content ?? [])
+      .expand((content) => content)
+      .toList();
+
+  socialProvider.setSocialMediaList(socialMediaList);
+}
     root = data['data'];
 
     if (root is Map) {
@@ -477,7 +496,64 @@ class _CommonBodyState extends State<CommonBody> {
                         ? (carouselLayout.buttonText ?? "")
                         : "",
 
-                    onViewAll: () {
+                    onViewAll: () async {
+                       debugPrint("=================================");
+    debugPrint("WATCH MORE CLICKED");
+    debugPrint("MENU ID = ${widget.menuID}");
+   
+    debugPrint("=================================");
+
+   
+
+    final provider = Provider.of<PageProvider>(context, listen: false);
+
+    final data = await provider.fetchWatchMorePage(context, carouselLayout.buttonMenuId);
+
+    if (!mounted) return;
+
+    debugPrint("WATCH MORE DATA = $data");
+
+    if (data == null) {
+      debugPrint("WATCH MORE: DATA IS NULL");
+      return;
+    }
+
+    final root = data['data'];
+
+    if (root == null || root is! Map) {
+      debugPrint("WATCH MORE: INVALID ROOT");
+      debugPrint("ROOT = $root");
+      return;
+    }
+
+    debugPrint("========== ROOT ==========");
+    debugPrint("ROOT = $root");
+    debugPrint("is_newsletter = ${root['is_newsletter']}");
+    debugPrint("is_awards = ${root['is_awards']}");
+    debugPrint("is_video = ${root['is_video']}");
+    debugPrint("is_dglibrary = ${root['is_dglibrary']}");
+    debugPrint("is_photo = ${root['is_photo']}");
+    debugPrint("==========================");
+
+                      print("root['is_dglibrary']");
+                      print(root['is_dglibrary']);
+                      if (root['is_dglibrary'] == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MediaListingScreen(
+              type: MediaType.digitalLibrary,
+              categoryID: root['digital_library_id'].toString(),
+              albumID: "",
+              albumName: "",
+              menuID: root['id'].toString(),
+              shareLink: "",
+              title: "Digital Library",
+              digitalLibraryCategoryName: "",
+            ),
+          ),
+        );
+      }else{
                       AppNavigation.navigateByMenuId(
                         context,
                         menuId: carouselLayout.buttonMenuId.toString(),
@@ -487,9 +563,9 @@ class _CommonBodyState extends State<CommonBody> {
                         type: carouselLayout.type,
                         title: carouselLayout.title ?? "",
                         shareLink: carouselLayout.buttonLink,
-                      );
+                      );}
                     },
-
+                    
                     items: items,
                   ),
 
@@ -873,6 +949,7 @@ class _CommonBodyState extends State<CommonBody> {
           children: [
             SizedBox(height: 10),
             CategorySection(content: layout.content ?? []),
+             SizedBox(height: 20),
           ],
         );
       case HomeLayoutType.socialLinks:
@@ -882,7 +959,11 @@ class _CommonBodyState extends State<CommonBody> {
           return const SizedBox();
         }
 
-        return Padding(
+  final socialProvider =
+      Provider.of<SocialProvider>(context, listen: false);
+
+  socialProvider.setSocialMediaList(content);
+        return  widget.menuID=="1"?Container(): Padding(
           padding: const EdgeInsets.only(top: 20),
           child: Column(
             children: content.map<Widget>((item) {

@@ -288,16 +288,20 @@ List<Widget> _buildCategoryList(FilterProvider provider) {
             onTap: () async {
               provider.selectCategory(e);
 
-              if (widget.type == MediaType.testimonialArticle) {
-                provider.selectedCountry = provider.allCountry;
+              // if (widget.type == MediaType.testimonialArticle) {
+              //   provider.selectedCountry = provider.allCountry;
 
-                await provider.loadFilters(
-                  context,
-                  type: MediaType.testimonialArticle,
-                );
-              }
-
-              if (widget.type == MediaType.videoLibrary) {
+              //   await provider.loadFilters(
+              //     context,
+              //     type: MediaType.testimonialArticle,
+              //   );
+              // }
+if (widget.type == MediaType.testimonialArticle) {
+  await provider.loadTestimonialArticleCountriesByCategory(
+    context,
+  );
+}
+              if (widget.type == MediaType.videoLibrary ||widget.type == MediaType.all) {
                 await provider.loadVideoCountriesByCategory(context);
               }
 

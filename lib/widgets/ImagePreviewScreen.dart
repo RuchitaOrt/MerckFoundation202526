@@ -1244,7 +1244,41 @@ class _ImagePreviewDialogState<T>
   // ===============================================================
   // NEXT IMAGE
   // ===============================================================
-
+Widget _closeButton() {
+  return Material(
+    color: Colors.transparent,
+    child: InkWell(
+      onTap: () {
+        Navigator.of(context).pop();
+      },
+      borderRadius: BorderRadius.circular(22),
+      child: Container(
+        width: 42,
+        height: 42,
+        decoration: BoxDecoration(
+          color: Colors.black,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: Colors.white,
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.25),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: const Icon(
+          Icons.close,
+          color: Colors.white,
+          size: 24,
+        ),
+      ),
+    ),
+  );
+}
   void _nextImage() {
     if (!canGoNext) {
       return;
@@ -1313,356 +1347,549 @@ class _ImagePreviewDialogState<T>
       color: Colors.transparent,
 
       child: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: cardWidth,
-            maxHeight: size.height * 0.82,
-          ),
+        child:
+       Center(
+  child: ConstrainedBox(
+    constraints: BoxConstraints(
+      maxWidth: cardWidth + 80,
+      maxHeight: size.height * 0.83,
+    ),
+    child: SizedBox(
+      width: cardWidth + 80,
+      child: Stack(
+        alignment: Alignment.center,
+        clipBehavior: Clip.none,
+        children: [
 
-          child: Stack(
-            clipBehavior: Clip.none,
+          // ===================================================
+          // MAIN CARD - CENTER
+          // ===================================================
 
-            children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: Container(
+              width: cardWidth,
 
-              // ===================================================
-              // MAIN WHITE CARD
-              // ===================================================
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
 
-              Container(
-                width: cardWidth,
+              clipBehavior: Clip.antiAlias,
 
-                decoration: BoxDecoration(
-                  // IMPORTANT:
-                  // White background keeps title INSIDE the card.
-                  color: Colors.white,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
 
-                  borderRadius:
-                      BorderRadius.circular(16),
-                ),
-
-                clipBehavior:
-                    Clip.antiAlias,
-
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize:
-                        MainAxisSize.min,
-
-                    children: [
-
-                      // =========================================
-                      // IMAGE
-                      // =========================================
-
-                      SizedBox(
-                        width:
-                            double.infinity,
-
-                        height:
-                            imageHeight,
-
-                        child:
-                            CachedNetworkImage(
-                          key: ValueKey(
-                            currentImage,
-                          ),
-
-                          imageUrl:
-                              currentImage,
-
-                          fit:
-                              BoxFit.contain,
-
-                          placeholder:
-                              (context, url) {
-                            return const
-                                ImageShimmer();
-                          },
-
-                          errorWidget:
-                              (
-                            context,
-                            url,
-                            error,
-                          ) {
-                            return Image.asset(
-                              CommonImagePath
-                                  .placeHolder,
-
-                              width:
-                                  double.infinity,
-
-                              height:
-                                  double.infinity,
-
-                              fit:
-                                  BoxFit.contain,
-                            );
-                          },
-                        ),
+                    // IMAGE
+                    SizedBox(
+                      width: double.infinity,
+                      height: imageHeight,
+                      child: CachedNetworkImage(
+                        key: ValueKey(currentImage),
+                        imageUrl: currentImage,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) {
+                          return const ImageShimmer();
+                        },
+                        errorWidget: (context, url, error) {
+                          return Image.asset(
+                            CommonImagePath.placeHolder,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.contain,
+                          );
+                        },
                       ),
+                    ),
 
-                      // =========================================
-                      // TITLE
-                      // =========================================
+                    // TITLE
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        8,
+                        8,
+                        8,
+                        8,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
 
-                      Padding(
-                        padding:
-                            const EdgeInsets.fromLTRB(
-                          8,
-                          8,
-                          8,
-                          8,
-                        ),
+                            final titleText =
+                                stripHtml(currentTitle);
 
-                        child: Align(
-                          alignment:
-                              Alignment.centerLeft,
-
-                          child: LayoutBuilder(
-                            builder:
-                                (
-                              context,
-                              constraints,
-                            ) {
-                              final titleText =
-                                  stripHtml(
-                                currentTitle,
+                            final textPainter = TextPainter(
+                              text: TextSpan(
+                                text: titleText,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black87,
+                                  height: 1.25,
+                                ),
+                              ),
+                              maxLines: 2,
+                              textDirection: TextDirection.ltr,
+                            )..layout(
+                                maxWidth: constraints.maxWidth,
                               );
 
-                              // ---------------------------------
-                              // CHECK 2 LINE OVERFLOW
-                              // ---------------------------------
+                            final isTextOverflowing =
+                                textPainter.didExceedMaxLines;
 
-                              final textPainter =
-                                  TextPainter(
-                                text: TextSpan(
-                                  text: titleText,
-                                  style:
-                                      const TextStyle(
+                            return Column(
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                              children: [
+
+                                Text(
+                                  titleText,
+                                  maxLines: isTitleExpanded
+                                      ? null
+                                      : 2,
+                                  overflow: isTitleExpanded
+                                      ? TextOverflow.visible
+                                      : TextOverflow.ellipsis,
+                                  style: const TextStyle(
                                     fontSize: 14,
-                                    fontWeight:
-                                        FontWeight.w500,
-                                    color:
-                                        Colors.black87,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black87,
                                     height: 1.25,
                                   ),
                                 ),
 
-                                maxLines: 2,
-
-                                textDirection:
-                                    TextDirection.ltr,
-                              )..layout(
-                                  maxWidth:
-                                      constraints.maxWidth,
-                                );
-
-                              final isTextOverflowing =
-                                  textPainter
-                                      .didExceedMaxLines;
-
-                              return Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment
-                                        .start,
-
-                                children: [
-
-                                  // -----------------------------
-                                  // TITLE TEXT
-                                  // -----------------------------
-
-                                  Text(
-                                    titleText,
-
-                                    maxLines:
+                                if (isTextOverflowing)
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        isTitleExpanded =
+                                            !isTitleExpanded;
+                                      });
+                                    },
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(
+                                        top: 4,
+                                      ),
+                                      child: Text(
                                         isTitleExpanded
-                                            ? null
-                                            : 2,
-
-                                    overflow:
-                                        isTitleExpanded
-                                            ? TextOverflow
-                                                .visible
-                                            : TextOverflow
-                                                .ellipsis,
-
-                                    textAlign:
-                                        TextAlign.left,
-
-                                    style:
-                                        const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight:
-                                          FontWeight.w500,
-                                      color:
-                                          Colors.black87,
-                                      height: 1.25,
-                                    ),
-                                  ),
-
-                                  // -----------------------------
-                                  // READ MORE / LESS
-                                  // -----------------------------
-
-                                  if (isTextOverflowing)
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          isTitleExpanded =
-                                              !isTitleExpanded;
-                                        });
-                                      },
-
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets
-                                                .only(
-                                          top: 4,
-                                        ),
-
-                                        child: Text(
-                                          isTitleExpanded
-                                              ? 'Read Less'
-                                              : 'Read More',
-
-                                          style:
-                                              const TextStyle(
-                                            fontSize: 13,
-                                            fontWeight:
-                                                FontWeight.w600,
-                                            color:
-                                                Colors.blue,
-                                          ),
+                                            ? 'Read Less'
+                                            : 'Read More',
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          fontWeight:
+                                              FontWeight.w600,
+                                          color: Colors.blue,
                                         ),
                                       ),
                                     ),
-                                ],
-                              );
-                            },
-                          ),
+                                  ),
+                              ],
+                            );
+                          },
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-
-              // ===================================================
-              // CLOSE BUTTON
-              // ===================================================
-
-              Positioned(
-                top: -18,
-                right: -18,
-
-                child: Material(
-                  color:
-                      Colors.transparent,
-
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(
-                        context,
-                      ).pop();
-                    },
-
-                    borderRadius:
-                        BorderRadius.circular(
-                      22,
-                    ),
-
-                    child: Container(
-                      width: 42,
-                      height: 42,
-
-                      decoration:
-                          BoxDecoration(
-                        color: Colors.black,
-
-                        shape:
-                            BoxShape.circle,
-
-                        border:
-                            Border.all(
-                          color: Colors.white,
-                          width: 2,
-                        ),
-
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black
-                                .withOpacity(
-                              0.25,
-                            ),
-
-                            blurRadius: 6,
-
-                            offset:
-                                const Offset(
-                              0,
-                              2,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      child:
-                          const Icon(
-                        Icons.close,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              // ===================================================
-              // PREVIOUS BUTTON
-              // ===================================================
-
-              if (canGoPrevious)
-                Positioned(
-                  left: 20,
-
-                  top:
-                      imageHeight / 2 - 22,
-
-                  child:
-                      _navigationButton(
-                    icon:
-                        Icons.chevron_left,
-
-                    onTap:
-                        _previousImage,
-                  ),
-                ),
-
-              // ===================================================
-              // NEXT BUTTON
-              // ===================================================
-
-              if (canGoNext)
-                Positioned(
-                  right: 20,
-
-                  top:
-                      imageHeight / 2 - 22,
-
-                  child:
-                      _navigationButton(
-                    icon:
-                        Icons.chevron_right,
-
-                    onTap:
-                        _nextImage,
-                  ),
-                ),
-            ],
+            ),
           ),
-        ),
+
+          // ===================================================
+          // CLOSE BUTTON
+          // ===================================================
+
+          Positioned(
+            top: -18,
+            right: 22,
+            child: _closeButton(),
+          ),
+
+          // ===================================================
+          // LEFT ARROW
+          // ===================================================
+
+          if (canGoPrevious)
+            Positioned(
+              left: 0,
+              top: imageHeight / 2 - 22,
+              child: _navigationButton(
+                icon: Icons.chevron_left,
+                onTap: _previousImage,
+              ),
+            ),
+
+          // ===================================================
+          // RIGHT ARROW
+          // ===================================================
+
+          if (canGoNext)
+            Positioned(
+              right: 0,
+              top: imageHeight / 2 - 22,
+              child: _navigationButton(
+                icon: Icons.chevron_right,
+                onTap: _nextImage,
+              ),
+            ),
+        ],
+      ),
+    ),
+  ),
+)
+        //  ConstrainedBox(
+        //   constraints: BoxConstraints(
+        //     maxWidth: cardWidth,
+        //     maxHeight: size.height * 0.82,
+        //   ),
+
+        //   child: Stack(
+        //     clipBehavior: Clip.none,
+
+        //     children: [
+
+        //       // ===================================================
+        //       // MAIN WHITE CARD
+        //       // ===================================================
+
+        //       Container(
+        //         width: cardWidth,
+
+        //         decoration: BoxDecoration(
+        //           // IMPORTANT:
+        //           // White background keeps title INSIDE the card.
+        //           color: Colors.white,
+
+        //           borderRadius:
+        //               BorderRadius.circular(16),
+        //         ),
+
+        //         clipBehavior:
+        //             Clip.antiAlias,
+
+        //         child: SingleChildScrollView(
+        //           child: Column(
+        //             mainAxisSize:
+        //                 MainAxisSize.min,
+
+        //             children: [
+
+        //               // =========================================
+        //               // IMAGE
+        //               // =========================================
+
+        //               SizedBox(
+        //                 width:
+        //                     double.infinity,
+
+        //                 height:
+        //                     imageHeight,
+
+        //                 child:
+        //                     CachedNetworkImage(
+        //                   key: ValueKey(
+        //                     currentImage,
+        //                   ),
+
+        //                   imageUrl:
+        //                       currentImage,
+
+        //                   fit:
+        //                       BoxFit.contain,
+
+        //                   placeholder:
+        //                       (context, url) {
+        //                     return const
+        //                         ImageShimmer();
+        //                   },
+
+        //                   errorWidget:
+        //                       (
+        //                     context,
+        //                     url,
+        //                     error,
+        //                   ) {
+        //                     return Image.asset(
+        //                       CommonImagePath
+        //                           .placeHolder,
+
+        //                       width:
+        //                           double.infinity,
+
+        //                       height:
+        //                           double.infinity,
+
+        //                       fit:
+        //                           BoxFit.contain,
+        //                     );
+        //                   },
+        //                 ),
+        //               ),
+
+        //               // =========================================
+        //               // TITLE
+        //               // =========================================
+
+        //               Padding(
+        //                 padding:
+        //                     const EdgeInsets.fromLTRB(
+        //                   8,
+        //                   8,
+        //                   8,
+        //                   8,
+        //                 ),
+
+        //                 child: Align(
+        //                   alignment:
+        //                       Alignment.centerLeft,
+
+        //                   child: LayoutBuilder(
+        //                     builder:
+        //                         (
+        //                       context,
+        //                       constraints,
+        //                     ) {
+        //                       final titleText =
+        //                           stripHtml(
+        //                         currentTitle,
+        //                       );
+
+        //                       // ---------------------------------
+        //                       // CHECK 2 LINE OVERFLOW
+        //                       // ---------------------------------
+
+        //                       final textPainter =
+        //                           TextPainter(
+        //                         text: TextSpan(
+        //                           text: titleText,
+        //                           style:
+        //                               const TextStyle(
+        //                             fontSize: 14,
+        //                             fontWeight:
+        //                                 FontWeight.w500,
+        //                             color:
+        //                                 Colors.black87,
+        //                             height: 1.25,
+        //                           ),
+        //                         ),
+
+        //                         maxLines: 2,
+
+        //                         textDirection:
+        //                             TextDirection.ltr,
+        //                       )..layout(
+        //                           maxWidth:
+        //                               constraints.maxWidth,
+        //                         );
+
+        //                       final isTextOverflowing =
+        //                           textPainter
+        //                               .didExceedMaxLines;
+
+        //                       return Column(
+        //                         crossAxisAlignment:
+        //                             CrossAxisAlignment
+        //                                 .start,
+
+        //                         children: [
+
+        //                           // -----------------------------
+        //                           // TITLE TEXT
+        //                           // -----------------------------
+
+        //                           Text(
+        //                             titleText,
+
+        //                             maxLines:
+        //                                 isTitleExpanded
+        //                                     ? null
+        //                                     : 2,
+
+        //                             overflow:
+        //                                 isTitleExpanded
+        //                                     ? TextOverflow
+        //                                         .visible
+        //                                     : TextOverflow
+        //                                         .ellipsis,
+
+        //                             textAlign:
+        //                                 TextAlign.left,
+
+        //                             style:
+        //                                 const TextStyle(
+        //                               fontSize: 14,
+        //                               fontWeight:
+        //                                   FontWeight.w500,
+        //                               color:
+        //                                   Colors.black87,
+        //                               height: 1.25,
+        //                             ),
+        //                           ),
+
+        //                           // -----------------------------
+        //                           // READ MORE / LESS
+        //                           // -----------------------------
+
+        //                           if (isTextOverflowing)
+        //                             GestureDetector(
+        //                               onTap: () {
+        //                                 setState(() {
+        //                                   isTitleExpanded =
+        //                                       !isTitleExpanded;
+        //                                 });
+        //                               },
+
+        //                               child: Padding(
+        //                                 padding:
+        //                                     const EdgeInsets
+        //                                         .only(
+        //                                   top: 4,
+        //                                 ),
+
+        //                                 child: Text(
+        //                                   isTitleExpanded
+        //                                       ? 'Read Less'
+        //                                       : 'Read More',
+
+        //                                   style:
+        //                                       const TextStyle(
+        //                                     fontSize: 13,
+        //                                     fontWeight:
+        //                                         FontWeight.w600,
+        //                                     color:
+        //                                         Colors.blue,
+        //                                   ),
+        //                                 ),
+        //                               ),
+        //                             ),
+        //                         ],
+        //                       );
+        //                     },
+        //                   ),
+        //                 ),
+        //               ),
+        //             ],
+        //           ),
+        //         ),
+        //       ),
+
+        //       // ===================================================
+        //       // CLOSE BUTTON
+        //       // ===================================================
+
+        //       Positioned(
+        //         top: -18,
+        //         right: -18,
+
+        //         child: Material(
+        //           color:
+        //               Colors.transparent,
+
+        //           child: InkWell(
+        //             onTap: () {
+        //               Navigator.of(
+        //                 context,
+        //               ).pop();
+        //             },
+
+        //             borderRadius:
+        //                 BorderRadius.circular(
+        //               22,
+        //             ),
+
+        //             child: Container(
+        //               width: 42,
+        //               height: 42,
+
+        //               decoration:
+        //                   BoxDecoration(
+        //                 color: Colors.black,
+
+        //                 shape:
+        //                     BoxShape.circle,
+
+        //                 border:
+        //                     Border.all(
+        //                   color: Colors.white,
+        //                   width: 2,
+        //                 ),
+
+        //                 boxShadow: [
+        //                   BoxShadow(
+        //                     color: Colors.black
+        //                         .withOpacity(
+        //                       0.25,
+        //                     ),
+
+        //                     blurRadius: 6,
+
+        //                     offset:
+        //                         const Offset(
+        //                       0,
+        //                       2,
+        //                     ),
+        //                   ),
+        //                 ],
+        //               ),
+
+        //               child:
+        //                   const Icon(
+        //                 Icons.close,
+        //                 color: Colors.white,
+        //                 size: 24,
+        //               ),
+        //             ),
+        //           ),
+        //         ),
+        //       ),
+
+        //       // ===================================================
+        //       // PREVIOUS BUTTON
+        //       // ===================================================
+
+        //       if (canGoPrevious)
+        //         Positioned(
+        //           left: -40,
+
+        //           top:
+        //               imageHeight / 2 - 22,
+
+        //           child:
+        //               _navigationButton(
+        //             icon:
+        //                 Icons.chevron_left,
+
+        //             onTap:
+        //                 _previousImage,
+        //           ),
+        //         ),
+
+        //       // ===================================================
+        //       // NEXT BUTTON
+        //       // ===================================================
+
+        //       if (canGoNext)
+        //         Positioned(
+        //           right: -40,
+
+        //           top:
+        //               imageHeight / 2 - 22,
+
+        //           child:
+        //               _navigationButton(
+        //             icon:
+        //                 Icons.chevron_right,
+
+        //             onTap:
+        //                 _nextImage,
+        //           ),
+        //         ),
+        //     ],
+        //   ),
+        // ),
       ),
     );
   }
@@ -1688,6 +1915,12 @@ class _ImagePreviewDialogState<T>
           width: 44,
           height: 44,
 
+          // decoration:
+          //     BoxDecoration(
+          //   color:
+          //       Colors.black.withOpacity(
+          //     0.60,
+          //   ),
           child: Icon(
             icon,
             color: Colors.white,

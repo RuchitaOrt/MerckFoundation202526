@@ -499,7 +499,7 @@ class _HorizontalAlbumWidgetState<T>
                   context,
                   item,
                   index,
-                   cardHeight
+                  //  cardHeight
                   // cardHeight,
                 );
               },
@@ -530,7 +530,7 @@ class _HorizontalAlbumWidgetState<T>
                 autoPlay: widget.images.length > 1,
 
                 autoPlayInterval:
-                    const Duration(seconds: 8),
+                    const Duration(seconds: 6),
 
                 autoPlayAnimationDuration:
                     const Duration(milliseconds: 700),
@@ -622,215 +622,215 @@ class _HorizontalAlbumWidgetState<T>
   // =============================================================
   // IMAGE CARD Option 1
   // =============================================================
-// Widget _buildImageCard(
-//   BuildContext context,
-//   T item,
-//   int index,
-// ) {
-//   return GestureDetector(
-//     onTap: () {
-//       showGeneralDialog(
-//         context: context,
-//         barrierDismissible: true,
-//         barrierLabel: 'Image Preview',
-//         barrierColor: Colors.black.withOpacity(0.75),
-//         transitionDuration: const Duration(milliseconds: 200),
-//         pageBuilder: (
-//           context,
-//           animation,
-//           secondaryAnimation,
-//         ) {
-//           return ImagePreviewDialog(
-//             items: widget.images,
-//             initialIndex: index,
-//             imageUrl: widget.imageUrl,
-//             title: (item) => widget.title.trim(),
-//           );
-//         },
-//       );
-//     },
-//     child: Container(
-//       decoration: BoxDecoration(
-//         color: Colors.transparent,
-//         borderRadius: BorderRadius.circular(18),
-//       ),
-//       child: ClipRRect(
-//         borderRadius: BorderRadius.circular(18),
-//         child: CachedNetworkImage(
-//           imageUrl: widget.imageUrl(item),
+Widget _buildImageCard(
+  BuildContext context,
+  T item,
+  int index,
+) {
+  return GestureDetector(
+    onTap: () {
+      showGeneralDialog(
+        context: context,
+        barrierDismissible: true,
+        barrierLabel: 'Image Preview',
+        barrierColor: Colors.black.withOpacity(0.75),
+        transitionDuration: const Duration(milliseconds: 200),
+        pageBuilder: (
+          context,
+          animation,
+          secondaryAnimation,
+        ) {
+          return ImagePreviewDialog(
+            items: widget.images,
+            initialIndex: index,
+            imageUrl: widget.imageUrl,
+            title: (item) => widget.title.trim(),
+          );
+        },
+      );
+    },
+    child: Container(
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: CachedNetworkImage(
+          imageUrl: widget.imageUrl(item),
 
-//           // Don't force width/height
-//           fit: BoxFit.contain,
+          // Don't force width/height
+          fit: BoxFit.contain,
 
-//           placeholder: (context, url) {
-//             return const ImageShimmer();
-//           },
+          placeholder: (context, url) {
+            return const ImageShimmer();
+          },
 
-//           errorWidget: (context, url, error) {
-//             return Image.asset(
-//               CommonImagePath.placeHolder,
-//               fit: BoxFit.contain,
-//             );
-//           },
-//         ),
-//       ),
-//     ),
-//   );
-// }
-
-//option2
-  Widget _buildImageCard(
-    BuildContext context,
-    T item,
-    int index,
-    double cardHeight,
-  ) {
-    return GestureDetector(
-      // ===========================================================
-      // OPEN IMAGE PREVIEW
-      // ===========================================================
-
-      onTap: () {
-        print("2Image");
-
-        showGeneralDialog(
-          context: context,
-
-          barrierDismissible: true,
-
-          barrierLabel:
-              'Image Preview',
-
-          barrierColor:
-              Colors.black.withOpacity(0.75),
-
-          transitionDuration:
-              const Duration(
-            milliseconds: 200,
-          ),
-
-          pageBuilder: (
-            context,
-            animation,
-            secondaryAnimation,
-          ) {
-            return ImagePreviewDialog(
-              items: widget.images,
-
-              initialIndex: index,
-
-              imageUrl:
-                  widget.imageUrl,
-
-              title: (item) =>
-                  widget.title.trim(),
+          errorWidget: (context, url, error) {
+            return Image.asset(
+              CommonImagePath.placeHolder,
+              fit: BoxFit.contain,
             );
           },
-        );
-      },
-
-      // ===========================================================
-      // CARD
-      // ===========================================================
-
-      child: Padding(
-        padding: const EdgeInsets.only(
-          right: 20,
-        ),
-
-        child: Container(
-          // =======================================================
-          // NO FIXED WIDTH
-          // =======================================================
-
-          width: double.infinity,
-
-          height: cardHeight,
-
-          decoration: BoxDecoration(
-            color: Colors.white,
-
-            borderRadius:
-                BorderRadius.circular(18),
-
-            boxShadow: [
-              BoxShadow(
-                blurRadius: 10,
-
-                color:
-                    Colors.black.withOpacity(.08),
-
-                offset:
-                    const Offset(0, 4),
-              ),
-            ],
-          ),
-
-          // =========================================================
-          // CLIP CORNERS
-          // =========================================================
-
-          child: ClipRRect(
-            borderRadius:
-                BorderRadius.circular(18),
-
-            child: CachedNetworkImage(
-              imageUrl:
-                  widget.imageUrl(item),
-
-              // ===================================================
-              // IMAGE
-              //
-              // BoxFit.cover keeps the existing visual behavior.
-              // ===================================================
-
-              fit: BoxFit.cover,
-
-              // ===================================================
-              // LOADING
-              // ===================================================
-
-              placeholder: (
-                context,
-                url,
-              ) {
-                return const ImageShimmer();
-              },
-
-              // ===================================================
-              // ERROR
-              // ===================================================
-
-              errorWidget: (
-                context,
-                url,
-                error,
-              ) {
-                return Container(
-                  color:
-                      Colors.grey.shade200,
-
-                  alignment:
-                      Alignment.center,
-
-                  child: Image.asset(
-                    CommonImagePath.placeHolder,
-
-                    width:
-                        double.infinity,
-
-                    height:
-                        double.infinity,
-
-                    fit:
-                        BoxFit.contain,
-                  ),
-                );
-              },
-            ),
-          ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
+//option2
+  // Widget _buildImageCard(
+  //   BuildContext context,
+  //   T item,
+  //   int index,
+  //   double cardHeight,
+  // ) {
+  //   return GestureDetector(
+  //     // ===========================================================
+  //     // OPEN IMAGE PREVIEW
+  //     // ===========================================================
+
+  //     onTap: () {
+  //       print("2Image");
+
+  //       showGeneralDialog(
+  //         context: context,
+
+  //         barrierDismissible: true,
+
+  //         barrierLabel:
+  //             'Image Preview',
+
+  //         barrierColor:
+  //             Colors.black.withOpacity(0.75),
+
+  //         transitionDuration:
+  //             const Duration(
+  //           milliseconds: 200,
+  //         ),
+
+  //         pageBuilder: (
+  //           context,
+  //           animation,
+  //           secondaryAnimation,
+  //         ) {
+  //           return ImagePreviewDialog(
+  //             items: widget.images,
+
+  //             initialIndex: index,
+
+  //             imageUrl:
+  //                 widget.imageUrl,
+
+  //             title: (item) =>
+  //                 widget.title.trim(),
+  //           );
+  //         },
+  //       );
+  //     },
+
+  //     // ===========================================================
+  //     // CARD
+  //     // ===========================================================
+
+  //     child: Padding(
+  //       padding: const EdgeInsets.only(
+  //         right: 20,
+  //       ),
+
+  //       child: Container(
+  //         // =======================================================
+  //         // NO FIXED WIDTH
+  //         // =======================================================
+
+  //         width: double.infinity,
+
+  //         height: cardHeight,
+
+  //         decoration: BoxDecoration(
+  //           color: Colors.white,
+
+  //           borderRadius:
+  //               BorderRadius.circular(18),
+
+  //           boxShadow: [
+  //             BoxShadow(
+  //               blurRadius: 10,
+
+  //               color:
+  //                   Colors.black.withOpacity(.08),
+
+  //               offset:
+  //                   const Offset(0, 4),
+  //             ),
+  //           ],
+  //         ),
+
+  //         // =========================================================
+  //         // CLIP CORNERS
+  //         // =========================================================
+
+  //         child: ClipRRect(
+  //           borderRadius:
+  //               BorderRadius.circular(18),
+
+  //           child: CachedNetworkImage(
+  //             imageUrl:
+  //                 widget.imageUrl(item),
+
+  //             // ===================================================
+  //             // IMAGE
+  //             //
+  //             // BoxFit.cover keeps the existing visual behavior.
+  //             // ===================================================
+
+  //             fit: BoxFit.cover,
+
+  //             // ===================================================
+  //             // LOADING
+  //             // ===================================================
+
+  //             placeholder: (
+  //               context,
+  //               url,
+  //             ) {
+  //               return const ImageShimmer();
+  //             },
+
+  //             // ===================================================
+  //             // ERROR
+  //             // ===================================================
+
+  //             errorWidget: (
+  //               context,
+  //               url,
+  //               error,
+  //             ) {
+  //               return Container(
+  //                 color:
+  //                     Colors.grey.shade200,
+
+  //                 alignment:
+  //                     Alignment.center,
+
+  //                 child: Image.asset(
+  //                   CommonImagePath.placeHolder,
+
+  //                   width:
+  //                       double.infinity,
+
+  //                   height:
+  //                       double.infinity,
+
+  //                   fit:
+  //                       BoxFit.contain,
+  //                 ),
+  //               );
+  //             },
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 }

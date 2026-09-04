@@ -10,7 +10,7 @@ import 'package:merckfoundation_252026/screens/MainScreens/dashboard.dart';
 import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 import 'package:merckfoundation_252026/widgets/share_bottom_sheet.dart';
-
+import 'dart:math' as math;
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final AppBarType type;
   final String? title;
@@ -42,7 +42,9 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   @override
-  Size get preferredSize => Size.fromHeight(height);
+  Size get preferredSize => Size.fromHeight(
+     type != AppBarType.home? title!.length>100?120:height:
+    height);
 
   @override
   Widget build(BuildContext context) {
@@ -126,8 +128,29 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
              
 
             },
-            child: Image.asset(CommonImagePath.drawerImg, height:
-             type == AppBarType.home?80: 65),
+            child:
+             Image.asset(CommonImagePath.drawerImg, 
+                              //  Image.asset(CommonImagePath.drawerImg, 
+                               
+                               height:
+                              type == AppBarType.home?80: 65),
+      //         Column(
+      //           children: [
+      //             Image.asset(CommonImagePath.logoMenu, 
+      //                         //  Image.asset(CommonImagePath.drawerImg, 
+                               
+      //                          height:
+      //                          type == AppBarType.home?50: 50),
+
+      //                        SmartHtmlWidget(
+      //   html: "The Philanthropic arm of Merck KGaA" ,
+      //   textColor: Customcolor.colorVoilet,
+      //   fontSize:  responsive.fontSize(1),
+      //   fontWeight: FontWeight.w900,
+      //   ignoreHtmlStyles: true,
+      // ),
+      //           ],
+      //         ),
           ),
 
           const Spacer(),
@@ -169,7 +192,9 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   Widget _bottomTitleBar(BuildContext context) {
     return Container(
-      height: 50,
+      height:
+     type != AppBarType.home?  title!.length>100?60:
+        50:50,
       width: double.infinity,
       color: Customcolor.colorVoilet,
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -184,7 +209,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
               ignoreHtmlStyles: true,
               applyMaxLines: true,
               fontFamily: "Times New Roman",
-              maxLines: 1,
+              maxLines: 3,
               softWrap: true,
               textOverflow: TextOverflow.ellipsis,
             ),

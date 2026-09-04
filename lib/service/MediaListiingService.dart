@@ -126,7 +126,8 @@ print("VIDEO MEdiaType body ${body}");
 
         api = API.testimonialarticles;
          body = {
-         "category_id": categoryId,"country_id":countryId
+          "p": "1",
+         "category_id": categoryId,"country_id":countryId=="0"?"":countryId
         };
 
         break;

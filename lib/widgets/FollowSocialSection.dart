@@ -1,10 +1,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
 import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 import 'package:merckfoundation_252026/main.dart';
+import 'package:merckfoundation_252026/widgets/formLabel.dart';
 
 class FollowSocialSection extends StatelessWidget {
   final String title;
@@ -374,39 +376,114 @@ class FollowSocialDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 2,
-      ),
-      child: Wrap(
-        alignment: WrapAlignment.center,
-        spacing: 7,
-        runSpacing: 14,
-        children: socialLinks.map<Widget>((social) {
-          final image =
-              social['social_media_image']
-                      ?.toString() ??
-                  '';
+     final responsive = ResponsiveFlutter.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        /// =========================
+        /// TITLE
+        /// =========================
+        if (title.trim().isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(
+              bottom: 2,
+            ),
+            child: 
+           FormLabel(
+                          text: title,
+                          labelColor:
+                              Customcolor.textDarkBlueColor,
+                          fontSize:
+                              responsive.fontSize(2.5),
+                          fontweight:
+                              FontWeight.w700,
+                          fontheight: 1.2,
+                        ),
+          ),
 
-          final link =
-              social['social_media_link']
-                      ?.toString() ??
-                  '';
+        /// =========================
+        /// SOCIAL ICONS
+        /// =========================
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 2,
+          ),
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 7,
+            runSpacing: 14,
+            children: socialLinks.map<Widget>((social) {
+              final image =
+                  social['social_media_image']?.toString() ?? '';
 
-          return SocialIcon(
-            image,
-            iconSize: iconSize,
-            onTap: () async {
-              if (link.isNotEmpty) {
-                await ShowDialogs.launchURL(link);
-              }
-            },
-          );
-        }).toList(),
-      ),
+              final link =
+                  social['social_media_link']?.toString() ?? '';
+
+              return SocialIcon(
+                image,
+                iconSize: iconSize,
+                onTap: () async {
+                  if (link.isNotEmpty) {
+                    await ShowDialogs.launchURL(link);
+                  }
+                },
+              );
+            }).toList(),
+          ),
+        ),
+      ],
     );
   }
 }
+// class FollowSocialDrawer extends StatelessWidget {
+//   final String title;
+//   final double? iconSize;
+//   final int position;
+//   final List<dynamic> socialLinks;
+
+//   const FollowSocialDrawer({
+//     super.key,
+//     required this.title,
+//     required this.socialLinks,
+//     this.iconSize,
+//     this.position = 0,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(
+//         horizontal: 2,
+//       ),
+//       child: Wrap(
+//         alignment: WrapAlignment.center,
+//         spacing: 7,
+//         runSpacing: 14,
+//         children: socialLinks.map<Widget>((social) {
+//           final image =
+//               social['social_media_image']
+//                       ?.toString() ??
+//                   '';
+
+//           final link =
+//               social['social_media_link']
+//                       ?.toString() ??
+//                   '';
+
+//           return SocialIcon(
+//             image,
+//             iconSize: iconSize,
+//             onTap: () async {
+//               if (link.isNotEmpty) {
+//                 await ShowDialogs.launchURL(link);
+//               }
+//             },
+//           );
+//         }).toList(),
+//       ),
+//     );
+//   }
+// }
 class SocialIcon extends StatelessWidget {
   final String icon;
   final double? iconSize;
@@ -434,7 +511,7 @@ class SocialIcon extends StatelessWidget {
       onTap: onTap,
       child: 
       Container(
-         padding: EdgeInsets.all(size * 0.25),
+         padding: EdgeInsets.all(size * 0.09),
         // decoration: const BoxDecoration(
         //   shape: BoxShape.circle,
         //   color: Colors.white,
@@ -443,9 +520,9 @@ class SocialIcon extends StatelessWidget {
             ? SvgPicture.network(
                 icon,
                 width:
-                    iconSize ?? size * 0.5,
+                iconSize ?? size * 0.8,
                 height:
-                    iconSize ?? size * 0.5,
+               iconSize ?? size * 0.8,
                 fit: BoxFit.contain,
                 placeholderBuilder: (_) =>
                     const SizedBox(
@@ -460,9 +537,9 @@ class SocialIcon extends StatelessWidget {
             : Image.network(
                 icon,
                 width:
-                    iconSize ?? size * 0.5,
+                    iconSize ?? size * 0.8,
                 height:
-                    iconSize ?? size * 0.5,
+                    iconSize ?? size * 0.8,
                 fit: BoxFit.contain,
                 errorBuilder:
                     (_, __, ___) =>

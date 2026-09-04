@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_strings.dart';
 import 'package:merckfoundation_252026/Provider/FilterProvider.dart';
 import 'package:merckfoundation_252026/Provider/MediaListingProvider.dart';
@@ -53,7 +54,8 @@ class MediaListingScreen extends StatefulWidget {
     this.useLocalPagination = false,
     this.isFilterApply = true,
     this.digitalLibraryCategoryName,
-     this.videoNavigationKey,  this.homeLayoutType,
+    this.videoNavigationKey,
+    this.homeLayoutType,
   });
 
   @override
@@ -63,262 +65,327 @@ class MediaListingScreen extends StatefulWidget {
 class _MediaListingScreenState extends State<MediaListingScreen> {
   final ScrollController _controller = ScrollController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-String? categoryId;
+  String? categoryId;
 
   @override
   void initState() {
     super.initState();
 
-        final filter = context.read<FilterProvider>();
+    final filter = context.read<FilterProvider>();
     final provider = context.read<MediaListingProvider>();
 
-WidgetsBinding.instance.addPostFrameCallback((_) async {
-  if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
 
-  final filter = context.read<FilterProvider>();
-  final provider = context.read<MediaListingProvider>();
+      final filter = context.read<FilterProvider>();
+      final provider = context.read<MediaListingProvider>();
 
-  // Reset previous filter state
-  filter.clearFilters();
+      // Reset previous filter state
+      filter.clearFilters();
 
-  // Ambassador album does not need filters
-  if (widget.type != MediaType.ambassadorAlbum) {
-    await filter.loadFilters(
-      context,
-      type: widget.type,
-    );
+      // Ambassador album does not need filters
+      if (widget.type != MediaType.ambassadorAlbum) {
+        await filter.loadFilters(context, type: widget.type);
 
-    if (!mounted) return;
+        if (!mounted) return;
 
-    // ============================
-    // RESTRICT VIDEO CATEGORIES
-    // ============================
-    if (widget.type == MediaType.all &&
-        widget.categoryID.isNotEmpty) {
-      
-      final allowedCategoryIds = widget.categoryID
-          .split(',')
-          .map((e) => int.tryParse(e.trim()))
-          .whereType<int>()
-          .toSet();
+        // ============================
+        // RESTRICT VIDEO CATEGORIES
+        // ============================
+        if (widget.type == MediaType.all && widget.categoryID.isNotEmpty) {
+          final allowedCategoryIds = widget.categoryID
+              .split(',')
+              .map((e) => int.tryParse(e.trim()))
+              .whereType<int>()
+              .toSet();
 
-      debugPrint(
-        "Allowed category IDs: $allowedCategoryIds",
-      );
+          debugPrint("Allowed category IDs: $allowedCategoryIds");
 
-      filter.categories = filter.categories
-          .where(
-            (category) =>
-                allowedCategoryIds.contains(category.id),
-          )
-          .toList();
-
-      debugPrint(
-        "Filtered categories: "
-        "${filter.categories.map((e) => '${e.id}-${e.name}').toList()}",
-      );
-    }
-
-    // ============================
-    // DIGITAL LIBRARY
-    // ============================
-    if (widget.type == MediaType.digitalLibraryall) {
-      final id = int.tryParse(
-        widget.categoryID.trim(),
-      );
-
-      if (id != null) {
-        final matchedCategory =
-            filter.categories.firstWhere(
-          (category) => category.id == id,
-          orElse: () => filter.allCategory,
-        );
-
-        if (matchedCategory.id == id) {
-          filter.categories = [matchedCategory];
-
-          filter.selectCategory(
-            matchedCategory,
-          );
+          filter.categories = filter.categories
+              .where((category) => allowedCategoryIds.contains(category.id))
+              .toList();
 
           debugPrint(
-            "Selected Digital Library Category: "
-            "${matchedCategory.id} - "
-            "${matchedCategory.name}",
-          );
-        } else {
-          filter.categories = [];
-
-          debugPrint(
-            "Category not found: $id",
+            "Filtered categories: "
+            "${filter.categories.map((e) => '${e.id}-${e.name}').toList()}",
           );
         }
-      }
-    }
-     if (widget.type == MediaType.photoAlbum &&
-        widget.categoryID.isNotEmpty) {
-      
-      final allowedCategoryIds = widget.categoryID
-          .split(',')
-          .map((e) => int.tryParse(e.trim()))
-          .whereType<int>()
-          .toSet();
+
+        // ============================
+        // DIGITAL LIBRARY
+        // ============================
+        // ============================
+// DIGITAL LIBRARY
+// ============================
+if ((widget.type == MediaType.digitalLibrary ||
+        widget.type == MediaType.digitalLibraryall) &&
+    widget.categoryID.isNotEmpty) {
+  final id = int.tryParse(widget.categoryID.trim());
+
+  if (id != null) {
+    final matchedCategory = filter.categories.firstWhere(
+      (category) => category.id == id,
+      orElse: () => filter.allCategory,
+    );
+
+    if (matchedCategory.id == id) {
+      // Select the passed category
+      filter.selectedCategory = matchedCategory;
+
+      // IMPORTANT:
+      // Show ONLY this category.
+      // "All" will NOT be shown.
+      filter.categories = [matchedCategory];
+
+      // Reset country and language
+      filter.selectedCountry = filter.allCountry;
+      filter.selectedLanguage = filter.allLanguage;
 
       debugPrint(
-        "Allowed PhotoAlbum category IDs: $allowedCategoryIds",
+        "Digital Library selected category: "
+        "${matchedCategory.id} - ${matchedCategory.name}",
       );
 
-      filter.categories = filter.categories
-          .where(
-            (category) =>
-                allowedCategoryIds.contains(category.id),
-          )
-          .toList();
+      // Load languages for this category
+      await filter.loadDigitalLibraryLanguages(context);
+
+      if (!mounted) return;
 
       debugPrint(
-        "FilteredPhotoAlbum categories: "
+        "Final categories: "
         "${filter.categories.map((e) => '${e.id}-${e.name}').toList()}",
       );
+    } else {
+      filter.categories = [];
+
+      debugPrint("Category not found: $id");
     }
   }
+}
 
-  // ============================
-  // LOAD MEDIA
-  // ============================
-  if (widget.useLocalPagination &&
-      widget.initialList != null) {
-    provider.setLocalData(
-      widget.initialList!,
-    );
-  } else {
-    provider.loadInitial(
-      context: context,
-      type: widget.type,
-      countryId: "",
-      categoryId: widget.categoryID,
-      languageId: "",
-      albumID: widget.albumID,
-    );
-  }
-});
-     
-    /// 🔥 RESET FILTER (prevent carry-over)
+//         if (widget.type == MediaType.digitalLibrary ||
+//     widget.type == MediaType.digitalLibraryall) {
+//   final id = int.tryParse(widget.categoryID.trim());
 
-//     WidgetsBinding.instance.addPostFrameCallback((_) async {
-//       if (!mounted) return;
-//       context.read<FilterProvider>().clearFilters();
-//       if(widget.type!=MediaType.ambassadorAlbum)
-//       {
-//  await filter.loadFilters(context, type: widget.type);
-//  if (widget.type == MediaType.all && widget.categoryID.isNotEmpty) {
-//   print("RANGA");
-//   final allowedCategoryIds = widget.categoryID
-//       .split(',')
-//       .map((e) => int.tryParse(e.trim()))
-//       .whereType<int>()
-//       .toSet();
-//  print("RANGA ${allowedCategoryIds}");
-//   filter.categories = filter.categories
-//       .where((category) => allowedCategoryIds.contains(category.id))
-//       .toList();
-
-//        print("RANGA ${filter.categories}");
-// }
-// if (widget.type == MediaType.digitalLibraryall) {
-//   print("RANGA digitalLibraryall");
-//   print("Category ID = ${widget.categoryID}");
-
-//   final categoryId = int.tryParse(widget.categoryID.trim());
-
-//   if (categoryId != null) {
+//   if (id != null) {
 //     final matchedCategory = filter.categories.firstWhere(
-//       (category) => category.id == categoryId,
+//       (category) => category.id == id,
 //       orElse: () => filter.allCategory,
 //     );
 
-//     if (matchedCategory.id == categoryId) {
-//       // Show ONLY the selected category.
+//     if (matchedCategory.id == id) {
+//       // Show ONLY the passed category
 //       filter.categories = [matchedCategory];
 
-//       // Automatically select that category.
+//       // Select that category
 //       filter.selectCategory(matchedCategory);
 
-//       print(
+//       debugPrint(
 //         "Selected Digital Library Category: "
-//         "${matchedCategory.id} - ${matchedCategory.name}",
+//         "${matchedCategory.id} - "
+//         "${matchedCategory.name}",
+//       );
+
+//       // 🔥 IMPORTANT:
+//       // Load countries according to selected category
+//       await filter.loadFilters(
+//         context,
+//         type: MediaType.digitalLibrary,
+//       );
+
+//       if (!mounted) return;
+
+//       debugPrint(
+//         "Countries for category ${matchedCategory.id}: "
+//         "${filter.countries.map((e) => '${e.id}-${e.name}').toList()}",
 //       );
 //     } else {
 //       filter.categories = [];
-//       print("Category not found: $categoryId");
+
+//       debugPrint("Category not found: $id");
 //     }
 //   }
 // }
-// // if(widget.type==MediaType.digitalLibraryall)
-// // {
-// //   print("object");
-// //   print(widget.type);
-// //   if (widget.digitalLibraryCategoryName!.isNotEmpty) {
-// //     print("Selected Category Name: '${widget.digitalLibraryCategoryName}'");
+        // if (widget.type == MediaType.digitalLibraryall) {
+        //   final id = int.tryParse(widget.categoryID.trim());
 
-// // for (final item in filter.categories) {
-// //   print(
-// //     "ID: ${item.id}, "
-// //     "Name: '${item.name}', "
-// //     "CatgName: '${item.catgname}'",
-// //   );
-// // }
+        //   if (id != null) {
+        //     final matchedCategory = filter.categories.firstWhere(
+        //       (category) => category.id == id,
+        //       orElse: () => filter.allCategory,
+        //     );
 
-// // final category = filter.categories.firstWhere(
-// //   (e) =>
-// //       (e.name ?? "").trim().toLowerCase() ==
-// //       (widget.digitalLibraryCategoryName ?? "")
-// //           .trim()
-// //           .toLowerCase(),
-// //   orElse: () => CategoryModel(id: 0, name: ""),
-// // );
+        //     if (matchedCategory.id == id) {
+        //       filter.categories = [matchedCategory];
 
-// // print("Matched Category:");
-// // print("ID: ${category.id}");
-// // print("Name: ${category.name}");
-// // print("CatgName: ${category.catgname}");
+        //       filter.selectCategory(matchedCategory);
 
-// // if (category.id != 0) {
-// //   categoryId = category.id.toString();
-// //   filter.selectCategory(category);
-// //   print("Category ID: $categoryId");
-// // } else {
-// //   print("No matching category found.");
-// // }
-// //     }
-// // }
-//       }
-//       // if(widget.type==MediaType.all){
-//       //   print("VIDEO ALL");
-//       //  provider.loadInitial(
-//       //     context: context,
-//       //     type: widget.type,
-//       //     countryId: "",
-//       //     categoryId: widget.categoryID,
-//       //     languageId: "",
-//       //     albumID: widget.albumID,
-//       //   );
-//       // }else{
-//         if (widget.useLocalPagination && widget.initialList != null) {
-//         provider.setLocalData(widget.initialList!);
-//       } else {
-//         provider.loadInitial(
-//           context: context,
-//           type: widget.type,
-//           countryId: "",
-//           categoryId:widget.categoryID,
-//           languageId: "",
-//           albumID: widget.albumID,
-//         );
-//       }
-//       // }
-//     });
+        //       debugPrint(
+        //         "Selected Digital Library Category: "
+        //         "${matchedCategory.id} - "
+        //         "${matchedCategory.name}",
+        //       );
+        //     } else {
+        //       filter.categories = [];
+
+        //       debugPrint("Category not found: $id");
+        //     }
+        //   }
+        // }
+        if (widget.type == MediaType.photoAlbum &&
+            widget.categoryID.isNotEmpty) {
+          final allowedCategoryIds = widget.categoryID
+              .split(',')
+              .map((e) => int.tryParse(e.trim()))
+              .whereType<int>()
+              .toSet();
+
+          debugPrint("Allowed PhotoAlbum category IDs: $allowedCategoryIds");
+
+          filter.categories = filter.categories
+              .where((category) => allowedCategoryIds.contains(category.id))
+              .toList();
+
+          debugPrint(
+            "FilteredPhotoAlbum categories: "
+            "${filter.categories.map((e) => '${e.id}-${e.name}').toList()}",
+          );
+        }
+      }
+
+      // ============================
+      // LOAD MEDIA
+      // ============================
+      if (widget.useLocalPagination && widget.initialList != null) {
+        provider.setLocalData(widget.initialList!);
+      } else {
+        provider.loadInitial(
+          context: context,
+          type: widget.type,
+          countryId: "",
+          categoryId: widget.categoryID,
+          languageId: "",
+          albumID: widget.albumID,
+        );
+      }
+    });
+
+    /// 🔥 RESET FILTER (prevent carry-over)
+
+    //     WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //       if (!mounted) return;
+    //       context.read<FilterProvider>().clearFilters();
+    //       if(widget.type!=MediaType.ambassadorAlbum)
+    //       {
+    //  await filter.loadFilters(context, type: widget.type);
+    //  if (widget.type == MediaType.all && widget.categoryID.isNotEmpty) {
+    //   print("RANGA");
+    //   final allowedCategoryIds = widget.categoryID
+    //       .split(',')
+    //       .map((e) => int.tryParse(e.trim()))
+    //       .whereType<int>()
+    //       .toSet();
+    //  print("RANGA ${allowedCategoryIds}");
+    //   filter.categories = filter.categories
+    //       .where((category) => allowedCategoryIds.contains(category.id))
+    //       .toList();
+
+    //        print("RANGA ${filter.categories}");
+    // }
+    // if (widget.type == MediaType.digitalLibraryall) {
+    //   print("RANGA digitalLibraryall");
+    //   print("Category ID = ${widget.categoryID}");
+
+    //   final categoryId = int.tryParse(widget.categoryID.trim());
+
+    //   if (categoryId != null) {
+    //     final matchedCategory = filter.categories.firstWhere(
+    //       (category) => category.id == categoryId,
+    //       orElse: () => filter.allCategory,
+    //     );
+
+    //     if (matchedCategory.id == categoryId) {
+    //       // Show ONLY the selected category.
+    //       filter.categories = [matchedCategory];
+
+    //       // Automatically select that category.
+    //       filter.selectCategory(matchedCategory);
+
+    //       print(
+    //         "Selected Digital Library Category: "
+    //         "${matchedCategory.id} - ${matchedCategory.name}",
+    //       );
+    //     } else {
+    //       filter.categories = [];
+    //       print("Category not found: $categoryId");
+    //     }
+    //   }
+    // }
+    // // if(widget.type==MediaType.digitalLibraryall)
+    // // {
+    // //   print("object");
+    // //   print(widget.type);
+    // //   if (widget.digitalLibraryCategoryName!.isNotEmpty) {
+    // //     print("Selected Category Name: '${widget.digitalLibraryCategoryName}'");
+
+    // // for (final item in filter.categories) {
+    // //   print(
+    // //     "ID: ${item.id}, "
+    // //     "Name: '${item.name}', "
+    // //     "CatgName: '${item.catgname}'",
+    // //   );
+    // // }
+
+    // // final category = filter.categories.firstWhere(
+    // //   (e) =>
+    // //       (e.name ?? "").trim().toLowerCase() ==
+    // //       (widget.digitalLibraryCategoryName ?? "")
+    // //           .trim()
+    // //           .toLowerCase(),
+    // //   orElse: () => CategoryModel(id: 0, name: ""),
+    // // );
+
+    // // print("Matched Category:");
+    // // print("ID: ${category.id}");
+    // // print("Name: ${category.name}");
+    // // print("CatgName: ${category.catgname}");
+
+    // // if (category.id != 0) {
+    // //   categoryId = category.id.toString();
+    // //   filter.selectCategory(category);
+    // //   print("Category ID: $categoryId");
+    // // } else {
+    // //   print("No matching category found.");
+    // // }
+    // //     }
+    // // }
+    //       }
+    //       // if(widget.type==MediaType.all){
+    //       //   print("VIDEO ALL");
+    //       //  provider.loadInitial(
+    //       //     context: context,
+    //       //     type: widget.type,
+    //       //     countryId: "",
+    //       //     categoryId: widget.categoryID,
+    //       //     languageId: "",
+    //       //     albumID: widget.albumID,
+    //       //   );
+    //       // }else{
+    //         if (widget.useLocalPagination && widget.initialList != null) {
+    //         provider.setLocalData(widget.initialList!);
+    //       } else {
+    //         provider.loadInitial(
+    //           context: context,
+    //           type: widget.type,
+    //           countryId: "",
+    //           categoryId:widget.categoryID,
+    //           languageId: "",
+    //           albumID: widget.albumID,
+    //         );
+    //       }
+    //       // }
+    //     });
     // WidgetsBinding.instance.addPostFrameCallback((_) {
-     
 
     //   if (filter.countries.isEmpty ||
     //       filter.categories.isEmpty ||
@@ -344,7 +411,6 @@ WidgetsBinding.instance.addPostFrameCallback((_) async {
         provider.loadMore(context);
       }
     });
-
   }
 
   String getCountryId() {
@@ -359,7 +425,6 @@ WidgetsBinding.instance.addPostFrameCallback((_) async {
 
   String getTitle() {
     switch (widget.type) {
-     
       case MediaType.stories:
       // return widget.title;
       case MediaType.videoLibrary:
@@ -380,15 +445,18 @@ WidgetsBinding.instance.addPostFrameCallback((_) async {
         return widget.albumName;
       case MediaType.episodes:
         return widget.albumName;
-        case MediaType.article:
+      case MediaType.article:
         return "";
       case MediaType.ambassadorAlbum:
-       case MediaType.all:
+      case MediaType.all:
         return widget.title;
     }
   }
-String getContentTitle() {
+
+  String getContentTitle() {
     switch (widget.type) {
+       case MediaType.all:
+        return widget.title;
       case MediaType.stories:
       case MediaType.testimonial:
       // return "Testimonials";
@@ -397,9 +465,9 @@ String getContentTitle() {
       case MediaType.activity:
       // return "Our Activities";
       case MediaType.digitalLibrary:
-        case MediaType.digitalLibraryall:
+      case MediaType.digitalLibraryall:
       // return "Digital Library";
-     
+
       case MediaType.testimonialArticle:
         // return "Testimonials of Merck Foundation Alumni";
         return widget.title;
@@ -409,81 +477,82 @@ String getContentTitle() {
         return widget.albumName;
       case MediaType.ambassadorAlbum:
         return widget.title;
-         
- case MediaType.all:
- return widget.title;
-        
+
+     
+
       case MediaType.article:
-      return "";
-        case MediaType.videoLibrary:
-      return "Videos";
+        return "";
+      case MediaType.videoLibrary:
+        return "Videos";
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-       onWillPop: () async {
-         print("onpop");
+      onWillPop: () async {
+        print("onpop");
         print(widget.type);
-    (widget.type == MediaType.stories ||
-     widget.type == MediaType.videoLibrary ||
-    //  widget.type == MediaType.all ||
-                  widget.type == MediaType.photoGallery)
-              ?   Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => Dashboard(
-              index: 0,
-              menuID: widget.menuID,
-              shareLink: widget.shareLink,
-              menuLogo: "",
-            ),
-          ),
-        )
-              : () {
+        (widget.type == MediaType.stories ||
+                widget.type == MediaType.videoLibrary ||
+                //  widget.type == MediaType.all ||
+                widget.type == MediaType.photoGallery)
+            ? Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => Dashboard(
+                    index: 0,
+                    menuID: widget.menuID,
+                    shareLink: widget.shareLink,
+                    menuLogo: "",
+                  ),
+                ),
+              )
+            : () {
                 print("Coming Phot c");
-                  Navigator.pop(context);
-                };
+                Navigator.pop(context);
+              };
 
-    return true;
-  },
+        return true;
+      },
       child: Scaffold(
         key: _scaffoldKey,
         endDrawer: AppDrawerfilter(type: widget.type),
-      
+
         appBar: CommonAppBar(
           type: AppBarType.inner,
-          title:getContentTitle(),
+          title: getContentTitle(),
           // getTitle(),
           onFilter:
               (widget.type == MediaType.photoGallery ||
                   widget.type == MediaType.photoAlbum ||
                   widget.type == MediaType.episodes ||
-                  widget.type == MediaType.activity ||widget.type == MediaType.ambassadorAlbum )
+                  widget.type == MediaType.activity ||
+                  widget.type == MediaType.ambassadorAlbum)
               ? null
               : widget.isFilterApply
               ? () => _scaffoldKey.currentState!.openEndDrawer()
               : null,
           onBack:
               (widget.type == MediaType.stories ||
-              widget.type == MediaType.videoLibrary ||
-              //  widget.type == MediaType.all ||
+                  widget.type == MediaType.videoLibrary ||
+                  //  widget.type == MediaType.all ||
                   widget.type == MediaType.photoGallery)
               ? null
               : () {
-                print("Coming Phot c");
+                  print("Coming Phot c");
                   Navigator.pop(context);
                 },
           onSearch: () {},
           shareLink: widget.shareLink ?? "",
           menuID: widget.menuID,
         ),
-      
+
         backgroundColor: Customcolor.background,
-      
+
         body: Consumer<MediaListingProvider>(
           builder: (context, provider, _) {
+            print("RUCHITA ${widget.type}");
             // if (provider.isLoading && provider.storyList.isEmpty) {
             //   return const Center(child:CommonLoader());
             // }
@@ -503,7 +572,7 @@ String getContentTitle() {
                 },
               );
             }
-      
+
             return CustomScrollView(
               controller: _controller,
               slivers: [
@@ -514,7 +583,7 @@ String getContentTitle() {
                         child: Column(
                           children: [
                             Expanded(child: EmptyStateWidget()),
-      
+
                             const FooterFlowerImage(),
                             const SizedBox(height: 8),
                             const Bottomcardlink(),
@@ -522,7 +591,11 @@ String getContentTitle() {
                         ),
                       )
                     : SliverPadding(
-                        padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
+                        padding: const EdgeInsets.only(
+                          left: 8,
+                          right: 8,
+                          top: 8,
+                        ),
                         sliver: SliverGrid(
                           delegate: SliverChildBuilderDelegate(
                             (context, index) {
@@ -536,50 +609,61 @@ String getContentTitle() {
                               //         )
                               //       : const SizedBox();
                               // }
-      if (index >= provider.storyList.length) {
-  return const Padding(
-    padding: EdgeInsets.all(16),
-    child: Center(
-      child: CommonLoader(),
-    ),
-  );
-}
+                              if (index >= provider.storyList.length) {
+                                return const Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: Center(child: CommonLoader()),
+                                );
+                              }
                               final item = provider.storyList[index];
-      
+
                               /// 🖼️ PHOTO GALLERY
-                              if (widget.type == MediaType.photoGallery || widget.type == MediaType.ambassadorAlbum ||
+                              if (widget.type == MediaType.photoGallery ||
+                                  widget.type == MediaType.ambassadorAlbum ||
                                   widget.type == MediaType.digitalLibrary ||
-                                  widget.type == MediaType.digitalLibraryall || 
+                                  widget.type == MediaType.digitalLibraryall ||
                                   widget.type == MediaType.photoAlbum ||
                                   widget.type == MediaType.activity) {
-                                return 
-                                MediaCard(
-                                  mediaType: widget.type ,
+                                return MediaCard(
+                                  mediaType: widget.type,
                                   type: widget.homeLayoutType,
                                   menuID: widget.menuID,
                                   shareLink: widget.shareLink,
                                   id: item.id.toString(),
-                                  image: (widget.type == MediaType.photoAlbum|| widget.type == MediaType.ambassadorAlbum)
+                                  image:
+                                      (widget.type == MediaType.photoAlbum ||
+                                          widget.type ==
+                                              MediaType.ambassadorAlbum)
                                       ? item.photo ?? ""
-                                      : (widget.type == MediaType.digitalLibrary ||widget.type == MediaType.digitalLibraryall)
+                                      : (widget.type ==
+                                                MediaType.digitalLibrary ||
+                                            widget.type ==
+                                                MediaType.digitalLibraryall)
                                       ? item.thumbnail_image ?? ""
                                       : item.image ?? "",
-                                  title:  (widget.type == MediaType.photoAlbum|| widget.type == MediaType.ambassadorAlbum)
+                                  title:
+                                      (widget.type == MediaType.photoAlbum ||
+                                          widget.type ==
+                                              MediaType.ambassadorAlbum)
                                       ? item.photo_description ?? ""
                                       : widget.type == MediaType.photoGallery
                                       ? item.photo_category_name ?? ""
                                       : item.title,
                                   showPlayIcon: false,
                                   onTap: () {
-                                    if (widget.type == MediaType.digitalLibrary ||widget.type == MediaType.digitalLibraryall ) {
+                                    if (widget.type ==
+                                            MediaType.digitalLibrary ||
+                                        widget.type ==
+                                            MediaType.digitalLibraryall) {
                                       ShowDialogs.launchURL(item.document!);
-                                    }else
-                                    if (widget.type == MediaType.photoGallery) {
+                                    } else if (widget.type ==
+                                        MediaType.photoGallery) {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (_) => PhotoAlumbScreen(
-                                            homeLayoutType: HomeLayoutType.photoGallery,
+                                            homeLayoutType:
+                                                HomeLayoutType.photoGallery,
                                             pageTile: getTitle(),
                                             tile: item.photo_category_name,
                                             categoryID: item.id.toString(),
@@ -589,89 +673,96 @@ String getContentTitle() {
                                         ),
                                       );
                                     } else if (widget.type ==
-                                        MediaType.photoAlbum || widget.type ==
-                                        MediaType.ambassadorAlbum) {
-                                          print("1Image");
-                                          showGeneralDialog(
-  context: context,
-  barrierDismissible: true,
-  barrierLabel: 'Image Preview',
+                                            MediaType.photoAlbum ||
+                                        widget.type ==
+                                            MediaType.ambassadorAlbum) {
+                                      print("1Image");
+                                      showGeneralDialog(
+                                        context: context,
+                                        barrierDismissible: true,
+                                        barrierLabel: 'Image Preview',
 
-  // Transparent black overlay over the previous screen
-  barrierColor: Colors.black.withOpacity(0.55),
+                                        // Transparent black overlay over the previous screen
+                                        barrierColor: Colors.black.withOpacity(
+                                          0.55,
+                                        ),
 
-  transitionDuration: const Duration(
-    milliseconds: 200,
-  ),
+                                        transitionDuration: const Duration(
+                                          milliseconds: 200,
+                                        ),
 
-  pageBuilder: (
-    context,
-    animation,
-    secondaryAnimation,
-  ) {
-    return ImagePreviewDialog(
-      items: provider.storyList,
-      initialIndex: index,
-      imageUrl: (item) => item.photo ?? "",
-      title: (item) => item.photo_description ?? "",
-    );
-  },
-);
-      //                                      showGeneralDialog(
-      //                             context: context,
-      //                             barrierDismissible: true,
-      //                             barrierLabel: 'Image Preview',
-      //                             barrierColor: Colors.transparent,
-      //                             transitionDuration: const Duration(
-      //                               milliseconds: 200,
-      //                             ),
-      //                             pageBuilder:
-      //                                 (context, animation, secondaryAnimation) {
-      //                                   return ImagePreviewDialog(
-      //                                     items: provider.storyList,
-      // initialIndex: index,
-      // imageUrl: (item) => item.photo ?? "",
-      // title: (item) => item.photo_description ?? "",
-      //                                   );
-      //                                 },
-      //                           );
-//                                           showGeneralDialog(
-//   context: context,
-//   barrierDismissible: true,
-//   barrierLabel: 'Image Preview',
-//   barrierColor: Colors.transparent,
-//   transitionDuration: const Duration(milliseconds: 200),
-//   pageBuilder: (
-//     context,
-//     animation,
-//     secondaryAnimation,
-//   ) {
-//     return ImagePreviewDialog(
-//       items: provider.storyList,
-//       initialIndex: index,
-//       imageUrl: (item) => item.photo ?? "",
-//       title: (item) => item.photo_description ?? "",
-//     );
-//   },
-// );
-      //                                 showModalBottomSheet(
-      //                                   context: context,
-      //                                   isScrollControlled: true,
-      //                                backgroundColor: Colors.transparent,
-      // barrierColor: Colors.transparent,
-      //                                   builder: (_) => 
-      //                                   ImagePreviewDialog(
-      //                                     items: provider.storyList,
-      // initialIndex: index,
+                                        pageBuilder:
+                                            (
+                                              context,
+                                              animation,
+                                              secondaryAnimation,
+                                            ) {
+                                              return ImagePreviewDialog(
+                                                items: provider.storyList,
+                                                initialIndex: index,
+                                                imageUrl: (item) =>
+                                                    item.photo ?? "",
+                                                title: (item) =>
+                                                    item.photo_description ??
+                                                    "",
+                                              );
+                                            },
+                                      );
+                                      //                                      showGeneralDialog(
+                                      //                             context: context,
+                                      //                             barrierDismissible: true,
+                                      //                             barrierLabel: 'Image Preview',
+                                      //                             barrierColor: Colors.transparent,
+                                      //                             transitionDuration: const Duration(
+                                      //                               milliseconds: 200,
+                                      //                             ),
+                                      //                             pageBuilder:
+                                      //                                 (context, animation, secondaryAnimation) {
+                                      //                                   return ImagePreviewDialog(
+                                      //                                     items: provider.storyList,
+                                      // initialIndex: index,
+                                      // imageUrl: (item) => item.photo ?? "",
+                                      // title: (item) => item.photo_description ?? "",
+                                      //                                   );
+                                      //                                 },
+                                      //                           );
+                                      //                                           showGeneralDialog(
+                                      //   context: context,
+                                      //   barrierDismissible: true,
+                                      //   barrierLabel: 'Image Preview',
+                                      //   barrierColor: Colors.transparent,
+                                      //   transitionDuration: const Duration(milliseconds: 200),
+                                      //   pageBuilder: (
+                                      //     context,
+                                      //     animation,
+                                      //     secondaryAnimation,
+                                      //   ) {
+                                      //     return ImagePreviewDialog(
+                                      //       items: provider.storyList,
+                                      //       initialIndex: index,
+                                      //       imageUrl: (item) => item.photo ?? "",
+                                      //       title: (item) => item.photo_description ?? "",
+                                      //     );
+                                      //   },
+                                      // );
+                                      //                                 showModalBottomSheet(
+                                      //                                   context: context,
+                                      //                                   isScrollControlled: true,
+                                      //                                backgroundColor: Colors.transparent,
+                                      // barrierColor: Colors.transparent,
+                                      //                                   builder: (_) =>
+                                      //                                   ImagePreviewDialog(
+                                      //                                     items: provider.storyList,
+                                      // initialIndex: index,
 
-      // imageUrl: (item) => item.photo ?? "",
+                                      // imageUrl: (item) => item.photo ?? "",
 
-      // title: (item) =>
-      //     item.photo_description ?? "",
-      //                                     // imageUrl: item.photo ?? "",
-      //                                     // title: item.photo_description ?? "",
-      //                                   ),
-      //                                 );
+                                      // title: (item) =>
+                                      //     item.photo_description ?? "",
+                                      //                                     // imageUrl: item.photo ?? "",
+                                      //                                     // title: item.photo_description ?? "",
+                                      //                                   ),
+                                      //                                 );
                                     } else {
                                       print("COm ${widget.type}");
                                       Navigator.push(
@@ -693,12 +784,10 @@ String getContentTitle() {
                                   },
                                 );
                               }
-      
+
                               /// 🎥 VIDEO TYPES
-                              return
-                               MediaCard(
-                                
-                                mediaType: widget.type ,
+                              return MediaCard(
+                                mediaType: widget.type,
                                 menuID: widget.menuID,
                                 shareLink: widget.shareLink,
                                 id: item.id.toString(),
@@ -714,39 +803,40 @@ String getContentTitle() {
                                   print("25Aug");
                                   final key = getYoutubeVideoId(item.videoLink);
 
-if (key != null && key.isNotEmpty) {
-  ShowDialogs.youtubevideolink(
-    "https://www.youtube.com/watch?v=$key&autoplay=1",
-  );
-}
+                                  if (key != null && key.isNotEmpty) {
+                                    ShowDialogs.youtubevideolink(
+                                      "https://www.youtube.com/watch?v=$key&autoplay=1",
+                                    );
+                                  }
                                   // var key = item.videoLink.substring(
                                   //   item.videoLink.length - 11,
                                   // );
-      
+
                                   // ShowDialogs.youtubevideolink(
                                   //   "https://www.youtube.com/watch?v=$key?autoplay=1",
                                   // );
                                 },
                               );
                             },
-                            childCount: provider.storyList.length +
-    ((widget.type != MediaType.photoAlbum &&
-            provider.hasMore &&
-            provider.isLoading)
-        ? 1
-        : 0),
+                            childCount:
+                                provider.storyList.length +
+                                ((widget.type != MediaType.photoAlbum &&
+                                        provider.hasMore &&
+                                        provider.isLoading)
+                                    ? 1
+                                    : 0),
                             // childCount: widget.type == MediaType.photoAlbum
                             //     ? provider.storyList.length
                             //     : provider.storyList.length + 1,
                           ),
                           gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
+                               SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
-                                childAspectRatio: 0.80,
+                                childAspectRatio:(widget.type == MediaType.photoAlbum)?1.4: 0.80,
                               ),
                         ),
                       ),
-      
+
                 /// 🔹 FOOTER
                 const SliverToBoxAdapter(child: FooterFlowerImage()),
                 const SliverToBoxAdapter(child: SizedBox(height: 8)),

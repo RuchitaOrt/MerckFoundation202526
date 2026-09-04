@@ -332,7 +332,7 @@ class _RashaKelejContent extends StatelessWidget {
       backgroundColor: Customcolor.background,
       appBar: CommonAppBar(
         type: AppBarType.inner,
-        title: "Senator Dr. Rasha Kelej, CEO of Merck Foundation",
+        title: "Senator Dr. Rasha Kelej, CEO of Merck Foundation \nBeyond Power; Leadership, Global Influence and Impact",
         onSearch: () {},
         shareLink: "",
         menuID: menuID,
@@ -397,16 +397,16 @@ class _RashaKelejContent extends StatelessWidget {
                   //   SmartHtmlWidget(
                   //     html: pageTitle,
                   //   ),
-                  Center(
-                    child: SmartHtmlWidget(
-                      html: "Beyond Power; Leadership, Global Influence and Impact",
-                      textColor: Customcolor.textBlueColor,
-                      textalign: TextAlign.center,
-                      fontSize: responsive.fontSize(3.0),
-                      fontFamily: "Times New Roman",
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
+                  // Center(
+                  //   child: SmartHtmlWidget(
+                  //     html: "Beyond Power; Leadership, Global Influence and Impact",
+                  //     textColor: Customcolor.textBlueColor,
+                  //     textalign: TextAlign.center,
+                  //     fontSize: responsive.fontSize(3.0),
+                  //     fontFamily: "Times New Roman",
+                  //     fontWeight: FontWeight.w900,
+                  //   ),
+                  // ),
                   Center(
                     child: SmartHtmlWidget(
                       html: "A Series of Articles developed by Dr. Rasha Kelej",

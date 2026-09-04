@@ -1131,6 +1131,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:merckfoundation_252026/CommonUtils/customcolor.dart';
 
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/CommonUtils/common_images.dart';
@@ -1520,7 +1521,8 @@ double get fixedTitleHeight {
           maxLines: 2,
           textOverflow: TextOverflow.ellipsis,
           textAlignment: TextAlign.center,
-          labelColor: Colors.black,
+          labelColor:widget.layoutType ==
+      HomeLayoutType.MerckMoreThanAmbasdar.name?Customcolor.colorPink: Colors.black,
           fontweight: FontWeight.w500,
           fontSize: responsive.fontSize(2.2),
         ),
@@ -1530,10 +1532,11 @@ double get fixedTitleHeight {
           padding: const EdgeInsets.only(top: 2,left: 2,right: 2),
           child: FormLabel(
             text: item.subTitle,
-            maxLines: 1,
+            maxLines: 2,
             textOverflow: TextOverflow.ellipsis,
             textAlignment: TextAlign.center,
-            labelColor: Colors.black,
+            labelColor:widget.layoutType ==
+      HomeLayoutType.MerckMoreThanAmbasdar.name?Customcolor.textBlueColor:  Colors.black,
             fontweight: FontWeight.w500,
             fontSize: responsive.fontSize(2.2),
           ),

@@ -26,12 +26,14 @@ class TestimonialArticlesScreen extends StatefulWidget {
   final String title;
   final List<TestimonialModel>? initialList;
   final bool useLocalPagination;
+  final String? videoCategories;
   const TestimonialArticlesScreen({
     super.key,
     required this.shareLink,
     required this.title,
     this.initialList,
     this.useLocalPagination = false,
+    this.videoCategories
   });
 
   @override
@@ -55,12 +57,41 @@ class _TestimonialArticlesScreenState extends State<TestimonialArticlesScreen> {
 
       /// 🔥 LOAD CATEGORY FILTERS
       await filter.loadFilters(context, type: MediaType.testimonialArticle);
+if (widget.videoCategories != null &&
+    widget.videoCategories!.isNotEmpty) {
 
+  final categoryId = int.tryParse(widget.videoCategories!);
+
+  if (categoryId != null) {
+    final category = filter.categories.firstWhere(
+      (e) => e.id == categoryId,
+      orElse: () => filter.allCategory,
+    );
+
+    if (category.id == categoryId) {
+
+      /// Keep only passed category
+      filter.categories = [category];
+
+      /// Select category
+      filter.selectCategory(category);
+
+      /// 🔥 IMPORTANT:
+      /// Reload countries according to selected category
+     await filter.loadTestimonialArticleCountriesByCategory(context);
+    }
+  }
+}
       /// 🔥 INITIAL API
       if (widget.useLocalPagination && widget.initialList != null) {
         provider.loadLocalTestimonials(widget.initialList!);
       } else {
-        await provider.fetchTestimonials(context, "","");
+        // await provider.fetchTestimonials(context, "","");
+        await provider.fetchTestimonials(
+  context,
+  widget.videoCategories ?? "",
+  "",
+);
       }
 
       _scrollController.addListener(() {
@@ -129,6 +160,7 @@ class _TestimonialArticlesScreenState extends State<TestimonialArticlesScreen> {
     return TestimonialCarouselWidget(
       items: provider.testimonials,
       scrollController: _scrollController,
+      provider: provider,
     );
   }
 }
@@ -136,22 +168,27 @@ class _TestimonialArticlesScreenState extends State<TestimonialArticlesScreen> {
 class TestimonialCarouselWidget extends StatefulWidget {
   final List<TestimonialModel> items;
   final ScrollController scrollController;
+    final TestimonialArticleProvider provider;
 
   const TestimonialCarouselWidget({
     super.key,
     required this.items,
     required this.scrollController,
+      required this.provider,
   });
 
   @override
   State<TestimonialCarouselWidget> createState() =>
       _TestimonialCarouselWidgetState();
 }
-
-class _TestimonialCarouselWidgetState extends State<TestimonialCarouselWidget> {
-  final CarouselSliderController _controller = CarouselSliderController();
+class _TestimonialCarouselWidgetState
+    extends State<TestimonialCarouselWidget> {
+  final CarouselSliderController _controller =
+      CarouselSliderController();
 
   int currentIndex = 0;
+
+  bool _loadingNextPage = false;
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +204,8 @@ class _TestimonialCarouselWidgetState extends State<TestimonialCarouselWidget> {
 
             height: MediaQuery.of(context).size.height,
 
-            enableInfiniteScroll: widget.items.length > 1,
+            // 🔥 Important for API pagination
+            enableInfiniteScroll: false,
 
             onPageChanged: (index, reason) {
               setState(() {
@@ -190,20 +228,19 @@ class _TestimonialCarouselWidgetState extends State<TestimonialCarouselWidget> {
         if (widget.items.length > 1)
           Positioned(
             top: MediaQuery.of(context).size.height * 0.22,
-
             left: 0,
             right: 0,
-
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+              ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
+                mainAxisAlignment:
+                    MainAxisAlignment.spaceBetween,
                 children: [
+                  /// LEFT ARROW
                   _arrowButton(
                     icon: Icons.arrow_back_ios_new,
-
                     onTap: currentIndex == 0
                         ? null
                         : () {
@@ -211,12 +248,10 @@ class _TestimonialCarouselWidgetState extends State<TestimonialCarouselWidget> {
                           },
                   ),
 
+                  /// RIGHT ARROW
                   _arrowButton(
                     icon: Icons.arrow_forward_ios,
-
-                    onTap: () {
-                      _controller.nextPage();
-                    },
+                    onTap: _handleNext,
                   ),
                 ],
               ),
@@ -226,35 +261,199 @@ class _TestimonialCarouselWidgetState extends State<TestimonialCarouselWidget> {
     );
   }
 
-  Widget _arrowButton({required IconData icon, required VoidCallback? onTap}) {
+  Future<void> _handleNext() async {
+    /// Normal next item
+    if (currentIndex < widget.items.length - 1) {
+      _controller.nextPage();
+      return;
+    }
+
+    /// We are on LAST item
+    print("========================================");
+    print("LAST TESTIMONIAL REACHED");
+    print("========================================");
+
+    /// No more API data
+    if (!widget.provider.hasMore) {
+      print("No more pages available");
+      return;
+    }
+
+    /// Prevent double click
+    if (_loadingNextPage) {
+      return;
+    }
+
+    _loadingNextPage = true;
+
+    final oldLength = widget.items.length;
+
+    /// 🔥 Load next API page
+    final loaded = await widget.provider.loadMoreTestimonials(
+      context,
+    );
+
+    if (loaded && mounted) {
+      /// Provider has appended new items.
+      ///
+      /// Wait for CarouselSlider to rebuild with the
+      /// new itemCount.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+
+        /// Move from old last item to first item
+        /// of newly loaded page.
+        if (widget.items.length > oldLength) {
+          _controller.animateToPage(
+            oldLength,
+            duration: const Duration(
+              milliseconds: 350,
+            ),
+            curve: Curves.easeInOut,
+          );
+        }
+      });
+    }
+
+    _loadingNextPage = false;
+  }
+
+  Widget _arrowButton({
+    required IconData icon,
+    required VoidCallback? onTap,
+  }) {
     return Container(
       height: 42,
       width: 42,
-
       decoration: BoxDecoration(
         color: Colors.white,
-
         borderRadius: BorderRadius.circular(14),
-
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
-
             blurRadius: 10,
-
             offset: const Offset(0, 4),
           ),
         ],
       ),
-
       child: IconButton(
-        icon: Icon(icon, size: 18, color: Customcolor.colorVoilet),
-
+        icon: Icon(
+          icon,
+          size: 18,
+          color: Customcolor.colorVoilet,
+        ),
         onPressed: onTap,
       ),
     );
   }
 }
+// class _TestimonialCarouselWidgetState extends State<TestimonialCarouselWidget> {
+//   final CarouselSliderController _controller = CarouselSliderController();
+
+//   int currentIndex = 0;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Stack(
+//       children: [
+//         CarouselSlider.builder(
+//           itemCount: widget.items.length,
+
+//           carouselController: _controller,
+
+//           options: CarouselOptions(
+//             viewportFraction: 1,
+
+//             height: MediaQuery.of(context).size.height,
+
+//             enableInfiniteScroll: widget.items.length > 1,
+
+//             onPageChanged: (index, reason) {
+//               setState(() {
+//                 currentIndex = index;
+//               });
+//             },
+//           ),
+
+//           itemBuilder: (context, index, realIndex) {
+//             final item = widget.items[index];
+
+//             return _TestimonialPage(
+//               item: item,
+//               scrollController: widget.scrollController,
+//             );
+//           },
+//         ),
+
+//         /// ARROWS
+//         if (widget.items.length > 1)
+//           Positioned(
+//             top: MediaQuery.of(context).size.height * 0.22,
+
+//             left: 0,
+//             right: 0,
+
+//             child: Padding(
+//               padding: const EdgeInsets.symmetric(horizontal: 12),
+
+//               child: Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+//                 children: [
+//                   _arrowButton(
+//                     icon: Icons.arrow_back_ios_new,
+
+//                     onTap: currentIndex == 0
+//                         ? null
+//                         : () {
+//                             _controller.previousPage();
+//                           },
+//                   ),
+
+//                   _arrowButton(
+//                     icon: Icons.arrow_forward_ios,
+
+//                     onTap: () {
+//                       _controller.nextPage();
+//                     },
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//       ],
+//     );
+//   }
+
+//   Widget _arrowButton({required IconData icon, required VoidCallback? onTap}) {
+//     return Container(
+//       height: 42,
+//       width: 42,
+
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+
+//         borderRadius: BorderRadius.circular(14),
+
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.black.withOpacity(0.08),
+
+//             blurRadius: 10,
+
+//             offset: const Offset(0, 4),
+//           ),
+//         ],
+//       ),
+
+//       child: IconButton(
+//         icon: Icon(icon, size: 18, color: Customcolor.colorVoilet),
+
+//         onPressed: onTap,
+//       ),
+//     );
+//   }
+// }
 
 class _TestimonialPage extends StatelessWidget {
   final TestimonialModel item;

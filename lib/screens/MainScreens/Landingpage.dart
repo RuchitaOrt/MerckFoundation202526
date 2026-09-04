@@ -146,8 +146,8 @@ class _LandingpageState extends State<Landingpage>
                           fontSize: isTablet
                               ? responsive.fontSize(3)
                               : isSmallPhone
-                              ? responsive.fontSize(2.2)
-                              : responsive.fontSize(2.6),
+                              ? responsive.fontSize(2.6)
+                              : responsive.fontSize(2.8),
                         ),
 
                         SizedBox(height: height * 0.012),
@@ -238,7 +238,7 @@ class _Logo extends StatelessWidget {
         tag: "appLogo",
 
         child: Image.asset(
-          CommonImagePath.logoMenu,
+          CommonImagePath.drawerLogo,
 
           width: isTablet ? width * 0.28 : width * 0.42,
 

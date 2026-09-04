@@ -135,10 +135,10 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
       return;
     } else if (root['is_video'] == true) {
       debugPrint("NAVIGATING -> VIDEO");
-
+      debugPrint("VIDEO CATEGORYMEnu 1 = ${root['menu_title']?.toString()} ");
       final videoCategories = root['video_category_array'];
 
-      debugPrint("VIDEO CATEGORY = $videoCategories");
+      debugPrint("RUCHITA VIDEO CATEGORY = $videoCategories");
 
       Navigator.push(
         context,
@@ -149,7 +149,7 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
             albumID: "",
             albumName: "",
             menuID: "",
-            title: root['menu_name']?.toString() ?? "",
+            title: root['menu_title']?.toString() ?? "",
             shareLink: root['share_link']?.toString() ?? "",
           ),
         ),
@@ -333,11 +333,12 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                       itemCount: visibleCount + (hasMore ? 1 : 0),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount:
-                            widget.type == HomeLayoutType.MerckMoreThanAmbasdar
+                      widget.type == HomeLayoutType.MerckMoreThanAmbasdar
                             ? 1
                             : 2,
                         childAspectRatio:
-                            (widget.type ==
+                     widget.type ==
+                                    HomeLayoutType.photoGallery?1.4:       (widget.type ==
                                     HomeLayoutType.MerckMoreThanAmbasdar &&
                                 widget.content_button)
                             ? 0.80
