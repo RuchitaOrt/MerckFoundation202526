@@ -19,6 +19,7 @@ import 'package:merckfoundation_252026/widgets/ImagePreviewScreen.dart';
 import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 import 'package:merckfoundation_252026/widgets/YouTubePreview.dart';
 import 'package:merckfoundation_252026/widgets/mediaCard.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 
 class VerticalMediaSection extends StatefulWidget {
@@ -327,7 +328,85 @@ class _VerticalMediaSectionState extends State<VerticalMediaSection> {
                 )
               : Column(
                   children: [
-                    GridView.builder(
+                 widget.type == HomeLayoutType.photoGallery
+    ? MasonryGridView.count(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: 2,
+        mainAxisSpacing: 8,
+        crossAxisSpacing: 8,
+        itemCount: visibleCount + (hasMore ? 1 : 0),
+        itemBuilder: (context, index) {
+          /// Loader Cell
+          if (index >= visibleCount) {
+            if (!isLoadingMore) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _loadMore();
+              });
+            }
+
+            return const Center(
+              child: CommonLoader(),
+            );
+          }
+
+          final item = widget.content[index];
+
+          return MediaCard(
+            content_button: widget.content_button,
+            type: widget.type,
+            mediaType: MediaType.photoAlbum,
+            menuID: widget.menuID,
+            shareLink: widget.shareLink,
+            id: item.id.toString(),
+            image: item.thumbnail ?? "",
+            title: item.description ?? "",
+            showPlayIcon: false,
+            onTap: () {
+             
+              showGeneralDialog(
+  context: context,
+  barrierDismissible: true,
+  barrierLabel: 'Image Preview',
+
+  // IMPORTANT
+  barrierColor: Colors.black.withOpacity(0.65),
+
+  transitionDuration: const Duration(milliseconds: 200),
+
+  pageBuilder: (
+    context,
+    animation,
+    secondaryAnimation,
+  ) {
+    return Material(
+      color: Colors.transparent,
+      child: ImagePreviewDialog(
+        items: widget.content,
+        initialIndex: index,
+        imageUrl: (item) => item.thumbnail ?? "",
+        title: (item) => item.description ?? "",
+      ),
+    );
+  },
+
+  transitionBuilder: (
+    context,
+    animation,
+    secondaryAnimation,
+    child,
+  ) {
+    return FadeTransition(
+      opacity: animation,
+      child: child,
+    );
+  },
+);
+            },
+          );
+        },
+      )
+    :    GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: visibleCount + (hasMore ? 1 : 0),

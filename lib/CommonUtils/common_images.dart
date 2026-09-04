@@ -43,7 +43,8 @@ class CommonImagePath {
   //   // AppBar / Header
   static const String menu = "assets/newImages/menu.png";
   static const String arrowBack = "assets/newImages/arrow_back.png";
-  static const String drawerImg = "assets/newImages/drawer_img.png";
+  static const String drawerImg = "assets/newImages/logo3.png";
+  // "assets/newImages/drawer_img.png";
 
   //   // Actions
   static const String search = "assets/newImages/search.png";
@@ -76,6 +77,9 @@ class CommonImagePath {
   static const facebook = "assets/newImages/FB.svg";
   static const twitter = "assets/newImages/twitt.svg";
   static const youtube = "assets/newImages/youtu.svg";
+
+ static const facebookNew = "assets/newImages/facebooknew.png";
+  static const twitterNew = "assets/newImages/twitter.png";
 
   static const flicker = "assets/newImages/flick.svg";
   static const thread = "assets/newImages/threads.svg";

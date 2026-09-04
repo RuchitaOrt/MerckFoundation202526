@@ -43,8 +43,43 @@ class ShareBottomSheet {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     /// FACEBOOK
-                    SocialIcon(
-                    CommonImagePath.facebook,
+//                     SocialIcon(
+//                     CommonImagePath.facebook,
+//                       iconSize: imgHeight,
+//                       onTap: () {
+//                         ShowDialogs.shareToFacebook(
+//                           "${GlobalLists.liveWebsiteUrl}${shareLink}",
+//                         );
+//                       },
+//                     ),
+//                     const SizedBox(width: 10),
+
+//                     /// TWITTER
+//                     SocialIcon(
+//                     CommonImagePath.twitter,
+//                       iconSize: imgHeight,
+//                       onTap: () {
+//                         ShowDialogs.shareToTwitter(
+//                           "Merck Foundation",
+//                           "${GlobalLists.liveWebsiteUrl}${shareLink}",
+//                         );
+//                       },
+//                     ),
+
+//                     const SizedBox(width: 10),
+// SocialIcon(
+//                      CommonImagePath.whatsup,
+//                       iconSize: imgHeight,
+//                       onTap: () {
+//                         ShowDialogs.launchWhatsappshare(
+//                           "${GlobalLists.liveWebsiteUrl}${shareLink}",
+//                         );
+//                       },
+//                     ),
+
+
+SocialIconPNG(
+                    CommonImagePath.facebookNew,
                       iconSize: imgHeight,
                       onTap: () {
                         ShowDialogs.shareToFacebook(
@@ -55,8 +90,8 @@ class ShareBottomSheet {
                     const SizedBox(width: 10),
 
                     /// TWITTER
-                    SocialIcon(
-                    CommonImagePath.twitter,
+                    SocialIconPNG(
+                    CommonImagePath.twitterNew,
                       iconSize: imgHeight,
                       onTap: () {
                         ShowDialogs.shareToTwitter(
@@ -67,7 +102,15 @@ class ShareBottomSheet {
                     ),
 
                     const SizedBox(width: 10),
-
+SocialIcon(
+                     CommonImagePath.whatsup,
+                      iconSize: imgHeight,
+                      onTap: () {
+                        ShowDialogs.launchWhatsappshare(
+                          "${GlobalLists.liveWebsiteUrl}${shareLink}",
+                        );
+                      },
+                    ),
                     /// LINKEDIN
                     // SocialIcon(
                     //   CommonImagePath.linkdin,
@@ -83,15 +126,7 @@ class ShareBottomSheet {
 
                     /// WHATSAPP
                     /// 
-                    SocialIcon(
-                     CommonImagePath.whatsup,
-                      iconSize: imgHeight,
-                      onTap: () {
-                        ShowDialogs.launchWhatsappshare(
-                          "${GlobalLists.liveWebsiteUrl}${shareLink}",
-                        );
-                      },
-                    ),
+                    
                    
                   ],
                 ),

@@ -132,8 +132,8 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
              Image.asset(CommonImagePath.drawerImg, 
                               //  Image.asset(CommonImagePath.drawerImg, 
                                
-                               height:
-                              type == AppBarType.home?80: 65),
+                               height: type == AppBarType.home?150: 65
+                              ),
       //         Column(
       //           children: [
       //             Image.asset(CommonImagePath.logoMenu, 

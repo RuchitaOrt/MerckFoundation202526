@@ -641,15 +641,46 @@ class SocialIcon extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(size * 0.25),
+        padding: EdgeInsets.all(size * 0.12),
         decoration: const BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.white,
         ),
         child: SvgPicture.asset(
           icon,
-          width: iconSize ?? size * 0.5,
-          height: iconSize ?? size * 0.5,
+          width:size * 0.5, //iconSize ?? size * 0.8,
+          height: size * 0.5,//iconSize ?? size * 0.8,
+        ),
+      ),
+    );
+  }
+}
+
+
+class SocialIconPNG extends StatelessWidget {
+  final String icon;
+  final double? iconSize;
+  final VoidCallback onTap;
+
+  const SocialIconPNG(this.icon, {super.key, this.iconSize, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final size =
+        MediaQuery.of(routeGlobalKey.currentContext!).size.width * 0.12;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(size * 0.12),
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+        ),
+        child: Image.asset(
+          icon,
+          width: size *0.5,//iconSize ?? size * 0.8,
+          height:size *0.5 //iconSize ?? size * 0.8,
         ),
       ),
     );

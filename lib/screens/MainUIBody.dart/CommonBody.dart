@@ -959,10 +959,10 @@ if (socialLayouts.isNotEmpty) {
           return const SizedBox();
         }
 
-  final socialProvider =
-      Provider.of<SocialProvider>(context, listen: false);
+  // final socialProvider =
+  //     Provider.of<SocialProvider>(context, listen: false);
 
-  socialProvider.setSocialMediaList(content);
+  // socialProvider.setSocialMediaList(content);
         return  widget.menuID=="1"?Container(): Padding(
           padding: const EdgeInsets.only(top: 20),
           child: Column(
