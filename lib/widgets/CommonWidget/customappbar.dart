@@ -41,46 +41,200 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.mennuLogo,
   });
 
-  @override
-  Size get preferredSize => Size.fromHeight(
-     type != AppBarType.home? title!.length>100?120:height:
-    height);
+  // @override
+  // Size get preferredSize => Size.fromHeight(
+  //    type != AppBarType.home? title!.length>100?120:height:
+  //   height);
+// @override
+// Size get preferredSize => Size.fromHeight(
+//   type != AppBarType.home && (title?.length ?? 0) > 100
+//       ? 120
+//       : height,
+// );
+// @override
+// Size get preferredSize {
+//   if (type == AppBarType.home) {
+//     return const Size.fromHeight(76);
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    final responsive = ResponsiveFlutter.of(context);
+//   final titleHeight = (title?.length ?? 0) > 100 ? 60.0 : 50.0;
 
-    return Container(
-      color: Customcolor.babyBlue,
-      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+//   return Size.fromHeight(
+//     59.0 + titleHeight,
+//   );
+// }
+@override
+Size get preferredSize {
+  if (type == AppBarType.home) {
+    return const Size.fromHeight(76);
+  }
+
+  final screenWidth = WidgetsBinding.instance.platformDispatcher.views.first
+      .physicalSize.width /
+      WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio;
+
+  final logoHeight = screenWidth < 380
+      ? 40.0
+      : screenWidth < 600
+          ? 44.0
+          : 48.0;
+
+  final topRowHeight = logoHeight + 2.0 + 16.0 + 8.0;
+
+  final titleHeight = (title?.length ?? 0) > 100 ? 60.0 : 50.0;
+
+  return Size.fromHeight(
+    topRowHeight + titleHeight,
+  );
+}
+@override
+Widget build(BuildContext context) {
+  final responsive = ResponsiveFlutter.of(context);
+
+  return Container(
+    color: Customcolor.babyBlue,
+    child: SafeArea(
+      bottom: false,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           _topRow(context, responsive),
           if (type == AppBarType.inner && title != null)
             _bottomTitleBar(context),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
+  // @override
+  // Widget build(BuildContext context) {
+  //   final responsive = ResponsiveFlutter.of(context);
 
-  Widget _topRow(BuildContext context, ResponsiveFlutter responsive) {
-    print("SHareLink Value");
-    print(shareLink);
-    
-    return SizedBox(
-      height: 60,
-      child: Row(
-        children: [
-          8.0.widthBox,
+  //   return Container(
+  //     color: Customcolor.babyBlue,
+  //     padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+  //     child: Column(
+  //       children: [
+  //         _topRow(context, responsive),
+  //         if (type == AppBarType.inner && title != null)
+  //           _bottomTitleBar(context),
+  //       ],
+  //     ),
+  //   );
+  // }
+Widget _topRow(
+  BuildContext context,
+  ResponsiveFlutter responsive,
+) {
+  final screenWidth = MediaQuery.of(context).size.width;
 
-          // LEFT ICON
-          GestureDetector(
+  final logoHeight = screenWidth < 380
+      ? 40.0
+      : screenWidth < 600
+          ? 44.0
+          : 48.0;
+
+  final topRowHeight = type == AppBarType.home
+      ? 76.0
+      : logoHeight + 2.0 + 16.0 + 8.0; // extra bottom space
+
+  return SizedBox(
+    height: topRowHeight,
+    child: Stack(
+      alignment: Alignment.center,
+      children: [
+
+        // CENTER LOGO + TAGLINE
+        Positioned.fill(
+          child: Center(
+            child: GestureDetector(
+              onTap: () {
+                if (type != AppBarType.home) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => Dashboard(
+                        index: 0,
+                        menuID: menuID,
+                        shareLink: shareLink,
+                        menuLogo: mennuLogo ?? "",
+                      ),
+                    ),
+                  );
+                }
+              },
+              child: SizedBox(
+                height: topRowHeight,
+                width: 260,
+                child:
+                Column(
+  mainAxisAlignment: MainAxisAlignment.center,
+  mainAxisSize: MainAxisSize.min,
+  children: [
+    SizedBox(
+      height: logoHeight,
+      child: Image.asset(
+        CommonImagePath.logoMenu,
+        fit: BoxFit.contain,
+      ),
+    ),
+
+    SmartHtmlWidget(
+      html: "<i>The German not-for-profit organization</i>",
+      textColor: Customcolor.colorVoilet,
+      fontSize: 7,
+      fontWeight: FontWeight.w500,
+      ignoreHtmlStyles: false,
+    ),
+  ],
+),
+                //  Column(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     SizedBox(
+                //       height: logoHeight,
+                //       child: Image.asset(
+                //         CommonImagePath.logoMenu,
+                //         fit: BoxFit.contain,
+                //       ),
+                //     ),
+
+                //     // const SizedBox(height: 2),
+
+                //     SizedBox(
+                //       height: 16,
+                //       width: 260,
+                //       child: FittedBox(
+                //         fit: BoxFit.scaleDown,
+                //         child: SmartHtmlWidget(
+                //           html:
+                //               "<i>The German not-for-profit organization</i>",
+                //           textColor: Customcolor.colorVoilet,
+                //           fontSize: 7,
+                //           fontWeight: FontWeight.w500,
+                //           ignoreHtmlStyles: false,
+                //         ),
+                //       ),
+                //     ),
+
+                //     // EXTRA SPACE BELOW TAGLINE
+                //     const SizedBox(height: 6),
+                //   ],
+                // ),
+              ),
+            ),
+          ),
+        ),
+
+        // LEFT ICON
+        Positioned(
+          left: 8,
+          child: GestureDetector(
             onTap: () {
               if (type == AppBarType.home) {
                 onDrawer?.call();
               } else {
                 if (onBack != null) {
-                  print("onBack");
                   onBack!.call();
                 } else {
                   Navigator.pushReplacement(
@@ -104,91 +258,173 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
               height: 24,
             ),
           ),
+        ),
 
-          const Spacer(),
+        // RIGHT ICONS
+        Positioned(
+          right: 10,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (shareLink?.isNotEmpty ?? false)
+                _icon(
+                  CommonImagePath.share,
+                  () {
+                    ShareBottomSheet.show(
+                      context,
+                      shareLink: shareLink!,
+                    );
+                  },
+                  true,
+                ),
 
-          // LOGO
-          GestureDetector(
-            onTap: ()
-            {
-              if( type != AppBarType.home)
-              {
- Navigator.pushReplacement(
+              const SizedBox(width: 8),
+
+              _icon(
+                CommonImagePath.search,
+                () {
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => Dashboard(
-                        index: 0,
-                        menuID: menuID,
-                        shareLink: shareLink,
-                        menuLogo: mennuLogo ?? "",
-                      ),
+                      builder: (_) => SearchScreen(),
                     ),
                   );
-              }
+                },
+                false,
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
+//   Widget _topRow(BuildContext context, ResponsiveFlutter responsive) {
+//     print("SHareLink Value");
+//     print(shareLink);
+    
+//     return SizedBox(
+//       height: 60,
+//       child: Row(
+//         children: [
+//           8.0.widthBox,
+
+//           // LEFT ICON
+//           GestureDetector(
+//             onTap: () {
+//               if (type == AppBarType.home) {
+//                 onDrawer?.call();
+//               } else {
+//                 if (onBack != null) {
+//                   print("onBack");
+//                   onBack!.call();
+//                 } else {
+//                   Navigator.pushReplacement(
+//                     context,
+//                     MaterialPageRoute(
+//                       builder: (_) => Dashboard(
+//                         index: 0,
+//                         menuID: menuID,
+//                         shareLink: shareLink,
+//                         menuLogo: mennuLogo ?? "",
+//                       ),
+//                     ),
+//                   );
+//                 }
+//               }
+//             },
+//             child: Image.asset(
+//               type == AppBarType.home
+//                   ? CommonImagePath.menu
+//                   : CommonImagePath.arrowBack,
+//               height: 24,
+//             ),
+//           ),
+
+//           const Spacer(),
+
+//           // LOGO
+//           GestureDetector(
+//             onTap: ()
+//             {
+//               if( type != AppBarType.home)
+//               {
+//  Navigator.pushReplacement(
+//                     context,
+//                     MaterialPageRoute(
+//                       builder: (_) => Dashboard(
+//                         index: 0,
+//                         menuID: menuID,
+//                         shareLink: shareLink,
+//                         menuLogo: mennuLogo ?? "",
+//                       ),
+//                     ),
+//                   );
+//               }
              
 
-            },
-            child:
-             Image.asset(CommonImagePath.drawerImg, 
-                              //  Image.asset(CommonImagePath.drawerImg, 
+//             },
+//             child:
+//              Image.asset(CommonImagePath.drawerImg, 
+//                               //  Image.asset(CommonImagePath.drawerImg, 
                                
-                               height: type == AppBarType.home?150: 65
-                              ),
-      //         Column(
-      //           children: [
-      //             Image.asset(CommonImagePath.logoMenu, 
-      //                         //  Image.asset(CommonImagePath.drawerImg, 
+//                                height: type == AppBarType.home?150: 65
+//                               ),
+//       //         Column(
+//       //           children: [
+//       //             Image.asset(CommonImagePath.logoMenu, 
+//       //                         //  Image.asset(CommonImagePath.drawerImg, 
                                
-      //                          height:
-      //                          type == AppBarType.home?50: 50),
+//       //                          height:
+//       //                          type == AppBarType.home?50: 50),
 
-      //                        SmartHtmlWidget(
-      //   html: "The Philanthropic arm of Merck KGaA" ,
-      //   textColor: Customcolor.colorVoilet,
-      //   fontSize:  responsive.fontSize(1),
-      //   fontWeight: FontWeight.w900,
-      //   ignoreHtmlStyles: true,
-      // ),
-      //           ],
-      //         ),
-          ),
+//       //                        SmartHtmlWidget(
+//       //   html: "The Philanthropic arm of Merck KGaA" ,
+//       //   textColor: Customcolor.colorVoilet,
+//       //   fontSize:  responsive.fontSize(1),
+//       //   fontWeight: FontWeight.w900,
+//       //   ignoreHtmlStyles: true,
+//       // ),
+//       //           ],
+//       //         ),
+//           ),
 
-          const Spacer(),
-          if (shareLink != "" 
-          )
+//           const Spacer(),
+//           if (shareLink != "" 
+//           )
           
-            _icon(CommonImagePath.share, () {
-              print("CLICKED");
-              if (shareLink != null && shareLink!.isNotEmpty) {
-                print("CLICKED");
-                ShareBottomSheet.show(context, shareLink: shareLink!);
-              }
-            }, true),
-          // if (onShare != null) _icon(CommonImagePath.share, onShare,true),
-          // // ACTION ICONS
-          8.0.heightBox,
-          // if (onSearch != null)
-          // _icon(CommonImagePath.search, onSearch, false),
-          _icon(
-            CommonImagePath.search,
-            () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => SearchScreen(
+//             _icon(CommonImagePath.share, () {
+//               print("CLICKED");
+//               if (shareLink != null && shareLink!.isNotEmpty) {
+//                 print("CLICKED");
+//                 ShareBottomSheet.show(context, shareLink: shareLink!);
+//               }
+//             }, true),
+//           // if (onShare != null) _icon(CommonImagePath.share, onShare,true),
+//           // // ACTION ICONS
+//           8.0.heightBox,
+//           // if (onSearch != null)
+//           // _icon(CommonImagePath.search, onSearch, false),
+//           _icon(
+//             CommonImagePath.search,
+//             () {
+//               Navigator.push(
+//                 context,
+//                 MaterialPageRoute(
+//                   builder: (_) => SearchScreen(
                     
-                  ),
-                ),
-              );
-            },
-            // onSearch,
-            false,
-          ),
-          10.0.heightBox,
-        ],
-      ),
-    );
-  }
+//                   ),
+//                 ),
+//               );
+//             },
+//             // onSearch,
+//             false,
+//           ),
+//           10.0.heightBox,
+//         ],
+//       ),
+//     );
+//   }
 
   Widget _bottomTitleBar(BuildContext context) {
     return Container(

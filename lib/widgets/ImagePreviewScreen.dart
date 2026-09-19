@@ -1253,8 +1253,8 @@ Widget _closeButton() {
       },
       borderRadius: BorderRadius.circular(22),
       child: Container(
-        width: 42,
-        height: 42,
+        width: 32,
+        height: 32,
         decoration: BoxDecoration(
           color: Colors.black,
           shape: BoxShape.circle,
@@ -1504,7 +1504,7 @@ Widget _closeButton() {
 
           Positioned(
             top: -18,
-            right: 22,
+            right: 24,
             child: _closeButton(),
           ),
 

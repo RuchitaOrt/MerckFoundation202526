@@ -4,7 +4,8 @@ class CommonImagePath {
   //splash logo
   static String splashLogo = "assets/newImages/splashbg.png";
   static String splashflower = "assets/newImages/splashflower.png";
-  static String splashdrawer = 'assets/newImages/drawer_img.png';
+  static String splashdrawer = 'assets/newImages/drawer_imglogo.png';
+  // 'assets/newImages/drawer_img.png';
   static const String logoMenu = 'assets/newImages/logo.png';
 
   static const String homeSelected = "assets/newImages/home_bottom.png";
@@ -28,7 +29,7 @@ class CommonImagePath {
   static const String callUnselected =
       "assets/newImages/call_for_application_unselect.png";
 
-  static const String drawerLogo = "assets/newImages/drawer_img.png";
+  // static const String drawerLogo = "assets/newImages/drawer_img.png";
 
   static const String arrowForward = 'assets/newImages/arrow_forward.png';
 
@@ -43,7 +44,8 @@ class CommonImagePath {
   //   // AppBar / Header
   static const String menu = "assets/newImages/menu.png";
   static const String arrowBack = "assets/newImages/arrow_back.png";
-  static const String drawerImg = "assets/newImages/logo3.png";
+  static const String drawerImg ="assets/newImages/logo3.png";
+  //  "assets/newImages/logo3.png";
   // "assets/newImages/drawer_img.png";
 
   //   // Actions

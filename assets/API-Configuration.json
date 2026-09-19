@@ -1,5 +1,5 @@
 {
-    "environment": "sanityLive",
+    "environment": "Live",
     "version": "1",
     "UAT": {
         "hostUrl": "https://mfv1-uat.ortdemo.com/",
@@ -23,6 +23,11 @@
     },
     "sanityLive": {
         "hostUrl": "https://sanityapi.merck-foundation.com/",
+        "timeout": 120,
+        "retry": 3
+    },
+    "Live": {
+        "hostUrl": "https://api.merck-foundation.com/",
         "timeout": 120,
         "retry": 3
     }

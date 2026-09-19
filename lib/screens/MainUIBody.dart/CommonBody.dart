@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:merckfoundation_252026/Provider/SocialProvider.dart';
@@ -22,6 +23,7 @@ import 'package:merckfoundation_252026/widgets/CommonWidget/CommonFunctions.dart
 
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonLoader.dart';
 import 'package:merckfoundation_252026/widgets/CommonWidget/CommonMarqueeWidget.dart';
+import 'package:merckfoundation_252026/widgets/CommonWidget/ImageShimmer.dart';
 
 import 'package:merckfoundation_252026/widgets/EmptyStateWidget.dart';
 import 'package:merckfoundation_252026/widgets/FollowSocialSection.dart';
@@ -108,30 +110,31 @@ class _CommonBodyState extends State<CommonBody> {
     // final data = provider.pageData;
     final data = provider.pageDataFor(widget.menuID ?? "");
 
-    
     if (!mounted) return;
 
     if (data == null) {
       setState(() => hasLoaded = true);
       return;
     }
-final layouts = provider.layoutsFor(widget.menuID ?? "");
+    final layouts = provider.layoutsFor(widget.menuID ?? "");
 
-final socialLayouts = layouts
-    .where((layout) => layout.type == HomeLayoutType.socialLinks)
-    .toList();
+    final socialLayouts = layouts
+        .where((layout) => layout.type == HomeLayoutType.socialLinks)
+        .toList();
 
-if (socialLayouts.isNotEmpty) {
-  final socialProvider =
-      Provider.of<SocialProvider>(context, listen: false);
+    if (socialLayouts.isNotEmpty) {
+      final socialProvider = Provider.of<SocialProvider>(
+        context,
+        listen: false,
+      );
 
-  final List<dynamic> socialMediaList = socialLayouts
-      .map((layout) => layout.content ?? [])
-      .expand((content) => content)
-      .toList();
+      final List<dynamic> socialMediaList = socialLayouts
+          .map((layout) => layout.content ?? [])
+          .expand((content) => content)
+          .toList();
 
-  socialProvider.setSocialMediaList(socialMediaList);
-}
+      socialProvider.setSocialMediaList(socialMediaList);
+    }
     root = data['data'];
 
     if (root is Map) {
@@ -443,13 +446,18 @@ if (socialLayouts.isNotEmpty) {
                 final image = e['thumbnail'];
                 final title = e['title'];
                 final pageUrl = e['page_url'];
-                final subtitle=e['subtitle'];
+                final subtitle = e['subtitle'];
 
                 return CarouselItem(
                   image: image is String ? image : "",
                   title: title is String ? title : "",
-                  subTitle:carouselLayout.type ==
-                          HomeLayoutType.MerckMoreThanAmbasdar? subtitle is String ? subtitle: "":"",
+                  subTitle:
+                      carouselLayout.type ==
+                          HomeLayoutType.MerckMoreThanAmbasdar
+                      ? subtitle is String
+                            ? subtitle
+                            : ""
+                      : "",
                   onTap:
                       carouselLayout.type ==
                           HomeLayoutType.MerckMoreThanAmbasdar
@@ -497,75 +505,80 @@ if (socialLayouts.isNotEmpty) {
                         : "",
 
                     onViewAll: () async {
-                       debugPrint("=================================");
-    debugPrint("WATCH MORE CLICKED");
-    debugPrint("MENU ID = ${widget.menuID}");
-   
-    debugPrint("=================================");
+                      debugPrint("=================================");
+                      debugPrint("WATCH MORE CLICKED");
+                      debugPrint("MENU ID = ${widget.menuID}");
 
-   
+                      debugPrint("=================================");
 
-    final provider = Provider.of<PageProvider>(context, listen: false);
+                      final provider = Provider.of<PageProvider>(
+                        context,
+                        listen: false,
+                      );
 
-    final data = await provider.fetchWatchMorePage(context, carouselLayout.buttonMenuId);
+                      final data = await provider.fetchWatchMorePage(
+                        context,
+                        carouselLayout.buttonMenuId,
+                      );
 
-    if (!mounted) return;
+                      if (!mounted) return;
 
-    debugPrint("WATCH MORE DATA = $data");
+                      debugPrint("WATCH MORE DATA = $data");
 
-    if (data == null) {
-      debugPrint("WATCH MORE: DATA IS NULL");
-      return;
-    }
+                      if (data == null) {
+                        debugPrint("WATCH MORE: DATA IS NULL");
+                        return;
+                      }
 
-    final root = data['data'];
+                      final root = data['data'];
 
-    if (root == null || root is! Map) {
-      debugPrint("WATCH MORE: INVALID ROOT");
-      debugPrint("ROOT = $root");
-      return;
-    }
+                      if (root == null || root is! Map) {
+                        debugPrint("WATCH MORE: INVALID ROOT");
+                        debugPrint("ROOT = $root");
+                        return;
+                      }
 
-    debugPrint("========== ROOT ==========");
-    debugPrint("ROOT = $root");
-    debugPrint("is_newsletter = ${root['is_newsletter']}");
-    debugPrint("is_awards = ${root['is_awards']}");
-    debugPrint("is_video = ${root['is_video']}");
-    debugPrint("is_dglibrary = ${root['is_dglibrary']}");
-    debugPrint("is_photo = ${root['is_photo']}");
-    debugPrint("==========================");
+                      debugPrint("========== ROOT ==========");
+                      debugPrint("ROOT = $root");
+                      debugPrint("is_newsletter = ${root['is_newsletter']}");
+                      debugPrint("is_awards = ${root['is_awards']}");
+                      debugPrint("is_video = ${root['is_video']}");
+                      debugPrint("is_dglibrary = ${root['is_dglibrary']}");
+                      debugPrint("is_photo = ${root['is_photo']}");
+                      debugPrint("==========================");
 
                       print("root['is_dglibrary']");
                       print(root['is_dglibrary']);
                       if (root['is_dglibrary'] == true) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => MediaListingScreen(
-              type: MediaType.digitalLibrary,
-              categoryID: root['digital_library_id'].toString(),
-              albumID: "",
-              albumName: "",
-              menuID: root['id'].toString(),
-              shareLink: "",
-              title: "Digital Library",
-              digitalLibraryCategoryName: "",
-            ),
-          ),
-        );
-      }else{
-                      AppNavigation.navigateByMenuId(
-                        context,
-                        menuId: carouselLayout.buttonMenuId.toString(),
-                        albumId: "",
-                        albumName: "",
-                        categoryId: "",
-                        type: carouselLayout.type,
-                        title: carouselLayout.title ?? "",
-                        shareLink: carouselLayout.buttonLink,
-                      );}
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => MediaListingScreen(
+                              type: MediaType.digitalLibrary,
+                              categoryID: root['digital_library_id'].toString(),
+                              albumID: "",
+                              albumName: "",
+                              menuID: root['id'].toString(),
+                              shareLink: "",
+                              title: "Digital Library",
+                              digitalLibraryCategoryName: "",
+                            ),
+                          ),
+                        );
+                      } else {
+                        AppNavigation.navigateByMenuId(
+                          context,
+                          menuId: carouselLayout.buttonMenuId.toString(),
+                          albumId: "",
+                          albumName: "",
+                          categoryId: "",
+                          type: carouselLayout.type,
+                          title: carouselLayout.title ?? "",
+                          shareLink: carouselLayout.buttonLink,
+                        );
+                      }
                     },
-                    
+
                     items: items,
                   ),
 
@@ -853,15 +866,13 @@ if (socialLayouts.isNotEmpty) {
                 showMenu: type == HomeLayoutType.episodes,
                 menuID: layout.buttonMenuId.toString(),
               );
-
       case HomeLayoutType.content:
         final List<dynamic> contentList = layout.content ?? [];
 
         if (contentList.isEmpty) {
           return const SizedBox();
         }
-
-        if (contentList.length == 1) {
+  if (contentList.length == 1  ) {
           final item = contentList.first;
 
           return Padding(
@@ -924,7 +935,194 @@ if (socialLayouts.isNotEmpty) {
             ),
           );
         }
+        if (layout.mobileView == "vertical" ||
+            layout.mobileView == "Vertical" ||
+            contentList.length > 1) {
+          final bool showButton =
+              layout.viewButton == true || layout.viewButton == "true";
+
+          return Padding(
+            padding: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom: 2,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ==========================================
+                // SECTION TITLE - SHOW ONLY ONCE
+                // ==========================================
+                if ((layout.title ?? "").isNotEmpty)
+                  SmartHtmlWidget(
+                    html: layout.title ?? "",
+                    textColor: Customcolor.violetcolor,
+                    fontSize: AppSizes.heading(context),
+                    ignorefontStyles: true,
+                  ),
+
+                const SizedBox(height: 5),
+
+                // ==========================================
+                // VERTICAL CONTENT
+                // ==========================================
+                ...contentList.map<Widget>((item) {
+                  return Column(
+                    children: [
+                  //     widget.menuID == "5"?
+                  //       item['thumbnail'] == "undefined"
+                  //           ? Container()
+                  //           : ClipRRect(
+                  //               borderRadius: BorderRadius.circular(24),
+
+                  //               // child:
+                  //               //  AspectRatio(
+                  //               //   aspectRatio: 4 / 4,
+                  //               child: CachedNetworkImage(
+                  //                 memCacheHeight: 1000,
+                  //                 imageUrl: item['thumbnail'],
+                  //                 fit: BoxFit.contain,
+                  //                 placeholder: (context, url) =>
+                  //                     const ImageShimmer(),
+
+                  //                 errorWidget: (_, __, ___) => Container(
+                  //                   color: Colors.grey.shade200,
+                  //                   child: const Icon(
+                  //                     Icons.broken_image,
+                  //                     size: 40,
+                  //                     color: Colors.grey,
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ):Container(),
+                  //  widget.menuID == "5"?    (item['thumbnail'].toString().isNotEmpty)?
+                        // SizedBox(
+                        //   height: (item['thumbnail'] == "undefined"||item['thumbnail'] == "") ? 0 : 18,
+                        // ):Container():Container(),
+
+                      /// SUBTITLE
+                      if ((item['subtitle'] ?? "").toString().isNotEmpty)
+                        SmartHtmlWidget(html: item['subtitle']),
+                      if ((item['subtitle'] ?? "").toString().isNotEmpty)
+                        const SizedBox(height: 14),
+
+                      /// SUBDESCRIPTION
+                      if ((item['subdescription'] ?? "").toString().isNotEmpty)
+                        SmartHtmlWidget(html: item['subdescription']),
+                      if ((item['subdescription'] ?? "").toString().isNotEmpty)
+                        const SizedBox(height: 14),
+
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: SmartHtmlWidget(
+                          html: item['description']?.toString() ?? "",
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+
+                // ==========================================
+                // VIEW BUTTON
+                // ==========================================
+                if (showButton) ...[
+                  const SizedBox(height: 10),
+
+                  Align(
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 5),
+                      child: CommonBorderButton(
+                        title: layout.buttonText,
+                        onTap: () {
+                          AppNavigation.navigateByMenuId(
+                            context,
+                            menuId: layout.buttonMenuId.toString(),
+                            title: layout.title ?? "",
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          );
+        }
+
         return ContentCarouselWidget(contentList: contentList);
+      // case HomeLayoutType.content:
+      //   final List<dynamic> contentList = layout.content ?? [];
+
+      //   if (contentList.isEmpty) {
+      //     return const SizedBox();
+      //   }
+
+      //   if (layout.mobileView=="vertical" ||  layout.mobileView=="Vertical" || contentList.length == 1  ) {
+      //     final item = contentList.first;
+
+      //     return Padding(
+      //       padding: const EdgeInsets.only(
+      //         left: 16,
+      //         right: 16,
+      //         top: 16,
+      //         bottom: 2,
+      //       ),
+      //       child: Column(
+      //         crossAxisAlignment: CrossAxisAlignment.start,
+      //         children: [
+      //           // if (!isFirstContentLayout)
+      //           //   layout.title.isNotEmpty
+      //           //       ? SmartHtmlWidget(
+      //           //           html: layout.title ?? "",
+      //           //           textColor: Customcolor.colorVoilet,
+      //           //           fontSize: responsive.fontSize(3.0),
+      //           //           fontWeight: FontWeight.w800,
+      //           //         )
+      //           //       : SmartHtmlWidget(
+      //           //           html: item['title'] ?? "",
+      //           //           // textColor: Customcolor.colorVoilet,
+      //           //           // fontSize: responsive.fontSize(3.0),
+      //           //           // fontWeight: FontWeight.w800,
+      //           //         ),
+      //           SmartHtmlWidget(
+      //             html: layout.title ?? "",
+      //             textColor: Customcolor.violetcolor,
+      //             // textColor: Customcolor.textBlueColor,
+      //             fontSize: AppSizes.heading(context),
+      //             ignorefontStyles: true,
+      //             // textColor: Customcolor.colorVoilet,
+      //             // fontSize: responsive.fontSize(3.0),
+      //             // fontWeight: FontWeight.w800,
+      //           ),
+
+      //           SmartHtmlWidget(html: """${item['description']}""" ?? ""),
+      //       (layout.viewButton == true || layout.viewButton == "true")?    SizedBox(height: 10,): SizedBox(height: 0,),
+      //           (layout.viewButton == true || layout.viewButton == "true")
+      //               ? Align(
+      //                   alignment: Alignment.center,
+      //                   child: Padding(
+      //                     padding: EdgeInsets.only(bottom: 5),
+      //                     child: CommonBorderButton(
+      //                       title: layout.buttonText,
+      //                       onTap: () {
+      //                         AppNavigation.navigateByMenuId(
+      //                           context,
+      //                           menuId: layout.buttonMenuId.toString() ?? "",
+      //                           title: layout.title ?? "",
+      //                         );
+      //                       },
+      //                     ),
+      //                   ),
+      //                 )
+      //               : Container(),
+      //           //  const SizedBox(height: 10),
+      //         ],
+      //       ),
+      //     );
+      //   }
+      //   return ContentCarouselWidget(contentList: contentList);
       case HomeLayoutType.leadership:
         return LeaderCard(
           content: layout.content ?? [],
@@ -940,8 +1138,13 @@ if (socialLayouts.isNotEmpty) {
       //   );
       case HomeLayoutType.marquee:
         return Column(
-          children: [CommonMarqueeWidget(contents: layout.content ?? []),
-       
+          children: [
+            CommonMarqueeWidget(
+              contents: layout.content ?? [],
+              onTap: () {
+                ShowDialogs.launchURL(layout.content[0]['page_url']);
+              },
+            ),
           ],
         );
       case HomeLayoutType.MenuManagement:
@@ -949,7 +1152,7 @@ if (socialLayouts.isNotEmpty) {
           children: [
             SizedBox(height: 10),
             CategorySection(content: layout.content ?? []),
-             SizedBox(height: 20),
+            SizedBox(height: 20),
           ],
         );
       case HomeLayoutType.socialLinks:
@@ -959,41 +1162,44 @@ if (socialLayouts.isNotEmpty) {
           return const SizedBox();
         }
 
-  // final socialProvider =
-  //     Provider.of<SocialProvider>(context, listen: false);
+        // final socialProvider =
+        //     Provider.of<SocialProvider>(context, listen: false);
 
-  // socialProvider.setSocialMediaList(content);
-        return  widget.menuID=="1"?Container(): Padding(
-          padding: const EdgeInsets.only(top: 20),
-          child: Column(
-            children: content.map<Widget>((item) {
-              final String title = item['title']?.toString() ?? "";
+        // socialProvider.setSocialMediaList(content);
+        return widget.menuID == "1"
+            ? Container()
+            : Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Column(
+                  children: content.map<Widget>((item) {
+                    final String title = item['title']?.toString() ?? "";
 
-              final int position = item['position'] is int
-                  ? item['position']
-                  : int.tryParse(item['position'].toString()) ?? 0;
+                    final int position = item['position'] is int
+                        ? item['position']
+                        : int.tryParse(item['position'].toString()) ?? 0;
 
-              List<dynamic> socialLinks = [];
+                    List<dynamic> socialLinks = [];
 
-              try {
-                final description = item['description']?.toString() ?? "[]";
+                    try {
+                      final description =
+                          item['description']?.toString() ?? "[]";
 
-                socialLinks = jsonDecode(description);
-              } catch (e) {
-                debugPrint("Social parse error: $e");
-              }
+                      socialLinks = jsonDecode(description);
+                    } catch (e) {
+                      debugPrint("Social parse error: $e");
+                    }
 
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: FollowSocialSection(
-                  title: title,
-                  position: position,
-                  socialLinks: socialLinks,
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: FollowSocialSection(
+                        title: title,
+                        position: position,
+                        socialLinks: socialLinks,
+                      ),
+                    );
+                  }).toList(),
                 ),
               );
-            }).toList(),
-          ),
-        );
 
       case HomeLayoutType.OurProgramsManagement:
         return Padding(

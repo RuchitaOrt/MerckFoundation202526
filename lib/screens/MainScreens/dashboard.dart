@@ -169,7 +169,9 @@ icon: CachedNetworkImage(
   ),
   errorWidget: (context, url, error) => Icon(
     Icons.image,
-    color: Customcolor.textGreyColor.withOpacity(0.5),
+    color: currentIndex == index
+      ? Customcolor.textBlueColor
+      :  Customcolor.textGreyColor.withOpacity(0.5),
   ),
 ),
     title: FormLabel(

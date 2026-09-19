@@ -43,8 +43,11 @@ class _DigitalLibraryViewerState extends State<DigitalLibraryViewer> {
 
     final pathAfterMedia =
         pageUrl.substring(index + mediaPath.length);
+// api.merck-foundation.com
+    // return 'https://sanity.merck-foundation.com/flipbook-proxy/$pathAfterMedia';
 
-    return 'https://sanity.merck-foundation.com/flipbook-proxy/$pathAfterMedia';
+    
+    return 'https://merck-foundation.com/flipbook-proxy/$pathAfterMedia';
   }
 
   @override

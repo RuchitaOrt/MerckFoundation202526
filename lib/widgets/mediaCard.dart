@@ -631,6 +631,7 @@ import 'package:merckfoundation_252026/widgets/CommonWidget/ImageShimmer.dart';
 import 'package:merckfoundation_252026/widgets/PauseImage.dart';
 import 'package:merckfoundation_252026/widgets/formLabel.dart';
 import 'package:merckfoundation_252026/widgets/share_bottom_sheet.dart';
+import 'package:shimmer/shimmer.dart';
 
 class MediaCard extends StatelessWidget {
   final String id;
@@ -689,79 +690,164 @@ class MediaCard extends StatelessWidget {
             /// IMAGE
             /// ============================================================
 
-            if (mediaType == MediaType.photoAlbum)
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 8,
-                      right: 8,
-                      top: 10,
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: CachedNetworkImage(
-                        imageUrl: image,
-                        width: double.infinity,
-                        fit: BoxFit.fitWidth,
-                        placeholder: (context, url) =>
-                            const ImageShimmer(),
-                        errorWidget: (context, url, error) {
-                          return Image.asset(
-                            CommonImagePath.placeHolder,
-                            width: double.infinity,
-                            fit: BoxFit.contain,
-                          );
-                        },
-                      ),
-                    ),
+            // if (mediaType == MediaType.photoAlbum)
+            //   Stack(
+            //     alignment: Alignment.center,
+            //     children: [
+            //       Padding(
+            //         padding: const EdgeInsets.only(
+            //           left: 8,
+            //           right: 8,
+            //           top: 10,
+            //         ),
+            //         child: ClipRRect(
+            //           borderRadius: BorderRadius.circular(8),
+            //           child: 
+            //           CachedNetworkImage(
+            //             imageUrl: image,
+            //             width: double.infinity,
+            //             fit: BoxFit.fitWidth,
+            //             placeholder: (context, url) =>
+            //                 const ImageShimmer(),
+            //             errorWidget: (context, url, error) {
+            //               return Image.asset(
+            //                 CommonImagePath.placeHolder,
+            //                 width: double.infinity,
+            //                 fit: BoxFit.contain,
+            //               );
+            //             },
+            //           ),
+            //         ),
+            //       ),
+
+            //       if (showmenu)
+            //         Positioned(
+            //           top: 16,
+            //           right: 12,
+            //           child: Container(
+            //             width: 30,
+            //             height: 30,
+            //             decoration: BoxDecoration(
+            //               color: Colors.black.withOpacity(0.45),
+            //               shape: BoxShape.circle,
+            //             ),
+            //             child: CommonPopupMenu(
+            //               iconcolor: Colors.white,
+            //               onSelected: (value) {
+            //                 if (value == "More Info") {
+            //                   print("ID is $id");
+
+            //                   Navigator.push(
+            //                     context,
+            //                     MaterialPageRoute(
+            //                       builder: (_) =>
+            //                           EpisodeInformation(
+            //                         episodeid: id,
+            //                         menuID: menuID,
+            //                         title: title,
+            //                         shareLink: shareLink,
+            //                       ),
+            //                     ),
+            //                   );
+            //                 } else {
+            //                   ShareBottomSheet.show(
+            //                     context,
+            //                     shareLink: shareLink!,
+            //                   );
+            //                 }
+            //               },
+            //             ),
+            //           ),
+            //         ),
+
+            //       if (showPlayIcon) const PauseImage(),
+            //     ],
+            //   )
+if (mediaType == MediaType.photoAlbum)
+  Stack(
+    alignment: Alignment.center,
+    children: [
+      Padding(
+        padding: const EdgeInsets.only(
+          left: 8,
+          right: 8,
+          top: 10,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: CachedNetworkImage(
+            imageUrl: image,
+            width: double.infinity,
+            fit: BoxFit.fitWidth,
+
+            placeholder: (context, url) {
+              return AspectRatio(
+                aspectRatio: 1.3,
+                child: Shimmer.fromColors(
+                  baseColor: Colors.grey.shade300,
+                  highlightColor: Colors.grey.shade100,
+                  child: Container(
+                    width: double.infinity,
+                    color: Colors.white,
                   ),
+                ),
+              );
+            },
 
-                  if (showmenu)
-                    Positioned(
-                      top: 16,
-                      right: 12,
-                      child: Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.45),
-                          shape: BoxShape.circle,
-                        ),
-                        child: CommonPopupMenu(
-                          iconcolor: Colors.white,
-                          onSelected: (value) {
-                            if (value == "More Info") {
-                              print("ID is $id");
+            errorWidget: (context, url, error) {
+              return AspectRatio(
+                aspectRatio: 1.3,
+                child: Image.asset(
+                  CommonImagePath.placeHolder,
+                  width: double.infinity,
+                  fit: BoxFit.contain,
+                ),
+              );
+            },
+          ),
+        ),
+      ),
 
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      EpisodeInformation(
-                                    episodeid: id,
-                                    menuID: menuID,
-                                    title: title,
-                                    shareLink: shareLink,
-                                  ),
-                                ),
-                              );
-                            } else {
-                              ShareBottomSheet.show(
-                                context,
-                                shareLink: shareLink!,
-                              );
-                            }
-                          },
-                        ),
+      if (showmenu)
+        Positioned(
+          top: 16,
+          right: 12,
+          child: Container(
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.45),
+              shape: BoxShape.circle,
+            ),
+            child: CommonPopupMenu(
+              iconcolor: Colors.white,
+              onSelected: (value) {
+                if (value == "More Info") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => EpisodeInformation(
+                        episodeid: id,
+                        menuID: menuID,
+                        title: title,
+                        shareLink: shareLink,
                       ),
                     ),
+                  );
+                } else {
+                  ShareBottomSheet.show(
+                    context,
+                    shareLink: shareLink!,
+                  );
+                }
+              },
+            ),
+          ),
+        ),
 
-                  if (showPlayIcon) const PauseImage(),
-                ],
-              )
-
+      if (showPlayIcon) const PauseImage(),
+    ],
+  )
             /// ============================================================
             /// EXISTING MERCK AMBASSADOR
             /// ============================================================

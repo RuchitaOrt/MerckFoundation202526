@@ -24,6 +24,7 @@ import 'package:merckfoundation_252026/widgets/SmartHtmlWidget.dart';
 class TestimonialArticlesScreen extends StatefulWidget {
   final String shareLink;
   final String title;
+  final String? subtitle;
   final List<TestimonialModel>? initialList;
   final bool useLocalPagination;
   final String? videoCategories;
@@ -33,7 +34,8 @@ class TestimonialArticlesScreen extends StatefulWidget {
     required this.title,
     this.initialList,
     this.useLocalPagination = false,
-    this.videoCategories
+    this.videoCategories,
+     this.subtitle
   });
 
   @override
@@ -216,7 +218,7 @@ class _TestimonialCarouselWidgetState
 
           itemBuilder: (context, index, realIndex) {
             final item = widget.items[index];
-
+print("RUCHI ${item} ");
             return _TestimonialPage(
               item: item,
               scrollController: widget.scrollController,
@@ -462,6 +464,8 @@ class _TestimonialPage extends StatelessWidget {
   const _TestimonialPage({required this.item, required this.scrollController});
   @override
   Widget build(BuildContext context) {
+    print("item.departmentName");
+    print(item.departmentName);
     final responsive = ResponsiveFlutter.of(context);
 
     return ListView(
@@ -540,7 +544,18 @@ class _TestimonialPage extends StatelessWidget {
               // ),
 
               // const SizedBox(height: 12),
- SmartHtmlWidget(
+ item.title!=""?
+    SmartHtmlWidget(
+                html: item.title,
+
+                textColor: Customcolor.colorVoilet,
+
+                fontSize: responsive.fontSize(3),
+
+                fontWeight: FontWeight.bold,
+              )
+
+ :SmartHtmlWidget(
                 html: item.testimonial_name,
 
                 textColor: Customcolor.colorVoilet,
@@ -555,8 +570,18 @@ class _TestimonialPage extends StatelessWidget {
               if (item.departmentName.isNotEmpty)
                 SmartHtmlWidget(html: item.departmentName),
 
-              const SizedBox(height: 12),
+              // const SizedBox(height: 12),
+ item.subtitle!=""?
+    SmartHtmlWidget(
+                html: item.subtitle,
 
+                textColor: Customcolor.pinkColor,
+
+                fontSize: responsive.fontSize(3),
+
+                fontWeight: FontWeight.bold,
+              ):Container(),
+              const SizedBox(height: 12),
               /// SHORT DESCRIPTION
               // if (item.shortDescription.isNotEmpty)
               //   SmartHtmlWidget(html: item.shortDescription),

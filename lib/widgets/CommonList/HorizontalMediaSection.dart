@@ -215,6 +215,7 @@ class _HorizontalMediaSectionState extends State<HorizontalMediaSection> {
           MaterialPageRoute(
             builder: (_) => TestimonialArticlesScreen(
               shareLink: widget.shareLink ?? "",
+              subtitle: "",
               title: widget.title!,
               videoCategories:videoCategories.toString()
             ),
@@ -496,6 +497,7 @@ class _HorizontalMediaSectionState extends State<HorizontalMediaSection> {
                 item['description'] ?? "",
             details:
                 item['description'] ?? "",
+                subtitle: item['subtitle'] ?? ""
           );
 
           Navigator.push(
@@ -504,6 +506,7 @@ class _HorizontalMediaSectionState extends State<HorizontalMediaSection> {
               builder: (_) =>
                   TestimonialArticlesScreen(
                 title: widget.title ?? "",
+                subtitle:item['subtitle'] ,
                 shareLink:
                     widget.shareLink ?? "",
                 initialList: [

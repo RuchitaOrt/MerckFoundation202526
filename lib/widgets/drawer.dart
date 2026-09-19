@@ -822,7 +822,7 @@ SliverFillRemaining(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Image.asset(
-                CommonImagePath.drawerLogo,
+                CommonImagePath.splashdrawer,
                 width: responsive.width(40),
                 height: responsive.height(12),
                 fit: BoxFit.contain,

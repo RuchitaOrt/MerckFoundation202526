@@ -16,8 +16,11 @@ class Customcolor {
 
   static const colorBlue =  Color(0xff2467B6);
 
+  static const colorBlue2 =  Color(0xff125CAB);
+
    static const colorVoilet =  Color(0xff532E92);
-    // static const colorVoilet =  Color(0xff7030a0);
+  static const colorVoilet2
+   =  Color(0xff7030a0);
   static const babyBlue =  Color(0xff89cff0);
   static const background =  Color(0xffEBF9FF);
 

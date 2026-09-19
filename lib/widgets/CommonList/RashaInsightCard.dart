@@ -407,14 +407,28 @@ class _RashaKelejContent extends StatelessWidget {
                   //     fontWeight: FontWeight.w900,
                   //   ),
                   // ),
-                  Center(
-                    child: SmartHtmlWidget(
-                      html: "A Series of Articles developed by Dr. Rasha Kelej",
-                      textColor: Customcolor.colorVoilet,
-                      fontSize: responsive.fontSize(3.0),
-                       textalign: TextAlign.center,
-                      fontFamily: "Times New Roman",
-                      fontWeight: FontWeight.w900,
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Center(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            left: BorderSide(
+                             color: Color(0xFF4B4E53),
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: SmartHtmlWidget(
+                          html: "A Series of Articles developed by Dr. Rasha Kelej",
+                          textColor: Customcolor.colorVoilet2,
+                          fontSize: responsive.fontSize(3.0),
+                          textalign: TextAlign.center,
+                          fontFamily: "Times New Roman",
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -516,9 +530,9 @@ class _RashaKelejContent extends StatelessWidget {
           // ==========================================
           SmartHtmlWidget(
             html: title,
-            textColor: Customcolor.blackSubTitle,
+            textColor: Customcolor.colorBlue2,
             fontSize: responsive.fontSize(2.5),
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
           ),
 
           const SizedBox(height: 10),
@@ -539,7 +553,7 @@ class _RashaKelejContent extends StatelessWidget {
               // SUBSTACK
               if (showSubstack)
                 _buildButton(
-                  title: "Substack",
+                  title: "Read full Article",
                   icon: Image.asset(
                     CommonImagePath.substack,
                     width: 20,

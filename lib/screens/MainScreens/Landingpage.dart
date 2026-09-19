@@ -238,7 +238,7 @@ class _Logo extends StatelessWidget {
         tag: "appLogo",
 
         child: Image.asset(
-          CommonImagePath.drawerLogo,
+          CommonImagePath.splashdrawer,
 
           width: isTablet ? width * 0.28 : width * 0.42,
 

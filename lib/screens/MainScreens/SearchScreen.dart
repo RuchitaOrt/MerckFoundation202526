@@ -241,6 +241,7 @@ Navigator.push(
                         departmentName: "",
                         shortDescription: item.description ?? "",
                         details: item.subdescription ?? "",
+                        subtitle:item.subtitle ?? ""
                       );
 
                       Navigator.push(

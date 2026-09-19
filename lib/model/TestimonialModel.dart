@@ -1,6 +1,7 @@
 class TestimonialModel {
   final String image;
   final String title;
+   final String subtitle;
   final String testimonial_name;
   final String departmentName;
   final String shortDescription;
@@ -13,6 +14,7 @@ class TestimonialModel {
     required this.departmentName,
     required this.shortDescription,
     required this.details,
+    required this.subtitle
   });
 
   factory TestimonialModel.fromJson(Map<String,dynamic> json){
@@ -23,6 +25,7 @@ class TestimonialModel {
       departmentName: json['department_name'] ?? "",
       shortDescription: json['short_description'] ?? "",
       details: json['details'] ?? "",
+      subtitle:json['subtitle'] ??""
     );
   }
 }

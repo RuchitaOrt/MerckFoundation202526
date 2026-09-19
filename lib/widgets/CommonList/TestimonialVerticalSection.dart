@@ -47,6 +47,7 @@ class _TestimonialVerticalSectionState
         departmentName: "",
         shortDescription: e.description ?? "",
         details: e.details ?? "",
+        subtitle:e.subtitle ??""
       );
     }).toList();
   }
