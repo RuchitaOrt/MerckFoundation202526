@@ -503,7 +503,7 @@ class SocialIcon extends StatelessWidget {
           routeGlobalKey.currentContext!,
         ).size.width *
             0.12;
-
+     print(icon);
     final bool isSvg =
         icon.toLowerCase().endsWith(".svg");
 
