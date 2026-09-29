@@ -499,56 +499,124 @@ class SocialIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size =
-        MediaQuery.of(
-          routeGlobalKey.currentContext!,
-        ).size.width *
-            0.12;
-     print(icon);
+        MediaQuery.of(routeGlobalKey.currentContext!).size.width * 0.12;
+
     final bool isSvg =
-        icon.toLowerCase().endsWith(".svg");
+        Uri.tryParse(icon)?.path.toLowerCase().endsWith(".svg") ?? false;
+
+    print("ICON: $icon");
+    print("IS SVG: $isSvg");
 
     return GestureDetector(
       onTap: onTap,
-      child: 
-      Container(
-         padding: EdgeInsets.all(size * 0.09),
-        // decoration: const BoxDecoration(
-        //   shape: BoxShape.circle,
-        //   color: Colors.white,
-        // ),
+      child: Container(
+        padding: EdgeInsets.all(size * 0.09),
         child: isSvg
             ? SvgPicture.network(
                 icon,
-                width:
-                iconSize ?? size * 0.8,
-                height:
-               iconSize ?? size * 0.8,
+                width: iconSize ?? size * 0.8,
+                height: iconSize ?? size * 0.8,
                 fit: BoxFit.contain,
-                placeholderBuilder: (_) =>
-                    const SizedBox(
+                placeholderBuilder: (_) => const SizedBox(
                   width: 18,
                   height: 18,
-                  child:
-                      CircularProgressIndicator(
+                  child: CircularProgressIndicator(
                     strokeWidth: 2,
                   ),
                 ),
+                errorBuilder: (context, error, stackTrace) {
+                  print("SVG ERROR: $error");
+                  print("SVG URL: $icon");
+
+                  return const Icon(
+                    Icons.image_not_supported,
+                    size: 18,
+                  );
+                },
               )
             : Image.network(
                 icon,
-                width:
-                    iconSize ?? size * 0.8,
-                height:
-                    iconSize ?? size * 0.8,
+                width: iconSize ?? size * 0.8,
+                height: iconSize ?? size * 0.8,
                 fit: BoxFit.contain,
-                errorBuilder:
-                    (_, __, ___) =>
-                        const Icon(
-                  Icons.image_not_supported,
-                  size: 18,
-                ),
+                errorBuilder: (_, error, stackTrace) {
+                  print("IMAGE ERROR: $error");
+                  return const Icon(
+                    Icons.image_not_supported,
+                    size: 18,
+                  );
+                },
               ),
       ),
     );
   }
 }
+// class SocialIcon extends StatelessWidget {
+//   final String icon;
+//   final double? iconSize;
+//   final VoidCallback onTap;
+
+//   const SocialIcon(
+//     this.icon, {
+//     super.key,
+//     this.iconSize,
+//     required this.onTap,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final size =
+//         MediaQuery.of(
+//           routeGlobalKey.currentContext!,
+//         ).size.width *
+//             0.12;
+//      print(icon);
+//     final bool isSvg =
+//         icon.toLowerCase().endsWith(".svg");
+
+//     return GestureDetector(
+//       onTap: onTap,
+//       child: 
+//       Container(
+//          padding: EdgeInsets.all(size * 0.09),
+//         // decoration: const BoxDecoration(
+//         //   shape: BoxShape.circle,
+//         //   color: Colors.white,
+//         // ),
+//         child: isSvg
+//             ?
+//              SvgPicture.network(
+//                 icon,
+//                 width:
+//                 iconSize ?? size * 0.8,
+//                 height:
+//                iconSize ?? size * 0.8,
+//                 fit: BoxFit.contain,
+//                 placeholderBuilder: (_) =>
+//                     const SizedBox(
+//                   width: 18,
+//                   height: 18,
+//                   child:
+//                       CircularProgressIndicator(
+//                     strokeWidth: 2,
+//                   ),
+//                 ),
+//               )
+//             : Image.network(
+//                 icon,
+//                 width:
+//                     iconSize ?? size * 0.8,
+//                 height:
+//                     iconSize ?? size * 0.8,
+//                 fit: BoxFit.contain,
+//                 errorBuilder:
+//                     (_, __, ___) =>
+//                         const Icon(
+//                   Icons.image_not_supported,
+//                   size: 18,
+//                 ),
+//               ),
+//       ),
+//     );
+//   }
+// }

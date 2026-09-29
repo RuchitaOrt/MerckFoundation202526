@@ -75,19 +75,28 @@ class CommonImagePath {
   static const healthCare3 = "assets/newImages/healthcare3.jpeg";
   static const healthCare2 = "assets/newImages/healthcare2.jpeg";
   static const healthCare1 = "assets/newImages/healthcare1.jpeg";
-  static const instagram = "assets/newImages/ins.svg";
-  static const facebook = "assets/newImages/FB.svg";
-  static const twitter = "assets/newImages/twitt.svg";
-  static const youtube = "assets/newImages/youtu.svg";
+  // static const instagram = "assets/newImages/ins.svg";
+  // static const facebook = "assets/newImages/FB.svg";
+  // static const twitter = "assets/newImages/twitt.svg";
+  // static const youtube = "assets/newImages/youtu.svg";
 
- static const facebookNew = "assets/newImages/facebooknew.png";
-  static const twitterNew = "assets/newImages/twitter.png";
+//  static const facebookNew = "assets/newImages/facebooknew.png";
+//   static const twitterNew = "assets/newImages/twitter.png";
+  static const whatsup = "assets/newImages/whatsappchat.svg";
+ static const facebookNew = "assets/newImages/fbchat.svg";
+  static const twitterNew = "assets/newImages/twiiterchat.svg";
 
-  static const flicker = "assets/newImages/flick.svg";
-  static const thread = "assets/newImages/threads.svg";
-  static const linkdin = "assets/newImages/linkdin.svg";
-  static const whatsup = "assets/newImages/whatsaup.svg";
 
+//   static const whatsup = "assets/newImages/instachat.svg";
+//  static const facebookNew = "assets/newImages/youtubechat.svg";
+//   static const twitterNew = "assets/newImages/subtrackchat.svg";
+
+// static const whatsup = "assets/newImages/whatsapp1.svg";
+
+  // static const flicker = "assets/newImages/flick.svg";
+  // static const thread = "assets/newImages/threads.svg";
+  // static const linkdin = "assets/newImages/linkdin.svg";
+ 
   static const serverError = "assets/newImages/Servererror.png";
   static const notFound = "assets/newImages/NotFound.png";
   static const noInternet = "assets/newImages/noInternet.png";

@@ -1,0 +1,21 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19 19">
+
+  <!-- Red background -->
+  <circle cx="9.5" cy="9.5" r="9.5" fill="#FF0000"></circle>
+
+  <!-- White video rectangle -->
+  <path fill="#FEFEFE" d="M5.7 6
+       H13.31
+       C14.49 6 15.45 6.96 15.45 8.14
+       V10.88
+       C15.45 12.06 14.49 13.02 13.31 13.02
+       H5.7
+       C4.52 13.02 3.56 12.06 3.56 10.88
+       V8.14
+       C3.56 6.96 4.52 6 5.7 6 Z"></path>
+
+  <!-- Red play button -->
+  <polygon points="11,9.5 9.5,10.37 8,11.23 8,9.5 8,7.77 9.5,8.64" fill="#FF0000"></polygon>
+
+</svg>

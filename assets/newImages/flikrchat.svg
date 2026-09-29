@@ -1,0 +1,13 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 17.88 17.88" width="17.88" height="17.88">
+
+  <!-- Background circle -->
+  <circle cx="8.94" cy="8.94" r="8.94" fill="#E6E7E8"></circle>
+
+  <!-- Left blue circle -->
+  <circle cx="5.46" cy="8.94" r="2.53" fill="#2A68B1"></circle>
+
+  <!-- Right pink circle -->
+  <circle cx="12.42" cy="8.94" r="2.53" fill="#ED318F"></circle>
+
+</svg>

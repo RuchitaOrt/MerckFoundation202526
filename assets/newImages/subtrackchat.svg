@@ -1,0 +1,27 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.07 19.07" width="19.07" height="19.07">
+
+  <!-- Orange background -->
+  <circle cx="9.54" cy="9.54" r="9.54" fill="#FF6718"></circle>
+
+  <!-- White icon -->
+  <path fill="#FEFEFE" d="M5.28 14.38
+       l3.73 -2.07
+       c0.07 -0.04 0.48 -0.28 0.54 -0.30
+       l2.37 1.33
+       c0.10 0.05 0.18 0.10 0.27 0.15
+       c0.20 0.12 1.55 0.87 1.61 0.89
+       l0 -5.04
+       c0 -0.05 0 -0.11 0 -0.16
+       c0 -0.07 0.02 -0.13 -0.05 -0.13
+       l-8.42 0
+       c-0.08 0 -0.05 0.13 -0.05 0.27
+       l0 5.06z"></path>
+
+  <!-- White line -->
+  <polygon fill="#FEFEFE" points="5.28,8.03 13.78,8.03 13.78,6.87 5.28,6.87"></polygon>
+
+  <!-- White line -->
+  <polygon fill="#FEFEFE" points="5.28,5.84 13.78,5.84 13.78,4.70 5.28,4.70"></polygon>
+
+</svg>

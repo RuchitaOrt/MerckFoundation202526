@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import 'package:merckfoundation_252026/Utility/ResponsiveFlutter.dart';
 import 'package:merckfoundation_252026/Utility/showdailog.dart';
@@ -78,7 +79,7 @@ class ShareBottomSheet {
 //                     ),
 
 
-SocialIconPNG(
+SocialIcon(
                     CommonImagePath.facebookNew,
                       iconSize: imgHeight,
                       onTap: () {
@@ -87,10 +88,11 @@ SocialIconPNG(
                         );
                       },
                     ),
+
                     const SizedBox(width: 10),
 
                     /// TWITTER
-                    SocialIconPNG(
+                    SocialIcon(
                     CommonImagePath.twitterNew,
                       iconSize: imgHeight,
                       onTap: () {

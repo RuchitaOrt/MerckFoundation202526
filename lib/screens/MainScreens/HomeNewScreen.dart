@@ -529,102 +529,102 @@ class CategoryChip extends StatelessWidget {
   }
 }
 
-class FollowSection extends StatelessWidget {
-  final String title;
-  final double? iconSize;
-  final int position;
-  const FollowSection({
-    super.key,
-    required this.title,
-    this.iconSize,
-    this.position = 0,
-  });
+// class FollowSection extends StatelessWidget {
+//   final String title;
+//   final double? iconSize;
+//   final int position;
+//   const FollowSection({
+//     super.key,
+//     required this.title,
+//     this.iconSize,
+//     this.position = 0,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 10, 0),
-                child: Text(
-                  stripHtml(title),
-                  // title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.055,
-                    fontWeight: FontWeight.w800,
-                    color: Customcolor.textBlueColor,
-                  ),
-                ),
-              ),
-            ),
-            position == 0
-                ? Container()
-                : position == 1
-                ? Image.asset(CommonImagePath.homeFlowerNew, height: 70)
-                : Container(),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Padding(
-          padding: const EdgeInsets.only(left: 10, right: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              SocialIcon(
-                CommonImagePath.instagram,
-                iconSize: iconSize,
-                onTap: () {},
-              ),
+//   @override
+//   Widget build(BuildContext context) {
+//     final screenWidth = MediaQuery.of(context).size.width;
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             Expanded(
+//               child: Padding(
+//                 padding: const EdgeInsets.fromLTRB(16, 0, 10, 0),
+//                 child: Text(
+//                   stripHtml(title),
+//                   // title,
+//                   maxLines: 2,
+//                   overflow: TextOverflow.ellipsis,
+//                   style: TextStyle(
+//                     fontSize: screenWidth * 0.055,
+//                     fontWeight: FontWeight.w800,
+//                     color: Customcolor.textBlueColor,
+//                   ),
+//                 ),
+//               ),
+//             ),
+//             position == 0
+//                 ? Container()
+//                 : position == 1
+//                 ? Image.asset(CommonImagePath.homeFlowerNew, height: 70)
+//                 : Container(),
+//           ],
+//         ),
+//         const SizedBox(height: 12),
+//         Padding(
+//           padding: const EdgeInsets.only(left: 10, right: 10),
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//             children: [
+//               SocialIcon(
+//                 CommonImagePath.instagram,
+//                 iconSize: iconSize,
+//                 onTap: () {},
+//               ),
 
-              SocialIcon(
-                CommonImagePath.facebook,
-                iconSize: iconSize,
-                onTap: () {},
-              ),
-              SocialIcon(
-                CommonImagePath.twitter,
-                iconSize: iconSize,
-                onTap: () {},
-              ),
-              SocialIcon(
-                CommonImagePath.youtube,
-                iconSize: iconSize,
-                onTap: () {},
-              ),
-              SocialIcon(
-                CommonImagePath.flicker,
-                iconSize: iconSize,
-                onTap: () {},
-              ),
+//               SocialIcon(
+//                 CommonImagePath.facebook,
+//                 iconSize: iconSize,
+//                 onTap: () {},
+//               ),
+//               SocialIcon(
+//                 CommonImagePath.twitter,
+//                 iconSize: iconSize,
+//                 onTap: () {},
+//               ),
+//               SocialIcon(
+//                 CommonImagePath.youtube,
+//                 iconSize: iconSize,
+//                 onTap: () {},
+//               ),
+//               SocialIcon(
+//                 CommonImagePath.flicker,
+//                 iconSize: iconSize,
+//                 onTap: () {},
+//               ),
 
-              SocialIcon(
-                CommonImagePath.thread,
-                iconSize: iconSize,
-                onTap: () {},
-              ),
-            ],
-          ),
-        ),
-        position == 0
-            ? Container()
-            : position == 1
-            ? Container()
-            : Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Image.asset(CommonImagePath.homeFlowerNew, height: 70),
-              ),
-      ],
-    );
-  }
-}
+//               SocialIcon(
+//                 CommonImagePath.thread,
+//                 iconSize: iconSize,
+//                 onTap: () {},
+//               ),
+//             ],
+//           ),
+//         ),
+//         position == 0
+//             ? Container()
+//             : position == 1
+//             ? Container()
+//             : Padding(
+//                 padding: const EdgeInsets.only(top: 10),
+//                 child: Image.asset(CommonImagePath.homeFlowerNew, height: 70),
+//               ),
+//       ],
+//     );
+//   }
+// }
 
 class SocialIcon extends StatelessWidget {
   final String icon;
@@ -642,14 +642,14 @@ class SocialIcon extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.all(size * 0.12),
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white,
-        ),
+        // decoration: const BoxDecoration(
+        //   shape: BoxShape.circle,
+        //   color: Colors.white,
+        // ),
         child: SvgPicture.asset(
           icon,
-          width:size * 0.5, //iconSize ?? size * 0.8,
-          height: size * 0.5,//iconSize ?? size * 0.8,
+          width:size * 0.8, //iconSize ?? size * 0.8,
+          height: size * 0.8,//iconSize ?? size * 0.8,
         ),
       ),
     );

@@ -436,7 +436,7 @@ if (element.localName == 'strong' || element.localName == 'b') {
       },
 onTapUrl: (url) async {
   // 📱 MF STORE 
-  if (url == "/MF_StoreRedirection") { 
+  if (url.contains("/MF_StoreRedirection")) { 
     final String storeUrl = Platform.isAndroid ? "https://play.google.com/store/apps/details?id=de.merck.foundation" : "https://apps.apple.com/app/de.merck.foundation"; final Uri storeUri = Uri.parse(storeUrl); try { if (await canLaunchUrl(storeUri)) { await launchUrl( storeUri, mode: LaunchMode.externalApplication, ); } else { debugPrint("Could not launch store URL: $storeUrl"); } } catch (e) { debugPrint("Store URL launch error: $e"); } return true; }
   // 📞 PHONE NUMBER
   if (url.toLowerCase().startsWith('tel:')) {
